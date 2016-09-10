@@ -1,0 +1,14 @@
+.hyperlink {
+    -fx-text-fill: cornflowerblue;
+    -fx-focus-color: transparent;
+}
+
+.hyperlink:hover, .hyperlink:hover:visited {
+    -fx-text-fill: firebrick;
+    -fx-underline: false;
+}
+
+.hyperlink:visited {
+    -fx-text-fill: cornflowerblue;
+    -fx-underline: false;
+}
