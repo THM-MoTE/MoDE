@@ -44,7 +44,12 @@ public class Configuration extends Observable {
   
   public void addRecent(Project project) {
     this.recent.addRecent(project);
-    this.notifyObservers("Recent");
+    this.notifyObservers("addRecent");
+  }
+  
+  public void removeRecent(Project project) {
+    this.recent.removeRecent(project);
+    this.notifyObservers("removeRecent");
   }
   
   public List<Project> getRecents() {

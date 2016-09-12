@@ -6,7 +6,6 @@ import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementList;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -32,10 +31,14 @@ public class Recent {
     this.checkLength();
   }
   
+  public void removeRecent(Project project) {
+    this.projects.remove(project);
+  }
+  
   public List<Project> getRecents() {
     List<Project> ret = new ArrayList<>();
-    Collections.copy(ret, this.projects);
-    Collections.reverse(ret);
+    for(Project p: this.projects)
+      ret.add(0, p);
     return ret;
   }
   

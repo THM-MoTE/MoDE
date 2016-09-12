@@ -1,77 +1,85 @@
 package de.thm.mni.mhpp11.util;
 
-import org.apache.commons.configuration2.Configuration;
-import org.apache.commons.configuration2.PropertiesConfiguration;
-import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
-import org.apache.commons.configuration2.builder.fluent.Configurations;
-import org.apache.commons.configuration2.ex.ConfigurationException;
+import de.thm.mni.mhpp11.util.config.model.Configuration;
+import org.simpleframework.xml.Serializer;
+import org.simpleframework.xml.core.Persister;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Locale;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 
 /**
  * Created by hobbypunk on 10.09.16.
  */
-public class Settings {
+public class Settings extends Configuration implements Observer {
   
   public static String NAME = "MoDE";
   public static String VERSION = "0.1";
   
   private static Settings INSTANCE;
   
-  private FileBasedConfigurationBuilder<PropertiesConfiguration> builder;
-  private Configuration config;
-  private String path;
+  private Serializer serializer;
   
-  
-  public static Settings load() throws ConfigurationException {
-    if(INSTANCE == null) INSTANCE = new Settings();
-    else INSTANCE.save();
-    return INSTANCE;
-  }
-  
-  private Settings() throws ConfigurationException {
+  public static Settings load() throws Exception {
+    if (INSTANCE != null) return INSTANCE;
+
     String os = System.getProperty("os.name").toLowerCase();
     String path;
-    if(os.contains("win")) {
+    if (os.contains("win")) {
       path = System.getenv("APPDATA") + "/" + NAME;
-    } else if(os.contains("mac")) {
+    } else if (os.contains("mac")) {
       //TODO: mac settings path
       path = System.getenv("HOME") + "/.config/" + NAME;
     } else {
       path = System.getenv("HOME") + "/.config/" + NAME;
     }
     File tmp = new File(path);
-    if(!tmp.exists()) {
-      if(!tmp.mkdirs()) throw new ConfigurationException("cant create folders");
+    if (!tmp.exists()) {
+      if (!tmp.mkdirs()) throw new Exception("cant create folders");
     }
-    path +=  "/config.properties";
+    path += "/config.xml";
     tmp = new File(path);
-    if(!tmp.exists()) {
+    if (!tmp.exists()) {
       try {
-        if(!tmp.createNewFile()) throw new ConfigurationException();
-      } catch(Exception e) {
-        throw new ConfigurationException("cant create file");
+        if (!tmp.createNewFile()) throw new Exception();
+  
+        try {
+          String cls = Settings.class.getSimpleName().toLowerCase();
+          List<String> lines = Arrays.asList("<"+cls+">", "</"+cls+">");
+          Files.write(tmp.toPath(), lines, Charset.forName("UTF-8"));
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      } catch (Exception e) {
+        throw new Exception("cant create file");
       }
     }
-    Configurations configs = new Configurations();
-    builder = configs.propertiesBuilder(path);
-    config = builder.getConfiguration();
+  
+    Serializer serializer = new Persister();
+    INSTANCE = serializer.read(Settings.class, tmp);
+    INSTANCE.file = tmp;
+    INSTANCE.serializer = serializer;
+    INSTANCE.addObserver(INSTANCE);
+    return INSTANCE;
   }
   
-  public Locale getLang() {
-    String lang = config.getString("lang");
-    if(lang == null) lang = "en_US";
-    return new Locale(lang.split("_")[0], lang.split("_")[1]);
+  public void save()  {
+    try {
+      serializer.write(this, this.file);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
   
-  public void setLang(Locale lang) {
-    config.setProperty("lang", lang);
-  }
-  
-  public void save() throws ConfigurationException {
-    builder.save();
+  @Override
+  public void update(Observable o, Object arg) {
+    System.out.println("Settings changed");
+    this.save();
   }
 }
