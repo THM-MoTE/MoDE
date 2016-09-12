@@ -1,4 +1,4 @@
-package de.thm.mni.mhpp11.parser.model;
+package de.thm.mni.mhpp11.model;
 
 
 import java.io.BufferedReader;

@@ -1,4 +1,4 @@
-package de.thm.mni.mhpp11.parser;
+package de.thm.mni.mhpp11.util.parser;
 
 /**
  * Created by hobbypunk on 08.09.16.

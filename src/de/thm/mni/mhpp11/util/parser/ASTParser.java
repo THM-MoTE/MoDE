@@ -1,16 +1,14 @@
-package de.thm.mni.mhpp11.parser;
+package de.thm.mni.mhpp11.util.parser;
 
 import beaver.Parser.Exception;
-import de.thm.mni.mhpp11.parser.model.MoProgramm;
-import de.thm.mni.mhpp11.parser.model.MoWithin;
+import de.thm.mni.mhpp11.model.MoProgramm;
+import de.thm.mni.mhpp11.model.MoWithin;
 import org.jmodelica.modelica.compiler.*;
-import org.jmodelica.modelica.compiler.LibraryList.LibraryDef;
 import org.jmodelica.util.OptionRegistry;
 import org.jmodelica.util.OptionRegistry.LocalIteration;
 import org.jmodelica.util.streams.CodeStream;
 
 import java.io.IOException;
-import java.util.Set;
 
 
 /**
