@@ -1,6 +1,6 @@
 package de.thm.mni.mhpp11.control;
 
-import de.thm.mni.mhpp11.util.Settings;
+import de.thm.mni.mhpp11.util.config.Settings;
 import de.thm.mni.mhpp11.util.config.model.Project;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;

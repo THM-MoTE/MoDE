@@ -1,13 +1,12 @@
 package de.thm.mni.mhpp11;
 
-import de.thm.mni.mhpp11.util.Settings;
+import de.thm.mni.mhpp11.util.config.Settings;
 import de.thm.mni.mhpp11.util.UTF8ResourceBundleControl;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-import org.apache.commons.configuration2.ex.ConfigurationException;
 
 import java.util.ResourceBundle;
 
@@ -23,7 +22,7 @@ public class MainApp extends Application {
   public MainApp() {
     try {
       settings = Settings.load();
-    } catch(ConfigurationException e) {
+    } catch(Exception e) {
       e.printStackTrace();
     }
     i18n = ResourceBundle.getBundle("de/thm/mni/mhpp11/i18n/welcome", settings.getLang(), new UTF8ResourceBundleControl());
@@ -35,7 +34,7 @@ public class MainApp extends Application {
     
     FXMLLoader loader = new FXMLLoader();
     loader.setResources(i18n);
-    loader.setLocation(Main.class.getResource("view/welcome.fxml"));
+    loader.setLocation(MainApp.class.getResource("view/welcome.fxml"));
     HBox rootLayout = loader.load();
     
     // Show the scene containing the root layout.

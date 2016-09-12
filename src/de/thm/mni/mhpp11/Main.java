@@ -1,7 +1,7 @@
 package de.thm.mni.mhpp11;
 
-import de.thm.mni.mhpp11.parser.ASTParser;
-import de.thm.mni.mhpp11.parser.ParserException;
+import de.thm.mni.mhpp11.util.parser.ASTParser;
+import de.thm.mni.mhpp11.util.parser.ParserException;
 import de.thm.mni.mhpp11.util.UTF8ResourceBundleControl;
 
 import java.util.Locale;

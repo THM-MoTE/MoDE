@@ -11,7 +11,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.16.8</version>
+            <version>1.16.10</version>
         </dependency>
 
         <dependency>
@@ -21,32 +21,39 @@
             <scope>test</scope>
         </dependency>
 
-
         <dependency>
             <groupId>net.sf.beaver</groupId>
             <artifactId>beaver-rt</artifactId>
             <version>0.9.11</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/de.jflex/jflex -->
-        <dependency>
-            <groupId>de.jflex</groupId>
-            <artifactId>jflex</artifactId>
-            <version>1.6.1</version>
-        </dependency>
-
         <!-- Configurations -->
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-configuration2</artifactId>
-            <version>2.1</version>
+            <groupId>org.simpleframework</groupId>
+            <artifactId>simple-xml</artifactId>
+            <version>2.7.1</version>
+        </dependency>
+
+        <!-- Icons -->
+        <dependency>
+            <groupId>org.kordamp.ikonli</groupId>
+            <artifactId>ikonli-javafx</artifactId>
+            <version>1.6.0</version>
         </dependency>
         <dependency>
-            <groupId>commons-beanutils</groupId>
-            <artifactId>commons-beanutils</artifactId>
-            <version>1.9.2</version>
+            <groupId>org.kordamp.ikonli</groupId>
+            <artifactId>ikonli-material-pack</artifactId>
+            <version>1.6.0</version>
         </dependency>
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>central</id>
+            <name>jcenter</name>
+            <url>http://jcenter.bintray.com</url>
+        </repository>
+    </repositories>
 
     <build>
         <sourceDirectory>${project.basedir}/src</sourceDirectory>
@@ -60,25 +67,6 @@
         </resources>
 
         <plugins>
-            <plugin>
-                <groupId>de.jflex</groupId>
-                <artifactId>jflex-maven-plugin</artifactId>
-                <version>1.6.1</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>src/de/thm/mni/mhpp11/parser</outputDirectory>
-                            <lexDefinitions>
-                                <lexDefinition>res-parser/parser.flex</lexDefinition>
-                            </lexDefinitions>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
