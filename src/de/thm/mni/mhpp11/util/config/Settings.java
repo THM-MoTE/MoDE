@@ -1,4 +1,4 @@
-package de.thm.mni.mhpp11.util;
+package de.thm.mni.mhpp11.util.config;
 
 import de.thm.mni.mhpp11.util.config.model.Configuration;
 import org.simpleframework.xml.Serializer;
