@@ -1,0 +1,16 @@
+Button.icon {
+    -fx-background-color: transparent;
+    -fx-border-width: 0px;
+}
+
+FontIcon.icon {
+    -fx-fill: #dddddd;
+}
+
+FontIcon.icon:hover {
+    -fx-fill: #6b6b6b;
+}
+
+.base:hover {
+    -fx-background-color: lightskyblue;
+}
