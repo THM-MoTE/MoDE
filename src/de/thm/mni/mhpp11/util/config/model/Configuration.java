@@ -1,5 +1,6 @@
 package de.thm.mni.mhpp11.util.config.model;
 
+import de.thm.mni.mhpp11.util.logger.Logger;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.simpleframework.xml.Element;
@@ -7,6 +8,8 @@ import org.simpleframework.xml.Root;
 
 import java.io.File;
 import java.util.*;
+
+import static de.thm.mni.mhpp11.util.logger.Logger.LOGLEVEL.ERROR;
 
 /**
  * Created by hobbypunk on 11.09.16.
@@ -21,6 +24,10 @@ public class Configuration extends Observable {
   private String lang = "en_US";
   @Element(required = false)
   Recent recent = new Recent();
+  @Element(required = false)
+  Logger.LOGLEVEL level = ERROR;
+  @Element(required = false)
+  Logger.LOGLEVEL notifyLevel = ERROR;
   
   public File file;
   
@@ -50,6 +57,24 @@ public class Configuration extends Observable {
   public void removeRecent(Project project) {
     this.recent.removeRecent(project);
     this.notifyObservers("removeRecent");
+  }
+  
+  public void setLogLevel(Logger.LOGLEVEL level) {
+    this.level = level;
+    this.notifyObservers("logLevel");
+  }
+  
+  public void setNotifyLevel(Logger.LOGLEVEL level) {
+    this.notifyLevel = level;
+    this.notifyObservers("notifyLevel");
+  }
+  
+  public Logger.LOGLEVEL getLogLevel() {
+    return this.level;
+  }
+  
+  public Logger.LOGLEVEL getNotifyLevel() {
+    return this.notifyLevel;
   }
   
   public List<Project> getRecents() {

@@ -1,6 +1,8 @@
 package de.thm.mni.mhpp11.util.config;
 
 import de.thm.mni.mhpp11.util.config.model.Configuration;
+import de.thm.mni.mhpp11.util.logger.Logger;
+import de.thm.mni.mhpp11.util.logger.LoggerFactory;
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
 
@@ -81,5 +83,9 @@ public class Settings extends Configuration implements Observer {
   public void update(Observable o, Object arg) {
     System.out.println("Settings changed");
     this.save();
+  }
+  
+  public Logger getLogger() {
+    return LoggerFactory.getConsoleLogger(this.getLogLevel(), this.getNotifyLevel());
   }
 }
