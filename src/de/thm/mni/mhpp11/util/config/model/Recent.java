@@ -1,10 +1,13 @@
 package de.thm.mni.mhpp11.util.config.model;
 
+import de.thm.mni.mhpp11.util.Utilities;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementList;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,13 +19,16 @@ import java.util.List;
 public class Recent {
   
   @Element(required = false)
-  public Integer recentCount = 10;
+  private File lastPath = Utilities.getHome();
+  
+  @Element(required = false)
+  @Getter private Integer count = 10;
   
   @ElementList(required = false)
   private List<Project> projects = new ArrayList<>();
   
-  public void setRecentCount(Integer recentCount) {
-    this.recentCount = recentCount;
+  public void setCount(Integer count) {
+    this.count = count;
     this.checkLength();
   }
   
@@ -43,7 +49,7 @@ public class Recent {
   }
   
   private void checkLength() {
-    while(projects.size() > this.recentCount)
+    while(projects.size() > this.count)
       projects.remove(0);
   }
 }

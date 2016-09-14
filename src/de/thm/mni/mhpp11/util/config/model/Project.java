@@ -1,10 +1,9 @@
 package de.thm.mni.mhpp11.util.config.model;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import lombok.*;
 import org.simpleframework.xml.Element;
 
+import java.io.File;
 import java.util.Date;
 
 
@@ -13,12 +12,20 @@ import java.util.Date;
  */
 @NoArgsConstructor
 @AllArgsConstructor
-@lombok.Getter
+@Getter
 public class Project {
   @Element
   @NonNull private String name;
   @Element
-  @NonNull private String path;
+  @NonNull private File file;
   @Element
   @NonNull private Date lastOpened;
+  
+  public Project(String name, File file) {
+    this(name, file, new Date());
+  }
+  
+  public void updateLastOpened() {
+    this.lastOpened = new Date();
+  }
 }

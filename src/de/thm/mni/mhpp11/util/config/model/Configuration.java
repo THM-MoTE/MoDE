@@ -1,15 +1,15 @@
 package de.thm.mni.mhpp11.util.config.model;
 
-import de.thm.mni.mhpp11.util.logger.Logger;
+import de.thm.mni.mhpp11.util.config.model.Logger.LEVEL;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
 
 import java.io.File;
-import java.util.*;
-
-import static de.thm.mni.mhpp11.util.logger.Logger.LOGLEVEL.ERROR;
+import java.util.List;
+import java.util.Locale;
+import java.util.Observable;
 
 /**
  * Created by hobbypunk on 11.09.16.
@@ -23,11 +23,11 @@ public class Configuration extends Observable {
   @Element(required = false)
   private String lang = "en_US";
   @Element(required = false)
-  Recent recent = new Recent();
+  private Recent recent = new Recent();
   @Element(required = false)
-  Logger.LOGLEVEL level = ERROR;
+  private Logger logger = new Logger();
   @Element(required = false)
-  Logger.LOGLEVEL notifyLevel = ERROR;
+  private Notification notification = new Notification();
   
   public File file;
   
@@ -41,12 +41,12 @@ public class Configuration extends Observable {
   }
   
   public void setRecentCount(Integer count) {
-    this.recent.setRecentCount(count);
+    this.recent.setCount(count);
     this.notifyObservers("RecentCount");
   }
   
   public Integer getRecentCount() {
-    return this.recent.recentCount;
+    return this.recent.getCount();
   }
   
   public void addRecent(Project project) {
@@ -59,22 +59,31 @@ public class Configuration extends Observable {
     this.notifyObservers("removeRecent");
   }
   
-  public void setLogLevel(Logger.LOGLEVEL level) {
-    this.level = level;
+  public void setLogLevel(LEVEL level) {
+    this.logger.level = level;
     this.notifyObservers("logLevel");
   }
   
-  public void setNotifyLevel(Logger.LOGLEVEL level) {
-    this.notifyLevel = level;
+  public void setNotifyLevel(LEVEL level) {
+    this.logger.notifyLevel = level;
     this.notifyObservers("notifyLevel");
   }
   
-  public Logger.LOGLEVEL getLogLevel() {
-    return this.level;
+  public Integer getNotifySeconds() {
+    return this.notification.seconds;
   }
   
-  public Logger.LOGLEVEL getNotifyLevel() {
-    return this.notifyLevel;
+  public void setNotifySeconds(Integer seconds) {
+    this.notification.seconds = seconds;
+    this.notifyObservers("notifySeconds");
+  }
+  
+  public LEVEL getLogLevel() {
+    return this.logger.level;
+  }
+  
+  public LEVEL getNotifyLevel() {
+    return this.logger.notifyLevel;
   }
   
   public List<Project> getRecents() {
