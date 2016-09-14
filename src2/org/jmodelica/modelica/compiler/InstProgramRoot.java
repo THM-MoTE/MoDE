@@ -176,7 +176,7 @@ public class InstProgramRoot extends InstRoot implements Cloneable {
             throw new ModelicaClassNotFoundException(className);
     }
     /**
-     * Generic traversal method used to find a particular class instance
+     * Generic traversal method used to findBasePackage a particular class instance
      * in the instance tree, and if so, flatten it.
      * @aspect Flattening
      * @declaredat /home/hobbypunk/Dokumente/Entwicklung/THM_Projekte/Projektphase/jModelica/Compiler/ModelicaFrontEnd/src/jastadd/flattening/Flattening.jrag:78

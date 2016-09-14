@@ -469,7 +469,7 @@ public abstract class InstNode extends BaseNode implements Cloneable, InstLookup
             return fClass;
         }
     /**
-     * If icd is in an outer component, try to find corresponding class in inner decl.
+     * If icd is in an outer component, try to findBasePackage corresponding class in inner decl.
      * 
      * If inner decl isn't found, return icd to avoid extra error messages.
      * @aspect InstLookupClasses
@@ -1958,7 +1958,7 @@ public abstract class InstNode extends BaseNode implements Cloneable, InstLookup
     public InstLookupResult<InstClassDecl> lookupLastRedeclareExtendsInstClass(String name) {
         ASTNode$State state = state();
         try {
-                // TODO: find better way of detecting if there is only one "redeclare class extends" in chain
+                // TODO: findBasePackage better way of detecting if there is only one "redeclare class extends" in chain
                 InstLookupResult<InstClassDecl> first = lookupCurRedeclareExtendsInstClass(name);
                 if (first.successful()) {
                     InstLookupResult<InstClassDecl> second = first.target().lookupRedeclareExtendsInstClass(name);

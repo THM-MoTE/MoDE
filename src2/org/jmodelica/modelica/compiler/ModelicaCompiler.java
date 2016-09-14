@@ -1222,7 +1222,7 @@ public class ModelicaCompiler extends Object {
                 } catch (CompilerException e) {
                     log.logCompilerException(e);
                 } catch (FileNotFoundException e) {
-                    log.error("Could not find file: " + e.getMessage());
+                    log.error("Could not findBasePackage file: " + e.getMessage());
                 } catch (IOException e) {
                     log.error("Error opening file: " + e.getMessage());
                 } catch (Exception e) {

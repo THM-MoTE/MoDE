@@ -243,7 +243,7 @@ public class InstFunctionCall extends CommonFunctionCall implements Cloneable {
                     func = func.asInstClassDecl().myConstructor();
                     if (func.isUnknown()) {
                         // The constructor does not exist
-                        error("Cannot find function declaration for " + name + "()");
+                        error("Cannot findBasePackage function declaration for " + name + "()");
                     }
                     // Constructor exists, but is not a function - delegate to default case
                 }
@@ -1510,7 +1510,7 @@ public class InstFunctionCall extends CommonFunctionCall implements Cloneable {
                     target = icd;
                 generated = true;
             } else if (target.isOperatorRecord()) {
-                // If the operator record defines constructors, find the one that matches the best
+                // If the operator record defines constructors, findBasePackage the one that matches the best
                 // TODO: Error if several perfect matches
                 // TODO: Make toString() match original decl
                 // TODO: handle vectorized constructors

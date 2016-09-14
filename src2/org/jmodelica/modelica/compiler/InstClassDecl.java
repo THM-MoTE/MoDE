@@ -332,7 +332,7 @@ public abstract class InstClassDecl extends InstBaseNode implements Cloneable, I
         return (numFAlgorithm() == 1);
     }
     /**
-     * Examine extends tree to find recursive extends nodes.
+     * Examine extends tree to findBasePackage recursive extends nodes.
      * @aspect InstanceErrorCheck
      * @declaredat /home/hobbypunk/Dokumente/Entwicklung/THM_Projekte/Projektphase/jModelica/Compiler/ModelicaFrontEnd/src/jastadd/errorcheck/ErrorCheck.jrag:1469
      */
@@ -2696,7 +2696,7 @@ public abstract class InstClassDecl extends InstBaseNode implements Cloneable, I
         return smoothOrder_value;
     }
     /**
-     * If this class is in an operator record or in a package in an operator record, find that operator record.
+     * If this class is in an operator record or in a package in an operator record, findBasePackage that operator record.
      * @attribute inh
      * @aspect ContentCheck
      * @declaredat /home/hobbypunk/Dokumente/Entwicklung/THM_Projekte/Projektphase/jModelica/Compiler/ModelicaFrontEnd/src/jastadd/errorcheck/ContentsCheck.jadd:713

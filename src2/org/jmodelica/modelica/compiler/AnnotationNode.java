@@ -232,7 +232,7 @@ public abstract class AnnotationNode extends Object implements Iterable<Annotati
         /**
          * Internal definition of {@link #forPath(String)}.
          * 
-         * @param path   the path elements to find
+         * @param path   the path elements to findBasePackage
          * @param i      the first index in <code>path</code> to use
          */
         private final AnnotationNode forPath(String[] path, int i) {
@@ -258,7 +258,7 @@ public abstract class AnnotationNode extends Object implements Iterable<Annotati
         /**
          * Internal definition of {@link #forPath(String)}.
          * 
-         * @param path   the path elements to find
+         * @param path   the path elements to findBasePackage
          * @param i      the first index in <code>path</code> to use
          */
         private final AnnotationNode createForPath(String[] path, int i) {

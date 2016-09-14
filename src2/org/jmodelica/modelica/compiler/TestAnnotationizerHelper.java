@@ -1343,7 +1343,7 @@ abstract public class TestAnnotationizerHelper extends Object {
 							names.add(var + "\n");
 				}
 				if (names.size() == l)
-					throw new IllegalArgumentException("Could not find variable " + name);
+					throw new IllegalArgumentException("Could not findBasePackage variable " + name);
 			}
 			Collections.sort(names);
 			StringBuilder res = new StringBuilder();

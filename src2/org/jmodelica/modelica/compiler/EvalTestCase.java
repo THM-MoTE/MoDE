@@ -172,7 +172,7 @@ public class EvalTestCase extends TestCase {
 			String name = names[i];
 			FAbstractVariable fv = fc.lookupFV(name);
 			if (fv.isUnknown()) {
-				fail("Could not find variable " + name + "."); 
+				fail("Could not findBasePackage variable " + name + ".");
 			} else {
 				String test = fv.ceval().toString();
 				String correct = vals[i].trim();

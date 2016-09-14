@@ -243,7 +243,7 @@ public class CValueRecord extends CValue {
         protected int index(String name) {
         	Integer i = members.get(name);
          	if (i == null)
-        		throw new ConstantEvaluationException(this, "find record member '" + name + "'");
+        		throw new ConstantEvaluationException(this, "findBasePackage record member '" + name + "'");
         	return i.intValue();
         }
 

@@ -211,7 +211,7 @@ public class InstExtends extends InstNode implements Cloneable {
 		return recursiveCache == RECURSIVE_YES;
 	}
     /**
-     * Examine extends tree to find recursive extends nodes.
+     * Examine extends tree to findBasePackage recursive extends nodes.
      * @aspect InstanceErrorCheck
      * @declaredat /home/hobbypunk/Dokumente/Entwicklung/THM_Projekte/Projektphase/jModelica/Compiler/ModelicaFrontEnd/src/jastadd/errorcheck/ErrorCheck.jrag:1459
      */

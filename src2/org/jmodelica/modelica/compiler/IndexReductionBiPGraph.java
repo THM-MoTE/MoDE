@@ -1303,7 +1303,7 @@ public class IndexReductionBiPGraph extends AbstractBiPGraph<IndexReductionEq, I
         try {
             result = matchMunkres(weights, cost, true);
         } catch (MunkresException e) {
-            throw new IndexReductionException("Munkres algorithm was unable to find a matching; " + e.getMessage());
+            throw new IndexReductionException("Munkres algorithm was unable to findBasePackage a matching; " + e.getMessage());
         }
 
         IndexReductionCost opt_cost = IndexReductionCost.zeroCost();

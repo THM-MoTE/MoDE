@@ -365,7 +365,7 @@ public abstract class InstLookupResult<T extends InstLookupResult.Item> extends 
             
             @Override
             public boolean problem(ASTNode src, String kind, String name) {
-                src.error("Cannot find %s declaration for %s", kind, name);
+                src.error("Cannot findBasePackage %s declaration for %s", kind, name);
                 return true;
             }
             

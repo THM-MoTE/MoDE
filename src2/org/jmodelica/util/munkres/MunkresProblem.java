@@ -262,7 +262,7 @@ public abstract class MunkresProblem<T extends MunkresCost<T>> {
             }
         }
         if (minValue == null) {
-            throw new MunkresException("Unable to find any uncovered incidence");
+            throw new MunkresException("Unable to findBasePackage any uncovered incidence");
         }
         return minValue.copy();
     }

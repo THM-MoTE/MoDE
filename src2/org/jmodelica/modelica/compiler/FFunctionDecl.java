@@ -1767,7 +1767,7 @@ public class FFunctionDecl extends BaseNode implements Cloneable, FCallable {
         return findAttribute_String_value;
     }
     /**
-     * Generic lookup function. Can find normal variables, records and record members.
+     * Generic lookup function. Can findBasePackage normal variables, records and record members.
      * @attribute syn
      * @aspect FlatNameBinding
      * @declaredat /home/hobbypunk/Dokumente/Entwicklung/THM_Projekte/Projektphase/jModelica/Compiler/ModelicaFlatTree/src/jastadd/FlatNameBinding.jrag:91
@@ -1787,7 +1787,7 @@ public class FFunctionDecl extends BaseNode implements Cloneable, FCallable {
     /**
      * Lookup function for finding the outermost record variable. 
      * 
-     * Can also find normal variables.
+     * Can also findBasePackage normal variables.
      * @attribute syn
      * @aspect FlatNameBinding
      * @declaredat /home/hobbypunk/Dokumente/Entwicklung/THM_Projekte/Projektphase/jModelica/Compiler/ModelicaFlatTree/src/jastadd/FlatNameBinding.jrag:103

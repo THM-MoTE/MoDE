@@ -2755,7 +2755,7 @@ public class FClass extends BaseNode implements Cloneable {
 			n.sortingIndex = si++;
 		}
 		
-		// Not possible to find an ordering without cycles?
+		// Not possible to findBasePackage an ordering without cycles?
 		if (L.getNumChild() != eqns.size() - n_indep) {
 			error("The model "+ name() +" contains cyclic parameter dependencies.");
 		} else {

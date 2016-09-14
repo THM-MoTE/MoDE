@@ -1,4 +1,4 @@
-model FirstOrderExperiment "Defining experimental conditions" /*Hallo*/
+model FirstOrderExperiment
   public Real x "State variable";
 initial equation
   x = 2 "Used before simulation to compute initial values";

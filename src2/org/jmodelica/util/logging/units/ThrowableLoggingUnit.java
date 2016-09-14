@@ -40,7 +40,7 @@ public class ThrowableLoggingUnit implements LoggingUnit {
         if (throwable instanceof ModelicaException) {
             print.append(throwable.getMessage());
         } else if (throwable instanceof FileNotFoundException) {
-            print.append("Could not find file: " + throwable.getMessage());
+            print.append("Could not findBasePackage file: " + throwable.getMessage());
         } else if (throwable instanceof OutOfMemoryError) {
             print.append("Out of memory. Please set the memory limit of the JVM higher.");
         } else {

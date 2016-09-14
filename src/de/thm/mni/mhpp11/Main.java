@@ -3,6 +3,8 @@ package de.thm.mni.mhpp11;
 import de.thm.mni.mhpp11.util.parser.ASTParser;
 import de.thm.mni.mhpp11.util.parser.ParserException;
 
+import java.io.File;
+
 /**
  * Hello world!
  *
@@ -12,6 +14,7 @@ public class Main {
   public static void main(String[] args) {
     Main m = new Main();
     
+    //m.testJModelica();
     m.startGUI(args);
   }
   
@@ -20,12 +23,12 @@ public class Main {
   }
   
   private void testJModelica() {
-    String path = "./test.mo";
-    path = "/home/hobbypunk/Dokumente/Entwicklung/THM_Projekte/Projektphase/2014-modelica-kotani/SHM/SeidelThesis/Examples/FullModel/package.mo";
+    File file  = new File("./test.mo");
+    file = new File("../2014-modelica-kotani/SHM/SeidelThesis/Examples/FullModel/package.mo");
   
     ASTParser ap = ASTParser.getInstance();
     try {
-      ap.parse(path);
+      ap.parse(file);
     } catch(ParserException e) {
       e.printStackTrace();
     }

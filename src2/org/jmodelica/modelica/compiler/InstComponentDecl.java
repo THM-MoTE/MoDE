@@ -4051,7 +4051,7 @@ public abstract class InstComponentDecl extends InstBaseNode implements Cloneabl
     /**
      * Find the ancestor component that is a direct child of the given component.
      * 
-     * @param a  the ancestor to find child of
+     * @param a  the ancestor to findBasePackage child of
      * @param c  the child being considered, always use <code>this</code>
      * @attribute inh
      * @aspect ExpandableConnectors

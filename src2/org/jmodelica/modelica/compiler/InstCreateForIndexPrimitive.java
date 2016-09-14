@@ -170,7 +170,7 @@ public class InstCreateForIndexPrimitive extends InstPrimitive implements Clonea
      * @declaredat /home/hobbypunk/Dokumente/Entwicklung/THM_Projekte/Projektphase/jModelica/Compiler/ModelicaFlatTree/src/jastadd/Constructors.jrag:169
      */
     public InstCreateForIndexPrimitive(ComponentDecl cd) {
-		// This maneuver is pretty ugly, but we need to find an InstClassDecl
+		// This maneuver is pretty ugly, but we need to findBasePackage an InstClassDecl
 		// in the instance tree from the source tree...
 		this(cd.getClassName().newInstAccess(), new Opt(), cd, new Opt(), new Opt(), new Opt(), 
 				((SourceRoot) cd.root()).getProgram().getInstProgramRoot());

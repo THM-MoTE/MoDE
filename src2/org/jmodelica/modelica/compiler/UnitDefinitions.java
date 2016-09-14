@@ -173,7 +173,7 @@ abstract class UnitDefinitions extends Object {
         
         static {
             // The parser tests for each prefix in the order below.
-            // for example if d was before da it would always find d and never check da.
+            // for example if d was before da it would always findBasePackage d and never check da.
             // Thankfully that is the only such overlap.
             // I use a LinkedHashMap to preserve the order.
             LinkedHashMap<String, Double> ps = new LinkedHashMap<String, Double>();

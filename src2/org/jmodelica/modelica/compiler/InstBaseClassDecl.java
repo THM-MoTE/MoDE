@@ -300,7 +300,7 @@ public abstract class InstBaseClassDecl extends InstClassDecl implements Cloneab
                     attrNode.ast().error("Multiple noDerivative or zeroDerivative declarations for " + varName);
                 InstLookupResult<InstComponentDecl> res = genericLookupInstComponent(varName);
                 if (res.isNotFound())
-                    attrNode.ast().error("Unable to find " + varName);
+                    attrNode.ast().error("Unable to findBasePackage " + varName);
                 else if (!res.target().isInput())
                     attrNode.ast().error(attrNode.name() + " annotation may only reference input variables");
             } else if ("order".equals(attrNode.name())) {

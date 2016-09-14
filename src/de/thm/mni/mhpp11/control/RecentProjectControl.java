@@ -1,5 +1,6 @@
 package de.thm.mni.mhpp11.control;
 
+import de.thm.mni.mhpp11.util.UTF8ResourceBundleControl;
 import de.thm.mni.mhpp11.util.config.Settings;
 import de.thm.mni.mhpp11.util.config.model.Project;
 import javafx.event.ActionEvent;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 /**
@@ -38,11 +40,13 @@ public class RecentProjectControl extends GridPane implements Initializable {
     bClose.setOnAction(value);
   }
   
-  FXMLLoader loader;
+  private FXMLLoader loader;
   
-  public RecentProjectControl(Project project) {
+  public RecentProjectControl(Project project, Locale lang) {
+    ResourceBundle i18n = ResourceBundle.getBundle("de.thm.mni.mhpp11.control.i18n.RecentProject", lang, new UTF8ResourceBundleControl());
     this.project = project;
     loader = new FXMLLoader();
+    loader.setResources(i18n);
     loader.setLocation(RecentProjectControl.class.getResource("view/RecentProject.fxml"));
     loader.setRoot(this);
     loader.setController(this);
@@ -53,10 +57,6 @@ public class RecentProjectControl extends GridPane implements Initializable {
     }
   }
   
-  public void setController(Object obj) {
-    loader.setController(this);
-  }
-  
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     if (this.project != null) {
@@ -65,7 +65,7 @@ public class RecentProjectControl extends GridPane implements Initializable {
         lName.textProperty().set(project.getName());
         DateFormat df = SimpleDateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, s.getLang());
         lDate.textProperty().set(df.format(project.getLastOpened()));
-        lPath.textProperty().set(project.getPath());
+        lPath.textProperty().set(project.getFile().getPath());
       } catch (Exception e) {
         e.printStackTrace();
       }
