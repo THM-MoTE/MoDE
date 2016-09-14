@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<fx:root maxHeight="-Infinity" maxWidth="350.0" minHeight="-Infinity" minWidth="150.0" styleClass="base" stylesheets="@../css/Notification.css" type="VBox" xmlns="http://javafx.com/javafx/8.0.76-ea" xmlns:fx="http://javafx.com/fxml/1">
+    <Label fx:id="lHeadline" alignment="TOP_LEFT" graphicTextGap="10.0" text="test" wrapText="true">
+        <graphic>
+            <FontIcon fx:id="fIcon" iconColor="cornflowerblue" iconLiteral="gmi-info" iconSize="26" textOrigin="TOP" />
+        </graphic>
+        <VBox.margin>
+            <Insets left="10.0" right="10.0" top="5.0" />
+        </VBox.margin>
+        <font>
+            <Font name="System Bold" size="13.0" />
+        </font>
+    </Label>
+    <Label fx:id="lMessage" text="uz fgzuoig ozigbiboiz ubo ibzub oubzou bouzbzzu b obuzbou bougobo zg ozugog iug iugiug uip ipui uihpi pgiuipug izuof zft zifuo g  ugou ououzofuzfuzo ff ozuzou zufu zzuf  zuo ff z" textAlignment="JUSTIFY" wrapText="true">
+        <VBox.margin>
+            <Insets bottom="10.0" left="23.0" right="10.0" top="10.0" />
+        </VBox.margin>
+        <font>
+            <Font size="12.0" />
+        </font>
+    </Label>
+</fx:root>
