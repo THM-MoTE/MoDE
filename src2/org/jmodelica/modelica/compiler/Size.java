@@ -549,7 +549,7 @@ public class Size extends Object {
     
 		
 		/**
-		 * Make sure that size is final, then get value of size[i].
+		 * Make sure that size is final, then getAll value of size[i].
 		 */
 		protected int read(int i) {
 			return size[i];
@@ -715,7 +715,7 @@ public class Size extends Object {
         /**
          * Create an FArraySubscripts that defines this size as used in variable declarations.
          * 
-         * Dimension that nothing is known about get an FColonSubscript.
+         * Dimension that nothing is known about getAll an FColonSubscript.
          */
         public FArraySubscripts createFArraySubscripts() {
             FArraySubscripts res = new FArraySubscripts();
@@ -740,7 +740,7 @@ public class Size extends Object {
 		/**
 		 * Create an FArraySubscripts that spans this size.
 		 * 
-		 * Dimension that nothing is known about get an FColonSubscript.
+		 * Dimension that nothing is known about getAll an FColonSubscript.
 		 */
 		public FArraySubscripts createExpandedFArraySubscripts() {
 			FArraySubscripts res = new FArraySubscripts();

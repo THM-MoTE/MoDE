@@ -1,7 +1,7 @@
 package de.thm.mni.mhpp11.control;
 
 import de.thm.mni.mhpp11.util.config.Settings;
-import de.thm.mni.mhpp11.util.logger.Logger;
+import de.thm.mni.mhpp11.util.config.model.Message;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -21,9 +21,9 @@ public class NotificationControl extends VBox implements Initializable {
   @FXML private Label lMessage;
   @FXML private FontIcon fIcon;
   
-  private final Logger.Message message;
+  private final Message message;
   
-  public NotificationControl(Logger.Message message) {
+  public NotificationControl(Message message) {
     this.message = message;
     FXMLLoader loader = new FXMLLoader();
     loader.setLocation(getClass().getResource("view/Notification.fxml"));
@@ -42,7 +42,7 @@ public class NotificationControl extends VBox implements Initializable {
       Settings s = Settings.load();
       lHeadline.textProperty().set(message.getHeadline());
       lMessage.textProperty().set(message.getMessage());
-      Logger.Message.TYPE type = message.getType();
+      Message.TYPE type = message.getType();
       String icon = ":22:";
       if(type.isInfo()) {
         icon = "gmi-info" + icon + "cornflowerblue";

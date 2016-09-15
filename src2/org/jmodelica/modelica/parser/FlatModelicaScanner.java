@@ -530,7 +530,7 @@ public final class FlatModelicaScanner extends AbstractFlatModelicaScanner {
             zzCurrentPos  = zzCurrentPosL;
             zzMarkedPos   = zzMarkedPosL;
             boolean eof = zzRefill();
-            // get translated positions and possibly new buffer
+            // getAll translated positions and possibly new buffer
             zzCurrentPosL  = zzCurrentPos;
             zzMarkedPosL   = zzMarkedPos;
             zzBufferL      = zzBuffer;

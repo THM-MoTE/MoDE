@@ -640,7 +640,7 @@ public class FFunctionDecl extends BaseNode implements Cloneable, FCallable {
     /**
      * Used to declare function headers. 
      * 
-     * @param indent  used to get a consistently formated c-code
+     * @param indent  used to getAll a consistently formated c-code
      * @param str  the c-code is written to this stream 
      * @aspect CADCodeGen
      * @declaredat /home/hobbypunk/Dokumente/Entwicklung/THM_Projekte/Projektphase/jModelica/Compiler/ModelicaCBackEnd/src/jastadd/CADCodeGen.jrag:2153
@@ -766,7 +766,7 @@ public class FFunctionDecl extends BaseNode implements Cloneable, FCallable {
      * 
      * @param p            use CADPrettyPrinter for p.print to call prettyPrint_CAD
      * @param str          the c-code is written to this stream 
-     * @param outerIndent  used to get a consistently formated c-code
+     * @param outerIndent  used to getAll a consistently formated c-code
      * @aspect CADCodeGen
      * @declaredat /home/hobbypunk/Dokumente/Entwicklung/THM_Projekte/Projektphase/jModelica/Compiler/ModelicaCBackEnd/src/jastadd/CADCodeGen.jrag:2276
      */
@@ -811,7 +811,7 @@ public class FFunctionDecl extends BaseNode implements Cloneable, FCallable {
      * 
      * @param p  use CADPrettyPrinter for p.print to call prettyPrint_CAD
      * @param str  the c-code is written to this stream 
-     * @param indent  used to get a consistently formated c-code
+     * @param indent  used to getAll a consistently formated c-code
      * @param type  the functions return type
      * @param suffix  typically der_AD for AD functions
      * @param returnArgs  specifies whether return arguments should be printed or not

@@ -1609,7 +1609,7 @@ public abstract class FAbstractVariable extends BaseNode implements Cloneable, C
     public FTypePrefixVariability variability() {
         ASTNode$State state = state();
         try {
-                throw new UnsupportedOperationException("Unable to get variability of FAbstractVariable type " + getClass().getSimpleName());
+                throw new UnsupportedOperationException("Unable to getAll variability of FAbstractVariable type " + getClass().getSimpleName());
             }
         finally {
         }
@@ -1749,7 +1749,7 @@ public abstract class FAbstractVariable extends BaseNode implements Cloneable, C
     public StateSelect stateSelection() {
         ASTNode$State state = state();
         try {
-                throw new UnsupportedOperationException("Unable to get state select from variable type " + getClass().getSimpleName());
+                throw new UnsupportedOperationException("Unable to getAll state select from variable type " + getClass().getSimpleName());
             }
         finally {
         }

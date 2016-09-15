@@ -201,7 +201,7 @@ public class InstPrimitive extends InstAssignable implements Cloneable {
             real.put(FAttribute.UNIT, emptyStr);
             real.put(FAttribute.DISPLAY_UNIT, emptyStr);
             real.put(FAttribute.START, new CValueReal(0.0));
-            // TODO: add stateSelect, but how to get type?
+            // TODO: add stateSelect, but how to getAll type?
             REAL_DEFAULT_ATTRIBUTES = real;
             Map<String,CValue> integer = new HashMap<String,CValue>();
             integer.put(FAttribute.QUANTITY, emptyStr);

@@ -1986,7 +1986,7 @@ public class ModelicaCompiler extends Object {
         try {
             return new File(".").getCanonicalPath();
         } catch (IOException e) {
-            return "< could not get current working directory >";
+            return "< could not getAll current working directory >";
         }
     }
 
@@ -2174,7 +2174,7 @@ public class ModelicaCompiler extends Object {
         }
         
         /**
-         * get the flag should be used in the Makefile.
+         * getAll the flag should be used in the Makefile.
          * 
          * @return The flag for the Makefile. 
          * 

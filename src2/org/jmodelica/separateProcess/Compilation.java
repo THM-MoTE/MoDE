@@ -120,7 +120,7 @@ public final class Compilation
                         if (exception == null)
                             exception = ((ThrowableLoggingUnit) o).getException();
                     } else if (o instanceof LoggingUnit) {
-                        // Ignore these... E.g. sometimes we get StringLoggingUnits here...
+                        // Ignore these... E.g. sometimes we getAll StringLoggingUnits here...
                     } else {
                         throw new SeparateProcessException("Unknown object type '" + o.getClass().getName() + "' received on compiler log");
                     }
@@ -165,7 +165,7 @@ public final class Compilation
                 byte[] buffer = new byte[2048];
                 while (stream.read(buffer) != -1);
             } catch (IOException e) {
-                // Not much to do here, we are in serious problems if we get here!
+                // Not much to do here, we are in serious problems if we getAll here!
                 e.printStackTrace();
             }
         }

@@ -510,7 +510,7 @@ public class XMLGenerator extends GenericXMLGenerator {
 
         @Override
         public void generate(CodeStream genPrinter) {
-            // get and sort all FVariables
+            // getAll and sort all FVariables
             ArrayList<FVariable> variables = new ArrayList<FVariable>(fclass.allVariables());
             Collections.sort(variables, new VariableNameComparator());
             

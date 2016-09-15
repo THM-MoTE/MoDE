@@ -501,7 +501,7 @@ public class FActualStream extends FStreamBuiltIn implements Cloneable {
                     cse = null;
             }
             if (cse != null) {
-                // Get the name of the single flow variable of the connector, then get the variables.
+                // Get the name of the single flow variable of the connector, then getAll the variables.
                 FQName flowVarName = cse.getFQName();
                 FRealVariable var = (FRealVariable) lookupFV(varName);
                 FRealVariable flowVar = (FRealVariable) lookupFV(flowVarName);

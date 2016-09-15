@@ -162,7 +162,7 @@ import org.xml.sax.SAXException;
  * 
  * Iterator acts as if on a vector of length 1.
  * 
- * The get() and set() methods ignore the Index and always operate on the single element.
+ * The getAll() and set() methods ignore the Index and always operate on the single element.
  * This allows a ScalarAsArray to be used with an Array in an algorithm that expects 
  * two Array objects, as long as the Indices from a real Array is used to iterate. 
  * 

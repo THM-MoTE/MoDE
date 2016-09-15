@@ -211,7 +211,7 @@ public abstract class InstArrayAccess extends InstNamedAccess implements Cloneab
      */
     public InstComponentDecl lookupArrayElement(InstComponentDecl array) {
         if (!isArray() && array != null) {
-            // If we can, try to get the correct InstArrayComponentDecl to do lookup from
+            // If we can, try to getAll the correct InstArrayComponentDecl to do lookup from
             try {
                 Index i = getFArraySubscripts().createIndex();
                 InstComponentDecl icd = array;

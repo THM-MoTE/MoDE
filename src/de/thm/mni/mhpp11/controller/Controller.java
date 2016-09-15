@@ -1,8 +1,10 @@
 package de.thm.mni.mhpp11.controller;
 
+import de.thm.mni.mhpp11.MainApp;
 import de.thm.mni.mhpp11.util.config.Settings;
-import de.thm.mni.mhpp11.util.logger.Logger;
-import de.thm.mni.mhpp11.util.logger.LoggerFactory;
+import de.thm.mni.mhpp11.util.config.model.Logger;
+import de.thm.mni.mhpp11.util.config.model.Logger.LEVEL;
+import de.thm.mni.mhpp11.util.logger.ConsoleLogger;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -17,21 +19,26 @@ public abstract class Controller implements Initializable {
   protected Settings settings;
   protected Logger logger;
   
+  protected MainApp app;
   protected Stage stage;
   protected Scene scene;
   
+  ResourceBundle i18n;
+  
   @Override
   public void initialize(URL location, ResourceBundle resources) {
-    logger = LoggerFactory.getConsoleLogger(de.thm.mni.mhpp11.util.config.model.Logger.LEVEL.ALWAYS, de.thm.mni.mhpp11.util.config.model.Logger.LEVEL.ALWAYS);
+    i18n = resources;
+    logger = new ConsoleLogger(LEVEL.ERROR, LEVEL.ERROR);
     try {
       settings = Settings.load();
     } catch (Exception e) {
       logger.error(e);
     }
-    logger = LoggerFactory.getConsoleLogger(settings.getLogLevel(), settings.getNotifyLevel());
+    logger = settings.getLogger();
   }
   
-  public void lateInitialize(Stage stage, Scene scene) {
+  public void lateInitialize(MainApp app, Stage stage, Scene scene) {
+    this.app = app;
     this.stage = stage;
     this.scene = scene;
   }

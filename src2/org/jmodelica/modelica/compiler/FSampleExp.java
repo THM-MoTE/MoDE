@@ -268,7 +268,7 @@ public class FSampleExp extends FBuiltInFunctionCall implements Cloneable {
         str.print("), ");
         getInterval().prettyPrint_C(str,"");
         str.print("))) {\n");
-        // nSamp should be almost an integer - round to get it exact
+        // nSamp should be almost an integer - round to getAll it exact
         str.print("    nSamp = jmi_dround((_t - (");
         getOffset().prettyPrint_C(str,"");
         str.print(")) / (");
@@ -297,7 +297,7 @@ public class FSampleExp extends FBuiltInFunctionCall implements Cloneable {
         str.print("), ");
         getInterval().prettyPrint_C(str,"");
         str.print("))) {\n");
-        // User the floor function to get the number of previous
+        // User the floor function to getAll the number of previous
         // samples
         str.print("    nSamp = floor((_t - (");
         getOffset().prettyPrint_C(str,"");

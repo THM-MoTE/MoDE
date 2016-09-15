@@ -65,19 +65,19 @@ public class SettingsController extends Controller {
     cbLanguage.valueProperty().addListener((observable, oldValue, newValue) -> settings.setLang(new Locale(newValue.getKey())));
   
     cbLoggerLevel.setItems(FXCollections.observableArrayList(LEVEL.values()));
-    cbLoggerLevel.setValue(settings.getLogLevel());
-    cbLoggerLevel.valueProperty().addListener((observable, oldValue, newValue) -> settings.setLogLevel(newValue));
+    cbLoggerLevel.setValue(settings.getLogger().getLevel());
+    cbLoggerLevel.valueProperty().addListener((observable, oldValue, newValue) -> settings.getLogger().setLevel(newValue));
     
     cbLoggerNotifyLevel.setItems(FXCollections.observableArrayList(LEVEL.values()));
-    cbLoggerNotifyLevel.setValue(settings.getNotifyLevel());
-    cbLoggerNotifyLevel.valueProperty().addListener((observable, oldValue, newValue) -> settings.setNotifyLevel(newValue));
+    cbLoggerNotifyLevel.setValue(settings.getLogger().getNotifyLevel());
+    cbLoggerNotifyLevel.valueProperty().addListener((observable, oldValue, newValue) -> settings.getLogger().setNotifyLevel(newValue));
   
   
-    initSlider(sRecentCount, tfRecentCount, settings.getRecentCount(), (observable, oldValue, newValue) -> {
-      if(oldValue.intValue() != newValue.intValue()) settings.setRecentCount(newValue.intValue());
+    initSlider(sRecentCount, tfRecentCount, settings.getRecent().getCount(), (observable, oldValue, newValue) -> {
+      if(oldValue.intValue() != newValue.intValue()) settings.getRecent().setCount(newValue.intValue());
     });
-    initSlider(sNotifySeconds, tfNotifySeconds, settings.getNotifySeconds(), (observable, oldValue, newValue) -> {
-      if(oldValue.intValue() != newValue.intValue()) settings.setNotifySeconds(newValue.intValue());
+    initSlider(sNotifySeconds, tfNotifySeconds, settings.getNotification().getSeconds(), (observable, oldValue, newValue) -> {
+      if(oldValue.intValue() != newValue.intValue()) settings.getNotification().setSeconds(newValue.intValue());
     });
   }
   

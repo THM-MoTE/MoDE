@@ -4029,7 +4029,7 @@ public class FClass extends BaseNode implements Cloneable {
         log.verbose(DAEBiPGraph.printMatchingObj());
 
         if (!DAEBiPGraph.isComplete()) {
-            // If we get here, index reduction failed
+            // If we getAll here, index reduction failed
             throw new IndexReductionException();
         }
     }

@@ -767,8 +767,8 @@ public abstract class FAbstractEquation extends BaseNode implements Cloneable, F
      * Generate block code for equations
      * 
      * @param visited      Keeps track of visited equations
-     * @param forVariables Variables that should get a writeback
-     * @param forIndices   Indices of equations that should get a writeback
+     * @param forVariables Variables that should getAll a writeback
+     * @param forIndices   Indices of equations that should getAll a writeback
      * @aspect CCodeGen
      * @declaredat /home/hobbypunk/Dokumente/Entwicklung/THM_Projekte/Projektphase/jModelica/Compiler/ModelicaCBackEnd/src/jastadd/CCodeGen.jrag:3416
      */
@@ -785,7 +785,7 @@ public abstract class FAbstractEquation extends BaseNode implements Cloneable, F
      * 
      * @param enumerator Enumerates residuals
      * @param visited    Keeps track of visited equations
-     * @param forIndices Indices of equations that should get a residual
+     * @param forIndices Indices of equations that should getAll a residual
      * @aspect CCodeGen
      * @declaredat /home/hobbypunk/Dokumente/Entwicklung/THM_Projekte/Projektphase/jModelica/Compiler/ModelicaCBackEnd/src/jastadd/CCodeGen.jrag:3566
      */

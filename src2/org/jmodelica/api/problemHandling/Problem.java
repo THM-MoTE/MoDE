@@ -80,7 +80,7 @@ public class Problem implements Comparable<Problem>, LoggingUnit {
     protected final ProblemKind kind;
     public ProblemKind kind() { return kind; }
 
-    protected Set<String> components = new TreeSet<String>(); // TreeSet is used so that we get a sorted set
+    protected Set<String> components = new TreeSet<String>(); // TreeSet is used so that we getAll a sorted set
 
     public void addComponent(String component) {
         if (component != null)

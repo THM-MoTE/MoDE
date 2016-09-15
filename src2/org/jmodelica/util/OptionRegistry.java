@@ -751,7 +751,7 @@ abstract public class OptionRegistry {
              OptionType.runtime, 
              Category.uncommon,
              true,
-             "If enabled, a few Newton steps are computed to get a better initial guess for Brent."),
+             "If enabled, a few Newton steps are computed to getAll a better initial guess for Brent."),
         ITERATION_VARIABLE_SCALING
             ("iteration_variable_scaling",
              OptionType.runtime, 

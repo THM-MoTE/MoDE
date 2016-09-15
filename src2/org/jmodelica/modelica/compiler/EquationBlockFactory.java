@@ -751,7 +751,7 @@ public class EquationBlockFactory extends Object {
                                     }
                                 }
                             }
-                            // Go through equations that might get a new matching
+                            // Go through equations that might getAll a new matching
                             boolean isChanged = false;
                             for (SolvingEq e : eqs) {
                                 if (e.isMeta()) {

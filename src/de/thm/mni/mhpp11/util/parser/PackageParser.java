@@ -2,7 +2,7 @@ package de.thm.mni.mhpp11.util.parser;
 
 import de.thm.mni.mhpp11.model.MoProgramm;
 import de.thm.mni.mhpp11.util.config.Settings;
-import de.thm.mni.mhpp11.util.logger.Logger;
+import de.thm.mni.mhpp11.util.config.model.Logger;
 
 import java.io.File;
 

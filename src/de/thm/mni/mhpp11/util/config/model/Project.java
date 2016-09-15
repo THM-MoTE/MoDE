@@ -1,6 +1,9 @@
 package de.thm.mni.mhpp11.util.config.model;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import org.simpleframework.xml.Element;
 
 import java.io.File;
@@ -10,10 +13,10 @@ import java.util.Date;
 /**
  * Created by hobbypunk on 11.09.16.
  */
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-public class Project {
+public class Project extends MyObservable {
   @Element
   @NonNull private String name;
   @Element
@@ -27,5 +30,6 @@ public class Project {
   
   public void updateLastOpened() {
     this.lastOpened = new Date();
+    this.notifyObservers("LastOpened");
   }
 }

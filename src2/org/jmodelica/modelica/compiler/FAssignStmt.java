@@ -330,7 +330,7 @@ public class FAssignStmt extends FStatement implements Cloneable {
     /**
      * Prints AD code for this assignement statement
      * @param p  use CADPrettyPrinter for p.print to call prettyPrint_CAD
-     * @param indent  used to get a consistently formated c-code
+     * @param indent  used to getAll a consistently formated c-code
      * @param str  the c-code is written to this stream 
      * @aspect CADCodeGen
      * @declaredat /home/hobbypunk/Dokumente/Entwicklung/THM_Projekte/Projektphase/jModelica/Compiler/ModelicaCBackEnd/src/jastadd/CADCodeGen.jrag:2125

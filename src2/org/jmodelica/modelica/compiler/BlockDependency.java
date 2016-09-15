@@ -167,7 +167,7 @@ public abstract class BlockDependency extends Object {
          * Returns a list of variables that this block depends on.
          */
         public Collection<FVariable> dependentVariables() {
-            throw new UnsupportedOperationException("Unable to get dependent variables from block dependency of type " + getClass().getSimpleName());
+            throw new UnsupportedOperationException("Unable to getAll dependent variables from block dependency of type " + getClass().getSimpleName());
         }
 
     
@@ -177,7 +177,7 @@ public abstract class BlockDependency extends Object {
          * block.
          */
         public Collection<AbstractEquationBlock> immediatePredecessors() {
-            throw new UnsupportedOperationException("Unable to get immediate predecessors from block dependency of type " + getClass().getSimpleName());
+            throw new UnsupportedOperationException("Unable to getAll immediate predecessors from block dependency of type " + getClass().getSimpleName());
         }
 
     
@@ -187,13 +187,13 @@ public abstract class BlockDependency extends Object {
          * block.
          */
         public Collection<AbstractEquationBlock> allPredecessors() {
-            throw new UnsupportedOperationException("Unable to get all predecessors from block dependency of type " + getClass().getSimpleName());
+            throw new UnsupportedOperationException("Unable to getAll all predecessors from block dependency of type " + getClass().getSimpleName());
         }
 
     
 
         public Collection<AbstractEquationBlock> immediateSuccessors() {
-            throw new UnsupportedOperationException("Unable to get immediate successors from block dependency of type " + getClass().getSimpleName());
+            throw new UnsupportedOperationException("Unable to getAll immediate successors from block dependency of type " + getClass().getSimpleName());
         }
 
     

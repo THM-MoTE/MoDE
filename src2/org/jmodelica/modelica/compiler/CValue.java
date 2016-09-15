@@ -216,7 +216,7 @@ public abstract class CValue extends Object implements Iterable<CValue>, Cloneab
 	     * @return Value converted to int.
 	     */
 	    public int intValue() { 
-	    	throw new ConstantEvaluationException(this, "get int value of "); 
+	    	throw new ConstantEvaluationException(this, "getAll int value of ");
 	    }
 
     
@@ -227,7 +227,7 @@ public abstract class CValue extends Object implements Iterable<CValue>, Cloneab
 	     * @return Value converted to double.
 	     */
 	    public double realValue() { 
-	    	throw new ConstantEvaluationException(this, "get real value of "); 
+	    	throw new ConstantEvaluationException(this, "getAll real value of ");
 	    }
 
     
@@ -238,7 +238,7 @@ public abstract class CValue extends Object implements Iterable<CValue>, Cloneab
          * @return Value converted to double vector.
          */
         public double[] realVector() { 
-            throw new ConstantEvaluationException(this, "get real vector of "); 
+            throw new ConstantEvaluationException(this, "getAll real vector of ");
         }
 
     
@@ -249,7 +249,7 @@ public abstract class CValue extends Object implements Iterable<CValue>, Cloneab
          * @return Value converted to double matrix.
          */
         public double[][] realMatrix() { 
-            throw new ConstantEvaluationException(this, "get real matrix of "); 
+            throw new ConstantEvaluationException(this, "getAll real matrix of ");
         }
 
     
@@ -260,7 +260,7 @@ public abstract class CValue extends Object implements Iterable<CValue>, Cloneab
 	     * @return Value converted to boolean.
 	     */
 	    public boolean booleanValue() { 
-	    	throw new ConstantEvaluationException(this, "get boolean value of "); 
+	    	throw new ConstantEvaluationException(this, "getAll boolean value of ");
 	    }
 
     
@@ -271,7 +271,7 @@ public abstract class CValue extends Object implements Iterable<CValue>, Cloneab
 	     * @return Value converted to string.
 	     */
 	    public String stringValue() { 
-	    	throw new ConstantEvaluationException(this, "get string value of "); 
+	    	throw new ConstantEvaluationException(this, "getAll string value of ");
 	    }
 
     
@@ -282,7 +282,7 @@ public abstract class CValue extends Object implements Iterable<CValue>, Cloneab
          * @return Value converted to string vector.
          */
         public String[] stringVector() { 
-            throw new ConstantEvaluationException(this, "get string vector of "); 
+            throw new ConstantEvaluationException(this, "getAll string vector of ");
         }
 
     
@@ -294,7 +294,7 @@ public abstract class CValue extends Object implements Iterable<CValue>, Cloneab
          * @return The smallest value that this CValue represent
          */
         public double minValue() {
-            throw new ConstantEvaluationException(this, "get min value of "); 
+            throw new ConstantEvaluationException(this, "getAll min value of ");
         }
 
     
@@ -306,7 +306,7 @@ public abstract class CValue extends Object implements Iterable<CValue>, Cloneab
          * @return The largest value that this CValue represent
          */
         public double maxValue() {
-            throw new ConstantEvaluationException(this, "get max value of "); 
+            throw new ConstantEvaluationException(this, "getAll max value of ");
         }
 
     

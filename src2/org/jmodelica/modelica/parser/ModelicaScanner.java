@@ -1040,7 +1040,7 @@ public final class ModelicaScanner extends AbstractModelicaScanner {
             zzCurrentPos  = zzCurrentPosL;
             zzMarkedPos   = zzMarkedPosL;
             boolean eof = zzRefill();
-            // get translated positions and possibly new buffer
+            // getAll translated positions and possibly new buffer
             zzCurrentPosL  = zzCurrentPos;
             zzMarkedPosL   = zzMarkedPos;
             zzBufferL      = zzBuffer;

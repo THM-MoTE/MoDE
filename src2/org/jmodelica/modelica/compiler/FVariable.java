@@ -3351,7 +3351,7 @@ public abstract class FVariable extends FAbstractVariable implements Cloneable, 
         try {
                 long score = 0;
                 
-                // Temporary variables added during transformations should get lower priority
+                // Temporary variables added during transformations should getAll lower priority
                 if (!isTemporary())
                     score += 1;
                 

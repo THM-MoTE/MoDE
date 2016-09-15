@@ -694,7 +694,7 @@ public class FRangeExp extends FAbstractArrayExp implements Cloneable {
      * @apilevel internal
      */
     private Array getArray_compute() {
-    		//log.debug("FRangeExp.getArray(): size = " + size().get(0));
+    		//log.debug("FRangeExp.getArray(): size = " + size().getAll(0));
     		Array array = new Array(indices());
     		if (type().isReal()) {
     			double i1 = getFExp(0).ceval().realValue();

@@ -186,7 +186,7 @@ public class SimpleBlockDependency extends BlockDependency {
             for (FVariable var : dependentVariables()) {
                 AbstractEquationBlock block = blockMap.get(var);
                 if (block == null)
-                    throw new IllegalArgumentException("Unable to get predecessor block for variable " + var.name());
+                    throw new IllegalArgumentException("Unable to getAll predecessor block for variable " + var.name());
                 
                 if (!immediatePredecessors.contains(block)) {
                     immediatePredecessors.add(block);

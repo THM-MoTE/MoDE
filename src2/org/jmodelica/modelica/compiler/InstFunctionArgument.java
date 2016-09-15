@@ -267,7 +267,7 @@ public abstract class InstFunctionArgument extends BaseNode implements Cloneable
 	}
     /**
      * Argument nodes representing arguments that are missing or given multiple times do 
-     * not get a location set when they are created. Set the location for those nodes, do nothing 
+     * not getAll a location set when they are created. Set the location for those nodes, do nothing
      * for other nodes.
      * @aspect InstFunctionBinding
      * @declaredat /home/hobbypunk/Dokumente/Entwicklung/THM_Projekte/Projektphase/jModelica/Compiler/ModelicaFrontEnd/src/jastadd/instance/InstFunctionBinding.jrag:135

@@ -82,7 +82,7 @@ public abstract class FormattingItem {
 	 * before this symbol's start, front adjacent to it, after it or the result can be undefined. The latter
 	 * happens if this formatting item is not a <code>ScannedFormattingItem</code> and thus doesn't have a valid
 	 * position.
-	 * @param symbol the <code>Symbol</code>, from which to get the starting position and compare to the ending
+	 * @param symbol the <code>Symbol</code>, from which to getAll the starting position and compare to the ending
 	 * position of this <code>FormattingItem</code>. 
 	 * @return if this <code>FormattingItem</code> is not a <code>ScannedFormattingItem</code>, then
 	 * <code>RelativePosition.UNDEFINED</code> is returned. Otherwise, if it ends just one column before
@@ -99,7 +99,7 @@ public abstract class FormattingItem {
 	 * Gets the position this formatting item's start relative to a item's ending position. It can either be
 	 * before this symbol's end, back adjacent to it, after it or the result can be undefined. The latter happens
 	 * if this formatting item is not a <code>ScannedFormattingItem</code> and thus doesn't have a valid position.
-	 * @param item the <code>ScannedFormattingItem</code>, from which to get the ending position and compare to the starting
+	 * @param item the <code>ScannedFormattingItem</code>, from which to getAll the ending position and compare to the starting
 	 * position of this <code>FormattingItem</code>. 
 	 * @return if this <code>FormattingItem</code> is not a <code>ScannedFormattingItem</code>, then
 	 * <code>RelativePosition.UNDEFINED</code> is returned. Otherwise, if it starts just one column after
@@ -117,7 +117,7 @@ public abstract class FormattingItem {
 	 * before this symbol's start, front adjacent to it, after it or the result can be undefined. The latter
 	 * happens if this formatting item is not a <code>ScannedFormattingItem</code> and thus doesn't have a valid
 	 * position.
-	 * @param item the <code>ScannedFormattingItem</code>, from which to get the starting position and compare to the ending
+	 * @param item the <code>ScannedFormattingItem</code>, from which to getAll the starting position and compare to the ending
 	 * position of this <code>FormattingItem</code>. 
 	 * @return if this <code>FormattingItem</code> is not a <code>ScannedFormattingItem</code>, then
 	 * <code>RelativePosition.UNDEFINED</code> is returned. Otherwise, if it ends just one column before
@@ -134,7 +134,7 @@ public abstract class FormattingItem {
 	 * Gets the position this formatting item's start relative to a symbol's ending position. It can either be
 	 * before this symbol's end, back adjacent to it, after it or the result can be undefined. The latter happens
 	 * if this formatting item is not a <code>ScannedFormattingItem</code> and thus doesn't have a valid position.
-	 * @param symbol the <code>Symbol</code>, from which to get the ending position and compare to the starting
+	 * @param symbol the <code>Symbol</code>, from which to getAll the ending position and compare to the starting
 	 * position of this <code>FormattingItem</code>. 
 	 * @return if this <code>FormattingItem</code> is not a <code>ScannedFormattingItem</code>, then
 	 * <code>RelativePosition.UNDEFINED</code> is returned. Otherwise, if it starts just one column after
@@ -152,8 +152,8 @@ public abstract class FormattingItem {
 	 * <code>column</code>). This item can either be before this position, front adjacent to it, after it or the
 	 * result can be undefined. The latter happens if this formatting item is not a
 	 * <code>ScannedFormattingItem</code> and thus doesn't have a valid position.
-	 * @param line the line, from which to get the relative position.
-	 * @param column the column, from which to get the relative position.
+	 * @param line the line, from which to getAll the relative position.
+	 * @param column the column, from which to getAll the relative position.
 	 * @return if this <code>FormattingItem</code> is not a <code>ScannedFormattingItem</code>, then
 	 * <code>RelativePosition.UNDEFINED</code> is returned. Otherwise, if it ends just one column before
 	 * (<code>line</code>, <code>column</code>) <code>RelativePosition.FRONT_ADJACENT</code> is returned. If it
@@ -168,8 +168,8 @@ public abstract class FormattingItem {
 	 * <code>column</code>). This item can either be before this position, back adjacent to it, after it or the
 	 * result can be undefined. The latter happens if this formatting item is not a
 	 * <code>ScannedFormattingItem</code> and thus doesn't have a valid position.
-	 * @param line the line, from which to get the relative position.
-	 * @param column the column, from which to get the relative position.
+	 * @param line the line, from which to getAll the relative position.
+	 * @param column the column, from which to getAll the relative position.
 	 * @return if this <code>FormattingItem</code> is not a <code>ScannedFormattingItem</code>, then
 	 * <code>RelativePosition.UNDEFINED</code> is returned. Otherwise, if it starts just one column after
 	 * (<code>line</code>, <code>column</code>) <code>RelativePosition.BACK_ADJACENT</code> is returned. If it
@@ -198,7 +198,7 @@ public abstract class FormattingItem {
 	/**
 	 * Creates a new <code>DefaultFormattingItem</code> containing all the whitespaces that this
 	 * <code>FormattingItem</code> contains after its last line break.
-	 * This should make it easy to get indentation from this <code>FormattingItem</code>.
+	 * This should make it easy to getAll indentation from this <code>FormattingItem</code>.
 	 * @return a new <code>DefaultFormattingItem</code> containing all the whitespaces that this
 	 * <code>FormattingItem</code> contains after its last line break.
 	 */

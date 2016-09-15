@@ -7,9 +7,11 @@ import de.thm.mni.mhpp11.util.config.model.Project;
 import de.thm.mni.mhpp11.util.parser.PackageParser;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 
@@ -32,14 +34,23 @@ public class WelcomeController extends NotifyController {
   @FXML @Override
   public void initialize(URL location, ResourceBundle resources) {
     super.initialize(location, resources);
-
+    
     lName.setText(Settings.NAME);
     lVersion.setText(Settings.VERSION);
     updateRecentList();
   }
   
+  @Override
+  public void show() {
+    this.stage.setTitle(i18n.getString("title.title") + " " + Settings.NAME + " " + Settings.VERSION);
+    this.stage.setScene(this.scene);
+    this.stage.setResizable(false);
+    this.stage.centerOnScreen();
+    this.stage.show();
+  }
+  
   private void onRemoveLastProject(Project project) {
-    settings.removeRecent(project);
+    settings.getRecent().remove(project);
   }
   
   private void onOpenLastProject(Project project) {
@@ -60,13 +71,13 @@ public class WelcomeController extends NotifyController {
     f = fc.showOpenDialog(root.getScene().getWindow());
     if(f == null) return;
     String name;
-    if(f.getName().equals("package.mo")) name = f.getParentFile().getName();
-    else name = f.getName().replaceAll(".mo$", "");
   
     logger.debug("Load File", f.getPath());
   
     f = PackageParser.getInstance().findBasePackage(f);
-    for (Project tmp : settings.getRecents()) {
+    if(f.getName().equals("package.mo")) name = f.getParentFile().getName();
+    else name = f.getName().replaceAll(".mo$", "");
+    for (Project tmp : settings.getRecent().getAll()) {
       if(tmp.getFile().equals(f)) {
         p = tmp;
         break;
@@ -74,14 +85,27 @@ public class WelcomeController extends NotifyController {
     }
   
     if(p == null) p = new Project(name, f);
+    
+    onOpenProject(p);
   }
   
   private void onOpenProject(Project p) {
-    
-    
     p.updateLastOpened();
-    settings.removeRecent(p);
-    settings.addRecent(p);
+    settings.getRecent().remove(p);
+    settings.getRecent().add(p);
+    FXMLLoader loader = new FXMLLoader();
+    loader.setLocation(getClass().getResource("../view/Main.fxml"));
+    //TODO: loader.setResources();
+    try {
+      Pane rootLayout = loader.load();
+      MainController controller = loader.getController();
+      Scene scene = new Scene(rootLayout);
+      controller.lateInitialize(this.app, this.stage, scene, p);
+      controller.show();
+      app.updateLoader(loader);
+    } catch (IOException e) {
+      logger.error(e);
+    }
   }
   
   @FXML
@@ -111,7 +135,7 @@ public class WelcomeController extends NotifyController {
   
   private void updateRecentList() {
     vbRecent.getChildren().clear();
-    for(Project p : settings.getRecents()) {
+    for(Project p : settings.getRecent().getAll()) {
       RecentProjectControl rpc = new RecentProjectControl(p, settings.getLang());
       vbRecent.getChildren().add(rpc);
       rpc.setOnClick(event -> onOpenLastProject(rpc.getProject()));

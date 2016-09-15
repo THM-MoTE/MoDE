@@ -622,7 +622,7 @@ public class Fmi2XMLGenerator extends FmiXMLGenerator {
 		public String[] children() { return new String[] {"variables"}; }
 		
 		public void generateChildren(CodeStream genPrinter) {
-			// get and sort all FVariables
+			// getAll and sort all FVariables
 			ArrayList<FVariable> variables = (ArrayList<FVariable>) fclass.allVariables().clone();
 			VariableNameComparator comp = new VariableNameComparator();
 			Collections.sort(variables, comp);

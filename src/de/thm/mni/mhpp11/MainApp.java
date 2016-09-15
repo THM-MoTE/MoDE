@@ -30,7 +30,6 @@ public class MainApp extends Application {
   
   @Override
   public void start(Stage primaryStage) throws Exception {
-    primaryStage.setTitle(i18n.getString("title.title") + " " + Settings.NAME + " " + Settings.VERSION);
     loader = new FXMLLoader();
     loader.setLocation(getClass().getResource("view/Welcome.fxml"));
     loader.setResources(i18n);
@@ -38,11 +37,12 @@ public class MainApp extends Application {
     NotifyController controller = loader.getController();
     // Show the scene containing the root layout.
     Scene scene = new Scene(rootLayout);
-    controller.lateInitialize(primaryStage, scene);
-    primaryStage.setScene(scene);
-    primaryStage.setResizable(false);
-    primaryStage.centerOnScreen();
-    primaryStage.show();
+    controller.lateInitialize(this, primaryStage, scene);
+    controller.show();
+  }
+  
+  public void updateLoader(FXMLLoader loader) {
+    this.loader = loader;
   }
   
   @Override

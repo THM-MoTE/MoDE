@@ -326,7 +326,7 @@ public class FFunctionCallLeft extends BaseNode implements Cloneable {
      * 
      * @param p       use CADPrettyPrinter for p.print to call prettyPrint_CAD
      * @param str     the c-code is written to this stream
-     * @param indent  used to get a consistently formated c-code
+     * @param indent  used to getAll a consistently formated c-code
      * @aspect CADCodeGen
      * @declaredat /home/hobbypunk/Dokumente/Entwicklung/THM_Projekte/Projektphase/jModelica/Compiler/ModelicaCBackEnd/src/jastadd/CADCodeGen.jrag:1518
      */
@@ -343,7 +343,7 @@ public class FFunctionCallLeft extends BaseNode implements Cloneable {
      * 
      * @param p       use CADPrettyPrinter for p.print to call prettyPrint_CAD
      * @param str     the c-code is written to this stream
-     * @param indent  used to get a consistently formated c-code
+     * @param indent  used to getAll a consistently formated c-code
      * @aspect CADCodeGen
      * @declaredat /home/hobbypunk/Dokumente/Entwicklung/THM_Projekte/Projektphase/jModelica/Compiler/ModelicaCBackEnd/src/jastadd/CADCodeGen.jrag:1585
      */
@@ -395,7 +395,7 @@ public class FFunctionCallLeft extends BaseNode implements Cloneable {
      * the expressions contained in this FFunctionCallLeft fills. 
      * 
      * @param str  the c-code is written to this stream
-     * @param indent  used to get a consistently formated c-code
+     * @param indent  used to getAll a consistently formated c-code
      * @aspect CADCodeGen
      * @declaredat /home/hobbypunk/Dokumente/Entwicklung/THM_Projekte/Projektphase/jModelica/Compiler/ModelicaCBackEnd/src/jastadd/CADCodeGen.jrag:2011
      */

@@ -374,7 +374,7 @@ public abstract class InstConstraining extends BaseNode implements Cloneable {
     @ASTNodeAnnotation.Attribute
     public abstract boolean hasInstRedeclare();
     /**
-     * get the InstNode for the redeclare that this constraining clause comes from.
+     * getAll the InstNode for the redeclare that this constraining clause comes from.
      * 
      * Only valid if hasInstRedeclare() returns true.
      * @attribute syn

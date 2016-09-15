@@ -36,7 +36,7 @@ public class MixedFormattingItem extends ScannedFormattingItem {
 
 	/**
 	 * Sets a new position of where this item begins using another scanned formatting item's starting position.
-	 * @param itemToStartFrom the <code>ScannedFormattingItem</code> from which to get the new starting position.
+	 * @param itemToStartFrom the <code>ScannedFormattingItem</code> from which to getAll the new starting position.
 	 */
 	public void newStart(ScannedFormattingItem itemToStartFrom) {
 		startLine = itemToStartFrom.startLine;
@@ -45,7 +45,7 @@ public class MixedFormattingItem extends ScannedFormattingItem {
 
 	/**
 	 * Sets a new position of where this item ends using another scanned formatting item's ending position.
-	 * @param itemToEndAt the <code>ScannedFormattingItem</code> from which to get the new ending position.
+	 * @param itemToEndAt the <code>ScannedFormattingItem</code> from which to getAll the new ending position.
 	 */
 	public void newEnd(ScannedFormattingItem itemToEndAt) {
 		endLine = itemToEndAt.endLine;

@@ -2,8 +2,6 @@ package de.thm.mni.mhpp11.util.config;
 
 import de.thm.mni.mhpp11.util.Utilities;
 import de.thm.mni.mhpp11.util.config.model.Configuration;
-import de.thm.mni.mhpp11.util.logger.Logger;
-import de.thm.mni.mhpp11.util.logger.LoggerFactory;
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
 
@@ -59,7 +57,6 @@ public class Settings extends Configuration implements Observer {
   
   private static Settings load(Boolean firstTime) {
     if (INSTANCE != null) return INSTANCE;
-    
     File f = Utilities.getConf();
     
     try {
@@ -67,7 +64,7 @@ public class Settings extends Configuration implements Observer {
       INSTANCE = serializer.read(Settings.class, f);
       INSTANCE.file = f;
       INSTANCE.serializer = serializer;
-      INSTANCE.addObserver(INSTANCE);
+      INSTANCE.init();
     } catch (Exception e) {
       if (!firstTime) throw new RuntimeException(e);
       f.delete();
@@ -87,9 +84,5 @@ public class Settings extends Configuration implements Observer {
   @Override
   public void update(Observable o, Object arg) {
     this.save();
-  }
-  
-  public Logger getLogger() {
-    return LoggerFactory.getConsoleLogger(this.getLogLevel(), this.getNotifyLevel());
   }
 }

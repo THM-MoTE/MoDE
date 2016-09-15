@@ -1837,7 +1837,7 @@ public abstract class FExp extends BaseNode implements Cloneable, ConstantEvalua
      * 
      * @param p       use CADPrettyPrinter for p.print to call prettyPrint_CAD
      * @param str     the c-code is written to this stream
-     * @param indent  used to get a consistently formated c-code
+     * @param indent  used to getAll a consistently formated c-code
      * @aspect CADCodeGen
      * @declaredat /home/hobbypunk/Dokumente/Entwicklung/THM_Projekte/Projektphase/jModelica/Compiler/ModelicaCBackEnd/src/jastadd/CADCodeGen.jrag:1534
      */
@@ -1848,7 +1848,7 @@ public abstract class FExp extends BaseNode implements Cloneable, ConstantEvalua
      * method in order to continue iteration over that  ASTNode:s
      * @param p  use CADPrettyPrinter for p.print to call prettyPrint_CAD
      * @param str  the c-code is written to this stream
-     * @param indent  used to get a consistently formated c-code
+     * @param indent  used to getAll a consistently formated c-code
      * @aspect CADCodeGen
      * @declaredat /home/hobbypunk/Dokumente/Entwicklung/THM_Projekte/Projektphase/jModelica/Compiler/ModelicaCBackEnd/src/jastadd/CADCodeGen.jrag:1624
      */
@@ -1889,7 +1889,7 @@ public abstract class FExp extends BaseNode implements Cloneable, ConstantEvalua
      * 
      * @param p  use CADPrettyPrinter for p.print to call prettyPrint_CAD
      * @param str  the c-code is written to this stream 
-     * @param indent  used to get a consistently formated c-code
+     * @param indent  used to getAll a consistently formated c-code
      * @aspect CADCodeGen
      * @declaredat /home/hobbypunk/Dokumente/Entwicklung/THM_Projekte/Projektphase/jModelica/Compiler/ModelicaCBackEnd/src/jastadd/CADCodeGen.jrag:1787
      */
@@ -1911,7 +1911,7 @@ public abstract class FExp extends BaseNode implements Cloneable, ConstantEvalua
      * 
      * @param p  use CADPrettyPrinter for p.print to call prettyPrint_CAD
      * @param str  the c-code is written to this stream 
-     * @param indent  used to get a consistently formated c-code
+     * @param indent  used to getAll a consistently formated c-code
      * @aspect CADCodeGen
      * @declaredat /home/hobbypunk/Dokumente/Entwicklung/THM_Projekte/Projektphase/jModelica/Compiler/ModelicaCBackEnd/src/jastadd/CADCodeGen.jrag:1858
      */

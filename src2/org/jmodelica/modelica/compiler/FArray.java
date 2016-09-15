@@ -484,7 +484,7 @@ public class FArray extends FAbstractArrayExp implements Cloneable {
      * 
      * @param p       use CADPrettyPrinter for p.print to call prettyPrint_CAD
      * @param str     the c-code is written to this stream
-     * @param indent  used to get a consistently formated c-code
+     * @param indent  used to getAll a consistently formated c-code
      * @aspect CADCodeGen
      * @declaredat /home/hobbypunk/Dokumente/Entwicklung/THM_Projekte/Projektphase/jModelica/Compiler/ModelicaCBackEnd/src/jastadd/CADCodeGen.jrag:1543
      */
@@ -502,7 +502,7 @@ public class FArray extends FAbstractArrayExp implements Cloneable {
      * 
      * @param p  use CADPrettyPrinter for p.print to call prettyPrint_CAD
      * @param str  the c-code is written to this stream
-     * @param indent  used to get a consistently formated c-code
+     * @param indent  used to getAll a consistently formated c-code
      * @aspect CADCodeGen
      * @declaredat /home/hobbypunk/Dokumente/Entwicklung/THM_Projekte/Projektphase/jModelica/Compiler/ModelicaCBackEnd/src/jastadd/CADCodeGen.jrag:1653
      */

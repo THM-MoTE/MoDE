@@ -708,7 +708,7 @@ public class MutableSize extends Size {
     
 		
 		/**
-		 * Make sure that size is final, then get value of size[i].
+		 * Make sure that size is final, then getAll value of size[i].
 		 */
 		protected int read(int i) {
 			evaluate(i);
@@ -924,7 +924,7 @@ public class MutableSize extends Size {
 					str.print(size[i]);
 				} else {
                     FExp exp = exps[i];
-					exp.prettyPrint_C(p, str, indent); // TODO: This is a hack to get CAD gen to work!
+					exp.prettyPrint_C(p, str, indent); // TODO: This is a hack to getAll CAD gen to work!
 				}
 			}
 		} else {
@@ -938,7 +938,7 @@ public class MutableSize extends Size {
             for (int i = 0; i < size.length; i++) {
                 if (size[i] == Size.UNKNOWN) {
                     FExp exp = src.dynamicFExp(exps[i]);
-                    p.printVarDecls(exp, str, indent); // TODO: This is a hack to get CAD gen to work!
+                    p.printVarDecls(exp, str, indent); // TODO: This is a hack to getAll CAD gen to work!
                 }
             }
         } else {
@@ -952,7 +952,7 @@ public class MutableSize extends Size {
             for (int i = 0; i < size.length; i++) {
                 if (size[i] == Size.UNKNOWN) {
                     FExp exp = src.dynamicFExp(exps[i]);
-                    p.printPreSteps(exp, str, indent); // TODO: This is a hack to get CAD gen to work!
+                    p.printPreSteps(exp, str, indent); // TODO: This is a hack to getAll CAD gen to work!
                 }
             }
         } else {
@@ -966,7 +966,7 @@ public class MutableSize extends Size {
             for (int i = 0; i < size.length; i++) {
                 if (size[i] == Size.UNKNOWN) {
                     FExp exp = src.dynamicFExp(exps[i]);
-                    p.printPostSteps(exp, str, indent); // TODO: This is a hack to get CAD gen to work!
+                    p.printPostSteps(exp, str, indent); // TODO: This is a hack to getAll CAD gen to work!
                 }
             }
         } else {

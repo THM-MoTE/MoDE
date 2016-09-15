@@ -168,7 +168,7 @@ public class Array extends BaseNode implements Cloneable {
     /**
      * Expand for all values of for indices given in <code>indices</code>.
      * 
-     * This is used to get the set of values for array indices while error checking 
+     * This is used to getAll the set of values for array indices while error checking
      * and to expand summation reduction expressions.
      * 
      * Size of new Array will be (n + m), where n = indices.size() and m = ndims().  
@@ -365,7 +365,7 @@ public class Array extends BaseNode implements Cloneable {
     /**
      * Returns element <code>i</code> in this Array.
      * 
-     * For vectors, this is equivalent to <code>get(new Index(new int[]{i}))</code>.
+     * For vectors, this is equivalent to <code>getAll(new Index(new int[]{i}))</code>.
      * @aspect ArrayHelpers
      * @declaredat /home/hobbypunk/Dokumente/Entwicklung/THM_Projekte/Projektphase/jModelica/Compiler/ModelicaFlatTree/src/jastadd/Arrays.jrag:3517
      */
@@ -374,7 +374,7 @@ public class Array extends BaseNode implements Cloneable {
 		/**
 		 * Returns element <code>i</code> in this Array.
 		 * 
-		 * For vectors, this is equivalent to <code>get(new Index(new int[]{i}))</code>.
+		 * For vectors, this is equivalent to <code>getAll(new Index(new int[]{i}))</code>.
 		 */
 		public FExp get(int i) {
 			return getFExp(i - 1);

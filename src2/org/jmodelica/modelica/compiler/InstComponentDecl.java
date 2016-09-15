@@ -639,7 +639,7 @@ public abstract class InstComponentDecl extends InstBaseNode implements Cloneabl
         }
     }
     /**
-     * Add all variables to connection set manager, to get "= 0" equations if they are not connected.
+     * Add all variables to connection set manager, to getAll "= 0" equations if they are not connected.
      * @aspect ExpandableConnectors
      * @declaredat /home/hobbypunk/Dokumente/Entwicklung/THM_Projekte/Projektphase/jModelica/Compiler/ModelicaFrontEnd/src/jastadd/flattening/Connections.jrag:2818
      */
