@@ -74,11 +74,14 @@ public class Settings extends Configuration implements Observer {
   }
   
   public void save() {
-    try {
-      serializer.write(this, this.file);
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+    Thread t = new Thread(() -> {
+      try {
+        serializer.write(this, this.file);
+      } catch (Exception e) {
+        getLogger().error(e);
+      }
+    });
+    t.start();
   }
   
   @Override
