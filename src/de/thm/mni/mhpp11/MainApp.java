@@ -37,19 +37,7 @@ public class MainApp extends Application {
     NotifyController controller = loader.getController();
     // Show the scene containing the root layout.
     Scene scene = new Scene(rootLayout);
-    controller.lateInitialize(this, primaryStage, scene);
+    controller.lateInitialize(primaryStage, scene);
     controller.show();
-  }
-  
-  public void updateLoader(FXMLLoader loader) {
-    this.loader = loader;
-  }
-  
-  @Override
-  public void stop() throws Exception {
-    NotifyController controller = loader.getController();
-    controller.deinitialize();
-    settings.save();
-    super.stop();
   }
 }

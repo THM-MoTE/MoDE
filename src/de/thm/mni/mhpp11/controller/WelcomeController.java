@@ -100,9 +100,8 @@ public class WelcomeController extends NotifyController {
       Pane rootLayout = loader.load();
       MainController controller = loader.getController();
       Scene scene = new Scene(rootLayout);
-      controller.lateInitialize(this.app, this.stage, scene, p);
+      controller.lateInitialize(this.stage, scene, p);
       controller.show();
-      app.updateLoader(loader);
     } catch (IOException e) {
       logger.error(e);
     }

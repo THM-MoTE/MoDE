@@ -4,6 +4,7 @@ import de.thm.mni.mhpp11.control.NotificationControl;
 import de.thm.mni.mhpp11.util.config.model.Message;
 import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -56,11 +57,11 @@ public abstract class NotifyController extends Controller implements Observer {
     fadeIn.play();
   }
   
-  
+  @Override
   public void update(Observable o, Object arg) {
     if(arg instanceof Message) {
       Message msg = (Message) arg;
-      this.addNotification(new NotificationControl(msg));
+      Platform.runLater(() -> this.addNotification(new NotificationControl(msg)));
     }
   }
   

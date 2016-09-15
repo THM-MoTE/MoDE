@@ -1,6 +1,5 @@
 package de.thm.mni.mhpp11.controller;
 
-import de.thm.mni.mhpp11.MainApp;
 import de.thm.mni.mhpp11.control.DragResizer;
 import de.thm.mni.mhpp11.util.config.Settings;
 import de.thm.mni.mhpp11.util.config.model.MainWindow;
@@ -35,8 +34,8 @@ public class MainController extends NotifyController {
     DragResizer.makeResizable(sRight, hbRight, DragResizer.RTL);
   }
   
-  public void lateInitialize(MainApp app, Stage stage, Scene scene, Project project) {
-    super.lateInitialize(app, stage, scene);
+  public void lateInitialize(Stage stage, Scene scene, Project project) {
+    super.lateInitialize(stage, scene);
     this.project = project;
   }
   

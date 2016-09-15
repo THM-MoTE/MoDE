@@ -1,6 +1,5 @@
 package de.thm.mni.mhpp11.controller;
 
-import de.thm.mni.mhpp11.MainApp;
 import de.thm.mni.mhpp11.util.config.Settings;
 import de.thm.mni.mhpp11.util.config.model.Logger;
 import de.thm.mni.mhpp11.util.config.model.Logger.LEVEL;
@@ -19,7 +18,6 @@ public abstract class Controller implements Initializable {
   protected Settings settings;
   protected Logger logger;
   
-  protected MainApp app;
   protected Stage stage;
   protected Scene scene;
   
@@ -37,10 +35,13 @@ public abstract class Controller implements Initializable {
     logger = settings.getLogger();
   }
   
-  public void lateInitialize(MainApp app, Stage stage, Scene scene) {
-    this.app = app;
+  public void lateInitialize(Stage stage, Scene scene) {
     this.stage = stage;
     this.scene = scene;
+    this.stage.setOnCloseRequest(value -> {
+      this.deinitialize();
+      settings.save();
+    });
   }
   
   public void deinitialize() {}
