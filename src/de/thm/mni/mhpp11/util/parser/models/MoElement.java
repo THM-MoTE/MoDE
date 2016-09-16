@@ -1,4 +1,4 @@
-package de.thm.mni.mhpp11.model;
+package de.thm.mni.mhpp11.util.parser.models;
 
 import lombok.AllArgsConstructor;
 

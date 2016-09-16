@@ -5,6 +5,9 @@ package de.thm.mni.mhpp11.util.parser;
  */
 public class ParserException extends Exception {
   
+  public ParserException(String cause) {
+    super(cause);
+  }
   public ParserException(Throwable cause) {
     super(cause);
   }

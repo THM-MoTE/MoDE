@@ -1,6 +1,6 @@
 package de.thm.mni.mhpp11.util.parser;
 
-import de.thm.mni.mhpp11.model.MoProgramm;
+import de.thm.mni.mhpp11.util.parser.models.MoProgramm;
 import de.thm.mni.mhpp11.util.config.Settings;
 import de.thm.mni.mhpp11.util.config.model.Logger;
 
@@ -16,24 +16,22 @@ public class PackageParser {
     return ourInstance;
   }
   
-  private ASTParser parser;
   private Logger logger;
   
   private PackageParser() {
     Settings settings = Settings.load();
     logger = settings.getLogger();
-    parser = ASTParser.getInstance();
   }
   
   public File findBasePackage(File f) {
     try {
-      MoProgramm mp = parser.parse(f);
-      if(mp.getPackage() != null || mp.getWithin().getPackages().size() > 0) {
+      MoProgramm mp = ASTParser.parse(f);
+      if(mp.getMoPackage() != null || mp.getMoWithin().getPackages().size() > 0) {
         f = f.getParentFile();
-        if(mp.getPackage() != null && mp.getWithin().getPackages().size() > 0) {
+        if(mp.getMoPackage() != null && mp.getMoWithin().getPackages().size() > 0) {
           f = f.getParentFile();
         }
-        for(Integer i = 1; i < mp.getWithin().getPackages().size(); i++) {
+        for(Integer i = 1; i < mp.getMoWithin().getPackages().size(); i++) {
           f = f.getParentFile();
         }
         return new File(f.getAbsolutePath() + "/package.mo");
@@ -42,5 +40,14 @@ public class PackageParser {
       logger.error(e);
     }
     return f;
+  }
+  
+  public void collectPackage(File f) {
+    try {
+      MoProgramm mp = ASTParser.parse(f);
+      mp = mp;
+    } catch (ParserException e) {
+      logger.error(e);
+    }
   }
 }

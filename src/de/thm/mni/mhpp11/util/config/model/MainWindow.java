@@ -12,28 +12,28 @@ import org.simpleframework.xml.Element;
 public class MainWindow extends MyObservable {
   
   @Element
-  @NonNull Pair<Integer, Integer> pos = new Pair<>(20,20);
+  @NonNull Point<Integer, Integer> pos = new Point<>(20,20);
   @Element
-  @NonNull Pair<Integer, Integer> size = new Pair<>(1000,700);
+  @NonNull Point<Integer, Integer> size = new Point<>(1000,700);
   @Element
   @NonNull Integer widthLeftPane = 200;
   @Element
   @NonNull Integer widthRightPane = 200;
   
   public void setPos(Integer x, Integer y) {
-    setPos(new Pair<>(x, y));
+    setPos(new Point<>(x, y));
   }
   
-  public void setPos(Pair<Integer, Integer> pos) {
+  public void setPos(Point<Integer, Integer> pos) {
     this.pos = pos;
     this.notifyObservers("Pos");
   }
   
   public void setSize(Integer w, Integer h) {
-    setSize(new Pair<>(w, h));
+    setSize(new Point<>(w, h));
   }
   
-  public void setSize(Pair<Integer, Integer> size) {
+  public void setSize(Point<Integer, Integer> size) {
     this.size = size;
     this.notifyObservers("Size");
   }

@@ -15,7 +15,7 @@ public class Main {
     Main m = new Main();
     
     //m.testJModelica();
-    m.startGUI(args);
+    m.startGUI(new String[]{"../2014-modelica-kotani/SHM/SeidelThesis/Examples/FullModel/SeidelThesisFullExample.mo"});
   }
   
   private void startGUI(String[] args) {
@@ -25,10 +25,9 @@ public class Main {
   private void testJModelica() {
     File file  = new File("./test.mo");
     file = new File("../2014-modelica-kotani/SHM/SeidelThesis/Examples/FullModel/package.mo");
-  
-    ASTParser ap = ASTParser.getInstance();
+    
     try {
-      ap.parse(file);
+      ASTParser.parse(file);
     } catch(ParserException e) {
       e.printStackTrace();
     }

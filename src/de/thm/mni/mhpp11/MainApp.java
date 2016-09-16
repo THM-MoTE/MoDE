@@ -1,6 +1,6 @@
 package de.thm.mni.mhpp11;
 
-import de.thm.mni.mhpp11.controller.NotifyController;
+import de.thm.mni.mhpp11.controller.WelcomeController;
 import de.thm.mni.mhpp11.util.UTF8ResourceBundleControl;
 import de.thm.mni.mhpp11.util.config.Settings;
 import javafx.application.Application;
@@ -30,14 +30,15 @@ public class MainApp extends Application {
   
   @Override
   public void start(Stage primaryStage) throws Exception {
+    String firstParam = this.getParameters().getUnnamed().get(0);
     loader = new FXMLLoader();
     loader.setLocation(getClass().getResource("view/Welcome.fxml"));
     loader.setResources(i18n);
     Pane rootLayout = loader.load();
-    NotifyController controller = loader.getController();
+    WelcomeController controller = loader.getController();
     // Show the scene containing the root layout.
     Scene scene = new Scene(rootLayout);
     controller.lateInitialize(primaryStage, scene);
-    controller.show();
+    controller.show(firstParam);
   }
 }

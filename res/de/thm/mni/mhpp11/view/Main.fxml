@@ -10,7 +10,9 @@
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -22,7 +24,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.controlsfx.control.BreadCrumbBar?>
 
-<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" stylesheets="@../css/Main.css" xmlns="http://javafx.com/javafx/8.0.76-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.thm.mni.mhpp11.controller.MainController">
+<GridPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" stylesheets="@../css/Main.css" xmlns="http://javafx.com/javafx/8.0.76-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.thm.mni.mhpp11.controller.MainController">
   <columnConstraints>
     <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
     <ColumnConstraints hgrow="SOMETIMES" minWidth="5.0" />
@@ -100,7 +102,7 @@
                     <tabs>
                       <Tab text="Untitled Tab 1">
                         <content>
-                              <ScrollPane>
+                              <ScrollPane fitToHeight="true" fitToWidth="true">
                                  <content>
                                 <AnchorPane layoutX="500.0" layoutY="500.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="500.0" prefWidth="500.0" />
                                  </content>
@@ -118,22 +120,29 @@
                   <VBox alignment="TOP_CENTER" HBox.hgrow="ALWAYS">
                      <children>
                         <ToolBar>
-                          <items>
-                            <Button mnemonicParsing="false" text="Button" />
-                          </items>
                            <VBox.margin>
                               <Insets />
                            </VBox.margin>
+                           <items>
+                              <TextField fx:id="tfLibFilter" alignment="TOP_LEFT" promptText="Filter" />
+                           </items>
                         </ToolBar>
                         <HBox VBox.vgrow="ALWAYS">
                            <VBox.margin>
-                              <Insets />
+                              <Insets bottom="-1.0" left="-1.0" right="-1.0" top="-1.0" />
                            </VBox.margin>
                            <children>
                               <ScrollPane fitToHeight="true" fitToWidth="true" HBox.hgrow="ALWAYS">
                                  <HBox.margin>
-                                    <Insets bottom="-1.0" right="-1.0" top="-1.0" />
+                                    <Insets />
                                  </HBox.margin>
+                                 <content>
+                                    <TreeView fx:id="tvLibrary" prefHeight="200.0" prefWidth="200.0">
+                                       <padding>
+                                          <Insets bottom="-1.0" left="-1.0" right="-1.0" top="-1.0" />
+                                       </padding>
+                                    </TreeView>
+                                 </content>
                               </ScrollPane>
                            </children>
                         </HBox>
@@ -162,7 +171,7 @@
                         </ToolBar>
                         <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
                            <VBox.margin>
-                              <Insets bottom="-1.0" top="-1.0" />
+                              <Insets bottom="-1.0" left="-1.0" right="-1.0" top="-1.0" />
                            </VBox.margin>
                         </ScrollPane>
                      </children>
@@ -174,7 +183,7 @@
             </HBox>
          </right>
       </BorderPane>
-      <VBox alignment="BOTTOM_RIGHT" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+      <VBox fx:id="notifications" alignment="BOTTOM_RIGHT" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
          <padding>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
          </padding>

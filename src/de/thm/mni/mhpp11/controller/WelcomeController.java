@@ -40,6 +40,10 @@ public class WelcomeController extends NotifyController {
     updateRecentList();
   }
   
+  public void show(String file) {
+    onOpenProject(new File(file));
+  }
+  
   @Override
   public void show() {
     this.stage.setTitle(i18n.getString("title.title") + " " + Settings.NAME + " " + Settings.VERSION);
@@ -64,12 +68,16 @@ public class WelcomeController extends NotifyController {
   
   @FXML
   private void onOpenProject() {
-    Project p = null;
     File f;
     FileChooser fc = new FileChooser();
     fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Modelica Files", "*.mo"));
     f = fc.showOpenDialog(root.getScene().getWindow());
     if(f == null) return;
+    onOpenProject(f);
+  }
+  
+  private void onOpenProject(File f) {
+    Project p = null;
     String name;
   
     logger.debug("Load File", f.getPath());
@@ -85,8 +93,9 @@ public class WelcomeController extends NotifyController {
     }
   
     if(p == null) p = new Project(name, f);
-    
+  
     onOpenProject(p);
+    
   }
   
   private void onOpenProject(Project p) {
