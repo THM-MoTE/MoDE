@@ -1,7 +1,7 @@
 package de.thm.mni.mhpp11.util.parser;
 
 import beaver.Parser.Exception;
-import de.thm.mni.mhpp11.util.parser.models.MoProgramm;
+import de.thm.mni.mhpp11.util.parser.models.MoFile;
 import org.jmodelica.modelica.compiler.*;
 import org.jmodelica.util.OptionRegistry;
 import org.jmodelica.util.OptionRegistry.LocalIteration;
@@ -18,14 +18,14 @@ import java.util.List;
  */
 public class ASTParser {
   
-  public static MoProgramm parse(File file) throws ParserException {
+  public static MoFile parse(File file) throws ParserException {
     OptionRegistry or = ModelicaCompiler.createOptions();
     or.setStringOption("local_iteration_in_tearing", LocalIteration.ALL);
     SourceRoot sr;
     
     try {
       sr = ParserHandler.parseModelicaFile(UtilInterface.create(or), file.getAbsolutePath());
-      return parse(sr);
+      return parse(sr, file.getName());
       
     } catch (Exception | IOException e) {
       e.printStackTrace();
@@ -33,9 +33,9 @@ public class ASTParser {
     }
   }
   
-  public static MoProgramm parse(SourceRoot sr) {
+  public static MoFile parse(SourceRoot sr, String name) {
     Program p = sr.getProgram();
-    return MoProgramm.parse(p);
+    return MoFile.parse(p, name);
   }
   
   public static List<String> parse(Access a) {

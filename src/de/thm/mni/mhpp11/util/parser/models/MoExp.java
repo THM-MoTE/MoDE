@@ -16,6 +16,7 @@ public class MoExp {
     if(exp instanceof ArrayConstructor) return parseFunctionArguments(((ArrayConstructor) exp).getFunctionArguments());
     if(exp instanceof BooleanLitExp) return parseBoolean(exp);
     if(exp instanceof IntegerLitExp) return Integer.parseInt(((IntegerLitExp) exp).getUNSIGNED_INTEGER());
+    if(exp instanceof StringLitExp) return ((StringLitExp) exp).getSTRING();
     if(exp instanceof FunctionCall) return parseFunctionArguments(((FunctionCall) exp).getFunctionArguments());
     if(exp instanceof RealLitExp) return Double.parseDouble(((RealLitExp)exp).getUNSIGNED_NUMBER());
     if(exp instanceof AccessExp) return ASTParser.parse(((AccessExp) exp).getAccess());

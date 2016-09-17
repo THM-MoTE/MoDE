@@ -13,6 +13,11 @@ public class MoPackage extends MoClass {
     super(name, description);
   }
   
+  @Override
+  public String toString() {
+    return "p > " + this.getName();
+  }
+  
   public static MoPackage parse(FullClassDecl fcd) {
     if(!(fcd.getChild(4) instanceof MPackage)) return null;
     String name = fcd.getName().getID();

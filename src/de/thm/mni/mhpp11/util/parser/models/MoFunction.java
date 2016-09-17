@@ -38,6 +38,6 @@ public class MoFunction extends MoElement {
   
   @Override
   public String toString() {
-    return "f > " + this.name;
+    return "f > " + this.getName();
   }
 }

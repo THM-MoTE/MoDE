@@ -23,7 +23,7 @@ public class MoClass extends MoElement {
   }
   
   @Override
-  public String toString() { return "p > " + this.name; }
+  public String toString() { return "p > " + this.getName(); }
   
   public static MoClass parse(FullClassDecl fcd) {
     MoClass tmp = MoModel.parse(fcd);
