@@ -41,7 +41,8 @@ public class WelcomeController extends NotifyController {
   }
   
   public void show(String file) {
-    onOpenProject(new File(file));
+    if(file.isEmpty()) show();
+    else onOpenProject(new File(file));
   }
   
   @Override

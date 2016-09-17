@@ -68,7 +68,7 @@ public class MainController extends NotifyController {
     tiProject.predicateProperty().bind(Bindings.createObjectBinding(() -> {
       if(tfLibFilter.getText() == null || tfLibFilter.getText().isEmpty())
         return null;
-      return TreeItemPredicate.create(name -> name.contains(tfLibFilter.getText()));
+      return TreeItemPredicate.create(name -> name.toLowerCase().contains(tfLibFilter.getText().toLowerCase()));
     }, tfLibFilter.textProperty()));
   
   }

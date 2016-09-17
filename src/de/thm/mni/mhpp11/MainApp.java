@@ -30,7 +30,9 @@ public class MainApp extends Application {
   
   @Override
   public void start(Stage primaryStage) throws Exception {
-    String firstParam = this.getParameters().getUnnamed().get(0);
+    String firstParam = "";
+    if(this.getParameters().getUnnamed().size() > 0)
+    firstParam = this.getParameters().getUnnamed().get(0);
     loader = new FXMLLoader();
     loader.setLocation(getClass().getResource("view/Welcome.fxml"));
     loader.setResources(i18n);
