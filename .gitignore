@@ -1,8 +1,9 @@
 *.iml
 *~
-.idea/*
+.idea/
 target/
 *.jar
 /*.fxml
 /*.mo
 /.java
+
