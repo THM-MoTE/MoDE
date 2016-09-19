@@ -149,6 +149,7 @@ public class MainController extends NotifyController {
       for (MoClass moClass : file.getMoClass()) {
         tmp = new FilterableTreeItem<>(moClass.getName());
         tmp.setExpanded(true);
+        tmp.setGraphic(moClass.getIcon());
         parent.getInternalChildren().add(tmp);
       }
       for (int i = 0; i < notPossibleYet.size(); i++) {

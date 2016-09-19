@@ -15,9 +15,9 @@ public class MoExp {
   public static Object parse(Exp exp) {
     if(exp instanceof ArrayConstructor) return parseFunctionArguments(((ArrayConstructor) exp).getFunctionArguments());
     if(exp instanceof BooleanLitExp) return parseBoolean(exp);
-    if(exp instanceof IntegerLitExp) return Integer.parseInt(((IntegerLitExp) exp).getUNSIGNED_INTEGER());
+    if(exp instanceof IntegerLitExp) return Double.parseDouble(((IntegerLitExp) exp).getUNSIGNED_INTEGER());
     if(exp instanceof StringLitExp) return ((StringLitExp) exp).getSTRING();
-    if(exp instanceof FunctionCall) return parseFunctionArguments(((FunctionCall) exp).getFunctionArguments());
+    if(exp instanceof FunctionCall) return MoFunction.parse((FunctionCall) exp);
     if(exp instanceof RealLitExp) return Double.parseDouble(((RealLitExp)exp).getUNSIGNED_NUMBER());
     if(exp instanceof AccessExp) return ASTParser.parse(((AccessExp) exp).getAccess());
     if(exp instanceof NegExp) {
@@ -36,7 +36,7 @@ public class MoExp {
     return exp instanceof BooleanLitExpTrue;
   }
   
-  private static List<Object> parseFunctionArguments(FunctionArguments fa) {
+  static List<Object> parseFunctionArguments(FunctionArguments fa) {
     List<Object> l = new ArrayList<>();
     for(Exp e : fa.getExps())
       l.add(parse(e));

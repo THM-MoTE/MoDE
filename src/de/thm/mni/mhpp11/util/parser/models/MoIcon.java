@@ -3,10 +3,12 @@ package de.thm.mni.mhpp11.util.parser.models;
 import de.thm.mni.mhpp11.util.parser.models.graphics.MoCoordinateSystem;
 import de.thm.mni.mhpp11.util.parser.models.graphics.MoGraphic;
 import lombok.Getter;
-import org.jmodelica.modelica.compiler.*;
+import org.jmodelica.modelica.compiler.Argument;
+import org.jmodelica.modelica.compiler.ComponentModification;
+import org.jmodelica.modelica.compiler.Exp;
 import org.jmodelica.modelica.compiler.List;
 
-import java.util.*;
+import java.util.ArrayList;
 
 /**
  * Created by hobbypunk on 16.09.16.
@@ -31,7 +33,7 @@ public class MoIcon extends MoAnnotation {
       if(type.equals("coordinatesystem")) {
         mcs = MoCoordinateSystem.parse((List<ComponentModification>) cm.getModificationOpt().getChild(0).getChild(0).getChild(0));
       } else if(type.equals("graphics")) {
-        l = (java.util.List<MoGraphic>)MoExp.parse((Exp)cm.getModificationOpt().getChild(0).getChild(0));
+        l = (java.util.List<MoGraphic>)MoGraphic.parse((Exp)cm.getModificationOpt().getChild(0).getChild(0));
       }
     }
     

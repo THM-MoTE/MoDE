@@ -1,43 +1,32 @@
 package de.thm.mni.mhpp11.util.parser.models;
 
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import lombok.Getter;
+import org.jmodelica.modelica.compiler.FunctionCall;
 
+import java.util.List;
 
 /**
  * Created by hobbypunk on 07.09.16.
  */
+@Getter
 public class MoFunction extends MoElement {
   
-  public static Pattern START = Pattern.compile("(\\s*([^\\s]*)\\s+)?function\\s+([^\\s]*)(\\s\"([^\"]*)\")?");
+  List<Object> params;
   
-  public static Boolean is(String line) {
-    return START.matcher(line).matches();
-  }
-  
-  public static MoFunction parse(String l, BufferedReader br) throws IOException {
-    Matcher m = START.matcher(l);
-    System.out.println(m.groupCount());
-    String name = m.group(3);
-    String description = m.group(5);
-    Pattern END = Pattern.compile("\\s*end " + name + ";");
-    String line;
-    while((line = br.readLine()) != null && !END.matcher(line).matches()) {
-      ;
-    }
-    return new MoFunction(name, description);
-  }
-  
-  
-  public MoFunction(String name, String description) {
-    super(name, description);
+  public MoFunction(String name, List<Object> params) {
+    super(name, "");
+    this.params = params;
   }
   
   @Override
   public String toString() {
     return "f > " + this.getName();
+  }
+  
+  public static MoFunction parse(FunctionCall fc) {
+    List<Object> l = MoExp.parseFunctionArguments(fc.getFunctionArguments());
+    return new MoFunction(fc.getName().asID(), l);
+    
   }
 }

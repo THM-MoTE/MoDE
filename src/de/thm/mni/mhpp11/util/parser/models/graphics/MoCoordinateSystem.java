@@ -14,14 +14,14 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class MoCoordinateSystem extends MoGraphic {
+public class MoCoordinateSystem {
   
-  private List<List<Integer>> extent;
+  private List<List<Double>> extent;
   private Boolean preserveAspectRatio;
   private Double initialScale;
-  private List<Integer> grid;
+  private List<Double> grid;
   
-  private MoCoordinateSystem(List<List<Integer>> extent, Boolean preserveAspectRatio, Double initialScale, List<Integer> grid) {
+  private MoCoordinateSystem(List<List<Double>> extent, Boolean preserveAspectRatio, Double initialScale, List<Double> grid) {
     this.extent = extent;
     this.preserveAspectRatio = preserveAspectRatio;
     this.initialScale = initialScale;
@@ -30,18 +30,18 @@ public class MoCoordinateSystem extends MoGraphic {
   
   
   public static MoCoordinateSystem parse(org.jmodelica.modelica.compiler.List<ComponentModification> list) {
-    List<List<Integer>> extent = null;
+    List<List<Double>> extent = null;
     Boolean preserveAspectRatio = null;
     Double initialScale = 0.1;
-    List<Integer> grid = null;
+    List<Double> grid = null;
     
     for (ComponentModification cm : list) {
       String type = cm.getName().asID().toLowerCase();
       Exp exp = ((ValueModification)cm.getChild(3).getChild(0)).getExp();
 
       switch (type) {
-        case "grid": grid = (List<Integer>) MoExp.parse(exp); break;
-        case "extent": extent = (List<List<Integer>>) MoExp.parse(exp); break;
+        case "grid": grid = (List<Double>) MoExp.parse(exp); break;
+        case "extent": extent = (List<List<Double>>) MoExp.parse(exp); break;
         case "initialscale": initialScale = (Double) MoExp.parse(exp); break;
         case "preserveaspectratio": preserveAspectRatio = (Boolean) MoExp.parse(exp); break;
       }

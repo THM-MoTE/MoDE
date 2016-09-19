@@ -1,5 +1,7 @@
 package de.thm.mni.mhpp11.util.parser.models;
 
+import de.thm.mni.mhpp11.control.MoIconPane;
+import javafx.scene.layout.Pane;
 import lombok.Getter;
 import org.jmodelica.modelica.compiler.FullClassDecl;
 
@@ -32,4 +34,13 @@ public class MoClass extends MoElement {
   }
   
   
+  public Pane getIcon() {
+    if(annotations == null) return null;
+    for(MoAnnotation ma : this.annotations) {
+      if(ma instanceof MoIcon) {
+        return new MoIconPane((MoIcon) ma);
+      }
+    }
+    return null;
+  }
 }
