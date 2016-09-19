@@ -4,15 +4,35 @@ import de.thm.mni.mhpp11.util.config.Settings;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 /**
  * Created by hobbypunk on 14.09.16.
  */
 public class Utilities {
+  
+  public static URL getRessources(String postfix) {
+    return Utilities.class.getResource("/de/thm/mni/mhpp11/" + postfix);
+  }
+  
+  public static URL getView(String view) {
+    return Utilities.getRessources("view/" + view + ".fxml");
+  }
+  
+  public static ResourceBundle getBundle(String bundle) {
+    Settings settings = Settings.load();
+    return getBundle(bundle, settings.getLang());
+  }
+  
+  public static ResourceBundle getBundle(String bundle, Locale lang) {
+    return ResourceBundle.getBundle("de/thm/mni/mhpp11/i18n/" + bundle, lang, new UTF8ResourceBundleControl());
+  }
   
   public static File getHome() {
     return new File(System.getProperty("user.home"));
@@ -22,9 +42,6 @@ public class Utilities {
     File f;
     if (isWin())
       f = new File(System.getenv("APPDATA") + "/" + Settings.NAME);
-    else if (isMac())
-      //TODO: mac settings path
-      f = new File(System.getenv("HOME") + "/.config/" + Settings.NAME);
     else
       f = new File(System.getenv("HOME") + "/.config/" + Settings.NAME);
     

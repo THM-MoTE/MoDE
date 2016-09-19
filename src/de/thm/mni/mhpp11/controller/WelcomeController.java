@@ -1,7 +1,7 @@
 package de.thm.mni.mhpp11.controller;
 
 import de.thm.mni.mhpp11.control.RecentProjectControl;
-import de.thm.mni.mhpp11.util.UTF8ResourceBundleControl;
+import de.thm.mni.mhpp11.util.Utilities;
 import de.thm.mni.mhpp11.util.config.Settings;
 import de.thm.mni.mhpp11.util.config.model.Project;
 import de.thm.mni.mhpp11.util.parser.PackageParser;
@@ -104,7 +104,7 @@ public class WelcomeController extends NotifyController {
     settings.getRecent().remove(p);
     settings.getRecent().add(p);
     FXMLLoader loader = new FXMLLoader();
-    loader.setLocation(getClass().getResource("../view/Main.fxml"));
+    loader.setLocation(Utilities.getView("Main"));
     //TODO: loader.setResources();
     try {
       Pane rootLayout = loader.load();
@@ -121,8 +121,8 @@ public class WelcomeController extends NotifyController {
   void onOpenSettings() {
     Dialog d = new Dialog();
     FXMLLoader loader = new FXMLLoader();
-    loader.setLocation(getClass().getResource("../view/Settings.fxml"));
-    loader.setResources(ResourceBundle.getBundle("de/thm/mni/mhpp11/i18n/Settings", settings.getLang(), new UTF8ResourceBundleControl()));
+    loader.setLocation(Utilities.getView("Settings"));
+    loader.setResources(Utilities.getBundle("Settings"));
     try {
       DialogPane dp = loader.load();
       d.setDialogPane(dp);
