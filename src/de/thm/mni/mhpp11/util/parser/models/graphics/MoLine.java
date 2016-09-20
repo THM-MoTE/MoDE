@@ -2,7 +2,11 @@ package de.thm.mni.mhpp11.util.parser.models.graphics;
 
 import de.thm.mni.mhpp11.util.config.model.Point;
 import de.thm.mni.mhpp11.util.parser.models.MoFunction;
+import javafx.scene.paint.Color;
 import javafx.util.Pair;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Singular;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,50 +14,83 @@ import java.util.List;
 /**
  * Created by hobbypunk on 19.09.16.
  */
-
+@SuppressWarnings("unchecked")
+@Getter
 public class MoLine extends MoGraphic {
   
-  enum Smooth {
-    None,
-    Bezier
+  
+  enum Arrow {
+    NONE,
+    OPEN,
+    FILLED,
+    HALF
   }
   
-  protected Smooth smooth = Smooth.None;
-  protected Double thickness = 1.0;
-  protected List<Point<Double, Double>> points = new ArrayList<>();
   
-  MoLine(Point<Double, Double> origin, List<Point<Double, Double>>points, Double thickness, Smooth smooth) {
-    super(origin);
+  List<Point<Double, Double>> points = new ArrayList<>();
+  Color color = Color.BLACK;
+  Utilities.LinePattern linePattern = Utilities.LinePattern.SOLID;
+  Double thickness = 1.0;
+  Arrow[] arrows = new Arrow[2];
+  Double arrowSize = 3.0;
+  Utilities.Smooth smooth = Utilities.Smooth.NONE;
+  
+  @Builder(builderMethodName = "lineBuilder")
+  MoLine(MoGraphic mg, @Singular List<Point<Double, Double>> points, Color color, Utilities.LinePattern linePattern, Double thickness, Arrow start, Arrow end, Double arrowSize, Utilities.Smooth smooth) {
+    super(mg);
     this.points = points;
+    this.color = color;
+    this.linePattern = linePattern;
     this.thickness = thickness;
+    this.arrows[0] = start;
+    this.arrows[1] = end;
+    this.arrowSize = arrowSize;
     this.smooth = smooth;
   }
   
   public static MoLine parse(MoFunction mf) {
-    MoGraphic mg = MoGraphic.parse(mf);
-    Smooth smooth = Smooth.None;
-    Double thickness = 1.0;
-    List<Object> list = null;
-    List<Point<Double, Double>> points = new ArrayList<>();
+    MoLineBuilder mb = lineBuilder();
+    mb.mg(MoGraphic.parse(mf));
     
-    for(Object o: mf.getParams()) {
-      if(!(o instanceof Pair)) continue;
+    for (Object o : mf.getParams()) {
+      if (!(o instanceof Pair)) continue;
       Pair<String, Object> p = (Pair<String, Object>) o;
-      if(p.getKey().equals("thickness")) thickness = (Double) p.getValue();
-      if(p.getKey().equals("points")) list = (List<Object>) p.getValue();
-      if(p.getKey().equals("smooth")) {
-        List<String> l = (List<String>)p.getValue();
-        if(l.get(1).equals("Bezier")) smooth = Smooth.Bezier;
+      String key = p.getKey().toLowerCase();
+      Object val = p.getValue();
+      switch (key) {
+        case "thickness":
+          mb.thickness((Double) p.getValue());
+          break;
+        case "points":
+          List<List<Double>> list = (List<List<Double>>) val;
+          for (Object obj : list) {
+            List<Double> point = (List<Double>) obj;
+            mb.point(new Point<>(point.get(0), point.get(1)));
+          }
+          break;
+        case "smooth": {
+          List<String> l = (List<String>) val;
+          mb.smooth(Utilities.Smooth.valueOf(l.get(1).toUpperCase()));
+          break;
+        }
+        case "color":
+          mb.color(Utilities.convertColor(val));
+          break;
+        case "pattern":
+          mb.linePattern(Utilities.LinePattern.valueOf(((List<String>) val).get(1).toUpperCase()));
+          break;
+        case "arrow": {
+          List<List<String>> l = (List<List<String>>) val;
+          mb.start(Arrow.valueOf(l.get(0).get(1).toUpperCase()));
+          mb.end(Arrow.valueOf(l.get(1).get(1).toUpperCase()));
+          break;
+        }
+        case "arrowSize":
+          mb.arrowSize((Double) p.getValue());
+          break;
       }
     }
     
-    if(list != null ) {
-      for(Object o : list) {
-        List<Double> p = (List<Double>) o;
-        points.add(new Point<>(p.get(0), p.get(1)));
-      }
-    }
-  
-    return new MoLine(mg.origin, points, thickness, smooth);
+    return mb.build();
   }
 }
