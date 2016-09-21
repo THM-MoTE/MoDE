@@ -4,12 +4,11 @@ import de.thm.mni.mhpp11.util.config.model.Point;
 import de.thm.mni.mhpp11.util.parser.models.MoIcon;
 import de.thm.mni.mhpp11.util.parser.models.graphics.*;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Transform;
-
-import java.util.List;
 
 /**
  * Created by hobbypunk on 19.09.16.
@@ -31,6 +30,16 @@ public class MoIconPane extends Pane {
     this.icon = icon;
     initCoordinateSystem();
     initImage();
+    this.getTransforms().add(Transform.translate(moveX, moveY));
+    //this.scaleTo(25.0, 25.0);
+  }
+  
+  public void scaleTo(Double width, Double height) {
+    Double scaleX = width / w;
+    Double scaleY = height / h;
+    this.getTransforms().addAll(Transform.scale(scaleX, scaleY), Transform.translate(-(width / 2), -(height / 2)));
+    this.setPrefHeight(height);
+    this.setPrefWidth(width);
   }
   
   private void initCoordinateSystem() {
@@ -52,9 +61,13 @@ public class MoIconPane extends Pane {
     
     if (mcs.getPreserveAspectRatio() != null) this.preserveAspectRatio = mcs.getPreserveAspectRatio();
     if (mcs.getInitialScale() != null) this.initialScale = mcs.getInitialScale();
-    
+  
     this.setPrefWidth(w);
     this.setPrefHeight(h);
+    this.setMinWidth(w);
+    this.setMinHeight(h);
+    this.setMaxWidth(w);
+    this.setMaxHeight(h);
   }
   
   private void initImage() {
@@ -66,67 +79,117 @@ public class MoIconPane extends Pane {
   private void initImage(MoGraphic mg) {
     Shape shape = null;
     if (mg instanceof MoText) {
-      shape = new Text();
-      Point<Double, Double>[] r = ((MoText)mg).getExtent();
-      ((Text)shape).setFont(Font.font(((MoText)mg).getFontName(), ((MoText)mg).getFontSize()));
-      ((Text)shape).setText(((MoText) mg).getTextString());
-      ((Text)shape).setUnderline(MoText.TextStyle.isUnterline(((MoText)mg).getTextStyle()));
-      ((Text)shape).setX(r[0].getX());
-      ((Text)shape).setY(r[0].getY());
+      shape = createText((MoText) mg);
     }else if (mg instanceof MoRectangle) {
-      shape = new Rectangle();
-      Point<Double, Double>[] r = ((MoRectangle) mg).getExtent();
-      ((Rectangle) shape).setX(r[0].getX());
-      ((Rectangle) shape).setY(r[0].getY());
-      ((Rectangle) shape).setWidth(r[0].getX() - r[1].getX());
-      ((Rectangle) shape).setHeight(r[0].getY() - r[1].getY());
+      shape = createRectangle((MoRectangle) mg);
     } else if(mg instanceof MoEllipse) {
-      shape = new Arc();
-      Point<Double, Double>[] r = ((MoEllipse) mg).getExtent();
-      ((Arc) shape).setCenterX(0);
-      ((Arc) shape).setCenterY(0);
-      ((Arc) shape).setRadiusX(Math.abs(r[0].getX() - r[1].getX())/2);
-      ((Arc) shape).setRadiusY(Math.abs(r[0].getY() - r[1].getY())/2);
-      ((Arc) shape).setStartAngle(((MoEllipse)mg).getStartAngle());
-      ((Arc) shape).setLength(((MoEllipse)mg).getEndAngle() - ((MoEllipse)mg).getStartAngle());
-      ((Arc) shape).setType(ArcType.ROUND);
+      shape = createEllipse((MoEllipse) mg);
     } else if (mg instanceof MoLine) {
-      shape = new Polyline();
-      List<Point<Double, Double>> points = ((MoLine) mg).getPoints();
-      for (Point<Double, Double> p : points) {
-        ((Polyline) shape).getPoints().addAll(p.getX(), p.getY());
-      }
+      shape = createLine((MoLine) mg);
     } else if (mg instanceof MoPolygon) {
-      shape = new Polygon();
-      List<Point<Double, Double>> points = ((MoPolygon) mg).getPoints();
-      for (Point<Double, Double> p : points) {
-        ((Polygon) shape).getPoints().addAll(p.getX(), p.getY());
-      }
+      shape = createPolygon((MoPolygon) mg);
       
     }
     
     if (shape != null) {
       if (mg instanceof MoFilledShape) {
-        shape.fillProperty().setValue(((MoFilledShape) mg).getFillColor());
+        shape = setFilledShape((MoFilledShape) mg, shape);
       }
-      shape.getTransforms().addAll(Transform.scale(1, -1), Transform.translate(0, -h), Transform.translate(moveX, moveY), Transform.translate(mg.getOrigin().getX(), mg.getOrigin().getY()));
+  
+      shape.getTransforms().add(Transform.translate(mg.getOrigin().getX(), -mg.getOrigin().getY()));
       this.getChildren().add(shape);
     }
   }
   
-  private Point<Double, Double> convertTo(Point<Double, Double> origin, Point<Double, Double> point) {
-    point.setX(point.getX() + moveX);
-    point.setY(point.getY() + moveY);
-    return point;
+  private Shape setFilledShape(MoFilledShape mfs, Shape shape) {
+    if (mfs.getFillPattern() == MoFilledShape.FillPattern.SOLID) {
+      shape.setFill(mfs.getFillColor());
+    } else if (mfs.getFillPattern() == MoFilledShape.FillPattern.NONE) {
+      shape.setFill(Color.TRANSPARENT);
+    }
+    shape.setStrokeWidth(mfs.getLineThickness());
+    
+    if (mfs.getPattern() == MoGraphic.Utilities.LinePattern.SOLID) {
+      shape.setStroke(mfs.getLineColor());
+    } else if (mfs.getPattern() == MoGraphic.Utilities.LinePattern.NONE) {
+      shape.setStroke(Color.TRANSPARENT);
+    }
+    
+    return shape;
   }
   
-  private Point<Double, Double> moveBaseline(Point<Double, Double> moPoint) {
-    moPoint.setX(moPoint.getX() + moveX);
-    moPoint.setY(moPoint.getY() + moveY);
-    return moPoint;
+  private Text createText(MoText mt) {
+    Text text = new Text();
+    Point<Double, Double>[] extent = mt.getExtent();
+    Font f;
+    if (mt.getFontSize() != 0) {
+      f = Font.font(mt.getFontName(), mt.getFontSize());
+    } else {
+      f = Font.font(mt.getFontName(), 20);
+      f = Font.font(f.getFamily(), MoGraphic.Utilities.calculateMaxFontSize(f, mt.getTextString(), Math.abs(-extent[0].getX() + extent[1].getX()) - 10, Math.abs(-extent[0].getY() + extent[1].getY()) - 10));
+    }
+    
+    text.setFont(f);
+    text.setText(mt.getTextString());
+    text.setUnderline(MoText.TextStyle.isUnterline(mt.getTextStyle()));
+    
+    Double h = MoGraphic.Utilities.calculateFontHeight(f);
+    Double w = MoGraphic.Utilities.calculateStringWidth(f, mt.getTextString());
+    
+    text.setX(extent[0].getX());
+    text.setY(h + (h * 0.5));
+    
+    return text;
   }
   
-  private Double flipY(Double y) {
-    return h - y;
+  private Rectangle createRectangle(MoRectangle mr) {
+    Rectangle rect = new Rectangle();
+    Point<Double, Double>[] r = mr.getExtent();
+    rect.setX(r[0].getX());
+    rect.setY(-r[0].getY());
+    rect.setWidth(r[0].getX() - r[1].getX());
+    rect.setHeight(r[0].getY() - r[1].getY());
+    
+    return rect;
+  }
+  
+  private Polyline createLine(MoLine ml) {
+    Polyline line = new Polyline();
+    for (Point<Double, Double> p : ml.getPoints()) {
+      line.getPoints().addAll(p.getX(), -p.getY());
+    }
+    
+    return line;
+  }
+  
+  private Polygon createPolygon(MoPolygon mp) {
+    Polygon polygon = new Polygon();
+    for (Point<Double, Double> p : mp.getPoints()) {
+      polygon.getPoints().addAll(p.getX(), -p.getY());
+    }
+    
+    return polygon;
+  }
+  
+  private Shape createEllipse(MoEllipse me) {
+    Point<Double, Double>[] r = me.getExtent();
+    if (me.getEndAngle() + me.getStartAngle() == 360) {
+      Ellipse e = new Ellipse();
+      e.setCenterX(0);
+      e.setCenterY(0);
+      e.setRadiusX(Math.abs(r[0].getX() - r[1].getX()) / 2);
+      e.setRadiusY(Math.abs(r[0].getY() - r[1].getY()) / 2);
+      return e;
+    } else {
+      Arc a = new Arc();
+      a.setCenterX(0);
+      a.setCenterY(0);
+      a.setRadiusX(Math.abs(r[0].getX() - r[1].getX()) / 2);
+      a.setRadiusY(Math.abs(r[0].getY() - r[1].getY()) / 2);
+      a.setStartAngle(me.getStartAngle());
+      a.setLength(me.getEndAngle() - me.getStartAngle());
+      a.setType(ArcType.ROUND);
+      return a;
+    }
   }
 }

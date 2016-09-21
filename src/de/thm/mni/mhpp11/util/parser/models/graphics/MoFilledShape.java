@@ -14,7 +14,7 @@ import java.util.List;
 @Getter
 public class MoFilledShape extends MoGraphic {
   
-  enum FillPattern {
+  public enum FillPattern {
     NONE,
     SOLID,
     HORIZONTAL,
@@ -46,11 +46,11 @@ public class MoFilledShape extends MoGraphic {
   @Builder(builderMethodName = "filledShapeBuilder")
   MoFilledShape(MoGraphic mg, Color lineColor, Color fillColor, Utilities.LinePattern pattern, FillPattern fillPattern, Double lineThickness) {
     super(mg);
-    this.lineColor = lineColor;
-    this.fillColor = fillColor;
-    this.pattern = pattern;
-    this.fillPattern = fillPattern;
-    this.lineThickness = lineThickness;
+    if (lineColor != null) this.lineColor = lineColor;
+    if (fillColor != null) this.fillColor = fillColor;
+    if (pattern != null) this.pattern = pattern;
+    if (fillPattern != null) this.fillPattern = fillPattern;
+    if (lineThickness != null) this.lineThickness = lineThickness;
   }
   
   public static MoFilledShape parse(MoFunction mf) {
