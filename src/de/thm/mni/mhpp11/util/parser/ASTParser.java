@@ -40,13 +40,14 @@ public class ASTParser {
   
   public static List<String> parse(Access a) {
     List<String> packageList = new ArrayList<>();
-    
-    if (a instanceof ParseAccess) {
-      packageList.add(((ParseAccess) a).getID());
-    } else {
-      for (int i = 0; i < a.getChild(0).getNumChild(); i++) {
-        ParseAccess pa = (ParseAccess) a.getChild(0).getChild(i);
-        packageList.add(pa.getID());
+    if (a != null) {
+      if (a instanceof ParseAccess) {
+        packageList.add(((ParseAccess) a).getID());
+      } else {
+        for (int i = 0; i < a.getChild(0).getNumChild(); i++) {
+          ParseAccess pa = (ParseAccess) a.getChild(0).getChild(i);
+          packageList.add(pa.getID());
+        }
       }
     }
     

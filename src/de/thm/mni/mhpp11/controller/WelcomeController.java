@@ -69,8 +69,9 @@ public class WelcomeController extends NotifyController {
   
   @FXML
   private void onOpenProject() {
-    File f;
+    File f = settings.getRecent().getLastPath();
     FileChooser fc = new FileChooser();
+    if (f != null) fc.setInitialDirectory(f);
     fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Modelica Files", "*.mo"));
     f = fc.showOpenDialog(root.getScene().getWindow());
     if(f == null) return;

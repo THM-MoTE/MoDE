@@ -8,9 +8,11 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
+import javafx.stage.DirectoryChooser;
 import javafx.util.Pair;
 import javafx.util.StringConverter;
 
+import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +34,8 @@ public class SettingsController extends Controller {
   
   @FXML private ChoiceBox<LEVEL> cbLoggerLevel;
   @FXML private ChoiceBox<LEVEL> cbLoggerNotifyLevel;
+  
+  @FXML private TextField tfOMLibrary;
   
   
   @Override
@@ -71,7 +75,14 @@ public class SettingsController extends Controller {
     cbLoggerNotifyLevel.setItems(FXCollections.observableArrayList(LEVEL.values()));
     cbLoggerNotifyLevel.setValue(settings.getLogger().getNotifyLevel());
     cbLoggerNotifyLevel.valueProperty().addListener((observable, oldValue, newValue) -> settings.getLogger().setNotifyLevel(newValue));
-  
+    
+    if (settings.getModelica().getModelicaLibrary() != null) {
+      File f = settings.getModelica().getModelicaLibrary();
+      tfOMLibrary.setText(f.getPath());
+      tfOMLibrary.positionCaret(f.getPath().length() + 1);
+    }
+    
+    tfOMLibrary.textProperty().addListener((observable, oldValue, newValue) -> settings.getModelica().setModelicaLibrary(new File(newValue)));
   
     initSlider(sRecentCount, tfRecentCount, settings.getRecent().getCount(), (observable, oldValue, newValue) -> {
       if(oldValue.intValue() != newValue.intValue()) settings.getRecent().setCount(newValue.intValue());
@@ -86,5 +97,17 @@ public class SettingsController extends Controller {
     tf.setText("" + i);
     s.valueProperty().addListener(cl);
     s.valueProperty().addListener((observable, oldValue, newValue) -> tf.setText("" + newValue.intValue()));
+  }
+  
+  @FXML
+  private void onOMLibraryClick() {
+    DirectoryChooser dc = new DirectoryChooser();
+    File f = settings.getModelica().getModelicaLibrary();
+    if (f != null) dc.setInitialDirectory(f);
+    f = dc.showDialog(this.stage);
+    
+    if (f == null) return;
+    tfOMLibrary.setText(f.getPath());
+    tfOMLibrary.positionCaret(f.getPath().length() + 1);
   }
 }

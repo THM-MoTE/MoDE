@@ -15,8 +15,8 @@ public class Main {
     Main m = new Main();
     
     //m.testJModelica();
-    m.startGUI(new String[]{"../2014-modelica-kotani/SHM/SeidelThesis/Components/Heart.mo"});
-    //m.startGUI(args);
+    //m.startGUI(new String[]{"../2014-modelica-kotani/SHM/SeidelThesis/Components/Heart.mo"});
+    m.startGUI(args);
   }
   
   private void startGUI(String[] args) {

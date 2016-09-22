@@ -3,6 +3,7 @@ package de.thm.mni.mhpp11.util.parser;
 import de.thm.mni.mhpp11.util.config.Settings;
 import de.thm.mni.mhpp11.util.config.model.Logger;
 import de.thm.mni.mhpp11.util.parser.models.MoFile;
+import de.thm.mni.mhpp11.util.parser.models.MoFile.TYPE;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,7 +48,15 @@ public class PackageParser extends Observable {
     return f;
   }
   
-  public void collectDir(File file, MoFile.TYPE type, Integer packageOrder) {
+  public void collectLibs(File base, TYPE type, Integer packageOrder) {
+    File[] libs = base.listFiles(File::isDirectory);
+    if (libs == null) return;
+    for (File lib : libs) {
+      collectDir(lib, type, packageOrder);
+    }
+  }
+  
+  public void collectDir(File file, TYPE type, Integer packageOrder) {
     File[] content = file.listFiles(pathname -> pathname.isDirectory() || pathname.getName().endsWith(".mo"));
     File[] orders = file.listFiles(pathname -> pathname.getName().endsWith(".order"));
     if(content == null) return;
@@ -68,7 +77,7 @@ public class PackageParser extends Observable {
     }
   }
   
-  public void collectFile(File file, MoFile.TYPE type, Integer order) {
+  public void collectFile(File file, TYPE type, Integer order) {
       logger.debug("Parse File", file.getName());
     try {
       MoFile mf = ASTParser.parse(file);

@@ -7,6 +7,7 @@ import de.thm.mni.mhpp11.util.config.model.Project;
 import de.thm.mni.mhpp11.util.parser.PackageParser;
 import de.thm.mni.mhpp11.util.parser.models.MoClass;
 import de.thm.mni.mhpp11.util.parser.models.MoFile;
+import de.thm.mni.mhpp11.util.parser.models.MoFile.TYPE;
 import de.thm.mni.mhpp11.util.parser.models.MoWithin;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
@@ -21,10 +22,7 @@ import org.eclipse.fx.ui.controls.tree.FilterableTreeItem;
 import org.eclipse.fx.ui.controls.tree.TreeItemPredicate;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Observable;
-import java.util.ResourceBundle;
+import java.util.*;
 
 /**
  * Created by hobbypunk on 15.09.16.
@@ -43,12 +41,23 @@ public class MainController extends NotifyController {
   
   @FXML private TreeView<String> tvLibrary;
   
-  private FilterableTreeItem<String> tiBuiltin = new FilterableTreeItem<>("BuiltIn");
-  private FilterableTreeItem<String> tiLibrary = new FilterableTreeItem<>("Library");
-  private FilterableTreeItem<String> tiProjectlibs = new FilterableTreeItem<>("Project Libraries");
-  private FilterableTreeItem<String> tiProject = new FilterableTreeItem<>("Project");
+  private Map<TYPE, FilterableTreeItem<String>> ftiMap = new HashMap<>();
   
-  private List<MoFile> notPossibleYet = new ArrayList<>();
+  {
+    ftiMap.put(TYPE.BUILTIN, new FilterableTreeItem<>("BuiltIn"));
+    ftiMap.put(TYPE.LIB, new FilterableTreeItem<>("Libraries"));
+    ftiMap.put(TYPE.PROJECTLIB, new FilterableTreeItem<>("Project Libraries"));
+    ftiMap.put(TYPE.PROJECT, new FilterableTreeItem<>("Project"));
+  }
+  
+  private Map<TYPE, List<MoFile>> notPossibleYetMap = new HashMap<>();
+  
+  {
+    notPossibleYetMap.put(TYPE.BUILTIN, new ArrayList<>());
+    notPossibleYetMap.put(TYPE.LIB, new ArrayList<>());
+    notPossibleYetMap.put(TYPE.PROJECTLIB, new ArrayList<>());
+    notPossibleYetMap.put(TYPE.PROJECT, new ArrayList<>());
+  }
   
   @Override
   public void initialize(URL location, ResourceBundle resources) {
@@ -63,14 +72,8 @@ public class MainController extends NotifyController {
     super.lateInitialize(stage, scene);
     this.project = project;
     initTreeView();
-    
-    //FROM: http://www.kware.net/?p=204#The_Predicate
-    tiProject.predicateProperty().bind(Bindings.createObjectBinding(() -> {
-      if(tfLibFilter.getText() == null || tfLibFilter.getText().isEmpty())
-        return null;
-      return TreeItemPredicate.create(name -> name.toLowerCase().contains(tfLibFilter.getText().toLowerCase()));
-    }, tfLibFilter.textProperty()));
   
+    initFilter();
   }
   
   @Override
@@ -105,17 +108,36 @@ public class MainController extends NotifyController {
     stage.show();
   }
   
+  private void initFilter() {
+    //FROM: http://www.kware.net/?p=204#The_Predicate
+    for (FilterableTreeItem<String> fti : ftiMap.values()) {
+      fti.predicateProperty().bind(Bindings.createObjectBinding(() -> {
+        if (tfLibFilter.getText() == null || tfLibFilter.getText().isEmpty())
+          return null;
+        return TreeItemPredicate.create(name -> name.toLowerCase().contains(tfLibFilter.getText().toLowerCase()));
+      }, tfLibFilter.textProperty()));
+    }
+  }
+  
   private void initTreeView() {
     FilterableTreeItem<String> root = new FilterableTreeItem<>("");
-    root.getInternalChildren().add(tiBuiltin);
-    root.getInternalChildren().add(tiLibrary);
-    root.getInternalChildren().add(tiProjectlibs);
-    root.getInternalChildren().add(tiProject);
-    tiProject.setExpanded(true);
+    for (TYPE t : new TYPE[]{TYPE.BUILTIN, TYPE.LIB, TYPE.PROJECTLIB, TYPE.PROJECT}) {
+      root.getInternalChildren().add(ftiMap.get(t));
+      ftiMap.get(t).setExpanded(true);
+    }
     tvLibrary.setRoot(root);
     tvLibrary.setShowRoot(false);
-    
+  
+    initLibs();
     initProject();
+  }
+  
+  private void initLibs() {
+    Thread t = new Thread(() -> {
+      PackageParser pp = PackageParser.getInstance();
+      pp.collectLibs(settings.getModelica().getModelicaLibrary(), TYPE.LIB, 0);
+    });
+    t.start();
   }
   
   private void initProject() {
@@ -123,20 +145,21 @@ public class MainController extends NotifyController {
       PackageParser pp = PackageParser.getInstance();
       String name = project.getFile().getName().toLowerCase();
       if (name.equals("package.mo"))
-        pp.collectDir(project.getFile().getParentFile(), MoFile.TYPE.PROJECT);
+        pp.collectDir(project.getFile().getParentFile(), TYPE.PROJECT, 0);
       else
-        pp.collectFile(project.getFile(), MoFile.TYPE.PROJECT);
+        pp.collectFile(project.getFile(), TYPE.PROJECT, 0);
     });
     t.start();
   }
   
   private void addFile(MoFile file) {
     FilterableTreeItem<String> parent = null;
-    if (file.getType().equals(MoFile.TYPE.PROJECT)) {
-      parent = tiProject;
-    }
+    if (ftiMap.containsKey(file.getType())) parent = ftiMap.get(file.getType());
     if (parent == null) return;
-    parent = searchNode(parent, file.getMoWithin(), 0);
+  
+    parent = searchNode(parent, file.getMoWithin(), file.getOrder(), 0);
+    List<MoFile> list = notPossibleYetMap.get(file.getType());
+
     if (parent != null) {
       FilterableTreeItem<String> tmp;
       if (file.getMoPackage() != null) {
@@ -152,24 +175,27 @@ public class MainController extends NotifyController {
         tmp.setGraphic(moClass.getIcon());
         parent.getInternalChildren().add(tmp);
       }
-      for (int i = 0; i < notPossibleYet.size(); i++) {
-        MoFile f = notPossibleYet.get(i--);
-        notPossibleYet.remove(f);
+      for (int i = 0; i < list.size(); i++) {
+        MoFile f = list.get(i--);
+        list.remove(f);
         addFile(f);
       }
     } else {
-      notPossibleYet.add(file);
+      list.add(file);
     }
   }
   
-  private FilterableTreeItem<String> searchNode(FilterableTreeItem<String> parent, MoWithin within, Integer pos) {
+  private FilterableTreeItem<String> searchNode(FilterableTreeItem<String> parent, MoWithin within, Integer order, Integer pos) {
     List<String> list = within.getPackages();
     if (list.size() == 0) return parent;
+    
     for (TreeItem<String> ti : parent.getInternalChildren()) {
       FilterableTreeItem<String> fti = (FilterableTreeItem<String>)ti;
       if (ti.getValue().equals(list.get(pos))) {
-        if (list.size() == pos + 1) return fti;
-        return searchNode(fti, within, pos + 1);
+        if (list.size() == pos + 1) {
+          return fti;
+        }
+        return searchNode(fti, within, order, pos + 1);
       }
     }
     return null;
