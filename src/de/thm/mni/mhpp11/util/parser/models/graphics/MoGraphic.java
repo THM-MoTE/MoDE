@@ -134,16 +134,20 @@ public class MoGraphic {
     }
   
     public static Double calculateFontHeight(Font font) {
-      return calculateFontHeight(Toolkit.getToolkit().getFontLoader(), font);
+      return calculateFontHeightWithoutDescent(Toolkit.getToolkit().getFontLoader(), font);
     }
   
     public static Double calculateStringWidth(Font font, String string) {
       return calculateStringWidth(Toolkit.getToolkit().getFontLoader(), font, string);
     }
   
-    private static Double calculateFontHeight(FontLoader fl, Font font) {
+    private static Double calculateFontHeightWithoutDescent(FontLoader fl, Font font) {
       FontMetrics fm = fl.getFontMetrics(font);
       return (double) (fm.getLeading() + fm.getMaxAscent() + fm.getMaxDescent());
+    }
+  
+    private static Double calculateFontHeight(FontLoader fl, Font font) {
+      return (double) (calculateFontHeightWithoutDescent(fl, font) + fl.getFontMetrics(font).getMaxDescent());
     }
   
     private static Double calculateStringWidth(FontLoader fl, Font font, String string) {

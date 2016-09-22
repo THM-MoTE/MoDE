@@ -1,8 +1,9 @@
 package de.thm.mni.mhpp11.util.parser.models.graphics;
 
+import de.thm.mni.mhpp11.util.config.model.Point;
 import de.thm.mni.mhpp11.util.parser.models.MoExp;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 import org.jmodelica.modelica.compiler.ComponentModification;
 import org.jmodelica.modelica.compiler.Exp;
 import org.jmodelica.modelica.compiler.ValueModification;
@@ -13,39 +14,50 @@ import java.util.List;
  * Created by hobbypunk on 16.09.16.
  */
 @Getter
-@Setter
 public class MoCoordinateSystem {
   
-  private List<List<Double>> extent;
-  private Boolean preserveAspectRatio;
-  private Double initialScale;
-  private List<Double> grid;
+  private Point<Double, Double>[] extent = (Point<Double, Double>[]) new Point[2];
+  private Boolean preserveAspectRatio = true;
+  private Double initialScale = 0.1;
+  private Point<Double, Double> grid = new Point<>(2., 2.);
   
-  private MoCoordinateSystem(List<List<Double>> extent, Boolean preserveAspectRatio, Double initialScale, List<Double> grid) {
-    this.extent = extent;
-    this.preserveAspectRatio = preserveAspectRatio;
-    this.initialScale = initialScale;
-    this.grid = grid;
+  @Builder
+  private MoCoordinateSystem(Point<Double, Double> first, Point<Double, Double> second, Boolean preserveAspectRatio, Double initialScale, Point<Double, Double> grid) {
+    this.extent[0] = (first != null) ? first : new Point<>(-100., 100.);
+    this.extent[1] = (second != null) ? second : new Point<>(100., -100.);
+    if (preserveAspectRatio != null) this.preserveAspectRatio = preserveAspectRatio;
+    if (initialScale != null) this.initialScale = initialScale;
+    if (grid != null) this.grid = grid;
   }
   
   
   public static MoCoordinateSystem parse(org.jmodelica.modelica.compiler.List<ComponentModification> list) {
-    List<List<Double>> extent = null;
-    Boolean preserveAspectRatio = null;
-    Double initialScale = 0.1;
-    List<Double> grid = null;
+    MoCoordinateSystemBuilder mb = builder();
     
     for (ComponentModification cm : list) {
       String type = cm.getName().asID().toLowerCase();
       Exp exp = ((ValueModification)cm.getChild(3).getChild(0)).getExp();
 
       switch (type) {
-        case "grid": grid = (List<Double>) MoExp.parse(exp); break;
-        case "extent": extent = (List<List<Double>>) MoExp.parse(exp); break;
-        case "initialscale": initialScale = (Double) MoExp.parse(exp); break;
-        case "preserveaspectratio": preserveAspectRatio = (Boolean) MoExp.parse(exp); break;
+        case "grid": {
+          List<Double> l = (List<Double>) MoExp.parse(exp);
+          mb.grid(new Point<>(l.get(0), l.get(1)));
+          break;
+        }
+        case "extent": {
+          List<List<Double>> l = (List<List<Double>>) MoExp.parse(exp);
+          mb.first(new Point<>(l.get(0).get(0), l.get(0).get(1)));
+          mb.second(new Point<>(l.get(1).get(0), l.get(1).get(1)));
+          break;
+        }
+        case "initialscale":
+          mb.initialScale((Double) MoExp.parse(exp));
+          break;
+        case "preserveaspectratio":
+          mb.preserveAspectRatio((Boolean) MoExp.parse(exp));
+          break;
       }
     }
-    return new MoCoordinateSystem(extent, preserveAspectRatio, initialScale, grid);
+    return mb.build();
   }
 }

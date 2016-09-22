@@ -30,6 +30,8 @@ public class Configuration extends MyObservable implements Observer {
   protected Notification notification = new Notification();
   @Element(required = false)
   protected MainWindow mainwindow = new MainWindow();
+  @Element(required = false)
+  protected Modelica modelica = new Modelica();
   
   public File file;
   
@@ -45,6 +47,7 @@ public class Configuration extends MyObservable implements Observer {
     logger.init();
     notification.init();
     mainwindow.init();
+    modelica.init();
   }
   
   @Override

@@ -15,7 +15,7 @@ import java.util.List;
 @Getter
 public class MoText extends MoFilledShapeExtent {
   
-  enum TextAlignment {
+  public enum TextAlignment {
     LEFT,
     CENTER,
     RIGHT

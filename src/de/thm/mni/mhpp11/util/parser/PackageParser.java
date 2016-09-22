@@ -5,6 +5,10 @@ import de.thm.mni.mhpp11.util.config.model.Logger;
 import de.thm.mni.mhpp11.util.parser.models.MoFile;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 
 /**
@@ -43,22 +47,33 @@ public class PackageParser extends Observable {
     return f;
   }
   
-  public void collectDir(File file, MoFile.TYPE type) {
+  public void collectDir(File file, MoFile.TYPE type, Integer packageOrder) {
     File[] content = file.listFiles(pathname -> pathname.isDirectory() || pathname.getName().endsWith(".mo"));
+    File[] orders = file.listFiles(pathname -> pathname.getName().endsWith(".order"));
     if(content == null) return;
-    
+    List<String> s = new ArrayList<>();
+    if (orders.length > 0) {
+      File o = orders[0];
+      try {
+        s = Files.readAllLines(o.toPath());
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
     for (File f: content) {
-      if(f.isDirectory()) collectDir(f, type);
-      else collectFile(f, type);
+      Integer order = (f.getName().toLowerCase().equals("package.mo")) ? packageOrder : s.indexOf(f.getName().replaceAll("\\.mo$", ""));
+  
+      if (f.isDirectory()) collectDir(f, type, order);
+      else collectFile(f, type, order);
     }
   }
   
-  public void collectFile(File file, MoFile.TYPE type) {
+  public void collectFile(File file, MoFile.TYPE type, Integer order) {
       logger.debug("Parse File", file.getName());
-  
     try {
       MoFile mf = ASTParser.parse(file);
       mf.setType(type);
+      mf.setOrder(order);
       sendFile(mf);
       
     } catch (ParserException e) {

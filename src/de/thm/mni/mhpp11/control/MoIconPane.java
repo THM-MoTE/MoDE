@@ -20,8 +20,8 @@ public class MoIconPane extends Pane {
   private Double moveX = 100.0;
   private Double moveY = 100.0;
   
-  private Double w = 200.0;
-  private Double h = 200.0;
+  private Double width = 200.0;
+  private Double height = 200.0;
   
   private Double initialScale = 1.0;
   private Boolean preserveAspectRatio = true;
@@ -30,44 +30,37 @@ public class MoIconPane extends Pane {
     this.icon = icon;
     initCoordinateSystem();
     initImage();
-    this.getTransforms().add(Transform.translate(moveX, moveY));
-    //this.scaleTo(25.0, 25.0);
+    this.scaleTo(25.0, 25.0);
   }
   
   public void scaleTo(Double width, Double height) {
-    Double scaleX = width / w;
-    Double scaleY = height / h;
-    this.getTransforms().addAll(Transform.scale(scaleX, scaleY), Transform.translate(-(width / 2), -(height / 2)));
+    Double scaleX = width / this.width;
+    Double scaleY = height / this.height;
+    this.getTransforms().addAll(Transform.scale(scaleX, scaleY));
     this.setPrefHeight(height);
     this.setPrefWidth(width);
   }
   
   private void initCoordinateSystem() {
     MoCoordinateSystem mcs = icon.getMoCoordinateSystem();
-    if (mcs.getExtent() != null && mcs.getExtent().size() > 0) {
-      Boolean minFirst = mcs.getExtent().get(0).get(0) < mcs.getExtent().get(1).get(0);
-      
-      Double minX = mcs.getExtent().get((minFirst) ? 0 : 1).get(0);
-      Double maxX = moveX = mcs.getExtent().get((minFirst) ? 1 : 0).get(0);
-      
-      minFirst = mcs.getExtent().get(0).get(1) < mcs.getExtent().get(1).get(1);
-      
-      Double minY = mcs.getExtent().get((minFirst) ? 0 : 1).get(1);
-      Double maxY = moveY = mcs.getExtent().get((minFirst) ? 1 : 0).get(1);
-      
-      w = Math.abs(minX - maxX);
-      h = Math.abs(minY - maxY);
+    if (mcs.getExtent() != null) {
+      Point<Double, Double>[] extent = mcs.getExtent();
+    
+      Double tlx = extent[(extent[0].getX() < extent[1].getX()) ? 0 : 1].getX();
+      Double tly = moveY = extent[(extent[0].getY() > extent[1].getY()) ? 0 : 1].getY();
+    
+      Double brx = moveX = extent[(extent[0].getX() > extent[1].getX()) ? 0 : 1].getX();
+      Double bry = extent[(extent[0].getY() < extent[1].getY()) ? 0 : 1].getY();
+    
+      width = brx - tlx;
+      height = tly - bry;
     }
     
     if (mcs.getPreserveAspectRatio() != null) this.preserveAspectRatio = mcs.getPreserveAspectRatio();
     if (mcs.getInitialScale() != null) this.initialScale = mcs.getInitialScale();
   
-    this.setPrefWidth(w);
-    this.setPrefHeight(h);
-    this.setMinWidth(w);
-    this.setMinHeight(h);
-    this.setMaxWidth(w);
-    this.setMaxHeight(h);
+    this.setPrefWidth(width);
+    this.setPrefHeight(height);
   }
   
   private void initImage() {
@@ -97,21 +90,24 @@ public class MoIconPane extends Pane {
       }
   
       shape.getTransforms().add(Transform.translate(mg.getOrigin().getX(), -mg.getOrigin().getY()));
+      shape.getTransforms().add(Transform.rotate(mg.getRotation(), 0, 0));
+      shape.getTransforms().add(Transform.translate(moveX, moveY));
+  
       this.getChildren().add(shape);
     }
   }
   
   private Shape setFilledShape(MoFilledShape mfs, Shape shape) {
-    if (mfs.getFillPattern() == MoFilledShape.FillPattern.SOLID) {
+    if (!(mfs instanceof MoText) && mfs.getFillPattern() == MoFilledShape.FillPattern.SOLID) {
       shape.setFill(mfs.getFillColor());
-    } else if (mfs.getFillPattern() == MoFilledShape.FillPattern.NONE) {
+    } else if (!(mfs instanceof MoText) && mfs.getFillPattern() == MoFilledShape.FillPattern.NONE) {
       shape.setFill(Color.TRANSPARENT);
     }
     shape.setStrokeWidth(mfs.getLineThickness());
-    
-    if (mfs.getPattern() == MoGraphic.Utilities.LinePattern.SOLID) {
+  
+    if (!(mfs instanceof MoText) && mfs.getPattern() == MoGraphic.Utilities.LinePattern.SOLID) {
       shape.setStroke(mfs.getLineColor());
-    } else if (mfs.getPattern() == MoGraphic.Utilities.LinePattern.NONE) {
+    } else if (!(mfs instanceof MoText) && mfs.getPattern() == MoGraphic.Utilities.LinePattern.NONE) {
       shape.setStroke(Color.TRANSPARENT);
     }
     
@@ -126,19 +122,35 @@ public class MoIconPane extends Pane {
       f = Font.font(mt.getFontName(), mt.getFontSize());
     } else {
       f = Font.font(mt.getFontName(), 20);
-      f = Font.font(f.getFamily(), MoGraphic.Utilities.calculateMaxFontSize(f, mt.getTextString(), Math.abs(-extent[0].getX() + extent[1].getX()) - 10, Math.abs(-extent[0].getY() + extent[1].getY()) - 10));
+      f = Font.font(f.getFamily(), MoGraphic.Utilities.calculateMaxFontSize(f, mt.getTextString(), Math.abs(-extent[0].getX() + extent[1].getX()), Math.abs(-extent[0].getY() + extent[1].getY())));
     }
     
     text.setFont(f);
     text.setText(mt.getTextString());
     text.setUnderline(MoText.TextStyle.isUnterline(mt.getTextStyle()));
-    
-    Double h = MoGraphic.Utilities.calculateFontHeight(f);
-    Double w = MoGraphic.Utilities.calculateStringWidth(f, mt.getTextString());
-    
-    text.setX(extent[0].getX());
-    text.setY(h + (h * 0.5));
-    
+  
+    Double tlx = extent[(extent[0].getX() < extent[1].getX()) ? 0 : 1].getX();
+    Double tly = extent[(extent[0].getY() > extent[1].getY()) ? 0 : 1].getY();
+  
+    Double brx = extent[(extent[0].getX() > extent[1].getX()) ? 0 : 1].getX();
+    Double bry = extent[(extent[0].getY() < extent[1].getY()) ? 0 : 1].getY();
+  
+    Double w1 = brx - tlx;
+    Double h1 = tly - bry;
+    Double h2 = MoGraphic.Utilities.calculateFontHeight(f);
+    Double w2 = MoGraphic.Utilities.calculateStringWidth(f, mt.getTextString());
+  
+    text.setY(((h1 - h2) / 2));
+    if (mt.getHorizontalAlignment() == MoText.TextAlignment.LEFT) {
+      text.setX(0);
+    } else if (mt.getHorizontalAlignment() == MoText.TextAlignment.RIGHT) {
+      text.setX(w1 - w2);
+    } else if (mt.getHorizontalAlignment() == MoText.TextAlignment.CENTER) {
+      text.setX(((w1 - w2) / 2));
+    }
+  
+    text.setFill((mt.getTextColor() != null) ? mt.getTextColor() : mt.getLineColor());
+    text.getTransforms().add(Transform.translate(tlx, tly));
     return text;
   }
   
@@ -151,6 +163,40 @@ public class MoIconPane extends Pane {
     rect.setHeight(r[0].getY() - r[1].getY());
     
     return rect;
+  }
+  
+  private Shape createEllipse(MoEllipse me) {
+    Point<Double, Double>[] extent = me.getExtent();
+    
+    Double tlx = extent[(extent[0].getX() < extent[1].getX()) ? 0 : 1].getX();
+    Double tly = extent[(extent[0].getY() > extent[1].getY()) ? 0 : 1].getY();
+    
+    Double brx = extent[(extent[0].getX() > extent[1].getX()) ? 0 : 1].getX();
+    Double bry = extent[(extent[0].getY() < extent[1].getY()) ? 0 : 1].getY();
+    
+    Double w1 = brx - tlx;
+    Double h1 = tly - bry;
+    
+    if (me.getEndAngle() + me.getStartAngle() == 360) {
+      Ellipse e = new Ellipse();
+      e.setCenterX((tlx + brx) / 2);
+      e.setCenterY((tly + bry) / 2);
+      e.setRadiusX(w1 / 2);
+      e.setRadiusY(h1 / 2);
+      
+      return e;
+    } else {
+      Arc a = new Arc();
+      a.setCenterX((tlx + brx) / 2);
+      a.setCenterY((tly + bry) / 2);
+      a.setRadiusX(w1 / 2);
+      a.setRadiusY(h1 / 2);
+      
+      a.setStartAngle(me.getStartAngle());
+      a.setLength(me.getEndAngle() - me.getStartAngle());
+      a.setType(ArcType.ROUND);
+      return a;
+    }
   }
   
   private Polyline createLine(MoLine ml) {
@@ -169,27 +215,5 @@ public class MoIconPane extends Pane {
     }
     
     return polygon;
-  }
-  
-  private Shape createEllipse(MoEllipse me) {
-    Point<Double, Double>[] r = me.getExtent();
-    if (me.getEndAngle() + me.getStartAngle() == 360) {
-      Ellipse e = new Ellipse();
-      e.setCenterX(0);
-      e.setCenterY(0);
-      e.setRadiusX(Math.abs(r[0].getX() - r[1].getX()) / 2);
-      e.setRadiusY(Math.abs(r[0].getY() - r[1].getY()) / 2);
-      return e;
-    } else {
-      Arc a = new Arc();
-      a.setCenterX(0);
-      a.setCenterY(0);
-      a.setRadiusX(Math.abs(r[0].getX() - r[1].getX()) / 2);
-      a.setRadiusY(Math.abs(r[0].getY() - r[1].getY()) / 2);
-      a.setStartAngle(me.getStartAngle());
-      a.setLength(me.getEndAngle() - me.getStartAngle());
-      a.setType(ArcType.ROUND);
-      return a;
-    }
   }
 }

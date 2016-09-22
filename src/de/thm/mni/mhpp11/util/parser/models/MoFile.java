@@ -25,6 +25,7 @@ public class MoFile extends MoElement {
   }
   
   @Setter private TYPE type;
+  @Setter private Integer order;
   @Setter private MoWithin moWithin;
   @Setter private MoPackage moPackage;
   private List<MoClass> moClass = new ArrayList<>();
