@@ -1,6 +1,5 @@
 package de.thm.mni.mhpp11.util.parser;
 
-import beaver.Parser.Exception;
 import de.thm.mni.mhpp11.util.parser.models.MoFile;
 import org.jmodelica.modelica.compiler.*;
 import org.jmodelica.util.OptionRegistry;
@@ -8,7 +7,6 @@ import org.jmodelica.util.OptionRegistry.LocalIteration;
 import org.jmodelica.util.streams.CodeStream;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,8 +24,8 @@ public class ASTParser {
     try {
       sr = ParserHandler.parseModelicaFile(UtilInterface.create(or), file.getAbsolutePath());
       return parse(sr, file.getName());
-      
-    } catch (Exception | IOException e) {
+  
+    } catch (Exception e) {
       e.printStackTrace();
       throw new ParserException(e.getCause());
     }

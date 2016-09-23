@@ -4,6 +4,7 @@ import de.thm.mni.mhpp11.util.config.model.Point;
 import de.thm.mni.mhpp11.util.parser.models.MoExp;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.jmodelica.modelica.compiler.ComponentModification;
 import org.jmodelica.modelica.compiler.Exp;
 import org.jmodelica.modelica.compiler.ValueModification;
@@ -13,16 +14,22 @@ import java.util.List;
 /**
  * Created by hobbypunk on 16.09.16.
  */
+@NoArgsConstructor
 @Getter
 public class MoCoordinateSystem {
   
   private Point<Double, Double>[] extent = (Point<Double, Double>[]) new Point[2];
+  
+  {
+    this.extent[0] = new Point<>(-100., 100.);
+    this.extent[1] = new Point<>(100., -100.);
+  }
   private Boolean preserveAspectRatio = true;
   private Double initialScale = 0.1;
   private Point<Double, Double> grid = new Point<>(2., 2.);
   
   @Builder
-  private MoCoordinateSystem(Point<Double, Double> first, Point<Double, Double> second, Boolean preserveAspectRatio, Double initialScale, Point<Double, Double> grid) {
+  public MoCoordinateSystem(Point<Double, Double> first, Point<Double, Double> second, Boolean preserveAspectRatio, Double initialScale, Point<Double, Double> grid) {
     this.extent[0] = (first != null) ? first : new Point<>(-100., 100.);
     this.extent[1] = (second != null) ? second : new Point<>(100., -100.);
     if (preserveAspectRatio != null) this.preserveAspectRatio = preserveAspectRatio;

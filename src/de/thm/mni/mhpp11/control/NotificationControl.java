@@ -1,7 +1,7 @@
 package de.thm.mni.mhpp11.control;
 
 import de.thm.mni.mhpp11.util.config.Settings;
-import de.thm.mni.mhpp11.util.config.model.Message;
+import de.thm.mni.mhpp11.util.logger.Message;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;

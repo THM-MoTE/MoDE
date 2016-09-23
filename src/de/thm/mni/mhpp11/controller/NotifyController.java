@@ -1,7 +1,7 @@
 package de.thm.mni.mhpp11.controller;
 
 import de.thm.mni.mhpp11.control.NotificationControl;
-import de.thm.mni.mhpp11.util.config.model.Message;
+import de.thm.mni.mhpp11.util.logger.Message;
 import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;

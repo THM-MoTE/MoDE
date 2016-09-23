@@ -1,9 +1,8 @@
-package de.thm.mni.mhpp11.util.config.model;
+package de.thm.mni.mhpp11.util.logger;
 
 import de.thm.mni.mhpp11.util.config.Settings;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NonNull;
 
 import java.time.Instant;
 import java.util.Date;
@@ -23,10 +22,12 @@ public class Message {
     public boolean isInfo() { return this.equals(INFO); }
   }
   
-  @NonNull private final TYPE type;
-  @NonNull private final String headline;
-  @NonNull private final String message;
-  @NonNull private final Date date = Date.from(Instant.now());
+  private final TYPE type;
+  private final String headline;
+  private final String message;
+  private final Boolean noNotify;
+  private final Date date = Date.from(Instant.now());
+  
   
   @Override
   public String toString() {

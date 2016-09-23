@@ -23,7 +23,7 @@ public class MoAnnotation {
   
   public static MoAnnotation parse(ComponentModification cm) {
     if(cm.getName().asID().toLowerCase().equals("icon")) {
-      return MoIcon.parse(((CompleteModification)cm.getChild(3).getChild(0)).getClassModification().getArguments());
+      return MoIcon.parse(((CompleteModification) cm.getModificationOpt().getChild(0)).getClassModification().getArguments());
     }
     return null;
   }

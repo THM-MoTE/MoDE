@@ -1,7 +1,6 @@
 package de.thm.mni.mhpp11.util.logger;
 
 import de.thm.mni.mhpp11.util.config.model.Logger;
-import de.thm.mni.mhpp11.util.config.model.Message;
 import lombok.NoArgsConstructor;
 
 /**

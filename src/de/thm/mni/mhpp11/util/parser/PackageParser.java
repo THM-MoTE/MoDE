@@ -49,6 +49,8 @@ public class PackageParser extends Observable {
   }
   
   public void collectLibs(File base, TYPE type, Integer packageOrder) {
+    if (base == null) return;
+    
     File[] libs = base.listFiles(File::isDirectory);
     if (libs == null) return;
     for (File lib : libs) {
@@ -86,7 +88,7 @@ public class PackageParser extends Observable {
       sendFile(mf);
       
     } catch (ParserException e) {
-      e.printStackTrace();
+      Settings.load().getLogger().error(e);
     }
   }
   

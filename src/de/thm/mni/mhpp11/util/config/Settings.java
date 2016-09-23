@@ -86,6 +86,9 @@ public class Settings extends Configuration implements Observer {
   
   @Override
   public void update(Observable o, Object arg) {
-    this.save();
+    if (arg instanceof String && !((String) arg).startsWith(getClass().getSimpleName())) {
+      super.update(o, arg);
+      this.save();
+    }
   }
 }

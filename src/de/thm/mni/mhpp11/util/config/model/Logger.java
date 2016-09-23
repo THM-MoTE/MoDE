@@ -1,9 +1,9 @@
 package de.thm.mni.mhpp11.util.config.model;
 
+import de.thm.mni.mhpp11.util.logger.Message;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import org.simpleframework.xml.Element;
 
 /**
@@ -23,10 +23,8 @@ public abstract class Logger extends MyObservable{
     ALWAYS
   }
   
-  @Element
-  @NonNull LEVEL level = LEVEL.ERROR;
-  @Element
-  @NonNull LEVEL notifyLevel = LEVEL.ERROR;
+  @Element LEVEL level = LEVEL.ERROR;
+  @Element LEVEL notifyLevel = LEVEL.ERROR;
   
   public void setLevel(LEVEL level) {
     this.level = level;
@@ -45,17 +43,25 @@ public abstract class Logger extends MyObservable{
   public abstract void log(Message message);
   
   public void debug(String head, String message) {
-    send(new Message(Message.TYPE.DEBUG, head, message));
+    send(new Message(Message.TYPE.DEBUG, head, message, false));
     
   }
   
+  
+  public void info(String head, String message, Boolean noNotify) {
+    send(new Message(Message.TYPE.INFO, head, message, noNotify));
+  }
+
   public void info(String head, String message) {
-    send(new Message(Message.TYPE.INFO, head, message));
-    
+    info(head, message, false);
   }
   
   public void warning(String head, String message) {
-    send(new Message(Message.TYPE.WARNING, head, message));
+    warning(head, message, false);
+  }
+  
+  public void warning(String head, String message, Boolean noNotify) {
+    send(new Message(Message.TYPE.WARNING, head, message, noNotify));
   }
   
   public void error(Exception exception) {
@@ -68,12 +74,12 @@ public abstract class Logger extends MyObservable{
     }
     
     String msg = String.format("Exception in thread \"%1$s\" %2$s", Thread.currentThread().getName(), exception.getClass().getCanonicalName());
-    logIntern(new Message(Message.TYPE.ERROR, msg, sb.toString()));
-    notify(new Message(Message.TYPE.ERROR, "Exception", exception.getMessage()));
+    logIntern(new Message(Message.TYPE.ERROR, msg, sb.toString(), false));
+    notify(new Message(Message.TYPE.ERROR, "Exception", exception.getMessage(), false));
   }
   
   public void error(String head, String message) {
-    send(new Message(Message.TYPE.ERROR, head, message));
+    send(new Message(Message.TYPE.ERROR, head, message, false));
   }
   
   private void send(Message m) {

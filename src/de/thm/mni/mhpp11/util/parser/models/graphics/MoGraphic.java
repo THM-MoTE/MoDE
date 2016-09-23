@@ -59,15 +59,19 @@ public class MoGraphic {
     MoGraphicBuilder mb = builder();
     
     for(Object o: mf.getParams()) {
-      if(!(o instanceof Pair)) continue;
+      if (!(o instanceof Pair)) continue;
       Pair<String, Object> p = (Pair<String, Object>) o;
-      if(p.getKey().equals("origin")) {
-        List<Double> l = (List<Double>)p.getValue();
-        mb.origin(new Point<>(l.get(0), l.get(1)));
-      } else if(p.getKey().equals("visible")) {
-        mb.visible((Boolean) p.getValue());
-      } else if(p.getKey().equals("rotation")) {
-        mb.rotation((Double) p.getValue());
+      try {
+        if (p.getKey().equals("origin")) {
+          List<Double> l = (List<Double>) p.getValue();
+          mb.origin(new Point<>(l.get(0), l.get(1)));
+        } else if (p.getKey().equals("visible")) {
+          mb.visible((Boolean) p.getValue());
+        } else if (p.getKey().equals("rotation")) {
+          mb.rotation((Double) p.getValue());
+        }
+      } catch (ClassCastException e) {
+        Settings.load().getLogger().warning("Cast Problem", "Can't cast " + p.getValue().getClass().getSimpleName(), true);
       }
     }
     

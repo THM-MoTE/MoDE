@@ -128,7 +128,7 @@ public class MainController extends NotifyController {
     tvLibrary.setRoot(root);
     tvLibrary.setShowRoot(false);
   
-    initLibs();
+    // initLibs();
     initProject();
   }
   

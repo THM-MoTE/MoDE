@@ -1,11 +1,9 @@
 package de.thm.mni.mhpp11.util.parser.models;
 
+import de.thm.mni.mhpp11.util.config.Settings;
 import lombok.Getter;
 import lombok.Setter;
-import org.jmodelica.modelica.compiler.Element;
-import org.jmodelica.modelica.compiler.FullClassDecl;
-import org.jmodelica.modelica.compiler.Program;
-import org.jmodelica.modelica.compiler.StoredDefinition;
+import org.jmodelica.modelica.compiler.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,10 +45,24 @@ public class MoFile extends MoElement {
   public static MoFile parse(Program p, MoFile mp) {
     StoredDefinition sd = p.getUnstructuredEntitys().getChild(0);
     mp.setMoWithin(MoWithin.parse(sd));
-    mp.setMoPackage(MoPackage.parse((FullClassDecl)sd.getElements().getChild(0)));
+    try {
+      mp.setMoPackage(MoPackage.parse((FullClassDecl) sd.getElements().getChild(0)));
+    } catch (ClassCastException e) {
+      Settings.load().getLogger().warning("Cast Problem", "Can't cast " + sd.getElements().getChild(0).getClass().getSimpleName(), true);
+    }
+  
     for(Element fcd: sd.getElements()) {
-      MoClass mc = MoClass.parse((FullClassDecl)fcd);
-      if(mc != null) mp.getMoClass().add(mc);
+      try {
+        MoClass mc = null;
+        if (fcd instanceof FullClassDecl) {
+          mc = MoClass.parse((FullClassDecl) fcd);
+        } else if (fcd instanceof ShortClassDecl) {
+          throw new ClassCastException();
+        }
+        if (mc != null) mp.getMoClass().add(mc);
+      } catch (ClassCastException e) {
+        Settings.load().getLogger().warning("Cast Problem", "Can't cast " + fcd.getClass().getSimpleName(), true);
+      }
     }
     
     return mp;
