@@ -1,9 +1,11 @@
 package de.thm.mni.mhpp11.util.parser.models;
 
 
+import lombok.Builder;
 import lombok.Getter;
 import org.jmodelica.modelica.compiler.FunctionCall;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -12,11 +14,11 @@ import java.util.List;
 @Getter
 public class MoFunction extends MoElement {
   
-  List<Object> params;
+  private final List<Object> params = new ArrayList<>();
   
-  public MoFunction(String name, List<Object> params) {
-    super(name, "");
-    this.params = params;
+  @Builder
+  public MoFunction(String name, MoElement parent) {
+    super(name, parent);
   }
   
   @Override
@@ -25,8 +27,13 @@ public class MoFunction extends MoElement {
   }
   
   public static MoFunction parse(FunctionCall fc) {
-    List<Object> l = MoExp.parseFunctionArguments(fc.getFunctionArguments());
-    return new MoFunction(fc.getName().asID(), l);
+    MoFunctionBuilder mb = builder();
+    mb.name(fc.getName().asID());
+    mb.parent(null);
+  
+    MoFunction mf = mb.build();
+    mf.getParams().addAll(MoExp.parseFunctionArguments(fc.getFunctionArguments()));
+    return mf;
     
   }
 }

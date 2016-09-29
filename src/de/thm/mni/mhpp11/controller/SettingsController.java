@@ -75,9 +75,9 @@ public class SettingsController extends Controller {
     cbLoggerNotifyLevel.setItems(FXCollections.observableArrayList(LEVEL.values()));
     cbLoggerNotifyLevel.setValue(settings.getLogger().getNotifyLevel());
     cbLoggerNotifyLevel.valueProperty().addListener((observable, oldValue, newValue) -> settings.getLogger().setNotifyLevel(newValue));
-    
-    if (settings.getModelica().getModelicaLibrary() != null) {
-      File f = settings.getModelica().getModelicaLibrary();
+  
+    if (settings.getModelica().getOmc() != null) {
+      File f = settings.getModelica().getOmc();
       tfOMLibrary.setText(f.getPath());
       tfOMLibrary.positionCaret(f.getPath().length() + 1);
     }
@@ -102,7 +102,7 @@ public class SettingsController extends Controller {
   @FXML
   private void onOMLibraryClick() {
     DirectoryChooser dc = new DirectoryChooser();
-    File f = settings.getModelica().getModelicaLibrary();
+    File f = settings.getModelica().getOmc();
     if (f != null) dc.setInitialDirectory(f);
     f = dc.showDialog(this.stage);
     

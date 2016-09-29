@@ -1,3 +1,4 @@
+/*
 package de.thm.mni.mhpp11.util.parser;
 
 import de.thm.mni.mhpp11.util.parser.models.MoFile;
@@ -11,9 +12,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+*/
 /**
  * Created by hobbypunk on 08.09.16.
- */
+ *//*
+
 public class ASTParser {
   
   public static MoFile parse(File file) throws ParserException {
@@ -67,3 +70,4 @@ public class ASTParser {
     p.prettyPrint(print, cs, "");
   }
 }
+*/

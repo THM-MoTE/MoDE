@@ -40,6 +40,10 @@ public class MoGraphic {
     if(rotation != null) this.rotation = rotation;
   }
   
+  public static List<MoGraphic> parse(String text) {
+    return null;
+  }
+  
   public static List<MoGraphic> parse(Exp exp) {
     List<MoGraphic> mgs = new ArrayList<>();
     List<MoFunction> list = (List<MoFunction>)MoExp.parse(exp);

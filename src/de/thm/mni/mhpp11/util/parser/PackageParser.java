@@ -2,8 +2,6 @@ package de.thm.mni.mhpp11.util.parser;
 
 import de.thm.mni.mhpp11.util.config.Settings;
 import de.thm.mni.mhpp11.util.config.model.Logger;
-import de.thm.mni.mhpp11.util.parser.models.MoFile;
-import de.thm.mni.mhpp11.util.parser.models.MoFile.TYPE;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,35 +28,20 @@ public class PackageParser extends Observable {
   }
   
   public File findBasePackage(File f) {
-    try {
-      MoFile mp = ASTParser.parse(f);
-      if(mp.getMoPackage() != null || mp.getMoWithin().getPackages().size() > 0) {
-        f = f.getParentFile();
-        if(mp.getMoPackage() != null && mp.getMoWithin().getPackages().size() > 0) {
-          f = f.getParentFile();
-        }
-        for(Integer i = 1; i < mp.getMoWithin().getPackages().size(); i++) {
-          f = f.getParentFile();
-        }
-        return new File(f.getAbsolutePath() + "/package.mo");
-      }
-    } catch(ParserException e) {
-      logger.error(e);
-    }
     return f;
   }
   
-  public void collectLibs(File base, TYPE type, Integer packageOrder) {
+  public void collectLibs(File base, Integer packageOrder) {
     if (base == null) return;
     
     File[] libs = base.listFiles(File::isDirectory);
     if (libs == null) return;
     for (File lib : libs) {
-      collectDir(lib, type, packageOrder);
+      collectDir(lib, packageOrder);
     }
   }
   
-  public void collectDir(File file, TYPE type, Integer packageOrder) {
+  public void collectDir(File file, Integer packageOrder) {
     File[] content = file.listFiles(pathname -> pathname.isDirectory() || pathname.getName().endsWith(".mo"));
     File[] orders = file.listFiles(pathname -> pathname.getName().endsWith(".order"));
     if(content == null) return;
@@ -74,27 +57,21 @@ public class PackageParser extends Observable {
     for (File f: content) {
       Integer order = (f.getName().toLowerCase().equals("package.mo")) ? packageOrder : s.indexOf(f.getName().replaceAll("\\.mo$", ""));
   
-      if (f.isDirectory()) collectDir(f, type, order);
-      else collectFile(f, type, order);
+      if (f.isDirectory()) collectDir(f, order);
+      else collectFile(f, order);
     }
   }
   
-  public void collectFile(File file, TYPE type, Integer order) {
+  public void collectFile(File file, Integer order) {
       logger.debug("Parse File", file.getName());
-    try {
-      MoFile mf = ASTParser.parse(file);
-      mf.setType(type);
-      mf.setOrder(order);
-      sendFile(mf);
-      
-    } catch (ParserException e) {
-      Settings.load().getLogger().error(e);
-    }
-  }
-  
-  private void sendFile(MoFile file) {
-    this.setChanged();
-    this.notifyObservers(file);
-    this.clearChanged();
+
+//      MoFile mf = ASTParser.parse(file);
+//      mf.setType(type);
+//      mf.setOrder(order);
+//      sendFile(mf);
+
+//    } catch (ParserException e) {
+//      Settings.load().getLogger().error(e);
+//    }
   }
 }

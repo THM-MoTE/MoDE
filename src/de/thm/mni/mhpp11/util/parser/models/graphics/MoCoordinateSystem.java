@@ -1,15 +1,9 @@
 package de.thm.mni.mhpp11.util.parser.models.graphics;
 
 import de.thm.mni.mhpp11.util.config.model.Point;
-import de.thm.mni.mhpp11.util.parser.models.MoExp;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.jmodelica.modelica.compiler.ComponentModification;
-import org.jmodelica.modelica.compiler.Exp;
-import org.jmodelica.modelica.compiler.ValueModification;
-
-import java.util.List;
 
 /**
  * Created by hobbypunk on 16.09.16.
@@ -37,34 +31,15 @@ public class MoCoordinateSystem {
     if (grid != null) this.grid = grid;
   }
   
-  
-  public static MoCoordinateSystem parse(org.jmodelica.modelica.compiler.List<ComponentModification> list) {
+  public static MoCoordinateSystem parse(String[] system) {
     MoCoordinateSystemBuilder mb = builder();
     
-    for (ComponentModification cm : list) {
-      String type = cm.getName().asID().toLowerCase();
-      Exp exp = ((ValueModification)cm.getChild(3).getChild(0)).getExp();
-
-      switch (type) {
-        case "grid": {
-          List<Double> l = (List<Double>) MoExp.parse(exp);
-          mb.grid(new Point<>(l.get(0), l.get(1)));
-          break;
-        }
-        case "extent": {
-          List<List<Double>> l = (List<List<Double>>) MoExp.parse(exp);
-          mb.first(new Point<>(l.get(0).get(0), l.get(0).get(1)));
-          mb.second(new Point<>(l.get(1).get(0), l.get(1).get(1)));
-          break;
-        }
-        case "initialscale":
-          mb.initialScale((Double) MoExp.parse(exp));
-          break;
-        case "preserveaspectratio":
-          mb.preserveAspectRatio((Boolean) MoExp.parse(exp));
-          break;
-      }
-    }
+    mb.first(new Point<>(Double.parseDouble(system[0]), Double.parseDouble(system[1])));
+    mb.second(new Point<>(Double.parseDouble(system[2]), Double.parseDouble(system[3])));
+    mb.preserveAspectRatio(Boolean.parseBoolean(system[4]));
+    mb.initialScale(Double.parseDouble(system[5]));
+    mb.grid(new Point<>(Double.parseDouble(system[6]), Double.parseDouble(system[7])));
+  
     return mb.build();
   }
 }

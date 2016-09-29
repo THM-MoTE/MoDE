@@ -1,6 +1,5 @@
 package de.thm.mni.mhpp11.util.parser.models;
 
-import de.thm.mni.mhpp11.util.parser.ASTParser;
 import javafx.util.Pair;
 import org.jmodelica.modelica.compiler.*;
 
@@ -19,7 +18,7 @@ public class MoExp {
     if(exp instanceof StringLitExp) return ((StringLitExp) exp).getSTRING();
     if(exp instanceof FunctionCall) return MoFunction.parse((FunctionCall) exp);
     if(exp instanceof RealLitExp) return Double.parseDouble(((RealLitExp)exp).getUNSIGNED_NUMBER());
-    if(exp instanceof AccessExp) return ASTParser.parse(((AccessExp) exp).getAccess());
+    //if(exp instanceof AccessExp) return ASTParser.parse(((AccessExp) exp).getAccess());
     if(exp instanceof NegExp) {
       Number n = (Number)parse(((NegExp) exp).getExp());
       if(n instanceof Integer) return -(Integer)n;

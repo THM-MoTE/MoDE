@@ -10,11 +10,10 @@ import java.io.File;
  */
 @Getter
 public class Modelica extends MyObservable {
-  @Element(required = false) File modelicaBuiltIn;
-  @Element(required = false) File modelicaLibrary;
+  @Element(required = false) File omc;
   
-  public void setModelicaLibrary(File modelicaLibrary) {
-    this.modelicaLibrary = modelicaLibrary;
-    this.notifyObservers("ModelicaLibrary");
+  public void setModelicaLibrary(File omc) {
+    this.omc = omc;
+    this.notifyObservers("omc");
   }
 }

@@ -1,7 +1,7 @@
 package de.thm.mni.mhpp11.control;
 
 import de.thm.mni.mhpp11.util.config.model.Point;
-import de.thm.mni.mhpp11.util.parser.models.MoIcon;
+import de.thm.mni.mhpp11.util.parser.models.annotations.MoIcon;
 import de.thm.mni.mhpp11.util.parser.models.graphics.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;

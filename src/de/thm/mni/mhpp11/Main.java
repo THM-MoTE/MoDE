@@ -1,8 +1,5 @@
 package de.thm.mni.mhpp11;
 
-import de.thm.mni.mhpp11.util.parser.ASTParser;
-import de.thm.mni.mhpp11.util.parser.ParserException;
-
 import java.io.File;
 
 /**
@@ -26,12 +23,6 @@ public class Main {
   private void testJModelica() {
     File file  = new File("./test.mo");
     file = new File("../2014-modelica-kotani/SHM/SeidelThesis/Examples/FullModel/package.mo");
-    
-    try {
-      ASTParser.parse(file);
-    } catch(ParserException e) {
-      e.printStackTrace();
-    }
   }
   
 }
