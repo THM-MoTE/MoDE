@@ -2,8 +2,5 @@
 *~
 .idea/
 target/
-*.jar
-/*.fxml
+src/main/generate/
 /*.mo
-/.java
-
