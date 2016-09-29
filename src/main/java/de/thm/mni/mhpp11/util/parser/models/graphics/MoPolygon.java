@@ -1,8 +1,7 @@
 package de.thm.mni.mhpp11.util.parser.models.graphics;
 
+import de.thm.mni.mhpp11.parser.ModelicaIconParser;
 import de.thm.mni.mhpp11.util.config.model.Point;
-import de.thm.mni.mhpp11.util.parser.models.MoFunction;
-import javafx.util.Pair;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Singular;
@@ -26,32 +25,16 @@ public class MoPolygon extends MoFilledShape {
     this.smooth = smooth;
   }
   
-  public static MoPolygon parse(MoFunction mf) {
+  public static MoPolygon parse(ModelicaIconParser.PolygonContext ctx) {
     MoPolygonBuilder mb = polygonBuilder();
     
-    mb.mfs(MoFilledShape.parse(mf));
-  
-    for (Object o : mf.getParams()) {
-      if (!(o instanceof Pair)) continue;
-      Pair<String, Object> p = (Pair<String, Object>) o;
-      String key = p.getKey().toLowerCase();
-      Object val = p.getValue();
-      switch (key) {
-        case "points":
-          List<List<Double>> list = (List<List<Double>>) val;
-          for (Object obj : list) {
-            List<Double> point = (List<Double>) obj;
-            mb.point(new Point<>(point.get(0), point.get(1)));
-          }
-          break;
-        case "smooth": {
-          List<String> l = (List<String>) val;
-          mb.smooth(Utilities.Smooth.valueOf(l.get(1).toUpperCase()));
-          break;
-        }
-      }
+    mb.mfs(MoFilledShape.parse(ctx.filledShape()));
+    
+    for (ModelicaIconParser.PointContext point : ctx.points().point()) {
+      mb.point(new Point<>(Double.parseDouble(point.x.getText()), Double.parseDouble(point.y.getText())));
     }
-  
+    
+    mb.smooth(Utilities.Smooth.valueOf(ctx.smooth().type.getText().toUpperCase()));
   
     return mb.build();
   }

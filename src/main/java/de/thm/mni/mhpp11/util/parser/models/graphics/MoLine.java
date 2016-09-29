@@ -1,9 +1,8 @@
 package de.thm.mni.mhpp11.util.parser.models.graphics;
 
+import de.thm.mni.mhpp11.parser.ModelicaIconParser;
 import de.thm.mni.mhpp11.util.config.model.Point;
-import de.thm.mni.mhpp11.util.parser.models.MoFunction;
 import javafx.scene.paint.Color;
-import javafx.util.Pair;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Singular;
@@ -48,48 +47,20 @@ public class MoLine extends MoGraphic {
     this.smooth = smooth;
   }
   
-  public static MoLine parse(MoFunction mf) {
+  public static MoLine parse(ModelicaIconParser.LineContext ctx) {
     MoLineBuilder mb = lineBuilder();
-    mb.mg(MoGraphic.parse(mf));
-    
-    for (Object o : mf.getParams()) {
-      if (!(o instanceof Pair)) continue;
-      Pair<String, Object> p = (Pair<String, Object>) o;
-      String key = p.getKey().toLowerCase();
-      Object val = p.getValue();
-      switch (key) {
-        case "thickness":
-          mb.thickness((Double) p.getValue());
-          break;
-        case "points":
-          List<List<Double>> list = (List<List<Double>>) val;
-          for (Object obj : list) {
-            List<Double> point = (List<Double>) obj;
-            mb.point(new Point<>(point.get(0), point.get(1)));
-          }
-          break;
-        case "smooth": {
-          List<String> l = (List<String>) val;
-          mb.smooth(Utilities.Smooth.valueOf(l.get(1).toUpperCase()));
-          break;
-        }
-        case "color":
-          mb.color(Utilities.convertColor(val));
-          break;
-        case "pattern":
-          mb.linePattern(Utilities.LinePattern.valueOf(((List<String>) val).get(1).toUpperCase()));
-          break;
-        case "arrow": {
-          List<List<String>> l = (List<List<String>>) val;
-          mb.start(Arrow.valueOf(l.get(0).get(1).toUpperCase()));
-          mb.end(Arrow.valueOf(l.get(1).get(1).toUpperCase()));
-          break;
-        }
-        case "arrowSize":
-          mb.arrowSize((Double) p.getValue());
-          break;
-      }
+    mb.mg(MoGraphic.parse(ctx.graphicItem()));
+    mb.thickness(Double.parseDouble(ctx.lineThickness.getText()));
+    for (ModelicaIconParser.PointContext point : ctx.points().point()) {
+      mb.point(new Point<>(Double.parseDouble(point.x.getText()), Double.parseDouble(point.y.getText())));
     }
+    
+    mb.smooth(Utilities.Smooth.valueOf(ctx.smooth().type.getText().toUpperCase()));
+    mb.color(Utilities.convertColor(ctx.lineColor));
+    mb.linePattern(Utilities.LinePattern.valueOf(ctx.linePattern().type.getText().toUpperCase()));
+    mb.start(Arrow.valueOf(ctx.arrows().a1.type.getText().toUpperCase()));
+    mb.end(Arrow.valueOf(ctx.arrows().a2.type.getText().toUpperCase()));
+    mb.arrowSize(Double.parseDouble(ctx.as.getText()));
     
     return mb.build();
   }

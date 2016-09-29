@@ -1,17 +1,18 @@
 package de.thm.mni.mhpp11.util.parser.models.annotations;
 
+import de.thm.mni.mhpp11.parser.ModelicaIconLexer;
+import de.thm.mni.mhpp11.parser.ModelicaIconParser;
 import de.thm.mni.mhpp11.util.parser.OMCompiler;
 import de.thm.mni.mhpp11.util.parser.models.graphics.MoCoordinateSystem;
 import de.thm.mni.mhpp11.util.parser.models.graphics.MoGraphic;
 import lombok.Builder;
 import lombok.Getter;
-import org.jmodelica.modelica.compiler.Argument;
-import org.jmodelica.modelica.compiler.ComponentModification;
-import org.jmodelica.modelica.compiler.Exp;
-import org.jmodelica.modelica.compiler.List;
+import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CommonTokenStream;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * Created by hobbypunk on 16.09.16.
@@ -28,27 +29,21 @@ public class MoIcon extends MoAnnotation {
     if (moGraphics != null) this.moGraphics = moGraphics;
   }
   
-  public static MoIcon parse(List<Argument> list) {
-    MoIconBuilder mb = builder();
-    for(Argument a : list) {
-      ComponentModification cm = (ComponentModification) a;
-      String type = cm.getName().asID().toLowerCase();
-      if(type.equals("coordinatesystem")) {
-      } else if(type.equals("graphics")) {
-        if (cm.getModificationOpt().getNumChild() > 0)
-          mb.moGraphics(MoGraphic.parse((Exp) cm.getModificationOpt().getChild(0).getChild(0)));
-      }
-    }
-  
-    return mb.build();
-  }
-  
   public static MoIcon parse(OMCompiler omc, String name) {
     MoIconBuilder mb = builder();
     String s = omc.getIcon(name);
-    String[] ss = s.split(",", 9);
-    mb.moCoordinateSystem(MoCoordinateSystem.parse(Arrays.copyOfRange(ss, 0, 8)));
-    mb.moGraphics(MoGraphic.parse(ss[8].replaceAll("(^\\{)|(\\}$)", "")));
+    if (s == null || s.isEmpty() || s.startsWith("annotation")) return null;
+    System.out.println(name + ": " + s);
+    try {
+      ANTLRInputStream is = new ANTLRInputStream(new ByteArrayInputStream(s.getBytes()));
+      ModelicaIconParser p = new ModelicaIconParser(new CommonTokenStream(new ModelicaIconLexer(is)));
+      ModelicaIconParser.IconContext ic = p.icon();
+      mb.moCoordinateSystem(MoCoordinateSystem.parse(ic.coordinateSystem()));
+      if (ic.l != null) mb.moGraphics(MoGraphic.parse(ic.l));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    
     return null;
   }
 }

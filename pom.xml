@@ -72,11 +72,15 @@
       <artifactId>ikonli-materialdesign-pack</artifactId>
       <version>1.7.0</version>
     </dependency>
+  
+    <!-- https://mvnrepository.com/artifact/org.antlr/antlr4-runtime -->
     <dependency>
-      <groupId>org.jmodelica</groupId>
-      <artifactId>modelica</artifactId>
-      <version>1.17-svn</version>
+      <groupId>org.antlr</groupId>
+      <artifactId>antlr4-runtime</artifactId>
+      <version>4.5.3</version>
     </dependency>
+  
+    <!-- local Repo -->
     <dependency>
       <groupId>de.thm.mni.njss90</groupId>
       <artifactId>omc</artifactId>
@@ -97,7 +101,7 @@
     </repository>
     
     <repository>
-      <id>Local jModelica Repo</id>
+      <id>Local Repo</id>
       <url>file://lib</url>
     </repository>
   </repositories>
@@ -108,7 +112,11 @@
       <plugin>
         <groupId>org.antlr</groupId>
         <artifactId>antlr4-maven-plugin</artifactId>
-        <version>4.3</version>
+        <version>4.5.3</version>
+        <configuration>
+          <outputDirectory>${project.build.directory}/generated-sources/antlr4/de/thm/mni/mhpp11/parser
+          </outputDirectory>
+        </configuration>
         <executions>
           <execution>
             <goals>

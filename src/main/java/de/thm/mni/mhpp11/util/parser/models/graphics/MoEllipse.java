@@ -1,7 +1,6 @@
 package de.thm.mni.mhpp11.util.parser.models.graphics;
 
-import de.thm.mni.mhpp11.util.parser.models.MoFunction;
-import javafx.util.Pair;
+import de.thm.mni.mhpp11.parser.ModelicaIconParser;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -21,27 +20,13 @@ public class MoEllipse extends MoFilledShapeExtent {
     if(endAngle != null) this.endAngle = endAngle;
   }
   
-  public static MoEllipse parse(MoFunction mf) {
+  public static MoEllipse parse(ModelicaIconParser.EllipseContext ctx) {
     MoEllipseBuilder mb = ellipseBuilder();
     
-    mb.mfse(MoFilledShapeExtent.parse(mf));
+    mb.mfse(MoFilledShapeExtent.parse(ctx.filledShape(), ctx.extent()));
     
-    for (Object o : mf.getParams()) {
-      if (!(o instanceof Pair)) continue;
-      Pair<String, Object> p = (Pair<String, Object>) o;
-      String key = p.getKey().toLowerCase();
-      Object val = p.getValue();
-      switch (key) {
-        case "startangle": {
-          mb.startAngle((Double)val);
-          break;
-        }
-        case "endangle": {
-          mb.endAngle((Double)val);
-          break;
-        }
-      }
-    }
+    mb.startAngle(Double.parseDouble(ctx.sa.getText()));
+    mb.endAngle(Double.parseDouble(ctx.ea.getText()));
     
     return mb.build();
   }

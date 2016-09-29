@@ -1,5 +1,6 @@
 package de.thm.mni.mhpp11.util.parser.models.graphics;
 
+import de.thm.mni.mhpp11.parser.ModelicaIconParser;
 import de.thm.mni.mhpp11.util.config.model.Point;
 import lombok.Builder;
 import lombok.Getter;
@@ -31,14 +32,14 @@ public class MoCoordinateSystem {
     if (grid != null) this.grid = grid;
   }
   
-  public static MoCoordinateSystem parse(String[] system) {
+  public static MoCoordinateSystem parse(ModelicaIconParser.CoordinateSystemContext system) {
     MoCoordinateSystemBuilder mb = builder();
     
-    mb.first(new Point<>(Double.parseDouble(system[0]), Double.parseDouble(system[1])));
-    mb.second(new Point<>(Double.parseDouble(system[2]), Double.parseDouble(system[3])));
-    mb.preserveAspectRatio(Boolean.parseBoolean(system[4]));
-    mb.initialScale(Double.parseDouble(system[5]));
-    mb.grid(new Point<>(Double.parseDouble(system[6]), Double.parseDouble(system[7])));
+    mb.first(new Point<>(Double.parseDouble(system.p1.x.getText()), Double.parseDouble(system.p1.y.getText())));
+    mb.second(new Point<>(Double.parseDouble(system.p2.x.getText()), Double.parseDouble(system.p2.y.getText())));
+    mb.preserveAspectRatio(Boolean.parseBoolean(system.preserveAspectRatio.getText()));
+    mb.initialScale(Double.parseDouble(system.initialScale.getText()));
+    mb.grid(new Point<>(Double.parseDouble(system.grid.x.getText()), Double.parseDouble(system.grid.y.getText())));
   
     return mb.build();
   }

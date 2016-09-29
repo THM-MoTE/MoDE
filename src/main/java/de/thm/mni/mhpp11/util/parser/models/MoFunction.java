@@ -3,7 +3,6 @@ package de.thm.mni.mhpp11.util.parser.models;
 
 import lombok.Builder;
 import lombok.Getter;
-import org.jmodelica.modelica.compiler.FunctionCall;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,15 +24,15 @@ public class MoFunction extends MoElement {
   public String toString() {
     return "f > " + this.getName();
   }
-  
-  public static MoFunction parse(FunctionCall fc) {
-    MoFunctionBuilder mb = builder();
-    mb.name(fc.getName().asID());
-    mb.parent(null);
-  
-    MoFunction mf = mb.build();
-    mf.getParams().addAll(MoExp.parseFunctionArguments(fc.getFunctionArguments()));
-    return mf;
-    
-  }
+
+//  public static MoFunction parse(FunctionCall fc) {
+//    MoFunctionBuilder mb = builder();
+//    mb.name(fc.getName().asID());
+//    mb.parent(null);
+//
+//    MoFunction mf = mb.build();
+//    mf.getParams().addAll(MoExp.parseFunctionArguments(fc.getFunctionArguments()));
+//    return mf;
+//
+//  }
 }

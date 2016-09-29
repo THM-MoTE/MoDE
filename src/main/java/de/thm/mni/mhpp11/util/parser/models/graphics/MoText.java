@@ -1,13 +1,10 @@
 package de.thm.mni.mhpp11.util.parser.models.graphics;
 
-import de.thm.mni.mhpp11.util.parser.models.MoFunction;
+import de.thm.mni.mhpp11.parser.ModelicaIconParser;
 import javafx.scene.paint.Color;
-import javafx.util.Pair;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-
-import java.util.List;
 
 /**
  * Created by hobbypunk on 19.09.16.
@@ -58,46 +55,20 @@ public class MoText extends MoFilledShapeExtent {
     this.textColor = (textColor != null)?textColor:this.lineColor;
   }
   
-  public static MoText parse(MoFunction mf) {
+  public static MoText parse(ModelicaIconParser.TextContext ctx) {
     MoTextBuilder mb = textBuilder();
     
-    mb.mfse(MoFilledShapeExtent.parse(mf));
+    mb.mfse(MoFilledShapeExtent.parse(ctx.filledShape(), ctx.extent()));
     
-    for (Object o : mf.getParams()) {
-      if (!(o instanceof Pair)) continue;
-      Pair<String, Object> p = (Pair<String, Object>) o;
-      String key = p.getKey().toLowerCase();
-      Object val = p.getValue();
-      switch (key) {
-        case "textstring": {
-          mb.textString((String)val);
-          break;
-        }
-        case "fontsize": {
-          mb.fontSize((Double)val);
-          break;
-        }
-        case "fontname": {
-          mb.fontName((String)val);
-          break;
-        }
-        case "textstyle": {
-          List<String> list = (List<String>)val;
-          Integer style = 0;
-          for(String s: list) {
-            style += TextStyle.valueOf(s.toUpperCase()).val;
-          }
-          mb.textStyle(style);
-          break;
-        }
-        case "textcolor": {
-          mb.textColor(Utilities.convertColor(val));
-        }
-        case "horizontalalignment": {
-          mb.horizontalAlignment(TextAlignment.valueOf(((String)val).toUpperCase()));
-        }
-      }
+    mb.textString(ctx.t.getText());
+    mb.fontSize(Double.parseDouble(ctx.fs.getText()));
+    if (ctx.f != null) mb.fontName(ctx.f.getText());
+    Integer style = 0;
+    for (ModelicaIconParser.TextStyleContext tsc : ctx.ts) {
+      style += TextStyle.valueOf(tsc.type.getText().toUpperCase()).val;
     }
+    mb.textStyle(style);
+    mb.horizontalAlignment(TextAlignment.valueOf(ctx.ta.type.getText().toUpperCase()));
     
     return mb.build();
   }

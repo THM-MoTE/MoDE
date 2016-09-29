@@ -1,18 +1,15 @@
 package de.thm.mni.mhpp11.util.parser.models.graphics;
 
+import de.thm.mni.mhpp11.parser.ModelicaIconParser;
 import de.thm.mni.mhpp11.util.config.model.Point;
-import de.thm.mni.mhpp11.util.parser.models.MoFunction;
-import javafx.util.Pair;
 import lombok.Builder;
 import lombok.Getter;
-
-import java.util.List;
 
 /**
  * Created by hobbypunk on 20.09.16.
  */
 @Getter
-public class MoFilledShapeExtent extends MoFilledShape {
+public class MoFilledShapeExtent extends MoFilledShape implements MoExtent {
   
   Point<Double, Double>[] extent = (Point<Double, Double>[]) new Point[2];
   
@@ -28,23 +25,12 @@ public class MoFilledShapeExtent extends MoFilledShape {
     this.extent[1] = second;
   }
   
-  public static MoFilledShapeExtent parse(MoFunction mf) {
+  public static MoFilledShapeExtent parse(ModelicaIconParser.FilledShapeContext ctx, ModelicaIconParser.ExtentContext extent) {
     MoFilledShapeExtentBuilder mb = filledShapeExtentBuilder();
-    mb.mfs(MoFilledShape.parse(mf));
-    
-    for (Object o : mf.getParams()) {
-      if (!(o instanceof Pair)) continue;
-      Pair<String, Object> p = (Pair<String, Object>) o;
-      String key = p.getKey().toLowerCase();
-      Object val = p.getValue();
-      
-      if (key.equals("extent")) {
-        List<List<Double>> list = (List<List<Double>>) val;
-        mb.first(new Point<>(list.get(0).get(0), list.get(0).get(1)));
-        mb.second(new Point<>(list.get(1).get(0), list.get(1).get(1)));
-        break;
-      }
-    }
+    mb.mfs(MoFilledShape.parse(ctx));
+    mb.first(new Point<>(Double.parseDouble(extent.p1.x.getText()), Double.parseDouble(extent.p1.y.getText())));
+    mb.second(new Point<>(Double.parseDouble(extent.p2.x.getText()), Double.parseDouble(extent.p2.y.getText())));
+  
     return mb.build();
   }
 }

@@ -1,12 +1,9 @@
 package de.thm.mni.mhpp11.util.parser.models.graphics;
 
-import de.thm.mni.mhpp11.util.parser.models.MoFunction;
+import de.thm.mni.mhpp11.parser.ModelicaIconParser;
 import javafx.scene.paint.Color;
-import javafx.util.Pair;
 import lombok.Builder;
 import lombok.Getter;
-
-import java.util.List;
 
 /**
  * Created by hobbypunk on 20.09.16.
@@ -53,34 +50,15 @@ public class MoFilledShape extends MoGraphic {
     if (lineThickness != null) this.lineThickness = lineThickness;
   }
   
-  public static MoFilledShape parse(MoFunction mf) {
+  public static MoFilledShape parse(ModelicaIconParser.FilledShapeContext ctx) {
     MoFilledShapeBuilder mb = filledShapeBuilder();
-    mb.mg(MoGraphic.parse(mf));
-  
-    for(Object o: mf.getParams()) {
-      if (!(o instanceof Pair)) continue;
-      Pair<String, Object> p = (Pair<String, Object>) o;
-      String key = p.getKey().toLowerCase();
-      Object val = p.getValue();
-  
-      switch (key) {
-        case "linecolor":
-          mb.lineColor(Utilities.convertColor(val));
-          break;
-        case "fillcolor":
-          mb.fillColor(Utilities.convertColor(val));
-          break;
-        case "pattern":
-          mb.pattern(Utilities.LinePattern.valueOf(((List<String>) val).get(1).toUpperCase()));
-          break;
-        case "fillpattern":
-          mb.fillPattern(FillPattern.valueOf(((List<String>) val).get(1).toUpperCase()));
-          break;
-        case "linethickness":
-          mb.lineThickness((Double) val);
-          break;
-      }
-    }
+    mb.mg(MoGraphic.parse(ctx.gi));
+    
+    mb.lineColor(Utilities.convertColor(ctx.lineColor));
+    mb.fillColor(Utilities.convertColor(ctx.fillColor));
+    mb.pattern(Utilities.LinePattern.valueOf(ctx.linePattern().type.getText().toUpperCase()));
+    mb.fillPattern(FillPattern.valueOf(ctx.fillPattern().type.getText().toUpperCase()));
+    mb.lineThickness(Double.parseDouble(ctx.lineThickness.getText()));
         
     return mb.build();
   }

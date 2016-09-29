@@ -1,0 +1,1 @@
+-100.0,100.0,100.0,-100.0,true,0.1,10.0,10.0,{Text(true, {0.0, 0.0}, 0, {0, 0, 0}, {0, 85, 0}, LinePattern.Solid, FillPattern.Solid, 0.25, {{-100, -170}, {100, -120}}, "%name", 0, "Arial", TextAlignment.Center), Rectangle(true, {0.0, 0.0}, 0, {0, 85, 0}, {199, 199, 149}, LinePattern.Solid, FillPattern.Solid, 10, BorderPattern.None, {{-110, -110}, {110, 110}}, 20)}

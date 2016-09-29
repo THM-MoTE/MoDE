@@ -1,0 +1,1 @@
+Line(true, {0.0, 0.0}, 0, {{-50, 0}, {50, 0}}, {0, 0, 0}, LinePattern.Solid, 0.25, {Arrow.Open, Arrow.Open}, 30, Smooth.None)

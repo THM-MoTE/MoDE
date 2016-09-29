@@ -3,16 +3,14 @@ package de.thm.mni.mhpp11.util.parser.models.graphics;
 import com.sun.javafx.tk.FontLoader;
 import com.sun.javafx.tk.FontMetrics;
 import com.sun.javafx.tk.Toolkit;
+import de.thm.mni.mhpp11.parser.ModelicaIconParser;
 import de.thm.mni.mhpp11.util.config.Settings;
 import de.thm.mni.mhpp11.util.config.model.Point;
-import de.thm.mni.mhpp11.util.parser.models.MoExp;
-import de.thm.mni.mhpp11.util.parser.models.MoFunction;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import javafx.util.Pair;
 import lombok.Builder;
 import lombok.Getter;
-import org.jmodelica.modelica.compiler.Exp;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,44 +38,41 @@ public class MoGraphic {
     if(rotation != null) this.rotation = rotation;
   }
   
-  public static List<MoGraphic> parse(String text) {
+  public static List<MoGraphic> parse(ModelicaIconParser.ListContext list) {
+    List<MoGraphic> l = new ArrayList<>();
+    for (ModelicaIconParser.ListItemContext item : list.items) {
+      l.add(parse(item));
+    }
+    return l;
+  }
+  
+  public static MoGraphic parse(ModelicaIconParser.ListItemContext item) {
+    ParserRuleContext elem = (ParserRuleContext) item.children.get(0);
+    
+    switch (elem.getClass().getSimpleName()) {
+      case "TextContext":
+        return MoText.parse((ModelicaIconParser.TextContext) elem);
+      case "RectangleContext":
+        return MoRectangle.parse((ModelicaIconParser.RectangleContext) elem);
+      case "EllipseContext":
+        return MoEllipse.parse((ModelicaIconParser.EllipseContext) elem);
+      case "LineContext":
+        return MoLine.parse((ModelicaIconParser.LineContext) elem);
+      case "PolygonContext":
+        return MoPolygon.parse((ModelicaIconParser.PolygonContext) elem);
+      case "BitmapContext":
+        return MoBitmap.parse((ModelicaIconParser.BitmapContext) elem);
+    }
+    
     return null;
   }
   
-  public static List<MoGraphic> parse(Exp exp) {
-    List<MoGraphic> mgs = new ArrayList<>();
-    List<MoFunction> list = (List<MoFunction>)MoExp.parse(exp);
-    for(MoFunction mf : list) {
-      switch (mf.getName()) {
-        case "Polygon" : mgs.add(MoPolygon.parse(mf)); break;
-        case "Rectangle" : mgs.add(MoRectangle.parse(mf)); break;
-        case "Ellipse" : mgs.add(MoEllipse.parse(mf)); break;
-        case "Line" : mgs.add(MoLine.parse(mf)); break;
-        case "Text" : mgs.add(MoText.parse(mf)); break;
-      }
-    }
-    return mgs;
-  }
-  
-  public static MoGraphic parse(MoFunction mf) {
+  public static MoGraphic parse(ModelicaIconParser.GraphicItemContext ctx) {
     MoGraphicBuilder mb = builder();
     
-    for(Object o: mf.getParams()) {
-      if (!(o instanceof Pair)) continue;
-      Pair<String, Object> p = (Pair<String, Object>) o;
-      try {
-        if (p.getKey().equals("origin")) {
-          List<Double> l = (List<Double>) p.getValue();
-          mb.origin(new Point<>(l.get(0), l.get(1)));
-        } else if (p.getKey().equals("visible")) {
-          mb.visible((Boolean) p.getValue());
-        } else if (p.getKey().equals("rotation")) {
-          mb.rotation((Double) p.getValue());
-        }
-      } catch (ClassCastException e) {
-        Settings.load().getLogger().warning("Cast Problem", "Can't cast " + p.getValue().getClass().getSimpleName(), true);
-      }
-    }
+    mb.origin(new Point<>(Double.parseDouble(ctx.origin.x.getText()), Double.parseDouble(ctx.origin.y.getText())));
+    mb.visible(Boolean.parseBoolean(ctx.visible.getText()));
+    mb.rotation(Double.parseDouble(ctx.rotation.getText()));
     
     return mb.build();
   }
@@ -100,9 +95,9 @@ public class MoGraphic {
   
     public static Color convertColor(Object val) {
       if (val instanceof String) return Color.valueOf(((String) val).toUpperCase());
-      else if (val instanceof List) {
-        List<Double> l = (List<Double>) val;
-        return Color.rgb(l.get(0).intValue(), l.get(1).intValue(), l.get(2).intValue());
+      else if (val instanceof ModelicaIconParser.ColorContext) {
+        ModelicaIconParser.ColorContext ctx = (ModelicaIconParser.ColorContext) val;
+        return Color.rgb(Integer.parseInt(ctx.r.getText()), Integer.parseInt(ctx.g.getText()), Integer.parseInt(ctx.b.getText()));
       } else {
         Settings.load().getLogger().debug("MoLine", "color: Not implemented");
       }

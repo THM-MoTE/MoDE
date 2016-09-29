@@ -1,10 +1,7 @@
 package de.thm.mni.mhpp11.util.parser.models.graphics;
 
-import de.thm.mni.mhpp11.util.parser.models.MoFunction;
-import javafx.util.Pair;
+import de.thm.mni.mhpp11.parser.ModelicaIconParser;
 import lombok.Builder;
-
-import java.util.List;
 
 /**
  * Created by hobbypunk on 19.09.16.
@@ -28,29 +25,13 @@ public class MoRectangle extends MoFilledShapeExtent {
     this.radius = radius;
   }
   
-  public static MoRectangle parse(MoFunction mf) {
+  public static MoRectangle parse(ModelicaIconParser.RectangleContext ctx) {
     MoRectangleBuilder mb = rectangleBuilder();
     
-    mb.mfse(MoFilledShapeExtent.parse(mf));
+    mb.mfse(MoFilledShapeExtent.parse(ctx.filledShape(), ctx.extent()));
     
-    for (Object o : mf.getParams()) {
-      if (!(o instanceof Pair)) continue;
-      Pair<String, Object> p = (Pair<String, Object>) o;
-      String key = p.getKey().toLowerCase();
-      Object val = p.getValue();
-      switch (key) {
-        case "borderpattern": {
-          List<String> l = (List<String>) val;
-          mb.borderPattern(BorderPattern.valueOf(l.get(1).toUpperCase()));
-          break;
-        }
-        case "radius": {
-          mb.radius((Double)val);
-          break;
-        }
-      }
-    }
-    
+    mb.borderPattern(BorderPattern.valueOf(ctx.bp.type.getText().toUpperCase()));
+    mb.radius(Double.parseDouble(ctx.r.getText()));
     
     return mb.build();
   }
