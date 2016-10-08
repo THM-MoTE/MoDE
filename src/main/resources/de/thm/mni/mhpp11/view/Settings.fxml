@@ -22,9 +22,9 @@
           <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="277.0" minWidth="10.0" prefWidth="277.0" />
         </columnConstraints>
         <rowConstraints>
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="-Infinity" prefHeight="30.0" vgrow="SOMETIMES"/>
+          <RowConstraints minHeight="-Infinity" prefHeight="30.0" vgrow="SOMETIMES"/>
+          <RowConstraints minHeight="-Infinity" prefHeight="30.0" vgrow="SOMETIMES"/>
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -46,7 +46,7 @@
                </GridPane.margin>
             </ChoiceBox>
             <Label alignment="CENTER_RIGHT" text="%settings.select.language" />
-           <Label alignment="CENTER_RIGHT" text="%settings.select.omlibrary" GridPane.rowIndex="6"/>
+           <Label alignment="CENTER_RIGHT" text="%settings.select.modelica.library" GridPane.rowIndex="7"/>
            <Label alignment="CENTER_RIGHT" text="%settings.select.recent.count" textAlignment="RIGHT" wrapText="true"
                   GridPane.rowIndex="2"/>
            <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.columnIndex="1"
@@ -79,9 +79,29 @@
            <ChoiceBox fx:id="cbLoggerNotifyLevel" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="14"/>
            <HBox alignment="CENTER_LEFT" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
              <children>
-               <TextField fx:id="tfOMLibrary" editable="false" HBox.hgrow="ALWAYS"/>
-               <Button fx:id="bOMLibrary" minWidth="80.0" mnemonicParsing="false" onAction="#onOMLibraryClick"
-                       text="File"/>
+               <TextField fx:id="tfModelicaCompiler" editable="false" HBox.hgrow="ALWAYS"/>
+               <Button minWidth="80.0" mnemonicParsing="false" onAction="#onModelicaCompilerClick" text="File"/>
+             </children>
+             <padding>
+               <Insets right="10.0"/>
+             </padding>
+           </HBox>
+           <HBox alignment="CENTER_LEFT" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="7">
+             <children>
+               <TextField fx:id="tfModelicaLibrary" editable="false" HBox.hgrow="ALWAYS"/>
+               <Button minWidth="80.0" mnemonicParsing="false" onAction="#onModelicaLibraryClick" text="File"/>
+             </children>
+             <padding>
+               <Insets right="10.0"/>
+             </padding>
+           </HBox>
+           <Label alignment="CENTER_RIGHT" text="%settings.select.modelica.compiler" GridPane.rowIndex="6"/>
+           <Label alignment="CENTER_RIGHT" text="%settings.select.modelica.depth" GridPane.rowIndex="8"/>
+           <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.columnIndex="1"
+                 GridPane.rowIndex="8">
+             <children>
+               <TextField fx:id="tfModelicaDepth" editable="false" prefWidth="35.0"/>
+               <Slider fx:id="sModelicaDepth" max="15.0" showTickMarks="true" value="5.0" HBox.hgrow="ALWAYS"/>
              </children>
              <padding>
                <Insets right="10.0"/>

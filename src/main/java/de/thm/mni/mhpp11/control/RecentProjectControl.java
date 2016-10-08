@@ -65,7 +65,7 @@ public class RecentProjectControl extends GridPane implements Initializable {
         lName.textProperty().set(project.getName());
         DateFormat df = SimpleDateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, s.getLang());
         lDate.textProperty().set(df.format(project.getLastOpened()));
-        lPath.textProperty().set(project.getFile().getPath());
+        lPath.textProperty().set(project.getFile().toString());
       } catch (Exception e) {
         e.printStackTrace();
       }

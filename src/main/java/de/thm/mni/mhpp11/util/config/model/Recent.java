@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementList;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 public class Recent extends MyObservable {
   @Element(required = false)
-  @Getter private File lastPath = Utilities.getHome();
+  @Getter private Path lastPath = Utilities.getHome();
   
   @Element(required = false)
   @Getter private Integer count = 10;
@@ -33,7 +33,7 @@ public class Recent extends MyObservable {
     }
   }
   
-  public void setLastPath(File lastPath) {
+  public void setLastPath(Path lastPath) {
     this.lastPath = lastPath;
     this.notifyObservers("LastPath");
   }
@@ -46,7 +46,7 @@ public class Recent extends MyObservable {
   
   public void add(Project project) {
     this.projects.add(project);
-    this.setLastPath(project.getFile().getParentFile());
+    this.setLastPath(project.getFile().getParent());
     this.checkLength();
     this.notifyObservers("AddRecent");
   }
@@ -66,5 +66,14 @@ public class Recent extends MyObservable {
   private void checkLength() {
     while(projects.size() > this.count)
       projects.get(0);
+  }
+  
+  @Override
+  public String toString() {
+    String tmp = "";
+    for (Project p : projects) {
+      tmp += ((tmp.isEmpty()) ? "" : ", ") + p;
+    }
+    return String.format("{ lastPath: %s, count: %d, projects: [ %s ] }", lastPath, count, tmp);
   }
 }

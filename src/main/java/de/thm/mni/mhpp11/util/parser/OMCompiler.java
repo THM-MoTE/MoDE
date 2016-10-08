@@ -1,14 +1,21 @@
 package de.thm.mni.mhpp11.util.parser;
 
-import de.thm.mni.mhpp11.util.config.Settings;
+import javafx.util.Pair;
+import lombok.Getter;
 import omc.corba.OMCClient;
 import omc.corba.OMCInterface;
 import omc.corba.Result;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Created by hobbypunk on 27.09.16.
@@ -24,31 +31,77 @@ public class OMCompiler {
     MODEL,
     CONNECTOR,
     ENUM,
+    OPERATOR,
+    OPERATOR_RECORD,
     NULL
   }
   
-  Settings settings;
-  OMCInterface client;
-  Boolean libsLoaded = false;
+  private final Path library;
+  private OMCInterface client;
   
-  List<String> systemLibraries = new ArrayList<>();
+  private Lock lock = new ReentrantLock();
+  private Condition systemLibs;
   
-  public OMCompiler() throws IOException {
-    settings = Settings.load();
-    client = new OMCClient(settings.getModelica().getOmc().getPath(), settings.getLang().toString());
+  @Getter List<Pair<String, Path>> systemLibraries = new ArrayList<>();
+  @Getter List<Pair<String, Path>> projectLibraries = new ArrayList<>();
+  @Getter Pair<String, Path> project = null;
+  
+  public OMCompiler(Path compiler, Path library, Locale locale) throws IOException {
+    this.library = library;
+    client = new OMCClient(compiler.toString(), locale.toString());
     client.connect();
-    this.preloadLibraries();
+    this.preloadSystemLibraries();
   }
   
-  private void preloadLibraries() {
+  private void preloadSystemLibraries() {
     Thread t = new Thread(() -> {
+      lock.lock();
+      systemLibs = lock.newCondition();
       for (String s : OMCompiler.this.getAvailableLibraries()) {
-        client.sendExpression("loadModel(" + s + ")");
+        sendExpression("loadModel(" + s + ")", true);
       }
-      getSystemLibraries();
-      libsLoaded = true;
+      loadSystemLibraries();
+      Condition s = systemLibs;
+      systemLibs = null;
+      s.signal();
+      lock.unlock();
     });
-    t.run();
+    t.start();
+  }
+  
+  public void setProject(Path f) throws ParserException {
+    if (this.project != null) throw new ParserException("project already set");
+    Pair<String, Path> lib = addLibrary(f);
+    if (lib == null) throw new ParserException("project not loaded");
+    this.project = lib;
+  }
+  
+  private Pair<String, Path> addLibrary(Path f) throws ParserException {
+    f = f.toAbsolutePath().normalize();
+    loadSystemLibraries(); // if not loaded now;
+    
+    Result r = sendExpression(String.format("loadFile(\"%s\")", f));
+    if (r.result.contains("false")) throw new ParserException("Cannot load file");
+    if (r.error.isPresent()) throw new ParserException(r.error.get());
+    
+    r = sendExpression("getLoadedLibraries()");
+    
+    List<Pair<String, Path>> list = toLibraryArray(r.result);
+    
+    for (Pair<String, Path> entry : list) {
+      if (entry.equals(project)) continue;
+      if (systemLibraries.contains(entry) || projectLibraries.contains(entry)) continue;
+      if (!f.startsWith(entry.getValue())) continue;
+      return new Pair<>(entry.getKey(), f);
+    }
+    return null;
+  }
+  
+  public void addProjectLibraries(List<Path> files) throws ParserException {
+    for (Path f : files) {
+      Pair<String, Path> p = addLibrary(f);
+      if (p != null) this.projectLibraries.add(p);
+    }
   }
   
   private List<String> getAvailableLibraries() {
@@ -56,25 +109,20 @@ public class OMCompiler {
     return toStringArray(result.result);
   }
   
-  public List<String> getSystemLibraries() {
-    if (systemLibraries.isEmpty())
-      systemLibraries.addAll(getLibraries(true));
-    
-    return systemLibraries;
-  }
-  
-  public List<String> getLibraries() {
-    return getLibraries(false);
-  }
-  
-  private List<String> getLibraries(Boolean ignoreLoaded) {
-    Result result = sendExpression("getLoadedLibraries()", ignoreLoaded);
-    List<String> tmp = new ArrayList<>();
-    for (String s : toStringArray(result.result))
-      if (!(s.startsWith("/") || s.startsWith("Obsolete") || s.contains("Test") || systemLibraries.contains(s)))
-        tmp.add(s);
-    
-    return tmp;
+  private void loadSystemLibraries() {
+    if (systemLibraries.isEmpty()) {
+      Result result = sendExpression("getLoadedLibraries()", true);
+      
+      List<Pair<String, Path>> tmp = new ArrayList<>();
+      List<Pair<String, Path>> list = toLibraryArray(result.result);
+      for (Pair<String, Path> entry : list) {
+        String name = entry.getKey().toLowerCase();
+        if (name.contains("obsolete") || name.contains("test")) continue;
+        if (this.library != null && entry.getValue().startsWith(this.library))
+          tmp.add(entry);
+      }
+      systemLibraries.addAll(tmp);
+    }
   }
   
   public String getDescription(String className) {
@@ -113,7 +161,12 @@ public class OMCompiler {
     
     r = sendExpression("isEnumeration(" + className + ")");
     if (r.result.contains("true")) return TYPE.ENUM;
-    
+  
+    r = sendExpression("isOperator(" + className + ")");
+    if (r.result.contains("true")) return TYPE.OPERATOR;
+  
+    r = sendExpression("isOperatorRecord(" + className + ")");
+    if (r.result.contains("true")) return TYPE.OPERATOR_RECORD;
     return TYPE.NULL;
   }
   
@@ -131,7 +184,7 @@ public class OMCompiler {
   
   
   public void disconnect() {
-    waitForLibs();
+    waitLibs();
     try {
       client.disconnect();
     } catch (IOException e) {
@@ -155,23 +208,35 @@ public class OMCompiler {
     return l;
   }
   
+  private List<Pair<String, Path>> toLibraryArray(String s) {
+    List<String> tmp = toStringArray(s, false);
+    List<Pair<String, Path>> list = new ArrayList<>();
+    for (int i = 0; i < tmp.size(); i += 2) {
+      list.add(new Pair<>(tmp.get(i), Paths.get(tmp.get(i + 1))));
+    }
+    return list;
+  }
+  
   public Result sendExpression(String s) {
     return sendExpression(s, false);
   }
   
   private Result sendExpression(String s, Boolean ignoreLoaded) {
     if (!ignoreLoaded)
-      waitForLibs();
-    return client.sendExpression(s);
+      waitLibs();
+    Result r = client.sendExpression(s);
+    return r;
   }
   
-  private void waitForLibs() {
-    while (!libsLoaded) {
-      try {
-        Thread.sleep(100);
-      } catch (InterruptedException e) {
-        e.printStackTrace();
+  private void waitLibs() {
+    lock.lock();
+    try {
+      if (systemLibs != null) {
+        systemLibs.await();
       }
+    } catch (InterruptedException e) {
+      e.printStackTrace();
     }
+    lock.unlock();
   }
 }

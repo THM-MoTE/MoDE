@@ -12,7 +12,7 @@ import org.simpleframework.xml.Element;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public abstract class Logger extends MyObservable{
+public abstract class Logger extends MyObservable {
   
   public enum LEVEL {
     NEVER,
@@ -98,5 +98,10 @@ public abstract class Logger extends MyObservable{
       this.setChanged();
       this.notifyObservers(m);
     }
+  }
+  
+  @Override
+  public String toString() {
+    return String.format("{level: %s, notifyLevel: %s}", level, notifyLevel);
   }
 }

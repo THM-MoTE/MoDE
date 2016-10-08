@@ -11,12 +11,12 @@ import java.util.List;
  * Created by hobbypunk on 07.09.16.
  */
 @Getter
-public class MoFunction extends MoElement {
+public class MoFunction extends MoClass {
   
   private final List<Object> params = new ArrayList<>();
   
   @Builder
-  public MoFunction(String name, MoElement parent) {
+  public MoFunction(String name, MoClass parent) {
     super(name, parent);
   }
   

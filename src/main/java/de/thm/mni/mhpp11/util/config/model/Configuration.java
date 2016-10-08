@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.Locale;
 import java.util.Observable;
 import java.util.Observer;
@@ -33,7 +33,7 @@ public class Configuration extends MyObservable implements Observer {
   @Element(required = false)
   protected Modelica modelica = new Modelica();
   
-  public File file;
+  public Path file;
   
   public void setLang(Locale lang) {
     this.lang = lang;
@@ -53,5 +53,10 @@ public class Configuration extends MyObservable implements Observer {
   @Override
   public void update(Observable o, Object arg) {
     notifyObservers(arg);
+  }
+  
+  @Override
+  public String toString() {
+    return String.format("{ lang: %s, recent: %s, logger: %s, notification: %s, mainwindow: %s, modelica: %s }", lang, recent, logger, notification, mainwindow, modelica);
   }
 }

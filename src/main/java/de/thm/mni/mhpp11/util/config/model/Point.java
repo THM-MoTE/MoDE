@@ -11,4 +11,9 @@ import lombok.*;
 public class Point<X, Y> {
   @NonNull X x;
   @NonNull Y y;
+  
+  @Override
+  public String toString() {
+    return String.format("{ x: %s, y: %s}", x, y);
+  }
 }

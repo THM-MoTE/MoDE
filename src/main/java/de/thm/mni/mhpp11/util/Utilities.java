@@ -2,11 +2,12 @@ package de.thm.mni.mhpp11.util;
 
 import de.thm.mni.mhpp11.util.config.Settings;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -34,33 +35,37 @@ public class Utilities {
     return ResourceBundle.getBundle("de/thm/mni/mhpp11/i18n/" + bundle, lang, new UTF8ResourceBundleControl());
   }
   
-  public static File getHome() {
-    return new File(System.getProperty("user.home"));
+  public static Path getHome() {
+    return Paths.get(System.getProperty("user.home"));
   }
   
-  private static File getConfDir() {
-    File f;
+  private static Path getConfDir() {
+    Path f;
     if (isWin())
-      f = new File(System.getenv("APPDATA") + "/" + Settings.NAME);
+      f = Paths.get(System.getenv("APPDATA") + "/" + Settings.NAME);
     else
-      f = new File(System.getenv("HOME") + "/.config/" + Settings.NAME);
+      f = Paths.get(System.getenv("HOME") + "/.config/" + Settings.NAME);
     
-    if (!f.exists()) {
-      if (!f.mkdirs()) throw new RuntimeException("can't create folders");
+    if (!Files.exists(f)) {
+      try {
+        f = Files.createDirectories(f);
+      } catch (IOException e) {
+        throw new RuntimeException("can't create folders");
+      }
     }
     return f;
   }
   
-  public static File getConf() {
-    File f = new File(getConfDir().getAbsolutePath() + "/config.xml");
-    if (!f.exists()) {
+  public static Path getConf() {
+    Path f = Paths.get(getConfDir() + "/config.xml");
+    if (Files.notExists(f)) {
       try {
-        if (!f.createNewFile()) throw new Exception("");
+        Files.createFile(f);
         
         try {
           String cls = Settings.class.getSimpleName().toLowerCase();
           List<String> lines = Arrays.asList("<" + cls + ">", "</" + cls + ">");
-          Files.write(f.toPath(), lines, Charset.forName("UTF-8"));
+          Files.write(f, lines, Charset.forName("UTF-8"));
         } catch (IOException e) {
           e.printStackTrace();
         }
@@ -73,19 +78,16 @@ public class Utilities {
   
   public static Boolean isWin() {
     String os = System.getProperty("os.name").toLowerCase();
-    String path;
     return os.contains("win");
   }
   
   public static Boolean isMac() {
     String os = System.getProperty("os.name").toLowerCase();
-    String path;
     return os.contains("mac");
   }
   
   public static Boolean isLinux() {
     String os = System.getProperty("os.name").toLowerCase();
-    String path;
     return os.contains("linux");
   }
 }

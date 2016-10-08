@@ -16,4 +16,9 @@ public class Notification extends MyObservable {
     this.seconds = seconds;
     this.notifyObservers("Seconds");
   }
+  
+  @Override
+  public String toString() {
+    return String.format("{ seconds: %d }", seconds);
+  }
 }

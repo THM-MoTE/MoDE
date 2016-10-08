@@ -18,6 +18,8 @@ import javafx.stage.FileChooser;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Observable;
 import java.util.ResourceBundle;
 
@@ -42,7 +44,7 @@ public class WelcomeController extends NotifyController {
   
   public void show(String file) {
     if(file.isEmpty()) show();
-    else onOpenProject(new File(file));
+    else onOpenProject(Paths.get(file));
   }
   
   @Override
@@ -69,24 +71,24 @@ public class WelcomeController extends NotifyController {
   
   @FXML
   private void onOpenProject() {
-    File f = settings.getRecent().getLastPath();
+    Path p = settings.getRecent().getLastPath();
     FileChooser fc = new FileChooser();
-    if (f != null) fc.setInitialDirectory(f);
+    if (p != null) fc.setInitialDirectory(p.toFile());
     fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Modelica Files", "*.mo"));
-    f = fc.showOpenDialog(root.getScene().getWindow());
+    File f = fc.showOpenDialog(root.getScene().getWindow());
     if(f == null) return;
-    onOpenProject(f);
+    onOpenProject(f.toPath());
   }
   
-  private void onOpenProject(File f) {
+  private void onOpenProject(Path f) {
     Project p = null;
     String name;
-  
-    logger.debug("Load File", f.getPath());
+    
+    logger.debug("Load File", f.toString());
   
     f = PackageParser.getInstance().findBasePackage(f);
-    if(f.getName().equals("package.mo")) name = f.getParentFile().getName();
-    else name = f.getName().replaceAll(".mo$", "");
+    if (f.getFileName().equals("package.mo")) name = f.getParent().getFileName().toString();
+    else name = f.getFileName().toString().replaceAll(".mo$", "");
     for (Project tmp : settings.getRecent().getAll()) {
       if(tmp.getFile().equals(f)) {
         p = tmp;

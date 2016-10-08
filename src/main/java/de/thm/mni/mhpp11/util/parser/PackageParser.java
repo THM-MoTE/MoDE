@@ -2,11 +2,14 @@ package de.thm.mni.mhpp11.util.parser;
 
 import de.thm.mni.mhpp11.util.config.Settings;
 import de.thm.mni.mhpp11.util.config.model.Logger;
+import de.thm.mni.mhpp11.util.config.model.Modelica;
+import de.thm.mni.mhpp11.util.parser.models.MoClass;
+import javafx.util.Pair;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
-import java.util.ArrayList;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Observable;
 
@@ -20,58 +23,50 @@ public class PackageParser extends Observable {
     return ourInstance;
   }
   
-  private Logger logger;
+  private final Settings settings;
+  private final Logger logger;
   
   private PackageParser() {
-    Settings settings = Settings.load();
-    logger = settings.getLogger();
+    this.settings = Settings.load();
+    this.logger = this.settings.getLogger();
   }
   
-  public File findBasePackage(File f) {
+  public Path findBasePackage(Path f) {
+    try {
+      List<String> tmp = Files.readAllLines(f);
+      String within = null;
+      for (String t : tmp) {
+        if (t.contains("within")) {
+          within = t;
+          break;
+        }
+      }
+      if (within == null) return f;
+      within = within.replaceAll("(^\\s*within\\s+)|(;\\s*$)", "");
+      String[] s = within.split("\\.");
+      if (f.getFileName().toString().toLowerCase().equals("package.mo")) f = f.getParent();
+      for (String value : s) {
+        f = f.getParent();
+      }
+      DirectoryStream<Path> ds = Files.newDirectoryStream(f, "(?i)package\\.mo");
+      if (ds.iterator().hasNext()) return ds.iterator().next();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
     return f;
   }
   
-  public void collectLibs(File base, Integer packageOrder) {
-    if (base == null) return;
-    
-    File[] libs = base.listFiles(File::isDirectory);
-    if (libs == null) return;
-    for (File lib : libs) {
-      collectDir(lib, packageOrder);
-    }
-  }
-  
-  public void collectDir(File file, Integer packageOrder) {
-    File[] content = file.listFiles(pathname -> pathname.isDirectory() || pathname.getName().endsWith(".mo"));
-    File[] orders = file.listFiles(pathname -> pathname.getName().endsWith(".order"));
-    if(content == null) return;
-    List<String> s = new ArrayList<>();
-    if (orders.length > 0) {
-      File o = orders[0];
-      try {
-        s = Files.readAllLines(o.toPath());
-      } catch (IOException e) {
-        e.printStackTrace();
+  public void collectSystemLibs(MoClass parent) {
+    Modelica modelica = settings.getModelica();
+    try {
+      OMCompiler omc = new OMCompiler(modelica.getCompiler(), modelica.getLibrary(), settings.getLang());
+      for (Pair<String, Path> lib : omc.getSystemLibraries()) {
+        MoClass mc = MoClass.parse(omc, lib.getKey(), parent, modelica.getDepth());
+        setChanged();
+        notifyObservers(mc);
       }
+    } catch (IOException e) {
+      logger.error(e);
     }
-    for (File f: content) {
-      Integer order = (f.getName().toLowerCase().equals("package.mo")) ? packageOrder : s.indexOf(f.getName().replaceAll("\\.mo$", ""));
-  
-      if (f.isDirectory()) collectDir(f, order);
-      else collectFile(f, order);
-    }
-  }
-  
-  public void collectFile(File file, Integer order) {
-      logger.debug("Parse File", file.getName());
-
-//      MoFile mf = ASTParser.parse(file);
-//      mf.setType(type);
-//      mf.setOrder(order);
-//      sendFile(mf);
-
-//    } catch (ParserException e) {
-//      Settings.load().getLogger().error(e);
-//    }
   }
 }

@@ -33,13 +33,13 @@ public class MoIcon extends MoAnnotation {
     MoIconBuilder mb = builder();
     String s = omc.getIcon(name);
     if (s == null || s.isEmpty() || s.startsWith("annotation")) return null;
-    System.out.println(name + ": " + s);
     try {
       ANTLRInputStream is = new ANTLRInputStream(new ByteArrayInputStream(s.getBytes()));
       ModelicaIconParser p = new ModelicaIconParser(new CommonTokenStream(new ModelicaIconLexer(is)));
       ModelicaIconParser.IconContext ic = p.icon();
       mb.moCoordinateSystem(MoCoordinateSystem.parse(ic.coordinateSystem()));
       if (ic.l != null) mb.moGraphics(MoGraphic.parse(ic.l));
+      return mb.build();
     } catch (IOException e) {
       e.printStackTrace();
     }

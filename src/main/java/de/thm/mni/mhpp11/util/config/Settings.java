@@ -2,10 +2,13 @@ package de.thm.mni.mhpp11.util.config;
 
 import de.thm.mni.mhpp11.util.Utilities;
 import de.thm.mni.mhpp11.util.config.model.Configuration;
+import de.thm.mni.mhpp11.util.xml.MyMatcher;
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Properties;
@@ -57,17 +60,21 @@ public class Settings extends Configuration implements Observer {
   
   private static Settings load(Boolean firstTime) {
     if (INSTANCE != null) return INSTANCE;
-    File f = Utilities.getConf();
+    Path f = Utilities.getConf();
     
     try {
-      Serializer serializer = new Persister();
-      INSTANCE = serializer.read(Settings.class, f);
+      Serializer serializer = new Persister(new MyMatcher());
+      INSTANCE = serializer.read(Settings.class, f.toFile());
       INSTANCE.file = f;
       INSTANCE.serializer = serializer;
       INSTANCE.init();
     } catch (Exception e) {
       if (!firstTime) throw new RuntimeException(e);
-      f.delete();
+      try {
+        Files.delete(f);
+      } catch (IOException e1) {
+        e1.printStackTrace();
+      }
       return load(false);
     }
     return INSTANCE;
@@ -76,7 +83,7 @@ public class Settings extends Configuration implements Observer {
   public void save() {
     Thread t = new Thread(() -> {
       try {
-        serializer.write(this, this.file);
+        serializer.write(this, this.file.toFile());
       } catch (Exception e) {
         getLogger().error(e);
       }
