@@ -3,7 +3,9 @@ package de.thm.mni.mhpp11.controller;
 import de.thm.mni.mhpp11.control.RecentProjectControl;
 import de.thm.mni.mhpp11.util.Utilities;
 import de.thm.mni.mhpp11.util.config.Settings;
+import de.thm.mni.mhpp11.util.config.model.Modelica;
 import de.thm.mni.mhpp11.util.config.model.Project;
+import de.thm.mni.mhpp11.util.parser.OMCompiler;
 import de.thm.mni.mhpp11.util.parser.PackageParser;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -40,6 +42,19 @@ public class WelcomeController extends NotifyController {
     lName.setText(Settings.NAME);
     lVersion.setText(Settings.VERSION);
     updateRecentList();
+    Modelica m = settings.getModelica();
+    try {
+      OMCompiler.getInstance(m.getCompiler(), m.getLibrary(), settings.getLang());
+    } catch (IOException e) {
+      logger.error(e);
+    }
+  }
+  
+  @Override
+  public void deinitialize() {
+    OMCompiler omc = OMCompiler.getInstance();
+    if (omc != null) omc.disconnect();
+    super.deinitialize();
   }
   
   public void show(String file) {
@@ -87,7 +102,7 @@ public class WelcomeController extends NotifyController {
     logger.debug("Load File", f.toString());
   
     f = PackageParser.getInstance().findBasePackage(f);
-    if (f.getFileName().equals("package.mo")) name = f.getParent().getFileName().toString();
+    if (f.getFileName().toString().toLowerCase().equals("package.mo")) name = f.getParent().getFileName().toString();
     else name = f.getFileName().toString().replaceAll(".mo$", "");
     for (Project tmp : settings.getRecent().getAll()) {
       if(tmp.getFile().equals(f)) {
@@ -130,10 +145,9 @@ public class WelcomeController extends NotifyController {
       DialogPane dp = loader.load();
       d.setDialogPane(dp);
       d.show();
+  
     } catch (IOException e) {
       logger.error(e);
-      //TODO remove
-      e.printStackTrace();
     }
   }
   

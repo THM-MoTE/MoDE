@@ -22,6 +22,18 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class OMCompiler {
   
+  private static OMCompiler ourInstance;
+  
+  public static OMCompiler getInstance(Path compiler, Path library, Locale locale) throws IOException {
+    if (ourInstance == null) ourInstance = new OMCompiler(compiler, library, locale);
+    return ourInstance;
+  }
+  
+  public static OMCompiler getInstance() {
+    return ourInstance;
+  }
+  
+  
   public enum TYPE {
     TYPE,
     PACKAGE,
@@ -46,7 +58,7 @@ public class OMCompiler {
   @Getter List<Pair<String, Path>> projectLibraries = new ArrayList<>();
   @Getter Pair<String, Path> project = null;
   
-  public OMCompiler(Path compiler, Path library, Locale locale) throws IOException {
+  private OMCompiler(Path compiler, Path library, Locale locale) throws IOException {
     this.library = library;
     client = new OMCClient(compiler.toString(), locale.toString());
     client.connect();
@@ -181,7 +193,6 @@ public class OMCompiler {
     Result result = sendExpression("getIconAnnotation(" + className + ")");
     return result.result.replaceAll("(^\\{)|(\\}$)", "");
   }
-  
   
   public void disconnect() {
     waitLibs();

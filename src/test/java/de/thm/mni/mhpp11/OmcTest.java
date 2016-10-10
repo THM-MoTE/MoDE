@@ -30,7 +30,7 @@ public class OmcTest {
   @Before
   public void before() throws IOException {
     Modelica m = Settings.load().getModelica();
-    omc = new OMCompiler(m.getCompiler(), m.getLibrary(), Locale.GERMANY);
+    omc = OMCompiler.getInstance(m.getCompiler(), m.getLibrary(), Locale.GERMANY);
     omc.sendExpression("getClassNames()");
   }
   

@@ -23,9 +23,7 @@ public abstract class Controller implements Initializable {
   
   ResourceBundle i18n;
   
-  @Override
-  public void initialize(URL location, ResourceBundle resources) {
-    i18n = resources;
+  Controller() {
     logger = new ConsoleLogger(LEVEL.ERROR, LEVEL.ERROR);
     try {
       settings = Settings.load();
@@ -33,6 +31,12 @@ public abstract class Controller implements Initializable {
       logger.error(e);
     }
     logger = settings.getLogger();
+  }
+  
+  @Override
+  public void initialize(URL location, ResourceBundle resources) {
+    i18n = resources;
+    
   }
   
   public void lateInitialize(Stage stage, Scene scene) {

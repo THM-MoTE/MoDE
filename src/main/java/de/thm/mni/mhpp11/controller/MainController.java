@@ -64,7 +64,6 @@ public class MainController extends NotifyController {
     super.lateInitialize(stage, scene);
     this.project = project;
     initTreeView();
-  
     initFilter();
   }
   
@@ -153,10 +152,8 @@ public class MainController extends NotifyController {
   private void initProject() {
     Thread t = new Thread(() -> {
       PackageParser pp = PackageParser.getInstance();
-//      if (name.equals("package.mo"))
-//        pp.collectDir(project.getFile().getParentFile(), TYPE.PROJECT, 0);
-//      else
-//        pp.collectFile(project.getFile(), TYPE.PROJECT, 0);
+      pp.collectProjectLibs(ftiMap.get(TYPE.PROJECTLIB).getValue(), project.getFile());
+      pp.collectProject(ftiMap.get(TYPE.PROJECT).getValue(), project.getFile());
     });
     t.start();
   }

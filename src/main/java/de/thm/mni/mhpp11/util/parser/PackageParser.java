@@ -10,8 +10,8 @@ import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
-import java.util.Observable;
+import java.nio.file.Paths;
+import java.util.*;
 
 /**
  * Created by hobbypunk on 14.09.16.
@@ -25,15 +25,22 @@ public class PackageParser extends Observable {
   
   private final Settings settings;
   private final Logger logger;
+  private final Modelica modelica;
+  private OMCompiler omc = null;
+  
   
   private PackageParser() {
     this.settings = Settings.load();
     this.logger = this.settings.getLogger();
+    this.modelica = settings.getModelica();
+    this.omc = OMCompiler.getInstance();
   }
   
   public Path findBasePackage(Path f) {
+    f = f.toAbsolutePath().normalize();
+    Path f2 = f;
     try {
-      List<String> tmp = Files.readAllLines(f);
+      List<String> tmp = Files.readAllLines(f2);
       String within = null;
       for (String t : tmp) {
         if (t.contains("within")) {
@@ -41,15 +48,22 @@ public class PackageParser extends Observable {
           break;
         }
       }
-      if (within == null) return f;
+      if (within == null) within = "";
       within = within.replaceAll("(^\\s*within\\s+)|(;\\s*$)", "");
       String[] s = within.split("\\.");
-      if (f.getFileName().toString().toLowerCase().equals("package.mo")) f = f.getParent();
       for (String value : s) {
-        f = f.getParent();
+        if (!value.isEmpty()) f2 = f2.getParent();
       }
-      DirectoryStream<Path> ds = Files.newDirectoryStream(f, "(?i)package\\.mo");
-      if (ds.iterator().hasNext()) return ds.iterator().next();
+      if (!Files.isDirectory(f2)) return f2;
+      if (f.getFileName().toString().toLowerCase().equals("package.mo")) f2 = f2.getParent();
+      DirectoryStream<Path> ds = Files.newDirectoryStream(f2, new DirectoryStream.Filter<Path>() {
+        @Override
+        public boolean accept(Path entry) throws IOException {
+          return entry.getFileName().toString().matches("(?i)package.mo$");
+        }
+      });
+      Iterator<Path> iterator = ds.iterator();
+      if (iterator.hasNext()) return iterator.next();
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -57,15 +71,42 @@ public class PackageParser extends Observable {
   }
   
   public void collectSystemLibs(MoClass parent) {
-    Modelica modelica = settings.getModelica();
+    if (this.omc == null) return;
+    collect(parent, omc.getSystemLibraries());
+  }
+  
+  public void collectProjectLibs(MoClass parent, Path file) {
+    if (this.omc == null) return;
+    Path p = file.getParent();
+    String basename = file.getFileName().toString().replaceAll("\\.mo$", "");
+    p = p.resolve(basename + ".import");
+    if (Files.notExists(p)) return;
     try {
-      OMCompiler omc = new OMCompiler(modelica.getCompiler(), modelica.getLibrary(), settings.getLang());
-      for (Pair<String, Path> lib : omc.getSystemLibraries()) {
-        MoClass mc = MoClass.parse(omc, lib.getKey(), parent, modelica.getDepth());
-        setChanged();
-        notifyObservers(mc);
+      List<Path> list = new ArrayList<>();
+      for (String line : Files.readAllLines(p)) {
+        list.add(Paths.get(line));
       }
-    } catch (IOException e) {
+      this.omc.addProjectLibraries(list);
+      collect(parent, this.omc.getProjectLibraries());
+    } catch (IOException | ParserException e) {
+      logger.error(e);
+    }
+  }
+  
+  private void collect(MoClass parent, List<Pair<String, Path>> list) {
+    for (Pair<String, Path> lib : list) {
+      MoClass mc = MoClass.parse(omc, lib.getKey(), parent, 1);
+      setChanged();
+      notifyObservers(mc);
+    }
+  }
+  
+  public void collectProject(MoClass parent, Path file) {
+    if (this.omc == null) return;
+    try {
+      this.omc.setProject(file);
+      collect(parent, Collections.singletonList(this.omc.getProject()));
+    } catch (ParserException e) {
       logger.error(e);
     }
   }
