@@ -16,6 +16,7 @@ import java.util.Locale;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
 
 /**
  * Created by hobbypunk on 27.09.16.
@@ -69,10 +70,11 @@ public class OMCompiler {
     Thread t = new Thread(() -> {
       lock.lock();
       systemLibs = lock.newCondition();
-      for (String s : OMCompiler.this.getAvailableLibraries()) {
+      List<String> list = OMCompiler.this.getAvailableLibraries();
+      for (String s : list) {
         sendExpression("loadModel(" + s + ")", true);
       }
-      loadSystemLibraries();
+      loadSystemLibraries(list);
       Condition s = systemLibs;
       systemLibs = null;
       s.signal();
@@ -90,7 +92,7 @@ public class OMCompiler {
   
   private Pair<String, Path> addLibrary(Path f) throws ParserException {
     f = f.toAbsolutePath().normalize();
-    loadSystemLibraries(); // if not loaded now;
+    loadSystemLibraries(null); // if not loaded now;
     
     Result r = sendExpression(String.format("loadFile(\"%s\")", f));
     if (r.result.contains("false")) throw new ParserException("Cannot load file");
@@ -118,23 +120,31 @@ public class OMCompiler {
   
   private List<String> getAvailableLibraries() {
     Result result = client.sendExpression("getAvailableLibraries()");
-    return toStringArray(result.result);
+    List<String> list = toStringArray(result.result);
+    String[] first = new String[]{"Modelica", "ModelicaServices", "ModelicaReference"};
+    list.removeAll(Arrays.asList(first));
+    list.addAll(0, Arrays.asList(first));
+    return list;
   }
   
-  private void loadSystemLibraries() {
+  private void loadSystemLibraries(List<String> list1) {
     if (systemLibraries.isEmpty()) {
       Result result = sendExpression("getLoadedLibraries()", true);
       
-      List<Pair<String, Path>> tmp = new ArrayList<>();
       List<Pair<String, Path>> list = toLibraryArray(result.result);
       for (Pair<String, Path> entry : list) {
         String name = entry.getKey().toLowerCase();
         if (name.contains("obsolete") || name.contains("test")) continue;
         if (this.library != null && entry.getValue().startsWith(this.library))
-          tmp.add(entry);
+          systemLibraries.add(entry);
       }
-      systemLibraries.addAll(tmp);
+      systemLibraries.sort((o1, o2) -> list1.indexOf(o1.getKey()) - list1.indexOf(o2.getKey()));
     }
+  }
+  
+  public List<Pair<String, Path>> getSystemLibraries() {
+    waitLibs();
+    return this.systemLibraries;
   }
   
   public String getDescription(String className) {
@@ -144,6 +154,11 @@ public class OMCompiler {
   
   public List<String> getChildren(String className) {
     Result result = sendExpression("getClassNames(" + className + ")");
+    return toStringArray(result.result);
+  }
+  
+  public List<String> getInheritedClasses(String className) {
+    Result result = sendExpression("getInheritedClasses(" + className + ")");
     return toStringArray(result.result);
   }
   
@@ -184,8 +199,8 @@ public class OMCompiler {
   
   public String getDocumentation(String className) {
     Result result = sendExpression("getDocumentationAnnotation(" + className + ")");
-    List<String> l = toStringArray(result.result, false);
-    if (l.isEmpty()) return null;
+    List<String> l = toStringArray(result.result);
+    if (l.isEmpty()) return "";
     return l.get(0);
   }
   
@@ -207,20 +222,20 @@ public class OMCompiler {
     return toStringArray(s, true);
   }
   
-  private List<String> toStringArray(String s, Boolean sort) {
+  private List<String> toStringArray(String s, Boolean unsorted) {
     List<String> l = Arrays.asList(s.split(","));
     
     for (int i = 0; i < l.size(); i++) {
       l.set(i, l.get(i).replaceAll("(^[\\{\\\"]*)|([\\\"\\}]*$)", ""));
     }
-    
-    if (sort) l.sort(String::compareToIgnoreCase);
+    l = l.stream().filter(s1 -> !s1.isEmpty()).collect(Collectors.toList());
+    if (!unsorted) l.sort(String::compareToIgnoreCase);
     
     return l;
   }
   
   private List<Pair<String, Path>> toLibraryArray(String s) {
-    List<String> tmp = toStringArray(s, false);
+    List<String> tmp = toStringArray(s);
     List<Pair<String, Path>> list = new ArrayList<>();
     for (int i = 0; i < tmp.size(); i += 2) {
       list.add(new Pair<>(tmp.get(i), Paths.get(tmp.get(i + 1))));

@@ -1,8 +1,6 @@
 package de.thm.mni.mhpp11.util.parser;
 
 import de.thm.mni.mhpp11.util.config.Settings;
-import de.thm.mni.mhpp11.util.config.model.Logger;
-import de.thm.mni.mhpp11.util.config.model.Modelica;
 import de.thm.mni.mhpp11.util.parser.models.MoClass;
 import javafx.util.Pair;
 
@@ -11,32 +9,21 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Created by hobbypunk on 14.09.16.
  */
-public class PackageParser extends Observable {
-  private static PackageParser ourInstance = new PackageParser();
+public class PackageParser {
   
-  public static PackageParser getInstance() {
-    return ourInstance;
-  }
+  private static ExecutorService es = Executors.newSingleThreadExecutor();
   
-  private final Settings settings;
-  private final Logger logger;
-  private final Modelica modelica;
-  private OMCompiler omc = null;
-  
-  
-  private PackageParser() {
-    this.settings = Settings.load();
-    this.logger = this.settings.getLogger();
-    this.modelica = settings.getModelica();
-    this.omc = OMCompiler.getInstance();
-  }
-  
-  public Path findBasePackage(Path f) {
+  public static Path findBasePackage(Path f) {
     f = f.toAbsolutePath().normalize();
     Path f2 = f;
     try {
@@ -56,27 +43,20 @@ public class PackageParser extends Observable {
       }
       if (!Files.isDirectory(f2)) return f2;
       if (f.getFileName().toString().toLowerCase().equals("package.mo")) f2 = f2.getParent();
-      DirectoryStream<Path> ds = Files.newDirectoryStream(f2, new DirectoryStream.Filter<Path>() {
-        @Override
-        public boolean accept(Path entry) throws IOException {
-          return entry.getFileName().toString().matches("(?i)package.mo$");
-        }
-      });
+      DirectoryStream<Path> ds = Files.newDirectoryStream(f2, entry -> entry.getFileName().toString().matches("(?i)package.mo$"));
       Iterator<Path> iterator = ds.iterator();
       if (iterator.hasNext()) return iterator.next();
     } catch (IOException e) {
-      e.printStackTrace();
+      Settings.load().getLogger().error(e);
     }
     return f;
   }
   
-  public void collectSystemLibs(MoClass parent) {
-    if (this.omc == null) return;
-    collect(parent, omc.getSystemLibraries());
+  public static void collectSystemLibs(OMCompiler omc, MoClass parent) {
+    collect(omc, parent, omc.getSystemLibraries());
   }
   
-  public void collectProjectLibs(MoClass parent, Path file) {
-    if (this.omc == null) return;
+  public static void collectProjectLibs(OMCompiler omc, MoClass parent, Path file) {
     Path p = file.getParent();
     String basename = file.getFileName().toString().replaceAll("\\.mo$", "");
     p = p.resolve(basename + ".import");
@@ -86,28 +66,30 @@ public class PackageParser extends Observable {
       for (String line : Files.readAllLines(p)) {
         list.add(Paths.get(line));
       }
-      this.omc.addProjectLibraries(list);
-      collect(parent, this.omc.getProjectLibraries());
+      omc.addProjectLibraries(list);
+      collect(omc, parent, omc.getProjectLibraries());
     } catch (IOException | ParserException e) {
-      logger.error(e);
+  
+      Settings.load().getLogger().error(e);
     }
   }
   
-  private void collect(MoClass parent, List<Pair<String, Path>> list) {
+  private static void collect(OMCompiler omc, MoClass parent, List<Pair<String, Path>> list) {
     for (Pair<String, Path> lib : list) {
-      MoClass mc = MoClass.parse(omc, lib.getKey(), parent, 1);
-      setChanged();
-      notifyObservers(mc);
+      es.execute(() -> MoClass.parse(omc, lib.getKey(), parent, 1));
     }
   }
   
-  public void collectProject(MoClass parent, Path file) {
-    if (this.omc == null) return;
+  public static void collectProject(OMCompiler omc, MoClass parent, Path file) {
     try {
-      this.omc.setProject(file);
-      collect(parent, Collections.singletonList(this.omc.getProject()));
+      omc.setProject(file);
+      collect(omc, parent, Collections.singletonList(omc.getProject()));
     } catch (ParserException e) {
-      logger.error(e);
+      Settings.load().getLogger().error(e);
     }
+  }
+  
+  public static void close() {
+    es.shutdownNow();
   }
 }

@@ -1,29 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.Tab?>
-<?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.ToolBar?>
-<?import javafx.scene.control.TreeView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.VBox?>
+<?import de.thm.mni.mhpp11.control.TreeViewWithItems?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 <?import org.controlsfx.control.BreadCrumbBar?>
-
 <GridPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" stylesheets="@../css/Main.css" xmlns="http://javafx.com/javafx/8.0.76-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.thm.mni.mhpp11.controller.MainController">
   <columnConstraints>
     <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
@@ -137,11 +119,11 @@
                                     <Insets />
                                  </HBox.margin>
                                  <content>
-                                    <TreeView fx:id="tvLibrary" prefHeight="200.0" prefWidth="200.0">
+                                   <TreeViewWithItems fx:id="tvLibrary" prefHeight="200.0" prefWidth="200.0">
                                        <padding>
                                           <Insets bottom="-1.0" left="-1.0" right="-1.0" top="-1.0" />
                                        </padding>
-                                    </TreeView>
+                                   </TreeViewWithItems>
                                  </content>
                               </ScrollPane>
                            </children>

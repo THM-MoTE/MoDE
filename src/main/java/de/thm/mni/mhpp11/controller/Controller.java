@@ -4,6 +4,8 @@ import de.thm.mni.mhpp11.util.config.Settings;
 import de.thm.mni.mhpp11.util.config.model.Logger;
 import de.thm.mni.mhpp11.util.config.model.Logger.LEVEL;
 import de.thm.mni.mhpp11.util.logger.ConsoleLogger;
+import de.thm.mni.mhpp11.util.parser.OMCompiler;
+import de.thm.mni.mhpp11.util.parser.PackageParser;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -42,10 +44,17 @@ public abstract class Controller implements Initializable {
   public void lateInitialize(Stage stage, Scene scene) {
     this.stage = stage;
     this.scene = scene;
-    this.stage.setOnCloseRequest(value -> {
-      this.deinitialize();
-      settings.save();
-    });
+    this.stage.setOnCloseRequest(value -> close());
+  }
+  
+  public void close() {
+    this.deinitialize();
+    PackageParser.close();
+    try {
+      OMCompiler.getInstance().disconnect();
+    } catch (Exception e) {
+    }
+    settings.save();
   }
   
   public void deinitialize() {}

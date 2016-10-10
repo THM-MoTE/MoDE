@@ -2,28 +2,24 @@ package de.thm.mni.mhpp11.controller;
 
 import de.thm.mni.mhpp11.control.DragResizer;
 import de.thm.mni.mhpp11.control.MoIconPane;
+import de.thm.mni.mhpp11.control.TreeViewWithItems;
 import de.thm.mni.mhpp11.util.config.Settings;
 import de.thm.mni.mhpp11.util.config.model.MainWindow;
 import de.thm.mni.mhpp11.util.config.model.Project;
+import de.thm.mni.mhpp11.util.parser.OMCompiler;
 import de.thm.mni.mhpp11.util.parser.PackageParser;
 import de.thm.mni.mhpp11.util.parser.models.MoClass;
-import de.thm.mni.mhpp11.util.parser.models.MoLater;
-import de.thm.mni.mhpp11.util.parser.models.MoMisc.TYPE;
 import de.thm.mni.mhpp11.util.parser.models.MoRoot;
-import javafx.beans.binding.Bindings;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import org.eclipse.fx.ui.controls.tree.FilterableTreeItem;
-import org.eclipse.fx.ui.controls.tree.TreeItemPredicate;
 
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Observable;
 import java.util.ResourceBundle;
 
 /**
@@ -41,20 +37,20 @@ public class MainController extends NotifyController {
   @FXML private HBox hbRight;
   @FXML private Separator sRight;
   
-  @FXML private TreeView<MoClass> tvLibrary;
+  @FXML private TreeViewWithItems<MoClass> tvLibrary;
   
-  private Map<TYPE, FilterableTreeItem<MoClass>> ftiMap = new HashMap<>();
+  private ObservableList<MoClass> data = FXCollections.observableArrayList();
+  private MoRoot mrSystemLibraries = new MoRoot("System Libraries");
+  private MoRoot mrProjectLibraries = new MoRoot("Project Libraries");
+  private MoRoot mrProject = new MoRoot("Project");
   
-  {
-    ftiMap.put(TYPE.LIB, new FilterableTreeItem<>(new MoRoot("Libraries")));
-    ftiMap.put(TYPE.PROJECTLIB, new FilterableTreeItem<>(new MoRoot("Project Libraries")));
-    ftiMap.put(TYPE.PROJECT, new FilterableTreeItem<>(new MoRoot("Project")));
+  public MainController() {
+    data.addAll(mrSystemLibraries, mrProjectLibraries, mrProject);
   }
   
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     super.initialize(location, resources);
-    PackageParser.getInstance().addObserver(this);
     
     DragResizer.makeResizable(sLeft, hbLeft, DragResizer.LTR);
     DragResizer.makeResizable(sRight, hbRight, DragResizer.RTL);
@@ -64,14 +60,11 @@ public class MainController extends NotifyController {
     super.lateInitialize(stage, scene);
     this.project = project;
     initTreeView();
-    initFilter();
   }
   
   @Override
   public void deinitialize() {
     super.deinitialize();
-    
-    PackageParser.getInstance().deleteObserver(this);
     
     MainWindow mw = settings.getMainwindow();
     mw.setPos((int) stage.getX(), (int) stage.getY());
@@ -99,25 +92,12 @@ public class MainController extends NotifyController {
     stage.show();
   }
   
-  private void initFilter() {
-    //FROM: http://www.kware.net/?p=204#The_Predicate
-    for (FilterableTreeItem<MoClass> fti : ftiMap.values()) {
-      fti.predicateProperty().bind(Bindings.createObjectBinding(() -> {
-        if (tfLibFilter.getText() == null || tfLibFilter.getText().isEmpty())
-          return null;
-        return TreeItemPredicate.create(name -> name.getSimpleName().toLowerCase().contains(tfLibFilter.getText().toLowerCase()));
-      }, tfLibFilter.textProperty()));
-    }
-  }
-  
   private void initTreeView() {
-    FilterableTreeItem<MoClass> root = new FilterableTreeItem<>(new MoRoot("Root"));
-    for (TYPE t : new TYPE[]{TYPE.LIB, TYPE.PROJECTLIB, TYPE.PROJECT}) {
-      root.getInternalChildren().add(ftiMap.get(t));
-      ftiMap.get(t).setExpanded(true);
-    }
-    tvLibrary.setRoot(root);
+    tvLibrary.setRoot(new TreeItem<>());
     tvLibrary.setShowRoot(false);
+    tvLibrary.setTreeItemExpandListener(parent -> parent.update(OMCompiler.getInstance()));
+    tvLibrary.setItems(data);
+
     tvLibrary.setCellFactory(new Callback<TreeView<MoClass>, TreeCell<MoClass>>() {
       @Override
       public TreeCell<MoClass> call(TreeView<MoClass> param) {
@@ -142,52 +122,11 @@ public class MainController extends NotifyController {
   }
   
   private void initLibs() {
-    Thread t = new Thread(() -> {
-      PackageParser pp = PackageParser.getInstance();
-      pp.collectSystemLibs(ftiMap.get(TYPE.LIB).getValue());
-    });
-    t.start();
+    PackageParser.collectSystemLibs(OMCompiler.getInstance(), mrSystemLibraries);
   }
   
   private void initProject() {
-    Thread t = new Thread(() -> {
-      PackageParser pp = PackageParser.getInstance();
-      pp.collectProjectLibs(ftiMap.get(TYPE.PROJECTLIB).getValue(), project.getFile());
-      pp.collectProject(ftiMap.get(TYPE.PROJECT).getValue(), project.getFile());
-    });
-    t.start();
-  }
-  
-  private void addClass(MoClass moClass) {
-    FilterableTreeItem<MoClass> parent = (FilterableTreeItem<MoClass>) findTreeItem(moClass.getParent());
-    if (parent == null) return;
-    if (moClass instanceof MoLater) return;
-    parent.getInternalChildren().add(new FilterableTreeItem<>(moClass));
-    for (MoClass mc : moClass.getChildren()) {
-      addClass(mc);
-    }
-  }
-  
-  
-  private TreeItem<MoClass> findTreeItem(MoClass that) {
-    if (that.getParent() == null) {
-      for (TreeItem<MoClass> fti : ftiMap.values()) {
-        if (fti.getValue().equals(that)) return fti;
-      }
-    }
-    TreeItem<MoClass> parent = findTreeItem(that.getParent());
-    if (parent == null) return null;
-    for (TreeItem<MoClass> fti : parent.getChildren())
-      if (fti.getValue().equals(that)) return fti;
-    
-    return null;
-  }
-  
-  @Override
-  public void update(Observable o, Object arg) {
-    super.update(o, arg);
-    if (arg instanceof MoClass) {
-      addClass((MoClass) arg);
-    }
+    PackageParser.collectProjectLibs(OMCompiler.getInstance(), mrProjectLibraries, project.getFile());
+    PackageParser.collectProject(OMCompiler.getInstance(), mrProject, project.getFile());
   }
 }

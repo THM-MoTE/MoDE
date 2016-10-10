@@ -101,7 +101,7 @@ public class WelcomeController extends NotifyController {
     
     logger.debug("Load File", f.toString());
   
-    f = PackageParser.getInstance().findBasePackage(f);
+    f = PackageParser.findBasePackage(f);
     if (f.getFileName().toString().toLowerCase().equals("package.mo")) name = f.getParent().getFileName().toString();
     else name = f.getFileName().toString().replaceAll(".mo$", "");
     for (Project tmp : settings.getRecent().getAll()) {

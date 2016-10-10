@@ -62,6 +62,16 @@ public class OmcTest {
   }
   
   @Test
+  public void testInherited() throws ParserException {
+    omc.addProjectLibraries(Arrays.asList(Paths.get("/home/hobbypunk/Dokumente/Entwicklung/THM_Projekte/Projektphase/2014-modelica-kotani/SHM/package.mo")));
+    MoRoot mr = new MoRoot("SystemLibs");
+    MoClass mc = MoClass.parse(omc, "SHM", mr, 1);
+    mc = mc.find(omc, "SHM.SeidelThesis.Components.SympatheticSystem");
+    System.out.println(mc);
+    System.out.println(mc.getInheritedClasses());
+  }
+  
+  @Test
   public void testProject() throws ParserException {
     omc.setProject(Paths.get("./test.mo"));
     System.out.println(omc.getProject());
