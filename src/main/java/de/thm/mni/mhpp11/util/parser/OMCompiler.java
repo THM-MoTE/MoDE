@@ -119,12 +119,13 @@ public class OMCompiler {
   }
   
   private List<String> getAvailableLibraries() {
-    Result result = client.sendExpression("getAvailableLibraries()");
-    List<String> list = toStringArray(result.result);
-    String[] first = new String[]{"Modelica", "ModelicaServices", "ModelicaReference"};
-    list.removeAll(Arrays.asList(first));
-    list.addAll(0, Arrays.asList(first));
-    return list;
+//    Result result = client.sendExpression("getAvailableLibraries()");
+//    List<String> list = toStringArray(result.result);
+    String[] first = new String[]{"Modelica", "ModelicaServices", "ModelicaReference", "Complex"};
+//    list.removeAll(Arrays.asList(first));
+//    list.addAll(0, Arrays.asList(first));
+//    return list;
+    return Arrays.asList(first);
   }
   
   private void loadSystemLibraries(List<String> list1) {

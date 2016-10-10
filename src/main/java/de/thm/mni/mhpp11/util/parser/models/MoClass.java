@@ -112,7 +112,7 @@ public class MoClass implements HierarchyData<MoClass> {
         c.moveTo(i, this);
         c.parseExtra(omc);
       } else {
-        System.out.println(this + " Cannot replace: " + child);
+        Settings.load().getLogger().error(String.format("Error in %s", this.getName()), String.format("Can't replace Child \"%s\"", child.getSimpleName()));
       }
     }
   }
@@ -174,7 +174,7 @@ public class MoClass implements HierarchyData<MoClass> {
     }
     
     if (parent instanceof MoRoot && tmp != null) bases.add(tmp);
-    if (tmp == null) System.out.println(name + "can't parse Type " + omc.getType(n));
+    if (tmp == null) Settings.load().getLogger().error(String.format("Error in \"%s\"", name), String.format("Can't parse Type %s", omc.getType(n)));
     if (tmp != null && !(tmp instanceof MoLater)) {
       parseChildren(omc, tmp, n, depth, noExtra);
       if (!noExtra) tmp.parseExtra(omc);
