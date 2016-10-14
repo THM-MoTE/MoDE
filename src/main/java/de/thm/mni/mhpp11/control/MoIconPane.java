@@ -30,7 +30,7 @@ public class MoIconPane extends Pane {
     this.icon = icon;
     initCoordinateSystem();
     initImage();
-    this.scaleTo(25.0, 25.0);
+    this.scaleTo(100., 100.);
   }
   
   public void scaleTo(Double width, Double height) {
@@ -81,7 +81,6 @@ public class MoIconPane extends Pane {
       shape = createLine((MoLine) mg);
     } else if (mg instanceof MoPolygon) {
       shape = createPolygon((MoPolygon) mg);
-      
     }
     
     if (shape != null) {

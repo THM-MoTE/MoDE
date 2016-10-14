@@ -1,8 +1,6 @@
-lexer grammar ModelicaIconLexer;
+lexer grammar LexerIconElements;
 
-@lexer::header {
-  package de.thm.mni.mhpp11.parser;
-}
+import LexerUtils;
 
 RECTANGLE   : 'Rectangle';
 TEXT        : 'Text';
@@ -64,28 +62,3 @@ HALF    : 'Half';
 
 //SMOOTH
 BEZIER  : 'Bezier';
-
-//COLOR
-BLACK   : 'Black';
-
-TRUE    : 'true';
-FALSE   : 'false';
-
-LCBRACE : '{';
-RCBRACE : '}';
-LBRACE : '(';
-RBRACE : ')';
-
-NUMBER  : '-'?[0-9]+
-        | '-'?[0-9]+'.'[0-9]+
-        | '-'?[0-9]+'.'[0-9]+'e''-'?[0-9]+;
-
-STRING : '"' S_CHAR* '"';
-
-LIT_DOT : '.';
-
-COMMA   : ',';
-
-WHITESPACE  : [ \r\n\t] + -> channel (HIDDEN);
-
-fragment S_CHAR : ~ ["\\];

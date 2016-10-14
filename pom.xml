@@ -114,7 +114,11 @@
         <artifactId>antlr4-maven-plugin</artifactId>
         <version>4.5.3</version>
         <configuration>
-          <outputDirectory>${project.build.directory}/generated-sources/antlr4/de/thm/mni/mhpp11/parser
+          <arguments>
+            <argument>-package</argument>
+            <argument>de.thm.mni.mhpp11.parser.modelica</argument>
+          </arguments>
+          <outputDirectory>${project.build.directory}/generated-sources/antlr4/de/thm/mni/mhpp11/parser/modelica
           </outputDirectory>
         </configuration>
         <executions>

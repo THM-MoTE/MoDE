@@ -96,6 +96,11 @@ public class MainController extends NotifyController {
     tvLibrary.setRoot(new TreeItem<>());
     tvLibrary.setShowRoot(false);
     tvLibrary.setTreeItemExpandListener(parent -> parent.update(OMCompiler.getInstance()));
+    tvLibrary.setTreeItemConfigurer((treeItem, value) -> {
+      if (value instanceof MoRoot) {
+        treeItem.setExpanded(true);
+      }
+    });
     tvLibrary.setItems(data);
 
     tvLibrary.setCellFactory(new Callback<TreeView<MoClass>, TreeCell<MoClass>>() {
@@ -108,10 +113,16 @@ public class MainController extends NotifyController {
             if (empty) {
               setText(null);
               setGraphic(null);
+              setDisable(false);
+              setStyle(null);
             } else {
               setText(item.getSimpleName());
-              if (item.getIcon() != null)
-                setGraphic(new MoIconPane(item.getIcon()));
+              if (item.getIcon() != null) setGraphic(new MoIconPane(item.getIcon()));
+              if (item instanceof MoRoot) {
+                setDisable(true);
+                setStyle("-fx-background-color: #eee;-fx-font-weight: bold; -fx-font-size: 90%");
+                //TODO: remove disclosure node!
+              }
             }
           }
         };

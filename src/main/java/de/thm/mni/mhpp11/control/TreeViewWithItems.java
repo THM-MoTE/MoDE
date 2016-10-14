@@ -1,6 +1,7 @@
 package de.thm.mni.mhpp11.control;
 
 import de.thm.mni.mhpp11.util.HierarchyData;
+import de.thm.mni.mhpp11.util.TreeItemConfigurer;
 import de.thm.mni.mhpp11.util.UpdateListener;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
@@ -45,6 +46,7 @@ public class TreeViewWithItems<T extends HierarchyData<T>> extends TreeView<T> {
   private ObjectProperty<ObservableList<? extends T>> items = new SimpleObjectProperty<>(this, "items");
   
   @Getter @Setter private UpdateListener<T> treeItemExpandListener = null;
+  @Getter @Setter private TreeItemConfigurer<T> treeItemConfigurer = null;
   
   public TreeViewWithItems() {
     super();
@@ -195,7 +197,7 @@ public class TreeViewWithItems<T extends HierarchyData<T>> extends TreeView<T> {
       if (newValue && treeItemExpandListener != null) treeItemExpandListener.update(value);
     });
     treeItem.setValue(value);
-    //treeItem.setExpanded(true);
+    if (this.treeItemConfigurer != null) this.treeItemConfigurer.call(treeItem, value);
     
     if (value != null && value.getChildren() != null) {
       ListChangeListener<T> listChangeListener = getListChangeListener(treeItem.getChildren());
@@ -223,4 +225,5 @@ public class TreeViewWithItems<T extends HierarchyData<T>> extends TreeView<T> {
   public void setItems(ObservableList<? extends T> items) {
     this.items.set(items);
   }
+  
 }

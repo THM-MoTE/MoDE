@@ -1,23 +1,8 @@
-parser grammar ModelicaIconParser;
+parser grammar ParserIconElements;
 
-@parser::header {
-  package de.thm.mni.mhpp11.parser;
-}
-options { tokenVocab=ModelicaIconLexer; } // use tokens from ModelicaIconLexer.g4
+import ParserUtils;
 
-icon                : cs=coordinateSystem (COMMA LCBRACE l=list RCBRACE)?;
-
-coordinateSystem    : p1=point COMMA p2=point COMMA preserveAspectRatio=bool COMMA initialScale=NUMBER COMMA grid=point;
-
-list    :  items+=listItem (COMMA items+=listItem)* ;
-
-listItem    : rectangle
-            | text
-            | ellipse
-            | line
-            | polygon
-            | bitmap
-            ;
+options { tokenVocab=LexerIconElements; } // use tokens from LexerIconElements.g4
 
 rectangle   : RECTANGLE LBRACE filledShape COMMA bp=borderPattern COMMA e=extent COMMA r=NUMBER RBRACE;
 
@@ -44,17 +29,6 @@ arrow_type  : NONE
             | FILLED
             | HALF
             ;
-
-points  : LCBRACE LCBRACE point RCBRACE (COMMA LCBRACE point RCBRACE)+ RCBRACE;
-
-extent  : LCBRACE LCBRACE p1=point RCBRACE COMMA LCBRACE p2=point RCBRACE RCBRACE ;
-
-bool    : TRUE|FALSE;
-
-color   : LCBRACE r=NUMBER COMMA g=NUMBER COMMA b=NUMBER RCBRACE
-        | n=BLACK;
-
-point   : x=NUMBER COMMA y=NUMBER;
 
 smooth  : SMOOTH LIT_DOT type=smooth_type ;
 

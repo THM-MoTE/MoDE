@@ -7,6 +7,7 @@ import de.thm.mni.mhpp11.util.parser.ParserException;
 import de.thm.mni.mhpp11.util.parser.models.MoClass;
 import de.thm.mni.mhpp11.util.parser.models.MoRoot;
 import javafx.util.Pair;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -32,6 +33,11 @@ public class OmcTest {
     Modelica m = Settings.load().getModelica();
     omc = OMCompiler.getInstance(m.getCompiler(), m.getLibrary(), Locale.GERMANY);
     omc.sendExpression("getClassNames()");
+  }
+  
+  @After
+  public void after() {
+    if (omc != null) omc.disconnect();
   }
   
   @Test
@@ -69,6 +75,13 @@ public class OmcTest {
     mc = mc.find(omc, "SHM.SeidelThesis.Components.SympatheticSystem");
     System.out.println(mc);
     System.out.println(mc.getInheritedClasses());
+  }
+  
+  @Test
+  public void testAnnotations() throws ParserException {
+    omc.addProjectLibraries(Arrays.asList(Paths.get("/home/hobbypunk/Dokumente/Entwicklung/THM_Projekte/Projektphase/2014-modelica-kotani/SHM/package.mo")));
+    List<String> list = omc.getAnnotationStrings("SHM.SeidelThesis.Components.SympatheticSystem");
+    
   }
   
   @Test
