@@ -1,18 +1,16 @@
 package de.thm.mni.mhpp11.util.parser.models.annotations;
 
-import de.thm.mni.mhpp11.parser.ModelicaIconLexer;
-import de.thm.mni.mhpp11.parser.ModelicaIconParser;
+import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.IconContentContext;
+import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.IconContext;
 import de.thm.mni.mhpp11.util.parser.OMCompiler;
 import de.thm.mni.mhpp11.util.parser.models.graphics.MoCoordinateSystem;
+import de.thm.mni.mhpp11.util.parser.models.graphics.MoDefaults;
 import de.thm.mni.mhpp11.util.parser.models.graphics.MoGraphic;
 import lombok.Builder;
 import lombok.Getter;
-import org.antlr.v4.runtime.ANTLRInputStream;
-import org.antlr.v4.runtime.CommonTokenStream;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by hobbypunk on 16.09.16.
@@ -20,30 +18,23 @@ import java.util.ArrayList;
 @Getter
 public class MoIcon extends MoAnnotation {
   
+  public static MoIcon PACKAGE = MoDefaults.newPackage();
+  
   private MoCoordinateSystem moCoordinateSystem = new MoCoordinateSystem();
-  private java.util.List<MoGraphic> moGraphics = new ArrayList<>();
+  private List<MoGraphic> moGraphics = new ArrayList<>();
   
   @Builder
-  private MoIcon(MoCoordinateSystem moCoordinateSystem, java.util.List<MoGraphic> moGraphics) {
+  public MoIcon(MoCoordinateSystem moCoordinateSystem, List<MoGraphic> moGraphics) {
     if (moCoordinateSystem != null) this.moCoordinateSystem = moCoordinateSystem;
     if (moGraphics != null) this.moGraphics = moGraphics;
   }
   
-  public static MoIcon parse(OMCompiler omc, String name) {
+  public static MoIcon parse(OMCompiler omc, IconContext icon) {
     MoIconBuilder mb = builder();
-    String s = omc.getIcon(name);
-    if (s == null || s.isEmpty() || s.startsWith("annotation")) return null;
-    try {
-      ANTLRInputStream is = new ANTLRInputStream(new ByteArrayInputStream(s.getBytes()));
-      ModelicaIconParser p = new ModelicaIconParser(new CommonTokenStream(new ModelicaIconLexer(is)));
-      ModelicaIconParser.IconContext ic = p.icon();
-      mb.moCoordinateSystem(MoCoordinateSystem.parse(ic.coordinateSystem()));
-      if (ic.l != null) mb.moGraphics(MoGraphic.parse(ic.l));
-      return mb.build();
-    } catch (IOException e) {
-      e.printStackTrace();
+    for (IconContentContext icc : icon.iconContent()) {
+      if (icc.coordinateSystem() != null) mb.moCoordinateSystem(MoCoordinateSystem.parse(icc.coordinateSystem()));
+      if (icc.graphics() != null) mb.moGraphics(MoGraphic.parse(omc, icc.graphics().element()));
     }
-    
-    return null;
+    return mb.build();
   }
 }

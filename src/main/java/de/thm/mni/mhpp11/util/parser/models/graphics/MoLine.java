@@ -1,6 +1,8 @@
 package de.thm.mni.mhpp11.util.parser.models.graphics;
 
-import de.thm.mni.mhpp11.parser.ModelicaIconParser;
+import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.LineContext;
+import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.LineDataContext;
+import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.PointContext;
 import de.thm.mni.mhpp11.util.config.model.Point;
 import javafx.scene.paint.Color;
 import lombok.Builder;
@@ -47,21 +49,35 @@ public class MoLine extends MoGraphic {
     this.smooth = smooth;
   }
   
-  public static MoLine parse(ModelicaIconParser.LineContext ctx) {
+  public static MoLine parse(LineContext elem) {
+    MoGraphicBuilder mgb = builder();
     MoLineBuilder mb = lineBuilder();
-    mb.mg(MoGraphic.parse(ctx.graphicItem()));
-    mb.thickness(Double.parseDouble(ctx.lineThickness.getText()));
-    for (ModelicaIconParser.PointContext point : ctx.points().point()) {
-      mb.point(new Point<>(Double.parseDouble(point.x.getText()), Double.parseDouble(point.y.getText())));
+    
+    for (LineDataContext data : elem.data) {
+      if (data.graphicItem() != null) {
+        MoGraphic.parse(mgb, data.graphicItem());
+      } else if (data.color() != null) {
+        mb.color(Utilities.convertColor(data.color().val));
+      } else if (data.linePattern() != null) {
+        mb.linePattern(Utilities.LinePattern.valueOf(data.linePattern().type.getText().toUpperCase()));
+      } else if (data.arrowSize() != null) {
+        mb.arrowSize(Double.parseDouble(data.arrowSize().val.getText()));
+      } else if (data.thickness() != null) {
+        mb.thickness(Double.parseDouble(data.thickness().val.getText()));
+      } else if (data.smooth() != null) {
+        mb.smooth(Utilities.Smooth.valueOf(data.smooth().type.getText().toUpperCase()));
+      } else if (data.arrows() != null) {
+        if (data.arrows().a1 != null) mb.start(Arrow.valueOf(data.arrows().a1.type.getText().toUpperCase()));
+        if (data.arrows().a2 != null) mb.end(Arrow.valueOf(data.arrows().a2.type.getText().toUpperCase()));
+      } else if (data.points() != null) {
+        for (PointContext point : data.points().pointList().point()) {
+          mb.point(new Point<>(Double.parseDouble(point.x.getText()), Double.parseDouble(point.y.getText())));
+        }
+      }
     }
     
-    mb.smooth(Utilities.Smooth.valueOf(ctx.smooth().type.getText().toUpperCase()));
-    mb.color(Utilities.convertColor(ctx.lineColor));
-    mb.linePattern(Utilities.LinePattern.valueOf(ctx.linePattern().type.getText().toUpperCase()));
-    mb.start(Arrow.valueOf(ctx.arrows().a1.type.getText().toUpperCase()));
-    mb.end(Arrow.valueOf(ctx.arrows().a2.type.getText().toUpperCase()));
-    mb.arrowSize(Double.parseDouble(ctx.as.getText()));
-    
-    return mb.build();
+    return mb.mg(
+        mgb.build()
+    ).build();
   }
 }

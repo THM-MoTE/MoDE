@@ -1,6 +1,8 @@
 package de.thm.mni.mhpp11.util.parser.models.graphics;
 
-import de.thm.mni.mhpp11.parser.ModelicaIconParser;
+import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.PointContext;
+import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.PolygonContext;
+import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.PolygonDataContext;
 import de.thm.mni.mhpp11.util.config.model.Point;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,17 +27,30 @@ public class MoPolygon extends MoFilledShape {
     this.smooth = smooth;
   }
   
-  public static MoPolygon parse(ModelicaIconParser.PolygonContext ctx) {
+  public static MoPolygon parse(PolygonContext elem) {
+    MoGraphicBuilder mgb = builder();
+    MoFilledShapeBuilder mfsb = filledShapeBuilder();
     MoPolygonBuilder mb = polygonBuilder();
     
-    mb.mfs(MoFilledShape.parse(ctx.filledShape()));
-    
-    for (ModelicaIconParser.PointContext point : ctx.points().point()) {
-      mb.point(new Point<>(Double.parseDouble(point.x.getText()), Double.parseDouble(point.y.getText())));
+    for (PolygonDataContext data : elem.data) {
+      if (data.graphicItem() != null) {
+        MoGraphic.parse(mgb, data.graphicItem());
+      } else if (data.filledShape() != null) {
+        MoFilledShape.parse(mfsb, data.filledShape());
+      } else if (data.smooth() != null) {
+        mb.smooth(Utilities.Smooth.valueOf(data.smooth().type.getText().toUpperCase()));
+      } else if (data.points() != null) {
+        for (PointContext point : data.points().pointList().point()) {
+          mb.point(new Point<>(Double.parseDouble(point.x.getText()), Double.parseDouble(point.y.getText())));
+        }
+      }
     }
     
-    mb.smooth(Utilities.Smooth.valueOf(ctx.smooth().type.getText().toUpperCase()));
-  
-    return mb.build();
+    
+    return mb.mfs(
+        mfsb.mg(
+            mgb.build()
+        ).build()
+    ).build();
   }
 }

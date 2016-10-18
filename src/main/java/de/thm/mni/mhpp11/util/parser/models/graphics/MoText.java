@@ -1,6 +1,8 @@
 package de.thm.mni.mhpp11.util.parser.models.graphics;
 
-import de.thm.mni.mhpp11.parser.ModelicaIconParser;
+import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.TextContext;
+import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.TextDataContext;
+import de.thm.mni.mhpp11.util.config.model.Point;
 import javafx.scene.paint.Color;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,8 +12,9 @@ import lombok.Getter;
  * Created by hobbypunk on 19.09.16.
  */
 @Getter
-public class MoText extends MoFilledShapeExtent {
+public class MoText extends MoFilledShape implements MoExtent {
   
+  private Point<Double, Double>[] extent = (Point<Double, Double>[]) new Point[2];
   public enum TextAlignment {
     LEFT,
     CENTER,
@@ -36,7 +39,7 @@ public class MoText extends MoFilledShapeExtent {
     }
   }
   
-  String textString = "";
+  String string = "";
   Double fontSize = 0.0;
   String fontName = "";
   Integer textStyle = 0;
@@ -45,9 +48,11 @@ public class MoText extends MoFilledShapeExtent {
   
   
   @Builder(builderMethodName = "textBuilder")
-  MoText(MoFilledShapeExtent mfse, String textString, Double fontSize, String fontName, Integer textStyle, Color textColor, TextAlignment horizontalAlignment) {
-    super(mfse);
-    if(textString != null) this.textString = textString;
+  MoText(MoFilledShape mfs, Point<Double, Double> first, Point<Double, Double> second, String string, Double fontSize, String fontName, Integer textStyle, Color textColor, TextAlignment horizontalAlignment) {
+    super(mfs);
+    if (first != null) this.extent[0] = first;
+    if (second != null) this.extent[1] = second;
+    if (string != null) this.string = string;
     if(fontSize != null) this.fontSize = fontSize;
     if(fontName != null) this.fontName = fontName;
     if(textStyle != null) this.textStyle = textStyle;
@@ -55,21 +60,39 @@ public class MoText extends MoFilledShapeExtent {
     this.textColor = (textColor != null)?textColor:this.lineColor;
   }
   
-  public static MoText parse(ModelicaIconParser.TextContext ctx) {
+  public static MoText parse(TextContext elem) {
+    MoGraphicBuilder mgb = builder();
+    MoFilledShapeBuilder mfsb = filledShapeBuilder();
     MoTextBuilder mb = textBuilder();
     
-    mb.mfse(MoFilledShapeExtent.parse(ctx.filledShape(), ctx.extent()));
-    
-    mb.textString(ctx.t.getText());
-    mb.fontSize(Double.parseDouble(ctx.fs.getText()));
-    if (ctx.f != null) mb.fontName(ctx.f.getText());
     Integer style = 0;
-    for (ModelicaIconParser.TextStyleContext tsc : ctx.ts) {
-      style += TextStyle.valueOf(tsc.type.getText().toUpperCase()).val;
-    }
-    mb.textStyle(style);
-    mb.horizontalAlignment(TextAlignment.valueOf(ctx.ta.type.getText().toUpperCase()));
     
-    return mb.build();
+    for (TextDataContext data : elem.data) {
+      if (data.graphicItem() != null) {
+        MoGraphic.parse(mgb, data.graphicItem());
+      } else if (data.filledShape() != null) {
+        MoFilledShape.parse(mfsb, data.filledShape());
+      } else if (data.extent() != null) {
+        mb.first(new Point<>(Double.parseDouble(data.extent().p1.x.getText()), Double.parseDouble(data.extent().p1.y.getText())));
+        mb.second(new Point<>(Double.parseDouble(data.extent().p2.x.getText()), Double.parseDouble(data.extent().p2.y.getText())));
+      } else if (data.string() != null) {
+        mb.string(data.string().getText());
+      } else if (data.fontName() != null) {
+        mb.fontName(data.fontName().val.getText());
+      } else if (data.fontSize() != null) {
+        mb.fontSize(Double.parseDouble(data.fontSize().val.getText()));
+      } else if (data.horizontalAlignment() != null) {
+        mb.horizontalAlignment(TextAlignment.valueOf(data.horizontalAlignment().val.type.getText().toUpperCase()));
+      } else if (data.textStyle() != null) {
+        //TODO textStyle
+        style += TextStyle.valueOf(data.textStyle().type.getText().toUpperCase()).val;
+      }
+    }
+    
+    return mb.mfs(
+        mfsb.mg(
+            mgb.build()
+        ).build()
+    ).build();
   }
 }

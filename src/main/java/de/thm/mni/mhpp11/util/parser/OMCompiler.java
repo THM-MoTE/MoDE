@@ -16,6 +16,7 @@ import java.util.Locale;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
  */
 public class OMCompiler {
   
+  private static final Pattern removeQuotes = Pattern.compile("(^\")|(\"$)");
   private static OMCompiler ourInstance;
   
   public static OMCompiler getInstance(Path compiler, Path library, Locale locale) throws IOException {
@@ -55,9 +57,9 @@ public class OMCompiler {
   private Lock lock = new ReentrantLock();
   private Condition systemLibs;
   
-  @Getter List<Pair<String, Path>> systemLibraries = new ArrayList<>();
-  @Getter List<Pair<String, Path>> projectLibraries = new ArrayList<>();
-  @Getter Pair<String, Path> project = null;
+  private List<Pair<String, Path>> systemLibraries = new ArrayList<>();
+  @Getter private List<Pair<String, Path>> projectLibraries = new ArrayList<>();
+  @Getter private Pair<String, Path> project = null;
   
   private OMCompiler(Path compiler, Path library, Locale locale) throws IOException {
     this.library = library;
@@ -72,7 +74,7 @@ public class OMCompiler {
       systemLibs = lock.newCondition();
       List<String> list = OMCompiler.this.getAvailableLibraries();
       for (String s : list) {
-        sendExpression("loadModel(" + s + ")", true);
+        sendExpression(String.format("loadModel(%s)", s), true);
       }
       loadSystemLibraries(list);
       Condition s = systemLibs;
@@ -129,6 +131,7 @@ public class OMCompiler {
   }
   
   private void loadSystemLibraries(List<String> list1) {
+    if (list1 == null) waitLibs();
     if (systemLibraries.isEmpty()) {
       Result result = sendExpression("getLoadedLibraries()", true);
       
@@ -148,66 +151,59 @@ public class OMCompiler {
     return this.systemLibraries;
   }
   
-  public String getDescription(String className) {
-    Result result = sendExpression("getClassComment(" + className + ")");
-    return result.result;
+  public List<String> getAnnotationStrings(String className) {
+    List<String> list = new ArrayList<>();
+    Result r = sendExpression(String.format("getAnnotationCount(%s)", className));
+    Integer count = Integer.parseInt(r.result);
+    for (Integer i = 1; i <= count; i++) {
+      r = sendExpression(String.format("getNthAnnotationString(%s, %d)", className, i));
+      if (!r.error.isPresent()) list.add(toString(r.result));
+    }
+    
+    return list;
   }
   
   public List<String> getChildren(String className) {
-    Result result = sendExpression("getClassNames(" + className + ")");
+    Result result = sendExpression(String.format("getClassNames(%s)", className));
     return toStringArray(result.result);
   }
   
   public List<String> getInheritedClasses(String className) {
-    Result result = sendExpression("getInheritedClasses(" + className + ")");
+    Result result = sendExpression(String.format("getInheritedClasses(%s)", className));
     return toStringArray(result.result);
   }
   
   public TYPE getType(String className) {
-    Result r;
-    
-    r = sendExpression("isType(" + className + ")");
-    if (r.result.contains("true")) return TYPE.TYPE;
-    
-    r = sendExpression("isPackage(" + className + ")");
-    if (r.result.contains("true")) return TYPE.PACKAGE;
-    
-    r = sendExpression("isClass(" + className + ")");
-    if (r.result.contains("true")) return TYPE.CLASS;
-    
-    r = sendExpression("isRecord(" + className + ")");
-    if (r.result.contains("true")) return TYPE.RECORD;
-    
-    r = sendExpression("isFunction(" + className + ")");
-    if (r.result.contains("true")) return TYPE.FUNCTION;
-    
-    r = sendExpression("isModel(" + className + ")");
-    if (r.result.contains("true")) return TYPE.MODEL;
-    
-    r = sendExpression("isConnector(" + className + ")");
-    if (r.result.contains("true")) return TYPE.CONNECTOR;
-    
-    r = sendExpression("isEnumeration(" + className + ")");
-    if (r.result.contains("true")) return TYPE.ENUM;
-  
-    r = sendExpression("isOperator(" + className + ")");
-    if (r.result.contains("true")) return TYPE.OPERATOR;
-  
-    r = sendExpression("isOperatorRecord(" + className + ")");
-    if (r.result.contains("true")) return TYPE.OPERATOR_RECORD;
-    return TYPE.NULL;
+    Result r = sendExpression(String.format("getClassRestriction(%s)", className));
+    String res = toString(r.result).toLowerCase();
+    switch (res) {
+      case "type":
+        return TYPE.TYPE;
+      case "package":
+        return TYPE.PACKAGE;
+      case "class":
+        return TYPE.CLASS;
+      case "record":
+        return TYPE.RECORD;
+      case "function":
+        return TYPE.FUNCTION;
+      case "model":
+        return TYPE.MODEL;
+      case "connector":
+        return TYPE.CONNECTOR;
+      case "enum":
+        return TYPE.ENUM;
+      case "operator":
+        return TYPE.OPERATOR;
+      case "operator record":
+        return TYPE.OPERATOR_RECORD;
+      default:
+        return TYPE.NULL;
+    }
   }
   
-  public String getDocumentation(String className) {
-    Result result = sendExpression("getDocumentationAnnotation(" + className + ")");
-    List<String> l = toStringArray(result.result);
-    if (l.isEmpty()) return "";
-    return l.get(0);
-  }
-  
-  public String getIcon(String className) {
-    Result result = sendExpression("getIconAnnotation(" + className + ")");
-    return result.result.replaceAll("(^\\{)|(\\}$)", "");
+  private String toString(String result) {
+    return removeQuotes.matcher(result).replaceAll("");
   }
   
   public void disconnect() {
@@ -242,6 +238,11 @@ public class OMCompiler {
       list.add(new Pair<>(tmp.get(i), Paths.get(tmp.get(i + 1))));
     }
     return list;
+  }
+  
+  public Path getPath(String path) {
+    Result r = sendExpression(String.format("uriToFilename(\"%s\")", path));
+    return Paths.get(r.result);
   }
   
   public Result sendExpression(String s) {

@@ -30,7 +30,7 @@ public class MoIconPane extends Pane {
     this.icon = icon;
     initCoordinateSystem();
     initImage();
-    this.scaleTo(100., 100.);
+    this.scaleTo(25., 25.);
   }
   
   public void scaleTo(Double width, Double height) {
@@ -121,11 +121,11 @@ public class MoIconPane extends Pane {
       f = Font.font(mt.getFontName(), mt.getFontSize());
     } else {
       f = Font.font(mt.getFontName(), 20);
-      f = Font.font(f.getFamily(), MoGraphic.Utilities.calculateMaxFontSize(f, mt.getTextString(), Math.abs(-extent[0].getX() + extent[1].getX()), Math.abs(-extent[0].getY() + extent[1].getY())));
+      f = Font.font(f.getFamily(), MoGraphic.Utilities.calculateMaxFontSize(f, mt.getString(), Math.abs(-extent[0].getX() + extent[1].getX()), Math.abs(-extent[0].getY() + extent[1].getY())));
     }
     
     text.setFont(f);
-    text.setText(mt.getTextString());
+    text.setText(mt.getString());
     text.setUnderline(MoText.TextStyle.isUnterline(mt.getTextStyle()));
   
     Double tlx = extent[(extent[0].getX() < extent[1].getX()) ? 0 : 1].getX();
@@ -137,7 +137,7 @@ public class MoIconPane extends Pane {
     Double w1 = brx - tlx;
     Double h1 = tly - bry;
     Double h2 = MoGraphic.Utilities.calculateFontHeight(f);
-    Double w2 = MoGraphic.Utilities.calculateStringWidth(f, mt.getTextString());
+    Double w2 = MoGraphic.Utilities.calculateStringWidth(f, mt.getString());
   
     text.setY(((h1 - h2) / 2));
     if (mt.getHorizontalAlignment() == MoText.TextAlignment.LEFT) {

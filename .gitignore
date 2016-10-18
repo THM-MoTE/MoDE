@@ -1,7 +1,7 @@
+.idea/
+gen/
+target/
 *.iml
 *~
-.idea/
-target/
-src/main/generate/
 /*.mo
 *.tokens

@@ -118,7 +118,6 @@ public class MoClass implements HierarchyData<MoClass> {
   }
   
   private void parseExtra(@NonNull OMCompiler omc) {
-    //mm.getAnnotations().addAll(MoAnnotation.parse(omc, mm));
     List<String> list = omc.getInheritedClasses(this.getName());
     Boolean classFound;
     for (String s : list) {
@@ -136,14 +135,14 @@ public class MoClass implements HierarchyData<MoClass> {
         Settings.load().getLogger().error(String.format("Error in \"%s\"", name), String.format("Can't find package \"%s\"", s));
       }
     }
-    this.setIcon(MoIcon.parse(omc, this.getName()));
-    this.setDocumentation(MoDocumentation.parse(omc, this.getName()));
+  
+    MoAnnotation.parse(omc, this);
     for (MoClass inheritedClass : this.getInheritedClasses()) {
       if (inheritedClass.getIcon() != null) {
         if (this.getIcon() == null) this.setIcon(inheritedClass.getIcon());
         else this.getIcon().getMoGraphics().addAll(0, inheritedClass.getIcon().getMoGraphics());
       }
-      if (this.getDocumentation().getDocumentation().isEmpty() && inheritedClass.getDocumentation() != null)
+      if ((this.getDocumentation() == null || this.getDocumentation().getDocumentation().isEmpty()) && inheritedClass.getDocumentation() != null)
         this.setDocumentation(inheritedClass.getDocumentation());
     }
   }

@@ -1,6 +1,7 @@
 package de.thm.mni.mhpp11.util.parser.models.graphics;
 
-import de.thm.mni.mhpp11.parser.ModelicaIconParser;
+import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.CoordinateSystemContext;
+import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.CoordinateSystem_dataContext;
 import de.thm.mni.mhpp11.util.config.model.Point;
 import lombok.Builder;
 import lombok.Getter;
@@ -32,14 +33,20 @@ public class MoCoordinateSystem {
     if (grid != null) this.grid = grid;
   }
   
-  public static MoCoordinateSystem parse(ModelicaIconParser.CoordinateSystemContext system) {
+  public static MoCoordinateSystem parse(CoordinateSystemContext system) {
     MoCoordinateSystemBuilder mb = builder();
     
-    mb.first(new Point<>(Double.parseDouble(system.p1.x.getText()), Double.parseDouble(system.p1.y.getText())));
-    mb.second(new Point<>(Double.parseDouble(system.p2.x.getText()), Double.parseDouble(system.p2.y.getText())));
-    mb.preserveAspectRatio(Boolean.parseBoolean(system.preserveAspectRatio.getText()));
-    mb.initialScale(Double.parseDouble(system.initialScale.getText()));
-    mb.grid(new Point<>(Double.parseDouble(system.grid.x.getText()), Double.parseDouble(system.grid.y.getText())));
+    for (CoordinateSystem_dataContext data : system.data)
+      if (data.extent() != null) {
+        mb.first(new Point<>(Double.parseDouble(data.extent().p1.x.getText()), Double.parseDouble(data.extent().p1.y.getText())));
+        mb.second(new Point<>(Double.parseDouble(data.extent().p2.x.getText()), Double.parseDouble(data.extent().p2.y.getText())));
+      } else if (data.preserveAspectRatio() != null) {
+        mb.preserveAspectRatio(Boolean.parseBoolean(data.preserveAspectRatio().getText()));
+      } else if (data.initialScale() != null) {
+        mb.initialScale(Double.parseDouble(data.initialScale().val.getText()));
+      } else if (data.grid() != null) {
+        mb.grid(new Point<>(Double.parseDouble(data.grid().val.x.getText()), Double.parseDouble(data.grid().val.y.getText())));
+      }
   
     return mb.build();
   }

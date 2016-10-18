@@ -1,6 +1,8 @@
 package de.thm.mni.mhpp11.util.parser.models.graphics;
 
-import de.thm.mni.mhpp11.parser.ModelicaIconParser;
+import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.EllipseContext;
+import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.EllipseDataContext;
+import de.thm.mni.mhpp11.util.config.model.Point;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -8,26 +10,45 @@ import lombok.Getter;
  * Created by hobbypunk on 19.09.16.
  */
 @Getter
-public class MoEllipse extends MoFilledShapeExtent {
+public class MoEllipse extends MoFilledShape implements MoExtent {
   
+  Point<Double, Double>[] extent = (Point<Double, Double>[]) new Point[2];
   private Double startAngle = 0.0;
   private Double endAngle = 360.0;
   
   @Builder(builderMethodName = "ellipseBuilder")
-  MoEllipse(MoFilledShapeExtent mfse, Double startAngle, Double endAngle) {
-    super(mfse);
+  MoEllipse(MoFilledShape mfs, Point<Double, Double> first, Point<Double, Double> second, Double startAngle, Double endAngle) {
+    super(mfs);
+    this.extent[0] = first;
+    this.extent[1] = second;
     if(startAngle != null) this.startAngle = startAngle;
     if(endAngle != null) this.endAngle = endAngle;
   }
   
-  public static MoEllipse parse(ModelicaIconParser.EllipseContext ctx) {
+  public static MoEllipse parse(EllipseContext elem) {
+    MoGraphicBuilder mgb = builder();
+    MoFilledShapeBuilder mfsb = filledShapeBuilder();
     MoEllipseBuilder mb = ellipseBuilder();
     
-    mb.mfse(MoFilledShapeExtent.parse(ctx.filledShape(), ctx.extent()));
+    for (EllipseDataContext data : elem.data) {
+      if (data.graphicItem() != null) {
+        MoGraphic.parse(mgb, data.graphicItem());
+      } else if (data.filledShape() != null) {
+        MoFilledShape.parse(mfsb, data.filledShape());
+      } else if (data.extent() != null) {
+        mb.first(new Point<>(Double.parseDouble(data.extent().p1.x.getText()), Double.parseDouble(data.extent().p1.y.getText())));
+        mb.second(new Point<>(Double.parseDouble(data.extent().p2.x.getText()), Double.parseDouble(data.extent().p2.y.getText())));
+      } else if (data.startAngle() != null) {
+        mb.startAngle(Double.parseDouble(data.startAngle().val.getText()));
+      } else if (data.endAngle() != null) {
+        mb.endAngle(Double.parseDouble(data.endAngle().val.getText()));
+      }
+    }
     
-    mb.startAngle(Double.parseDouble(ctx.sa.getText()));
-    mb.endAngle(Double.parseDouble(ctx.ea.getText()));
-    
-    return mb.build();
+    return mb.mfs(
+        mfsb.mg(
+            mgb.build()
+        ).build()
+    ).build();
   }
 }
