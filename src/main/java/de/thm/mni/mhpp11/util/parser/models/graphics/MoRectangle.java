@@ -3,6 +3,7 @@ package de.thm.mni.mhpp11.util.parser.models.graphics;
 import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.RectangleContext;
 import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.RectangleDataContext;
 import de.thm.mni.mhpp11.util.config.model.Point;
+import de.thm.mni.mhpp11.util.parser.models.interfaces.MoExtent;
 import lombok.Builder;
 import lombok.Getter;
 

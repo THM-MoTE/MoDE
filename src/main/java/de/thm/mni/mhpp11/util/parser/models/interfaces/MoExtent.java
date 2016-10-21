@@ -1,4 +1,4 @@
-package de.thm.mni.mhpp11.util.parser.models.graphics;
+package de.thm.mni.mhpp11.util.parser.models.interfaces;
 
 import de.thm.mni.mhpp11.util.config.model.Point;
 

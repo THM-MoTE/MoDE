@@ -10,7 +10,7 @@ public class MoRoot extends MoClass {
   }
   
   public MoRoot(String name) {
-    super(name, null);
+    super(null, name, null);
     PREFIX = "r";
   }
 }

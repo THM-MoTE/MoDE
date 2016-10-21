@@ -2,11 +2,13 @@ package de.thm.mni.mhpp11;
 
 import de.thm.mni.mhpp11.util.config.Settings;
 import de.thm.mni.mhpp11.util.config.model.Modelica;
+import de.thm.mni.mhpp11.util.parser.ClassInformation;
 import de.thm.mni.mhpp11.util.parser.OMCompiler;
 import de.thm.mni.mhpp11.util.parser.ParserException;
 import de.thm.mni.mhpp11.util.parser.models.MoClass;
 import de.thm.mni.mhpp11.util.parser.models.MoRoot;
 import javafx.util.Pair;
+import omc.corba.Result;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -90,5 +92,13 @@ public class OmcTest {
     System.out.println(omc.getProject());
     System.out.println(omc.getSystemLibraries());
     System.out.println(omc.getProjectLibraries());
+  }
+  
+  @Test
+  public void testConnectors() throws ParserException {
+    omc.addProjectLibraries(Arrays.asList(Paths.get("/home/hobbypunk/Dokumente/Entwicklung/THM_Projekte/Projektphase/2014-modelica-kotani/SHM/package.mo")));
+    Result r = omc.sendExpression("getClassInformation(SHM.SeidelThesis.Examples.FullModel.SeidelThesisFullExample)");
+    ClassInformation ci = omc.getClassInformation("SHM.Shared.Components.Compartments.BloodSystem");
+    System.out.println(ci);
   }
 }

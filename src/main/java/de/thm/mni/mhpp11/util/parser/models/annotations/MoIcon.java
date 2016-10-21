@@ -4,7 +4,6 @@ import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.IconContentContext;
 import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.IconContext;
 import de.thm.mni.mhpp11.util.parser.OMCompiler;
 import de.thm.mni.mhpp11.util.parser.models.graphics.MoCoordinateSystem;
-import de.thm.mni.mhpp11.util.parser.models.graphics.MoDefaults;
 import de.thm.mni.mhpp11.util.parser.models.graphics.MoGraphic;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,8 +16,6 @@ import java.util.List;
  */
 @Getter
 public class MoIcon extends MoAnnotation {
-  
-  public static MoIcon PACKAGE = MoDefaults.newPackage();
   
   private MoCoordinateSystem moCoordinateSystem = new MoCoordinateSystem();
   private List<MoGraphic> moGraphics = new ArrayList<>();

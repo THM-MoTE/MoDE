@@ -88,8 +88,8 @@ public class MoIconPane extends Pane {
         shape = setFilledShape((MoFilledShape) mg, shape);
       }
   
+      shape.getTransforms().add(Transform.rotate(-mg.getRotation(), mg.getOrigin().getX(), -mg.getOrigin().getY()));
       shape.getTransforms().add(Transform.translate(mg.getOrigin().getX(), -mg.getOrigin().getY()));
-      shape.getTransforms().add(Transform.rotate(mg.getRotation(), 0, 0));
       shape.getTransforms().add(Transform.translate(moveX, moveY));
   
       this.getChildren().add(shape);

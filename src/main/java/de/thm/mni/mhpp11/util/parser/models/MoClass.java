@@ -2,15 +2,17 @@ package de.thm.mni.mhpp11.util.parser.models;
 
 import de.thm.mni.mhpp11.util.HierarchyData;
 import de.thm.mni.mhpp11.util.config.Settings;
+import de.thm.mni.mhpp11.util.parser.ClassInformation;
 import de.thm.mni.mhpp11.util.parser.OMCompiler;
 import de.thm.mni.mhpp11.util.parser.models.annotations.MoAnnotation;
 import de.thm.mni.mhpp11.util.parser.models.annotations.MoDocumentation;
 import de.thm.mni.mhpp11.util.parser.models.annotations.MoIcon;
+import de.thm.mni.mhpp11.util.parser.models.graphics.MoDefaults;
+import de.thm.mni.mhpp11.util.parser.models.interfaces.MoElement;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,26 +21,32 @@ import java.util.List;
  * Created by hobbypunk on 07.09.16.
  */
 @Getter
-public class MoClass implements HierarchyData<MoClass> {
+public class MoClass extends MoElement implements HierarchyData<MoClass> {
   
-  private static List<MoClass> bases = new ArrayList<>();
+  @Getter private static final List<MoClass> bases;
   
-  protected String PREFIX = "c";
-  private final String name;
+  static {
+    bases = new ArrayList<>();
+    bases.add(new MoClass(null, "Real", null));
+    bases.add(new MoClass(null, "Boolean", null));
+    bases.add(new MoClass(null, "Integer", null));
+    bases.add(new MoClass(null, "String", null));
+    bases.add(new MoClass(null, "Enum", null));
+  }
+  
+  private ClassInformation classInformation;
   private MoClass parent;
-  @Setter private String description;
   
-  @Setter private MoDocumentation documentation;
-  @Setter private MoIcon icon;
   @Getter private List<MoClass> inheritedClasses = new ArrayList<>();
   
-  private final List<MoAnnotation> annotations = new ArrayList<>();
+  private final List<MoVariable> variables = new ArrayList<>();
   
   private final ObservableList<MoClass> children = FXCollections.observableArrayList();
   
   
-  MoClass(String name, MoClass parent) {
-    this.name = name;
+  MoClass(ClassInformation classInformation, String name, MoClass parent) {
+    super("c", name, "");
+    this.classInformation = classInformation;
     this.parent = parent;
     if (parent != null) parent.getChildren().add(this);
   }
@@ -137,14 +145,43 @@ public class MoClass implements HierarchyData<MoClass> {
     }
   
     MoAnnotation.parse(omc, this);
+    MoVariable.parse(omc, this);
     for (MoClass inheritedClass : this.getInheritedClasses()) {
-      if (inheritedClass.getIcon() != null) {
-        if (this.getIcon() == null) this.setIcon(inheritedClass.getIcon());
-        else this.getIcon().getMoGraphics().addAll(0, inheritedClass.getIcon().getMoGraphics());
+      if (this.getInternalIcon() != null && inheritedClass.getInternalIcon() != null)
+        this.getInternalIcon().getMoGraphics().addAll(0, inheritedClass.getInternalIcon().getMoGraphics());
+      for (MoAnnotation ma : inheritedClass.getAnnotations()) {
+        if (!(ma instanceof MoIcon)) {
+          this.getAnnotations().add(ma);
+        }
       }
-      if ((this.getDocumentation() == null || this.getDocumentation().getDocumentation().isEmpty()) && inheritedClass.getDocumentation() != null)
-        this.setDocumentation(inheritedClass.getDocumentation());
     }
+  }
+  
+  public List<MoDocumentation> getDocumentations() {
+    List<MoDocumentation> list = new ArrayList<>();
+    for (MoAnnotation ma : getAnnotations()) {
+      if (ma instanceof MoDocumentation)
+        list.add((MoDocumentation) ma);
+    }
+    return list;
+  }
+  
+  public MoIcon getIcon() {
+    //TODO return default if gerInternalIcon is null
+    if (getInternalIcon() == null) {
+      if (this instanceof MoPackage) return MoDefaults.newPackage();
+      if (this instanceof MoModel) return MoDefaults.newModel();
+      if (this instanceof MoFunction) return MoDefaults.newFunction();
+    }
+    return getInternalIcon();
+  }
+  
+  private MoIcon getInternalIcon() {
+    
+    for (MoAnnotation ma : getAnnotations()) {
+      if (ma instanceof MoIcon) return (MoIcon) ma;
+    }
+    return null;
   }
   
   public static MoClass parse(@NonNull OMCompiler omc, @NonNull String name, @NonNull MoClass parent, Integer depth) {
@@ -154,26 +191,29 @@ public class MoClass implements HierarchyData<MoClass> {
   private static MoClass parse(@NonNull OMCompiler omc, @NonNull String name, MoClass parent, @NonNull String parentName, Integer depth, Boolean noExtra) {
     if (depth == 0) return new MoLater(name, parent);
     String n = (parentName.equals("")) ? name : parentName + "." + name;
-    
+    ClassInformation ci = omc.getClassInformation(n);
     if (parent instanceof MoLater) {
       n = parent.getName();
       parent = null;
     }
     MoClass tmp = null;
-    switch (omc.getType(n)) {
+    switch (ci.getType()) {
       case PACKAGE:
-        tmp = new MoPackage(name, parent);
+        tmp = new MoPackage(ci, name, parent);
         break;
       case MODEL:
-        tmp = new MoModel(name, parent);
+        tmp = new MoModel(ci, name, parent);
         break;
       case CLASS:
-        tmp = new MoClass(name, parent);
+        tmp = new MoClass(ci, name, parent);
+        break;
+      case CONNECTOR:
+        tmp = new MoConnector(ci, name, parent);
         break;
     }
     
     if (parent instanceof MoRoot && tmp != null) bases.add(tmp);
-    if (tmp == null) Settings.load().getLogger().error(String.format("Error in \"%s\"", name), String.format("Can't parse Type %s", omc.getType(n)));
+    if (tmp == null) Settings.load().getLogger().error(String.format("Error in \"%s\"", name), String.format("Can't parse Type %s", ci.getType()));
     if (tmp != null && !(tmp instanceof MoLater)) {
       parseChildren(omc, tmp, n, depth, noExtra);
       if (!noExtra) tmp.parseExtra(omc);
@@ -189,5 +229,14 @@ public class MoClass implements HierarchyData<MoClass> {
         continue;
     }
     return parent.getChildren();
+  }
+  
+  public static MoClass findClass(OMCompiler omc, String s) {
+    MoClass clazz;
+    for (MoClass c : bases) {
+      clazz = c.find(omc, s);
+      if (clazz != null) return clazz;
+    }
+    return null;
   }
 }

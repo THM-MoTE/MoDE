@@ -7,10 +7,6 @@ graphicItem : visible
             | rotation
             ;
 
-visible     : 'visible'  EQUALS val=bool;
-origin      : 'origin'   EQUALS val=point;
-rotation    : 'rotation' EQUALS val=NUMBER;
-
 filledShape : lineColor
             | fillColor
             | linePattern

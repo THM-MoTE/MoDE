@@ -21,7 +21,8 @@ public class MoDocumentation extends MoAnnotation {
   public static MoDocumentation parse(OMCompiler omc, DocumentationContext documentation) {
     MoDocumentationBuilder mb = builder();
     for (DocumentationContentContext dcc : documentation.documentationContent()) {
-      if (dcc.info() != null) mb.documentation(dcc.info().val.getText());
+      if (dcc.info() != null)
+        mb.documentation(dcc.info().val.getText());
       if (dcc.revisions() != null) mb.revisions(dcc.revisions().val.getText());
       
     }

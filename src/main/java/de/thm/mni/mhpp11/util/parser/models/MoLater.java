@@ -6,7 +6,7 @@ package de.thm.mni.mhpp11.util.parser.models;
 public class MoLater extends MoClass {
   
   MoLater(String name, MoClass parent) {
-    super(name, parent);
+    super(null, name, parent);
     PREFIX = "l";
   }
 }

@@ -3,6 +3,7 @@ package de.thm.mni.mhpp11.util.parser.models.graphics;
 import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.TextContext;
 import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.TextDataContext;
 import de.thm.mni.mhpp11.util.config.model.Point;
+import de.thm.mni.mhpp11.util.parser.models.interfaces.MoExtent;
 import javafx.scene.paint.Color;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

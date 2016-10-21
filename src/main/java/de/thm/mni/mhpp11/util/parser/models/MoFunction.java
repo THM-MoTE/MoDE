@@ -1,6 +1,7 @@
 package de.thm.mni.mhpp11.util.parser.models;
 
 
+import de.thm.mni.mhpp11.util.parser.ClassInformation;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -16,8 +17,8 @@ public class MoFunction extends MoClass {
   private final List<Object> params = new ArrayList<>();
   
   @Builder
-  public MoFunction(String name, MoClass parent) {
-    super(name, parent);
+  public MoFunction(ClassInformation classInformation, String name, MoClass parent) {
+    super(classInformation, name, parent);
   }
   
   @Override

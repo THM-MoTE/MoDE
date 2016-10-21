@@ -26,15 +26,7 @@ public class GeneratorTest {
   }
   
   @Test
-  public void testParser() throws Exception {
-    ANTLRInputStream is = new ANTLRInputStream(getClass().getResourceAsStream("/Annotation.txt"));
-    AnnotationParser p = new AnnotationParser(new CommonTokenStream(new AnnotationLexer(is)));
-    AnnotationParser.AnnotationContext ac = p.annotation();
-    System.out.println(ac);
-  }
-  
-  @Test
-  public void testParser2() throws Exception {
+  public void testLexer2() throws Exception {
     ANTLRInputStream is = new ANTLRInputStream(new ByteArrayInputStream("Protection(access = Access.hide)".getBytes()));
     IgnoreEntryLexer mi = new IgnoreEntryLexer(is);
     Token t = null;
@@ -43,4 +35,18 @@ public class GeneratorTest {
       System.out.println(IgnoreEntryLexer.VOCABULARY.getDisplayName(t.getType()) + ": " + t.getText());
     }
   }
+  
+  @Test
+  public void testParser() throws Exception {
+    ANTLRInputStream is = new ANTLRInputStream(getClass().getResourceAsStream("/Annotation.txt"));
+    AnnotationParser p = new AnnotationParser(new CommonTokenStream(new AnnotationLexer(is)));
+    AnnotationParser.AnnotationContext ac = p.annotation();
+    System.out.println(ac);
+  }
+  
+  @Test
+  public void testGenerator() throws Exception {
+    
+  }
+  
 }

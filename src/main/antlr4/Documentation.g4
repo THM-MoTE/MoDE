@@ -8,5 +8,5 @@ documentationContent : info
                      | revisions
                      ;
 
-info : 'info' EQUALS val=STRING;
-revisions : 'revisions' EQUALS val=STRING;
+info        : 'info' EQUALS val=STRING;
+revisions   : 'revisions' EQUALS val=STRING;

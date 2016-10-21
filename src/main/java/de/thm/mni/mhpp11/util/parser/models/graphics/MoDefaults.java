@@ -12,6 +12,10 @@ import java.util.List;
  */
 public class MoDefaults {
   
+  private static MoIcon moPackage = null;
+  private static MoIcon moModel = null;
+  private static MoIcon moFunction = null;
+  
   private static MoGraphic getMoGraphic() {
     return new MoGraphic(null, null, null);
   }
@@ -20,13 +24,28 @@ public class MoDefaults {
     return new MoFilledShape(getMoGraphic(), c, Color.TRANSPARENT, MoGraphic.Utilities.LinePattern.SOLID, MoFilledShape.FillPattern.NONE, 2.);
   }
   
-  
-  public static MoIcon newPackage() {
+  private static MoIcon newAnything(Color c, String text) {
     MoCoordinateSystem mcs = new MoCoordinateSystem();
     List<MoGraphic> list = new ArrayList<>();
     
-    list.add(new MoRectangle(getMoFilledShape(Color.DARKRED), new Point<>(-100., 100.), new Point<>(100., -100.), MoRectangle.BorderPattern.NONE, 0.));
-    list.add(new MoText(getMoFilledShape(Color.DARKRED), new Point<>(-100., 100.), new Point<>(100., -100.), "P", 0., "", MoText.TextStyle.BOLD.val, Color.DARKRED, null));
+    list.add(new MoRectangle(getMoFilledShape(c), new Point<>(-100., 100.), new Point<>(100., -100.), MoRectangle.BorderPattern.NONE, 0.));
+    list.add(new MoText(getMoFilledShape(c), new Point<>(-100., 100.), new Point<>(100., -100.), text, 0., "", MoText.TextStyle.BOLD.val, c, null));
     return new MoIcon(mcs, list);
+    
+  }
+  
+  public static MoIcon newPackage() {
+    if (moPackage == null) moPackage = newAnything(Color.DARKRED, "P");
+    return moPackage;
+  }
+  
+  public static MoIcon newModel() {
+    if (moModel == null) moModel = newAnything(Color.BLUE, "M");
+    return moModel;
+  }
+  
+  public static MoIcon newFunction() {
+    if (moFunction == null) moFunction = newAnything(Color.GREEN, "F");
+    return moFunction;
   }
 }

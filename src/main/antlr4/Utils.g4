@@ -1,6 +1,10 @@
 grammar Utils;
 
-extent  : EXTENT EQUALS LCBRACE p1=point COMMA p2=point RCBRACE ;
+
+visible     : 'visible'  EQUALS val=bool;
+origin      : 'origin'   EQUALS val=point;
+rotation    : 'rotation' EQUALS val=NUMBER;
+extent      : 'extent' EQUALS LCBRACE p1=point COMMA p2=point RCBRACE ;
 
 pointList  : LCBRACE  point (COMMA point)+ RCBRACE;
 
@@ -12,7 +16,6 @@ colorType  : LCBRACE r=NUMBER COMMA g=NUMBER COMMA b=NUMBER RCBRACE
 
 point   : LCBRACE x=NUMBER COMMA y=NUMBER RCBRACE;
 
-EXTENT  : 'extent';
 
 //COLOR
 BLACK   : 'Black';
@@ -39,8 +42,7 @@ SEMICOLON : ';';
 
 WHITESPACE  : [ \r\n\t] + -> channel (HIDDEN);
 
-string  : STRING;
-STRING  : '\\\"' S_CHAR* '\\\"';
+STRING          : '\\\"' S_CHAR* '\\\"';
 
 fragment S_CHAR : ~["\\]
                 | ESCAPESEQUENCE
@@ -56,7 +58,28 @@ fragment OCTALESCAPE    :   '\\\\\\' OCTALDIGIT
                         |   '\\\\\\' ZEROTOTHREE OCTALDIGIT OCTALDIGIT
                         ;
 
-fragment UNICODEESCAPE  :   '\\' 'u' HEXDIGIT HEXDIGIT HEXDIGIT HEXDIGIT;
+fragment UNICODEESCAPE  :   '\\\\\\' 'u' HEXDIGIT HEXDIGIT HEXDIGIT HEXDIGIT;
+
+
+S_STRING    : '"' S_CHAR* '"';
+
+fragment S_S_CHAR : ~["\\]
+                | ESCAPESEQUENCE
+                ;
+
+fragment S_ESCAPESEQUENCE :   '\\' [btnfr"'\\]
+                        |   OCTALESCAPE
+                        |   UNICODEESCAPE
+                        ;
+
+fragment S_OCTALESCAPE    :   '\\' OCTALDIGIT
+                        |   '\\' OCTALDIGIT OCTALDIGIT
+                        |   '\\' ZEROTOTHREE OCTALDIGIT OCTALDIGIT
+                        ;
+
+fragment S_UNICODEESCAPE  :   '\\' 'u' HEXDIGIT HEXDIGIT HEXDIGIT HEXDIGIT;
+
+
 fragment ZEROTOTHREE    : [0-3];
 fragment OCTALDIGIT     : [0-7];
 fragment HEXDIGIT       : [0-9a-fA-F];

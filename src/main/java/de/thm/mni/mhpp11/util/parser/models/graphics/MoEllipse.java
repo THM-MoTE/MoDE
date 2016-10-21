@@ -3,6 +3,7 @@ package de.thm.mni.mhpp11.util.parser.models.graphics;
 import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.EllipseContext;
 import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.EllipseDataContext;
 import de.thm.mni.mhpp11.util.config.model.Point;
+import de.thm.mni.mhpp11.util.parser.models.interfaces.MoExtent;
 import lombok.Builder;
 import lombok.Getter;
 

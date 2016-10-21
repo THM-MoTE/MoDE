@@ -36,7 +36,6 @@ public class OMCompiler {
     return ourInstance;
   }
   
-  
   public enum TYPE {
     TYPE,
     PACKAGE,
@@ -173,33 +172,17 @@ public class OMCompiler {
     return toStringArray(result.result);
   }
   
-  public TYPE getType(String className) {
-    Result r = sendExpression(String.format("getClassRestriction(%s)", className));
-    String res = toString(r.result).toLowerCase();
-    switch (res) {
-      case "type":
-        return TYPE.TYPE;
-      case "package":
-        return TYPE.PACKAGE;
-      case "class":
-        return TYPE.CLASS;
-      case "record":
-        return TYPE.RECORD;
-      case "function":
-        return TYPE.FUNCTION;
-      case "model":
-        return TYPE.MODEL;
-      case "connector":
-        return TYPE.CONNECTOR;
-      case "enum":
-        return TYPE.ENUM;
-      case "operator":
-        return TYPE.OPERATOR;
-      case "operator record":
-        return TYPE.OPERATOR_RECORD;
-      default:
-        return TYPE.NULL;
+  public ClassInformation getClassInformation(String className) {
+    Result r = sendExpression(String.format("getClassInformation(%s)", className));
+    List<String> list = toStringArray(r.result, true, false);
+    TYPE t;
+    try {
+      t = TYPE.valueOf(list.get(0).replaceAll(" ", "_").toUpperCase());
+    } catch (Exception e) {
+      t = TYPE.NULL;
     }
+    
+    return new ClassInformation(t, list.get(1), getPath(list.get(5)), Boolean.parseBoolean(list.get(6)), Integer.parseInt(list.get(7)), Integer.parseInt(list.get(9)), Integer.parseInt(list.get(8)), Integer.parseInt(list.get(10)));
   }
   
   private String toString(String result) {
@@ -216,16 +199,16 @@ public class OMCompiler {
   }
   
   private List<String> toStringArray(String s) {
-    return toStringArray(s, true);
+    return toStringArray(s, true, true);
   }
   
-  private List<String> toStringArray(String s, Boolean unsorted) {
+  private List<String> toStringArray(String s, Boolean unsorted, Boolean removeEmpty) {
     List<String> l = Arrays.asList(s.split(","));
     
     for (int i = 0; i < l.size(); i++) {
-      l.set(i, l.get(i).replaceAll("(^[\\{\\\"]*)|([\\\"\\}]*$)", ""));
+      l.set(i, l.get(i).replaceAll("(^[\\(\\{\\\"]*)|([\\\"\\}\\)]*$)", ""));
     }
-    l = l.stream().filter(s1 -> !s1.isEmpty()).collect(Collectors.toList());
+    if (removeEmpty) l = l.stream().filter(s1 -> !s1.isEmpty()).collect(Collectors.toList());
     if (!unsorted) l.sort(String::compareToIgnoreCase);
     
     return l;
@@ -242,7 +225,7 @@ public class OMCompiler {
   
   public Path getPath(String path) {
     Result r = sendExpression(String.format("uriToFilename(\"%s\")", path));
-    return Paths.get(r.result);
+    return Paths.get(toStringArray(r.result).get(0));
   }
   
   public Result sendExpression(String s) {

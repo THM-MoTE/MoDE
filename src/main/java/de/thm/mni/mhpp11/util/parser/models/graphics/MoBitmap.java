@@ -4,6 +4,7 @@ import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.BitmapContext;
 import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.BitmapDataContext;
 import de.thm.mni.mhpp11.util.config.model.Point;
 import de.thm.mni.mhpp11.util.parser.OMCompiler;
+import de.thm.mni.mhpp11.util.parser.models.interfaces.MoExtent;
 import lombok.Builder;
 import lombok.Getter;
 
