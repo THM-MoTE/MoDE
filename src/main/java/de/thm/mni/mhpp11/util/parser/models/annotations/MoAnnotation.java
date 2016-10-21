@@ -11,6 +11,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,11 +25,12 @@ public class MoAnnotation {
   
   public static void parse(OMCompiler omc, MoElement that, List<String> annotations) {
     for (String annotation : annotations) {
-      MoAnnotation.parse(omc, that, annotation);
+      that.getAnnotations().addAll(MoAnnotation.parse(omc, annotation));
     }
   }
   
-  public static void parse(OMCompiler omc, MoElement that, String annotation) {
+  public static List<MoAnnotation> parse(OMCompiler omc, String annotation) {
+    List<MoAnnotation> list = new ArrayList<>();
     ANTLRInputStream is;
     AnnotationParser p;
     try {
@@ -37,15 +39,16 @@ public class MoAnnotation {
       AnnotationContext a = p.annotation();
       for (AnnotationElementContext elem : a.annotationElement()) {
         if (elem.documentation() != null) {
-          that.getAnnotations().add(MoDocumentation.parse(omc, elem.documentation()));
+          list.add(MoDocumentation.parse(omc, elem.documentation()));
         } else if (elem.icon() != null) {
-          that.getAnnotations().add(MoIcon.parse(omc, elem.icon()));
+          list.add(MoIcon.parse(omc, elem.icon()));
         } else if (elem.placement() != null) {
-          that.getAnnotations().add(MoPlacement.parse(elem.placement()));
+          list.add(MoPlacement.parse(elem.placement()));
         }
       }
     } catch (IOException e) {
       e.printStackTrace();
     }
+    return list;
   }
 }

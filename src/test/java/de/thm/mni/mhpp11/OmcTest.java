@@ -87,6 +87,13 @@ public class OmcTest {
   }
   
   @Test
+  public void testConnections() throws ParserException {
+    omc.addProjectLibraries(Arrays.asList(Paths.get("/home/hobbypunk/Dokumente/Entwicklung/THM_Projekte/Projektphase/2014-modelica-kotani/SHM/package.mo")));
+    List<String> list = omc.getConnections("SHM.SeidelThesis.Examples.FullModel.SeidelThesisFullExample");
+    System.out.println(list);
+  }
+  
+  @Test
   public void testProject() throws ParserException {
     omc.setProject(Paths.get("./test.mo"));
     System.out.println(omc.getProject());

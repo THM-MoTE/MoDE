@@ -1,30 +1,37 @@
 package de.thm.mni.mhpp11.util.parser;
 
+import de.thm.mni.mhpp11.parser.modelica.ComponentsLexer;
+import de.thm.mni.mhpp11.parser.modelica.ComponentsParser;
 import javafx.util.Pair;
 import lombok.Getter;
 import omc.corba.OMCClient;
 import omc.corba.OMCInterface;
 import omc.corba.Result;
+import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CommonTokenStream;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Created by hobbypunk on 27.09.16.
  */
 public class OMCompiler {
   
+  private static final Pattern lineEnd = Pattern.compile(";\\s*$");
   private static final Pattern removeQuotes = Pattern.compile("(^\")|(\"$)");
+  private static final Pattern connect = Pattern.compile("^\\s*connect\\s*\\(.*");
   private static OMCompiler ourInstance;
   
   public static OMCompiler getInstance(Path compiler, Path library, Locale locale) throws IOException {
@@ -183,6 +190,94 @@ public class OMCompiler {
     }
     
     return new ClassInformation(t, list.get(1), getPath(list.get(5)), Boolean.parseBoolean(list.get(6)), Integer.parseInt(list.get(7)), Integer.parseInt(list.get(9)), Integer.parseInt(list.get(8)), Integer.parseInt(list.get(10)));
+  }
+  
+  public List<Map<String, String>> getVariables(String className) throws IOException {
+    return getVariables(className, getClassInformation(className));
+  }
+  
+  public List<Map<String, String>> getVariables(String className, ClassInformation ci) throws IOException {
+    List<Map<String, String>> list = getComponents(className);
+    for (Map<String, String> m : list) {
+      Pattern regex = Pattern.compile(String.format("%s(\\[.*?\\])? %s[\\W]", m.get("type"), m.get("name")));
+      
+      try (Stream<String> lines = Files.lines(ci.getFileName())) {
+        lines.limit(ci.getLineNumberEnd()).skip(ci.getLineNumberStart() - 1).filter(new Predicate<String>() {
+          Boolean match = false;
+          
+          @Override
+          public boolean test(String s) {
+            Boolean alwaysReturn = false;
+            if (regex.matcher(s).find()) alwaysReturn = match = true;
+            if (lineEnd.matcher(s).find()) {
+              if (match) alwaysReturn = true;
+              match = false;
+            }
+            return alwaysReturn || match;
+          }
+        }).map(String::trim).reduce((s, s2) -> s + s2).ifPresent(s -> {
+          m.put("line", s);
+        });
+      }
+    }
+    
+    return list;
+  }
+  
+  public List<Map<String, String>> getComponents(String className) throws IOException {
+    List<Map<String, String>> list = new ArrayList<>();
+    Result r = sendExpression(String.format("getComponentsTest(%s)", className));
+    ANTLRInputStream is;
+    ComponentsParser p;
+    is = new ANTLRInputStream(new ByteArrayInputStream(r.result.getBytes()));
+    p = new ComponentsParser(new CommonTokenStream(new ComponentsLexer(is)));
+    ComponentsParser.ComponentsContext cs = p.components();
+    for (ComponentsParser.ComponentContext c : cs.component()) {
+      Map<String, String> m = new HashMap<>();
+      list.add(m);
+      m.put("type", toString(c.className().val.getText()));
+      m.put("name", toString(c.name().val.getText()));
+      m.put("comment", toString(c.comment().val.getText()));
+      m.put("isProtected", toString(c.isProtected().val.getText()));
+      m.put("isFinal", toString(c.isFinal().val.getText()));
+      m.put("isFlow", toString(c.isFlow().val.getText()));
+      m.put("isStream", toString(c.isStream().val.getText()));
+      m.put("isReplaceable", toString(c.isReplaceable().val.getText()));
+      m.put("variability", toString(c.variability().val.getText()));
+      m.put("innerOuter", toString(c.innerOuter().val.getText()));
+      m.put("inputOutput", toString(c.inputOutput().val.getText()));
+      m.put("dimensions", toString(c.dimensions().val.getText()));
+    }
+    
+    return list;
+  }
+  
+  public List<String> getConnections(String className) {
+    return getConnections(getClassInformation(className));
+  }
+  
+  public List<String> getConnections(ClassInformation ci) {
+    try (Stream<String> lines = Files.lines(ci.getFileName())) {
+      return lines.limit(ci.getLineNumberEnd()).skip(ci.getLineNumberStart() - 1).filter(new Predicate<String>() {
+        Boolean match = false;
+        
+        @Override
+        public boolean test(String s) {
+          Boolean alwaysReturn = false;
+          if (connect.matcher(s).matches()) alwaysReturn = match = true;
+          if (s.endsWith(";")) {
+            if (match) alwaysReturn = true;
+            match = false;
+          }
+          return alwaysReturn || match;
+        }
+      }).filter(s -> s.contains("annotation")).map(String::trim).collect(Collectors.toList());
+      
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    
+    return new ArrayList<>();
   }
   
   private String toString(String result) {
