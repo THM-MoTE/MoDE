@@ -94,14 +94,14 @@ text        : 'Text' LBRACE (data+=textData (COMMA data +=textData)*)? RBRACE;
 textData    : graphicItem
             | filledShape
             | extent
-            | string
+            | textString
             | fontSize
             | fontName
             | textStyle
             | horizontalAlignment
             | index
             ;
-string              : TEXTSTRING EQUALS val=STRING;
+textString              : LIT_STRING EQUALS val=STRING;
 fontSize            : 'fontSize' EQUALS val=NUMBER;
 fontName            : 'fontName' EQUALS val=STRING;
 textStyle           : 'textStyle' EQUALS 'TextStyle' LIT_DOT type=textStyleType;
@@ -146,9 +146,9 @@ linePatternType    : NONE
 
 //LEXER
 
-TEXTSTRING  : 'string'
-            | 'textString'
-            ;
+LIT_STRING : LIT_SSTRING | LIT_TEXTSTRING;
+fragment LIT_SSTRING  : 'string';
+fragment LIT_TEXTSTRING  : 'textString';
 
 RECTANGLE   : 'Rectangle';
 TEXT        : 'Text';

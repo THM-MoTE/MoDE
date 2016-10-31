@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -23,4 +24,22 @@ public abstract class MoElement {
     this.name = name;
     this.comment = comment;
   }
+  
+  public void add(MoAnnotation annotation) {
+    annotations.add(annotation);
+  }
+  
+  public void add(int index, MoAnnotation annotation) {
+    annotations.add(index, annotation);
+  }
+  
+  public void addAll(Collection<? extends MoAnnotation> list) {
+    annotations.addAll(list);
+  }
+  
+  public void addAll(int index, Collection<? extends MoAnnotation> list) {
+    annotations.addAll(index, list);
+  }
+  
+  public String toString() { return PREFIX + " > " + this.getName(); }
 }

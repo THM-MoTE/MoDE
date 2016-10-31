@@ -25,7 +25,7 @@ public class MoAnnotation {
   
   public static void parse(OMCompiler omc, MoElement that, List<String> annotations) {
     for (String annotation : annotations) {
-      that.getAnnotations().addAll(MoAnnotation.parse(omc, annotation));
+      that.addAll(MoAnnotation.parse(omc, annotation));
     }
   }
   
@@ -42,6 +42,8 @@ public class MoAnnotation {
           list.add(MoDocumentation.parse(omc, elem.documentation()));
         } else if (elem.icon() != null) {
           list.add(MoIcon.parse(omc, elem.icon()));
+        } else if (elem.diagram() != null) {
+          list.add(MoDiagram.parse(omc, elem.diagram()));
         } else if (elem.placement() != null) {
           list.add(MoPlacement.parse(elem.placement()));
         }

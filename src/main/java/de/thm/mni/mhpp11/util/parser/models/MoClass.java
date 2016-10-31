@@ -1,10 +1,12 @@
 package de.thm.mni.mhpp11.util.parser.models;
 
 import de.thm.mni.mhpp11.util.HierarchyData;
+import de.thm.mni.mhpp11.util.ImmutableListCollector;
 import de.thm.mni.mhpp11.util.config.Settings;
 import de.thm.mni.mhpp11.util.parser.ClassInformation;
 import de.thm.mni.mhpp11.util.parser.OMCompiler;
 import de.thm.mni.mhpp11.util.parser.models.annotations.MoAnnotation;
+import de.thm.mni.mhpp11.util.parser.models.annotations.MoDiagram;
 import de.thm.mni.mhpp11.util.parser.models.annotations.MoDocumentation;
 import de.thm.mni.mhpp11.util.parser.models.annotations.MoIcon;
 import de.thm.mni.mhpp11.util.parser.models.graphics.MoDefaults;
@@ -15,6 +17,7 @@ import lombok.Getter;
 import lombok.NonNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -36,6 +39,7 @@ public class MoClass extends MoElement implements HierarchyData<MoClass> {
   
   private ClassInformation classInformation;
   private MoClass parent;
+  private Boolean complete = false;
   
   @Getter private List<MoClass> inheritedClasses = new ArrayList<>();
   
@@ -62,7 +66,7 @@ public class MoClass extends MoElement implements HierarchyData<MoClass> {
     this.parent = newParent;
   }
   
-  public Boolean contains(OMCompiler omc, MoClass child) {
+  private Boolean contains(OMCompiler omc, MoClass child) {
     if (children.contains(child)) return true;
     
     this.update(omc);
@@ -95,9 +99,64 @@ public class MoClass extends MoElement implements HierarchyData<MoClass> {
     return this.name;
   }
   
-  public String toString() { return PREFIX + " > " + this.getName(); }
+  void add(MoVariable variable) {
+    this.variables.add(variable);
+  }
   
-  public void update(@NonNull OMCompiler omc, String name) {
+  public List<MoVariable> getVariables() {
+    List<MoVariable> list = new ArrayList<>();
+    list.addAll(this.variables);
+    inheritedClasses.forEach(inheritedClass -> list.addAll(0, inheritedClass.getVariables()));
+    return Collections.unmodifiableList(list);
+  }
+  
+  public Boolean hasConnectors() {
+    for (MoVariable mv : getVariables())
+      if (mv.getType() instanceof MoConnector) return true;
+    return false;
+  }
+  
+  public List<MoVariable> getConnectorVariables() {
+    return getVariables().stream().filter(moVariable -> moVariable.getType() instanceof MoConnector).collect(ImmutableListCollector.toImmutableList());
+  }
+  
+  public List<MoAnnotation> getAnnotations() {
+    List<MoAnnotation> annotations = new ArrayList<>();
+    annotations.addAll(super.getAnnotations());
+    inheritedClasses.forEach(inheritedClass -> {
+      annotations.addAll(0, inheritedClass.getAnnotations());
+    });
+    
+    return Collections.unmodifiableList(annotations);
+  }
+  
+  public List<MoDocumentation> getDocumentations() {
+    return getAnnotations().stream().filter(annotation -> annotation instanceof MoDocumentation).map(annotation -> (MoDocumentation) annotation).collect(ImmutableListCollector.toImmutableList());
+  }
+  
+  public MoIcon getIcon() {
+    MoIcon mi = getInternalIcon();
+    if (mi != null) return mi;
+    if (this instanceof MoPackage) return MoDefaults.newPackage();
+    if (this instanceof MoModel) return MoDefaults.newModel();
+    if (this instanceof MoFunction) return MoDefaults.newFunction();
+    else return null;
+  }
+  
+  private MoIcon getInternalIcon() {
+    MoIcon mi = null;
+    for (MoAnnotation ma : getAnnotations()) {
+      if (ma instanceof MoIcon && !(ma instanceof MoDiagram)) {
+        if (mi == null) mi = ((MoIcon) ma).copy();
+        else mi.getMoGraphics().addAll(((MoIcon) ma).getMoGraphics());
+      }
+    }
+    
+    return mi;
+  }
+  
+  
+  private void update(@NonNull OMCompiler omc, String name) {
     for (Integer i = 0; i < getChildren().size(); i++) {
       MoClass child = getChildren().get(i);
       if (name.startsWith(child.getName()) && child instanceof MoLater) {
@@ -126,6 +185,7 @@ public class MoClass extends MoElement implements HierarchyData<MoClass> {
   }
   
   private void parseExtra(@NonNull OMCompiler omc) {
+    if (complete) return;
     List<String> list = omc.getInheritedClasses(this.getName());
     Boolean classFound;
     for (String s : list) {
@@ -146,43 +206,9 @@ public class MoClass extends MoElement implements HierarchyData<MoClass> {
   
     MoAnnotation.parse(omc, this);
     MoVariable.parse(omc, this);
-    for (MoClass inheritedClass : this.getInheritedClasses()) {
-      if (this.getInternalIcon() != null && inheritedClass.getInternalIcon() != null)
-        this.getInternalIcon().getMoGraphics().addAll(0, inheritedClass.getInternalIcon().getMoGraphics());
-      for (MoAnnotation ma : inheritedClass.getAnnotations()) {
-        if (!(ma instanceof MoIcon)) {
-          this.getAnnotations().add(ma);
-        }
-      }
-    }
+    complete = true;
   }
   
-  public List<MoDocumentation> getDocumentations() {
-    List<MoDocumentation> list = new ArrayList<>();
-    for (MoAnnotation ma : getAnnotations()) {
-      if (ma instanceof MoDocumentation)
-        list.add((MoDocumentation) ma);
-    }
-    return list;
-  }
-  
-  public MoIcon getIcon() {
-    //TODO return default if gerInternalIcon is null
-    if (getInternalIcon() == null) {
-      if (this instanceof MoPackage) return MoDefaults.newPackage();
-      if (this instanceof MoModel) return MoDefaults.newModel();
-      if (this instanceof MoFunction) return MoDefaults.newFunction();
-    }
-    return getInternalIcon();
-  }
-  
-  private MoIcon getInternalIcon() {
-    
-    for (MoAnnotation ma : getAnnotations()) {
-      if (ma instanceof MoIcon) return (MoIcon) ma;
-    }
-    return null;
-  }
   
   public static MoClass parse(@NonNull OMCompiler omc, @NonNull String name, @NonNull MoClass parent, Integer depth) {
     return MoClass.parse(omc, name, parent, (parent instanceof MoRoot) ? "" : parent.getName(), depth, false);

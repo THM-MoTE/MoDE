@@ -8,5 +8,5 @@ documentationContent : info
                      | revisions
                      ;
 
-info        : 'info' EQUALS (STRING|S_STRING);
+info        : 'info' EQUALS val=string;
 revisions   : 'revisions' EQUALS val=STRING;

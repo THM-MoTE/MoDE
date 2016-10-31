@@ -32,7 +32,8 @@ RBRACE : ')';
 
 NUMBER  : '-'?[0-9]+
         | '-'?[0-9]+'.'[0-9]+
-        | '-'?[0-9]+'.'[0-9]+'e''-'?[0-9]+;
+        | '-'?[0-9]+'.'[0-9]+'e''-'?[0-9]+
+        ;
 
 LIT_DOT : '.';
 
@@ -42,7 +43,11 @@ SEMICOLON : ';';
 
 WHITESPACE  : [ \r\n\t] + -> channel (HIDDEN);
 
-STRING          : '\\\"' S_CHAR* '\\\"';
+string  : STRING
+        | S_STRING
+        ;
+
+STRING          : '\\"' S_CHAR* '\\"';
 
 fragment S_CHAR : ~["\\]
                 | ESCAPESEQUENCE
@@ -61,15 +66,15 @@ fragment OCTALESCAPE    :   '\\\\\\' OCTALDIGIT
 fragment UNICODEESCAPE  :   '\\\\\\' 'u' HEXDIGIT HEXDIGIT HEXDIGIT HEXDIGIT;
 
 
-S_STRING    : '"' S_CHAR* '"';
+S_STRING    : '"' S_S_CHAR* '"';
 
 fragment S_S_CHAR : ~["\\]
-                | ESCAPESEQUENCE
+                | S_ESCAPESEQUENCE
                 ;
 
 fragment S_ESCAPESEQUENCE :   '\\' [btnfr"'\\]
-                        |   OCTALESCAPE
-                        |   UNICODEESCAPE
+                        |   S_OCTALESCAPE
+                        |   S_UNICODEESCAPE
                         ;
 
 fragment S_OCTALESCAPE    :   '\\' OCTALDIGIT

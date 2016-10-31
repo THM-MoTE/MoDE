@@ -90,7 +90,7 @@
     <dependency>
       <groupId>de.thm.mni.njss90</groupId>
       <artifactId>omc</artifactId>
-      <version>0.1</version>
+      <version>0.2</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -101,14 +101,14 @@
   
   <repositories>
     <repository>
+      <id>Local Repo</id>
+      <url>file://lib</url>
+    </repository>
+  
+    <repository>
       <id>central</id>
       <name>jcenter</name>
       <url>http://jcenter.bintray.com</url>
-    </repository>
-    
-    <repository>
-      <id>Local Repo</id>
-      <url>file://lib</url>
     </repository>
   </repositories>
   

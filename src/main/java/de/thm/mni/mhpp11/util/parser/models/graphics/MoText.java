@@ -5,9 +5,12 @@ import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.TextDataContext;
 import de.thm.mni.mhpp11.util.config.model.Point;
 import de.thm.mni.mhpp11.util.parser.models.interfaces.MoExtent;
 import javafx.scene.paint.Color;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+
+import java.util.regex.Pattern;
 
 /**
  * Created by hobbypunk on 19.09.16.
@@ -15,6 +18,7 @@ import lombok.Getter;
 @Getter
 public class MoText extends MoFilledShape implements MoExtent {
   
+  private static final Pattern COMPILE = Pattern.compile("(^[\\\\\\\"]+)|([\\\\\\\"]+$)");
   private Point<Double, Double>[] extent = (Point<Double, Double>[]) new Point[2];
   public enum TextAlignment {
     LEFT,
@@ -44,7 +48,7 @@ public class MoText extends MoFilledShape implements MoExtent {
   Double fontSize = 0.0;
   String fontName = "";
   Integer textStyle = 0;
-  Color textColor = this.lineColor;
+  @Getter(AccessLevel.PRIVATE) Color textColor = this.lineColor;
   TextAlignment horizontalAlignment = TextAlignment.CENTER;
   
   
@@ -59,6 +63,14 @@ public class MoText extends MoFilledShape implements MoExtent {
     if(textStyle != null) this.textStyle = textStyle;
     if(horizontalAlignment != null) this.horizontalAlignment = horizontalAlignment;
     this.textColor = (textColor != null)?textColor:this.lineColor;
+  }
+  
+  public Color getFillColor() {
+    return (this.textColor != null) ? this.textColor : super.getLineColor();
+  }
+  
+  public Color getLineColor() {
+    return Color.TRANSPARENT;
   }
   
   public static MoText parse(TextContext elem) {
@@ -76,8 +88,8 @@ public class MoText extends MoFilledShape implements MoExtent {
       } else if (data.extent() != null) {
         mb.first(new Point<>(Double.parseDouble(data.extent().p1.x.getText()), Double.parseDouble(data.extent().p1.y.getText())));
         mb.second(new Point<>(Double.parseDouble(data.extent().p2.x.getText()), Double.parseDouble(data.extent().p2.y.getText())));
-      } else if (data.string() != null) {
-        mb.string(data.string().getText());
+      } else if (data.textString() != null) {
+        mb.string(COMPILE.matcher(data.textString().val.getText()).replaceAll(""));
       } else if (data.fontName() != null) {
         mb.fontName(data.fontName().val.getText());
       } else if (data.fontSize() != null) {

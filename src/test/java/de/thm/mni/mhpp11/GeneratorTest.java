@@ -2,7 +2,6 @@ package de.thm.mni.mhpp11;
 
 import de.thm.mni.mhpp11.parser.modelica.AnnotationLexer;
 import de.thm.mni.mhpp11.parser.modelica.AnnotationParser;
-import de.thm.mni.mhpp11.parser.modelica.IgnoreEntryLexer;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Token;
@@ -27,12 +26,12 @@ public class GeneratorTest {
   
   @Test
   public void testLexer2() throws Exception {
-    ANTLRInputStream is = new ANTLRInputStream(new ByteArrayInputStream("Protection(access = Access.hide)".getBytes()));
-    IgnoreEntryLexer mi = new IgnoreEntryLexer(is);
+    ANTLRInputStream is = new ANTLRInputStream(new ByteArrayInputStream("textString".getBytes()));
+    AnnotationLexer iel = new AnnotationLexer(is);
     Token t = null;
-    while (!mi._hitEOF) {
-      t = mi.nextToken();
-      System.out.println(IgnoreEntryLexer.VOCABULARY.getDisplayName(t.getType()) + ": " + t.getText());
+    while (!iel._hitEOF) {
+      t = iel.nextToken();
+      System.out.println(AnnotationLexer.VOCABULARY.getDisplayName(t.getType()) + ": " + t.getText());
     }
   }
   

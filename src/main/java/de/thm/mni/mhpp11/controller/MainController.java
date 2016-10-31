@@ -1,8 +1,10 @@
 package de.thm.mni.mhpp11.controller;
 
 import de.thm.mni.mhpp11.control.DragResizer;
-import de.thm.mni.mhpp11.control.MoIconPane;
 import de.thm.mni.mhpp11.control.TreeViewWithItems;
+import de.thm.mni.mhpp11.control.icon.MoDiagramPane;
+import de.thm.mni.mhpp11.control.icon.MoIconPane;
+import de.thm.mni.mhpp11.control.icon.MoPane;
 import de.thm.mni.mhpp11.util.config.Settings;
 import de.thm.mni.mhpp11.util.config.model.MainWindow;
 import de.thm.mni.mhpp11.util.config.model.Project;
@@ -15,6 +17,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.util.Callback;
@@ -38,6 +41,8 @@ public class MainController extends NotifyController {
   @FXML private Separator sRight;
   
   @FXML private TreeViewWithItems<MoClass> tvLibrary;
+  
+  @FXML private AnchorPane main;
   
   private ObservableList<MoClass> data = FXCollections.observableArrayList();
   private MoRoot mrSystemLibraries = new MoRoot("System Libraries");
@@ -95,6 +100,26 @@ public class MainController extends NotifyController {
   private void initTreeView() {
     tvLibrary.setRoot(new TreeItem<>());
     tvLibrary.setShowRoot(false);
+    tvLibrary.setOnMouseClicked(event -> {
+      TreeItem<MoClass> item = tvLibrary.getSelectionModel().getSelectedItem();
+      if (item == null) return;
+      MoPane mp = null;
+    
+      if (event.getClickCount() == 2)
+        mp = new MoDiagramPane(item.getValue());
+      if (event.getClickCount() == 3)
+        mp = new MoIconPane(item.getValue(), false);
+      if (mp == null || event.getClickCount() <= 1) return;
+    
+      main.getChildren().removeAll(main.getChildren());
+    
+      mp.scaleTo(800., 800.);
+      mp.setLayoutX(20.);
+      mp.setLayoutY(20.);
+      mp.setInternalStyle("-fx-background-color: gainsboro;");
+      main.getChildren().add(mp);
+    
+    });
     tvLibrary.setTreeItemExpandListener(parent -> parent.update(OMCompiler.getInstance()));
     tvLibrary.setTreeItemConfigurer((treeItem, value) -> {
       if (value instanceof MoRoot) {
@@ -110,18 +135,19 @@ public class MainController extends NotifyController {
           @Override
           protected void updateItem(MoClass item, boolean empty) {
             super.updateItem(item, empty);
+            setDisable(false);
+            setStyle(null);
             if (empty) {
               setText(null);
               setGraphic(null);
-              setDisable(false);
-              setStyle(null);
             } else {
               setText(item.getSimpleName());
-              if (item.getIcon() != null) setGraphic(new MoIconPane(item.getIcon()));
+              if (item.hasConnectors()) setStyle("-fx-font-weight: bold");
               if (item instanceof MoRoot) {
                 setDisable(true);
-                setStyle("-fx-background-color: #eee;-fx-font-weight: bold; -fx-font-size: 90%");
-                //TODO: remove disclosure node!
+                setStyle("-fx-background-color: gainsboro;-fx-font-weight: bold; -fx-font-size: 90%; -fx-padding: 2 -15;");
+              } else {
+                setGraphic(new MoIconPane(item).scaleTo(25., 25.));
               }
             }
           }
@@ -141,3 +167,4 @@ public class MainController extends NotifyController {
     PackageParser.collectProject(OMCompiler.getInstance(), mrProject, project.getFile());
   }
 }
+

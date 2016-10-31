@@ -11,24 +11,10 @@ import lombok.Getter;
 @Getter
 public class MoFilledShape extends MoGraphic {
   
-  public enum FillPattern {
-    NONE,
-    SOLID,
-    HORIZONTAL,
-    VERTICAL,
-    CROSS,
-    FORWARD,
-    BACKWARD,
-    CROSSDIAG,
-    HORIZONTALCYLINDER,
-    VERTICALCYLINDER,
-    SPHERE
-  }
-  
   Color lineColor = Color.BLACK;
   Color fillColor = Color.BLACK;
-  Utilities.LinePattern pattern = Utilities.LinePattern.SOLID;
-  FillPattern fillPattern = FillPattern.NONE;
+  de.thm.mni.mhpp11.util.parser.models.graphics.Utilities.LinePattern pattern = de.thm.mni.mhpp11.util.parser.models.graphics.Utilities.LinePattern.SOLID;
+  de.thm.mni.mhpp11.util.parser.models.graphics.Utilities.FillPattern fillPattern = de.thm.mni.mhpp11.util.parser.models.graphics.Utilities.FillPattern.NONE;
   Double lineThickness = 0.25;
   
   MoFilledShape(MoFilledShape mfs) {
@@ -41,7 +27,7 @@ public class MoFilledShape extends MoGraphic {
   }
   
   @Builder(builderMethodName = "filledShapeBuilder")
-  MoFilledShape(MoGraphic mg, Color lineColor, Color fillColor, Utilities.LinePattern pattern, FillPattern fillPattern, Double lineThickness) {
+  MoFilledShape(MoGraphic mg, Color lineColor, Color fillColor, de.thm.mni.mhpp11.util.parser.models.graphics.Utilities.LinePattern pattern, de.thm.mni.mhpp11.util.parser.models.graphics.Utilities.FillPattern fillPattern, Double lineThickness) {
     super(mg);
     if (lineColor != null) this.lineColor = lineColor;
     if (fillColor != null) this.fillColor = fillColor;
@@ -52,13 +38,13 @@ public class MoFilledShape extends MoGraphic {
   
   static void parse(MoFilledShapeBuilder mfsb, FilledShapeContext ctx) {
     if (ctx.fillColor() != null) {
-      mfsb.fillColor(Utilities.convertColor(ctx.fillColor().val));
+      mfsb.fillColor(de.thm.mni.mhpp11.util.parser.models.graphics.Utilities.convertColor(ctx.fillColor().val));
     } else if (ctx.lineColor() != null) {
-      mfsb.lineColor(Utilities.convertColor(ctx.lineColor().val));
+      mfsb.lineColor(de.thm.mni.mhpp11.util.parser.models.graphics.Utilities.convertColor(ctx.lineColor().val));
     } else if (ctx.linePattern() != null) {
-      mfsb.pattern(Utilities.LinePattern.valueOf(ctx.linePattern().type.getText().toUpperCase()));
+      mfsb.pattern(de.thm.mni.mhpp11.util.parser.models.graphics.Utilities.LinePattern.valueOf(ctx.linePattern().type.getText().toUpperCase()));
     } else if (ctx.fillPattern() != null) {
-      mfsb.fillPattern(FillPattern.valueOf(ctx.fillPattern().type.getText().toUpperCase()));
+      mfsb.fillPattern(de.thm.mni.mhpp11.util.parser.models.graphics.Utilities.FillPattern.valueOf(ctx.fillPattern().type.getText().toUpperCase()));
     } else if (ctx.lineThickness() != null) {
       mfsb.lineThickness(Double.parseDouble(ctx.lineThickness().getText()));
     }

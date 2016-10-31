@@ -1,6 +1,7 @@
 package de.thm.mni.mhpp11.util;
 
 import de.thm.mni.mhpp11.util.config.Settings;
+import lombok.experimental.UtilityClass;
 
 import java.io.IOException;
 import java.net.URL;
@@ -16,30 +17,31 @@ import java.util.ResourceBundle;
 /**
  * Created by hobbypunk on 14.09.16.
  */
+@UtilityClass
 public class Utilities {
   
-  public static URL getRessources(String postfix) {
+  public URL getRessources(String postfix) {
     return Utilities.class.getResource("/de/thm/mni/mhpp11/" + postfix);
   }
   
-  public static URL getView(String view) {
+  public URL getView(String view) {
     return Utilities.getRessources("view/" + view + ".fxml");
   }
   
-  public static ResourceBundle getBundle(String bundle) {
+  public ResourceBundle getBundle(String bundle) {
     Settings settings = Settings.load();
     return getBundle(bundle, settings.getLang());
   }
   
-  public static ResourceBundle getBundle(String bundle, Locale lang) {
+  public ResourceBundle getBundle(String bundle, Locale lang) {
     return ResourceBundle.getBundle("de/thm/mni/mhpp11/i18n/" + bundle, lang, new UTF8ResourceBundleControl());
   }
   
-  public static Path getHome() {
+  public Path getHome() {
     return Paths.get(System.getProperty("user.home"));
   }
   
-  private static Path getConfDir() {
+  private Path getConfDir() {
     Path f;
     if (isWin())
       f = Paths.get(System.getenv("APPDATA") + "/" + Settings.NAME);
@@ -56,7 +58,7 @@ public class Utilities {
     return f;
   }
   
-  public static Path getConf() {
+  public Path getConf() {
     Path f = Paths.get(getConfDir() + "/config.xml");
     if (Files.notExists(f)) {
       try {
@@ -76,17 +78,17 @@ public class Utilities {
     return f;
   }
   
-  public static Boolean isWin() {
+  public Boolean isWin() {
     String os = System.getProperty("os.name").toLowerCase();
     return os.contains("win");
   }
   
-  public static Boolean isMac() {
+  public Boolean isMac() {
     String os = System.getProperty("os.name").toLowerCase();
     return os.contains("mac");
   }
   
-  public static Boolean isLinux() {
+  public Boolean isLinux() {
     String os = System.getProperty("os.name").toLowerCase();
     return os.contains("linux");
   }

@@ -13,6 +13,7 @@ public class Main {
     
     //m.testJModelica();
     m.startGUI(new String[]{"../2014-modelica-kotani/SHM/SeidelThesis/Components/Heart.mo"});
+    //m.startGUI(new String[]{"./test.mo"});
     //m.startGUI(args);
   }
   

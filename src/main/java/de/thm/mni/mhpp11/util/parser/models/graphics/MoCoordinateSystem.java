@@ -17,20 +17,28 @@ public class MoCoordinateSystem {
   private Point<Double, Double>[] extent = (Point<Double, Double>[]) new Point[2];
   
   {
-    this.extent[0] = new Point<>(-100., 100.);
-    this.extent[1] = new Point<>(100., -100.);
+    this.extent[0] = new Point<>(-100., -100.);
+    this.extent[1] = new Point<>(100., 100.);
   }
   private Boolean preserveAspectRatio = true;
   private Double initialScale = 0.1;
   private Point<Double, Double> grid = new Point<>(2., 2.);
   
   @Builder
-  public MoCoordinateSystem(Point<Double, Double> first, Point<Double, Double> second, Boolean preserveAspectRatio, Double initialScale, Point<Double, Double> grid) {
+  private MoCoordinateSystem(Point<Double, Double> first, Point<Double, Double> second, Boolean preserveAspectRatio, Double initialScale, Point<Double, Double> grid) {
     this.extent[0] = (first != null) ? first : new Point<>(-100., 100.);
     this.extent[1] = (second != null) ? second : new Point<>(100., -100.);
     if (preserveAspectRatio != null) this.preserveAspectRatio = preserveAspectRatio;
     if (initialScale != null) this.initialScale = initialScale;
     if (grid != null) this.grid = grid;
+  }
+  
+  private MoCoordinateSystem(MoCoordinateSystem that) {
+    this.extent[0] = that.extent[0];
+    this.extent[1] = that.extent[1];
+    this.preserveAspectRatio = that.preserveAspectRatio;
+    this.initialScale = that.initialScale;
+    this.grid = that.grid;
   }
   
   public static MoCoordinateSystem parse(CoordinateSystemContext system) {
@@ -49,5 +57,9 @@ public class MoCoordinateSystem {
       }
   
     return mb.build();
+  }
+  
+  public MoCoordinateSystem copy() {
+    return new MoCoordinateSystem(this);
   }
 }

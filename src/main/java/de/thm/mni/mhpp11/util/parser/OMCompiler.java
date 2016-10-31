@@ -2,11 +2,13 @@ package de.thm.mni.mhpp11.util.parser;
 
 import de.thm.mni.mhpp11.parser.modelica.ComponentsLexer;
 import de.thm.mni.mhpp11.parser.modelica.ComponentsParser;
+import de.thm.mni.mhpp11.util.ImmutableListCollector;
 import javafx.util.Pair;
 import lombok.Getter;
 import omc.corba.OMCClient;
 import omc.corba.OMCInterface;
 import omc.corba.Result;
+import omc.corba.ScriptingHelper;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 
@@ -21,7 +23,6 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -188,8 +189,16 @@ public class OMCompiler {
     } catch (Exception e) {
       t = TYPE.NULL;
     }
-    
-    return new ClassInformation(t, list.get(1), getPath(list.get(5)), Boolean.parseBoolean(list.get(6)), Integer.parseInt(list.get(7)), Integer.parseInt(list.get(9)), Integer.parseInt(list.get(8)), Integer.parseInt(list.get(10)));
+  
+    return new ClassInformation(
+                                   t,
+                                   list.get(1),
+                                   getPath(list.get(5)),
+                                   Boolean.parseBoolean(list.get(6)),
+                                   Integer.parseInt(list.get(7)),
+                                   Integer.parseInt(list.get(9)),
+                                   Integer.parseInt(list.get(8)),
+                                   Integer.parseInt(list.get(10)));
   }
   
   public List<Map<String, String>> getVariables(String className) throws IOException {
@@ -271,7 +280,7 @@ public class OMCompiler {
           }
           return alwaysReturn || match;
         }
-      }).filter(s -> s.contains("annotation")).map(String::trim).collect(Collectors.toList());
+      }).filter(s -> s.contains("annotation")).map(String::trim).collect(ImmutableListCollector.toImmutableList());
       
     } catch (IOException e) {
       e.printStackTrace();
@@ -298,15 +307,14 @@ public class OMCompiler {
   }
   
   private List<String> toStringArray(String s, Boolean unsorted, Boolean removeEmpty) {
-    List<String> l = Arrays.asList(s.split(","));
-    
-    for (int i = 0; i < l.size(); i++) {
-      l.set(i, l.get(i).replaceAll("(^[\\(\\{\\\"]*)|([\\\"\\}\\)]*$)", ""));
-    }
-    if (removeEmpty) l = l.stream().filter(s1 -> !s1.isEmpty()).collect(Collectors.toList());
-    if (!unsorted) l.sort(String::compareToIgnoreCase);
-    
-    return l;
+    List<String> l = ScriptingHelper.fromNestedArray(s);
+    Stream<String> stream = l.stream();
+    stream = stream.map(OMCompiler.this::toString);
+  
+    if (removeEmpty) stream = stream.filter(s1 -> !s1.isEmpty());
+    if (!unsorted) stream = stream.sorted(String::compareToIgnoreCase);
+  
+    return stream.collect(ImmutableListCollector.toImmutableList());
   }
   
   private List<Pair<String, Path>> toLibraryArray(String s) {

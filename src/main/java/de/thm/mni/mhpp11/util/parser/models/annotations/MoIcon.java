@@ -26,6 +26,11 @@ public class MoIcon extends MoAnnotation {
     if (moGraphics != null) this.moGraphics = moGraphics;
   }
   
+  private MoIcon(MoIcon that) {
+    this.moCoordinateSystem = that.moCoordinateSystem.copy();
+    this.moGraphics.addAll(that.moGraphics); //TODO perhaps cloning of elements
+  }
+  
   public static MoIcon parse(OMCompiler omc, IconContext icon) {
     MoIconBuilder mb = builder();
     for (IconContentContext icc : icon.iconContent()) {
@@ -33,5 +38,9 @@ public class MoIcon extends MoAnnotation {
       if (icc.graphics() != null) mb.moGraphics(MoGraphic.parse(omc, icc.graphics().element()));
     }
     return mb.build();
+  }
+  
+  public MoIcon copy() {
+    return new MoIcon(this);
   }
 }

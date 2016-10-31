@@ -29,8 +29,8 @@ public class MoRectangle extends MoFilledShape implements MoExtent {
     super(mfs);
     this.extent[0] = first;
     this.extent[1] = second;
-    this.borderPattern = borderPattern;
-    this.radius = radius;
+    if (borderPattern != null) this.borderPattern = borderPattern;
+    if (radius != null) this.radius = radius;
   }
   
   public static MoRectangle parse(RectangleContext elem) {
