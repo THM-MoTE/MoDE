@@ -1,5 +1,6 @@
 package de.thm.mni.mhpp11.util.parser.models;
 
+import de.thm.mni.mhpp11.util.ImmutableListCollector;
 import de.thm.mni.mhpp11.util.parser.OMCompiler;
 import de.thm.mni.mhpp11.util.parser.models.annotations.MoAnnotation;
 import de.thm.mni.mhpp11.util.parser.models.annotations.MoPlacement;
@@ -7,6 +8,7 @@ import de.thm.mni.mhpp11.util.parser.models.interfaces.MoElement;
 import lombok.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -18,15 +20,28 @@ import java.util.regex.Pattern;
 public class MoVariable extends MoElement {
   private static final Pattern PATTERN = Pattern.compile("(^\"|\"$)");
   private final MoClass parent;
+  private final Specification kind;
   @Setter private MoClass type = null;
   @Setter private String comment = "";
   
+  private enum Specification {
+    NONE,
+    INPUT,
+    OUTPUT,
+    FLOW
+  }
+  
   @Builder
-  private MoVariable(@NonNull MoClass parent, MoClass type, String name, String comment, @Singular List<MoAnnotation> annotations) {
+  private MoVariable(@NonNull MoClass parent, Specification kind, MoClass type, String name, String comment, @Singular List<MoAnnotation> annotations) {
     super("v", name, comment);
     this.parent = parent;
+    this.kind = kind;
     if (type != null) this.type = type;
-    if (annotations != null) this.getAnnotations().addAll(annotations);
+    if (annotations != null) this.addAllAnnotation(annotations);
+  }
+  
+  public List<MoVariable> getVariables() {
+    return getType().getVariables();
   }
   
   public MoPlacement getPlacement() {
@@ -35,22 +50,35 @@ public class MoVariable extends MoElement {
     return null;
   }
   
-  public static void parse(OMCompiler omc, MoClass moClass) {
-    MoVariableBuilder mb;
+  public static List<MoVariable> parse(OMCompiler omc, MoClass parent) {
+    List<MoVariable> list = new ArrayList<>();
     try {
-      for (Map<String, String> m : omc.getVariables(moClass.getName(), moClass.getClassInformation())) {
-        mb = builder();
-        mb.parent(moClass);
-        mb.type(MoClass.findClass(omc, m.get("type")));
-        mb.name(m.get("name"));
-        mb.comment(m.get("comment"));
-        String line = m.get("line");
-        if (line.contains("annotation("))
-          MoAnnotation.parse(omc, line.substring(line.indexOf("annotation("))).forEach(mb::annotation);
-        moClass.add(mb.build());
+      for (Map<String, String> m : omc.getVariables(parent.getName(), parent.getClassInformation())) {
+        list.add(parse(omc, parent, m));
       }
     } catch (IOException e) {
       e.printStackTrace();
     }
+    
+    return list.stream().filter(moVariable -> moVariable != null).collect(ImmutableListCollector.toImmutableList());
+  }
+  
+  private static MoVariable parse(OMCompiler omc, MoClass parent, Map<String, String> m) {
+    if (Boolean.parseBoolean(m.get("isProtected"))) return null;
+    
+    MoVariableBuilder mb = builder();
+    if (Boolean.parseBoolean(m.get("isFlow"))) {
+      mb.kind(Specification.FLOW);
+    } else if (!m.get("inputOutput").isEmpty()) {
+      if (m.get("inputOutput").contains("input")) mb.kind(Specification.INPUT);
+      else mb.kind(Specification.OUTPUT);
+    } else mb.kind(Specification.NONE);
+    mb.parent(parent);
+    mb.type(MoClass.findClass(omc, m.get("type")));
+    mb.name(m.get("name"));
+    mb.comment(m.get("comment"));
+    if (m.containsKey("annotation"))
+      MoAnnotation.parse(omc, m.get("annotation")).forEach(mb::annotation);
+    return mb.build();
   }
 }

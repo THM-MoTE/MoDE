@@ -1,6 +1,6 @@
 grammar Annotation;
 
-import  Icon, Documentation, Placement, Utils, IgnoreEntry;
+import  Icon, Documentation, Placement, Utils, ConnectAnnotation, IgnoreEntry;
 
 annotation  : 'annotation' LBRACE (annotationElement (COMMA annotationElement)*)? RBRACE SEMICOLON;
 

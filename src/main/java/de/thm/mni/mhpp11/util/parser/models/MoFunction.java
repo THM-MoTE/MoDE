@@ -32,7 +32,7 @@ public class MoFunction extends MoClass {
 //    mb.parent(null);
 //
 //    MoFunction mf = mb.build();
-//    mf.getParams().addAll(MoExp.parseFunctionArguments(fc.getFunctionArguments()));
+//    mf.getParams().addAllAnnotation(MoExp.parseFunctionArguments(fc.getFunctionArguments()));
 //    return mf;
 //
 //  }

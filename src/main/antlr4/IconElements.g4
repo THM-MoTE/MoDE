@@ -2,6 +2,7 @@ grammar IconElements;
 
 import Utils;
 
+
 graphicItem : visible
             | origin
             | rotation
@@ -33,7 +34,7 @@ lineThickness   : 'lineThickness' EQUALS val=NUMBER;
 radius          : 'radius' EQUALS val=NUMBER;
 
 
-line        : 'Line' LBRACE (data+=lineData (COMMA data +=lineData)*)? RBRACE;
+line        : 'Line' LBRACE (data+=lineData (COMMA data +=lineData)*)? RBRACE ;
 lineData    : graphicItem
             | points
             | color

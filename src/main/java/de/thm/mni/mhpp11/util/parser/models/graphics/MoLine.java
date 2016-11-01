@@ -1,9 +1,11 @@
 package de.thm.mni.mhpp11.util.parser.models.graphics;
 
-import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.LineContext;
+import de.thm.mni.mhpp11.parser.modelica.AnnotationParser;
 import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.LineDataContext;
 import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.PointContext;
 import de.thm.mni.mhpp11.util.config.model.Point;
+import de.thm.mni.mhpp11.util.parser.models.graphics.Utilities.LinePattern;
+import de.thm.mni.mhpp11.util.parser.models.graphics.Utilities.Smooth;
 import javafx.scene.paint.Color;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,7 +21,6 @@ import java.util.List;
 @Getter
 public class MoLine extends MoGraphic {
   
-  
   enum Arrow {
     NONE,
     OPEN,
@@ -27,29 +28,29 @@ public class MoLine extends MoGraphic {
     HALF
   }
   
-  
   List<Point<Double, Double>> points = new ArrayList<>();
   Color color = Color.BLACK;
-  de.thm.mni.mhpp11.util.parser.models.graphics.Utilities.LinePattern linePattern = de.thm.mni.mhpp11.util.parser.models.graphics.Utilities.LinePattern.SOLID;
+  LinePattern linePattern = LinePattern.SOLID;
   Double thickness = 1.0;
   Arrow[] arrows = new Arrow[2];
   Double arrowSize = 3.0;
-  de.thm.mni.mhpp11.util.parser.models.graphics.Utilities.Smooth smooth = de.thm.mni.mhpp11.util.parser.models.graphics.Utilities.Smooth.NONE;
+  Smooth smooth = Smooth.NONE;
   
   @Builder(builderMethodName = "lineBuilder")
-  MoLine(MoGraphic mg, @Singular List<Point<Double, Double>> points, Color color, de.thm.mni.mhpp11.util.parser.models.graphics.Utilities.LinePattern linePattern, Double thickness, Arrow start, Arrow end, Double arrowSize, de.thm.mni.mhpp11.util.parser.models.graphics.Utilities.Smooth smooth) {
+  MoLine(MoGraphic mg, @Singular List<Point<Double, Double>> points, Color color, LinePattern linePattern, Double thickness, Arrow start, Arrow end, Double arrowSize, Smooth smooth) {
     super(mg);
     this.points = points;
-    this.color = color;
-    this.linePattern = linePattern;
-    this.thickness = thickness;
     this.arrows[0] = start;
     this.arrows[1] = end;
-    this.arrowSize = arrowSize;
-    this.smooth = smooth;
+  
+    if (color != null) this.color = color;
+    if (linePattern != null) this.linePattern = linePattern;
+    if (thickness != null) this.thickness = thickness;
+    if (arrowSize != null) this.arrowSize = arrowSize;
+    if (smooth != null) this.smooth = smooth;
   }
   
-  public static MoLine parse(LineContext elem) {
+  public static MoLine parse(AnnotationParser.LineContext elem) {
     MoGraphicBuilder mgb = builder();
     MoLineBuilder mb = lineBuilder();
     
@@ -57,15 +58,15 @@ public class MoLine extends MoGraphic {
       if (data.graphicItem() != null) {
         MoGraphic.parse(mgb, data.graphicItem());
       } else if (data.color() != null) {
-        mb.color(de.thm.mni.mhpp11.util.parser.models.graphics.Utilities.convertColor(data.color().val));
+        mb.color(Utilities.convertColor(data.color().val));
       } else if (data.linePattern() != null) {
-        mb.linePattern(de.thm.mni.mhpp11.util.parser.models.graphics.Utilities.LinePattern.valueOf(data.linePattern().type.getText().toUpperCase()));
+        mb.linePattern(LinePattern.valueOf(data.linePattern().type.getText().toUpperCase()));
       } else if (data.arrowSize() != null) {
         mb.arrowSize(Double.parseDouble(data.arrowSize().val.getText()));
       } else if (data.thickness() != null) {
         mb.thickness(Double.parseDouble(data.thickness().val.getText()));
       } else if (data.smooth() != null) {
-        mb.smooth(de.thm.mni.mhpp11.util.parser.models.graphics.Utilities.Smooth.valueOf(data.smooth().type.getText().toUpperCase()));
+        mb.smooth(Smooth.valueOf(data.smooth().type.getText().toUpperCase()));
       } else if (data.arrows() != null) {
         if (data.arrows().a1 != null) mb.start(Arrow.valueOf(data.arrows().a1.type.getText().toUpperCase()));
         if (data.arrows().a2 != null) mb.end(Arrow.valueOf(data.arrows().a2.type.getText().toUpperCase()));

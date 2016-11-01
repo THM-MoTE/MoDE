@@ -16,13 +16,12 @@ import org.junit.Test;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by hobbypunk on 27.09.16.
@@ -89,7 +88,7 @@ public class OmcTest {
   @Test
   public void testConnections() throws ParserException {
     omc.addProjectLibraries(Arrays.asList(Paths.get("/home/hobbypunk/Dokumente/Entwicklung/THM_Projekte/Projektphase/2014-modelica-kotani/SHM/package.mo")));
-    List<String> list = omc.getConnections("SHM.SeidelThesis.Examples.FullModel.SeidelThesisFullExample");
+    List<Map<String, String>> list = omc.getConnections("SHM.SeidelThesis.Examples.FullModel.SeidelThesisFullExample");
     System.out.println(list);
   }
   
@@ -104,8 +103,21 @@ public class OmcTest {
   @Test
   public void testConnectors() throws ParserException {
     omc.addProjectLibraries(Arrays.asList(Paths.get("/home/hobbypunk/Dokumente/Entwicklung/THM_Projekte/Projektphase/2014-modelica-kotani/SHM/package.mo")));
-    Result r = omc.sendExpression("getClassInformation(SHM.SeidelThesis.Examples.FullModel.SeidelThesisFullExample)");
+    Result r = omc.sendExpression("getEquationItemsCount(SHM.SeidelThesis.Examples.FullModel.SeidelThesisFullExample)");
     ClassInformation ci = omc.getClassInformation("SHM.Shared.Components.Compartments.BloodSystem");
-    System.out.println(ci);
+    System.out.println(r.result);
+    Integer count = Integer.parseInt(r.result);
+    for (int i = 1; i <= count; i++) {
+      r = omc.sendExpression("getNthEquationItem(SHM.SeidelThesis.Examples.FullModel.SeidelThesisFullExample, " + i + ")");
+      Pattern p = Pattern.compile("^\"connect\\(\\s*([\\w\\.]+)\\s*,\\s*([\\w\\.]+)\\s*\\);\"$");
+      Matcher m = p.matcher(r.result);
+      System.out.println(r.result);
+      if (m.matches()) {
+        System.out.println("\tfrom: " + m.group(1));
+        System.out.println("\tto:   " + m.group(2));
+      }
+    }
+  
+    omc.getConnections("SHM.SeidelThesis.Examples.FullModel.SeidelThesisFullExample").forEach(System.out::println);
   }
 }

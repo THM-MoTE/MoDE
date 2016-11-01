@@ -19,6 +19,7 @@ import lombok.NonNull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * Created by hobbypunk on 07.09.16.
@@ -44,6 +45,7 @@ public class MoClass extends MoElement implements HierarchyData<MoClass> {
   @Getter private List<MoClass> inheritedClasses = new ArrayList<>();
   
   private final List<MoVariable> variables = new ArrayList<>();
+  private final List<MoConnection> connections = new ArrayList<>();
   
   private final ObservableList<MoClass> children = FXCollections.observableArrayList();
   
@@ -90,6 +92,12 @@ public class MoClass extends MoElement implements HierarchyData<MoClass> {
     return null;
   }
   
+  public MoVariable findVariable(String name) throws NoSuchElementException {
+    for (MoVariable mv : getVariables())
+      if (mv.getName().equals(name)) return mv;
+    throw new NoSuchElementException(String.format("No Variable named \"%s\" found", name));
+  }
+  
   public String getName() {
     if (this.parent == null || this.parent instanceof MoRoot) return this.name;
     return this.parent.getName() + "." + this.name;
@@ -99,14 +107,24 @@ public class MoClass extends MoElement implements HierarchyData<MoClass> {
     return this.name;
   }
   
-  void add(MoVariable variable) {
-    this.variables.add(variable);
+  private void addAllVariables(List<MoVariable> list) {
+    this.variables.addAll(list);
   }
-  
   public List<MoVariable> getVariables() {
     List<MoVariable> list = new ArrayList<>();
     list.addAll(this.variables);
     inheritedClasses.forEach(inheritedClass -> list.addAll(0, inheritedClass.getVariables()));
+    return Collections.unmodifiableList(list);
+  }
+  
+  private void addAllConnections(List<MoConnection> list) {
+    this.connections.addAll(list);
+  }
+  
+  public List<MoConnection> getConnections() {
+    List<MoConnection> list = new ArrayList<>();
+    list.addAll(this.connections);
+    inheritedClasses.forEach(inheritedClass -> list.addAll(0, inheritedClass.getConnections()));
     return Collections.unmodifiableList(list);
   }
   
@@ -204,8 +222,9 @@ public class MoClass extends MoElement implements HierarchyData<MoClass> {
       }
     }
   
-    MoAnnotation.parse(omc, this);
-    MoVariable.parse(omc, this);
+    this.addAllAnnotation(MoAnnotation.parse(omc, this));
+    this.addAllVariables(MoVariable.parse(omc, this));
+    this.addAllConnections(MoConnection.parse(omc, this));
     complete = true;
   }
   

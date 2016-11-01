@@ -50,10 +50,10 @@ public class MoText extends MoFilledShape implements MoExtent {
   Integer textStyle = 0;
   @Getter(AccessLevel.PRIVATE) Color textColor = this.lineColor;
   TextAlignment horizontalAlignment = TextAlignment.CENTER;
-  
+  Integer index = 1;
   
   @Builder(builderMethodName = "textBuilder")
-  MoText(MoFilledShape mfs, Point<Double, Double> first, Point<Double, Double> second, String string, Double fontSize, String fontName, Integer textStyle, Color textColor, TextAlignment horizontalAlignment) {
+  MoText(MoFilledShape mfs, Point<Double, Double> first, Point<Double, Double> second, String string, Double fontSize, String fontName, Integer textStyle, Color textColor, TextAlignment horizontalAlignment, Integer index) {
     super(mfs);
     if (first != null) this.extent[0] = first;
     if (second != null) this.extent[1] = second;
@@ -63,6 +63,7 @@ public class MoText extends MoFilledShape implements MoExtent {
     if(textStyle != null) this.textStyle = textStyle;
     if(horizontalAlignment != null) this.horizontalAlignment = horizontalAlignment;
     this.textColor = (textColor != null)?textColor:this.lineColor;
+    if (index != null) this.index = index;
   }
   
   public Color getFillColor() {
@@ -99,6 +100,8 @@ public class MoText extends MoFilledShape implements MoExtent {
       } else if (data.textStyle() != null) {
         //TODO textStyle
         style += TextStyle.valueOf(data.textStyle().type.getText().toUpperCase()).val;
+      } else if (data.index() != null) { //only for connect Annotations
+        mb.index(Integer.parseInt(data.index().val.getText()));
       }
     }
     

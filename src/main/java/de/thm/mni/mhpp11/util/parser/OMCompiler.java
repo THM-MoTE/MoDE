@@ -22,6 +22,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Predicate;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
@@ -132,7 +133,7 @@ public class OMCompiler {
 //    List<String> list = toStringArray(result.result);
     String[] first = new String[]{"Modelica", "ModelicaServices", "ModelicaReference", "Complex"};
 //    list.removeAll(Arrays.asList(first));
-//    list.addAll(0, Arrays.asList(first));
+//    list.addAllAnnotation(0, Arrays.asList(first));
 //    return list;
     return Arrays.asList(first);
   }
@@ -226,6 +227,7 @@ public class OMCompiler {
           }
         }).map(String::trim).reduce((s, s2) -> s + s2).ifPresent(s -> {
           m.put("line", s);
+          if (s.contains("annotation")) m.put("annotation", s.substring(s.indexOf("annotation(")));
         });
       }
     }
@@ -261,11 +263,11 @@ public class OMCompiler {
     return list;
   }
   
-  public List<String> getConnections(String className) {
+  public List<Map<String, String>> getConnections(String className) {
     return getConnections(getClassInformation(className));
   }
   
-  public List<String> getConnections(ClassInformation ci) {
+  public List<Map<String, String>> getConnections(ClassInformation ci) {
     try (Stream<String> lines = Files.lines(ci.getFileName())) {
       return lines.limit(ci.getLineNumberEnd()).skip(ci.getLineNumberStart() - 1).filter(new Predicate<String>() {
         Boolean match = false;
@@ -280,13 +282,22 @@ public class OMCompiler {
           }
           return alwaysReturn || match;
         }
-      }).filter(s -> s.contains("annotation")).map(String::trim).collect(ImmutableListCollector.toImmutableList());
-      
+      }).filter(s -> s.contains("annotation")).map(String::trim).map(s -> {
+        Map<String, String> map = new HashMap<>();
+        Pattern p = Pattern.compile("connect\\(\\s*([^,\\)\\s]+)\\s*,\\s*([^,\\)\\s]+)\\s*\\)\\s");
+        Matcher m = p.matcher(s);
+        if (m.find()) {
+          map.put("from", m.group(1));
+          map.put("to", m.group(2));
+          map.put("annotation", m.replaceAll(""));
+        }
+        return Collections.unmodifiableMap(map);
+      }).filter(map -> !map.isEmpty()).collect(ImmutableListCollector.toImmutableList());
     } catch (IOException e) {
       e.printStackTrace();
     }
     
-    return new ArrayList<>();
+    return Collections.unmodifiableList(new ArrayList<>());
   }
   
   private String toString(String result) {
@@ -301,6 +312,7 @@ public class OMCompiler {
       e.printStackTrace();
     }
   }
+  
   
   private List<String> toStringArray(String s) {
     return toStringArray(s, true, true);

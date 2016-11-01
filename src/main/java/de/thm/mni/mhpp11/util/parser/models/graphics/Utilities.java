@@ -8,9 +8,6 @@ import de.thm.mni.mhpp11.util.config.Settings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.LinearGradient;
-import javafx.scene.paint.Paint;
-import javafx.scene.paint.RadialGradient;
 import javafx.scene.text.Font;
 import lombok.experimental.UtilityClass;
 
@@ -36,30 +33,30 @@ public class Utilities {
     SPHERE
   }
   
-  public static Paint getFill(FillPattern pattern, Color fillColor, Color lineColor) {
+  public static String getFillCSS(FillPattern pattern, Color fillColor, Color lineColor) {
+    String s = "-fx-fill: ";
     switch (pattern) {
       case NONE:
-        return Color.TRANSPARENT;
+        return s + "transparent;";
       case SOLID:
-        return fillColor;
-      //TODO: HORIZONTAL, VERTICAL, CROSS, FORWARD, BACKWARD, CROSSDIAG
+        return s + fillColor.toString().replace("0x", "#") + ";";
       case HORIZONTALCYLINDER:
-        return LinearGradient.valueOf("linear-gradient(to bottom, " +
-                                          lineColor + " 0%, " +
-                                          fillColor + " 50%, " +
-                                          lineColor + " 100%)");
+        return s + "linear-gradient(to bottom, " +
+                   lineColor.toString().replace("0x", "#") + " 0%, " +
+                   fillColor.toString().replace("0x", "#") + " 50%, " +
+                   lineColor.toString().replace("0x", "#") + " 100%);";
       case VERTICALCYLINDER:
-        return LinearGradient.valueOf("linear-gradient(to right, " +
-                                          lineColor + " 0%, " +
-                                          fillColor + " 50%, " +
-                                          lineColor + " 100%)");
+        return s + "linear-gradient(to right, " +
+                   lineColor.toString().replace("0x", "#") + " 0%, " +
+                   fillColor.toString().replace("0x", "#") + " 50%, " +
+                   lineColor.toString().replace("0x", "#") + " 100%);";
       case SPHERE:
-        return RadialGradient.valueOf("radial-gradient(center 50% 50%, " +
-                                          "radius 100%, " +
-                                          fillColor + ", " +
-                                          lineColor + ")");
+        return s + "radial-gradient(center 50% 50%, " +
+                   "radius 100%, " +
+                   fillColor.toString().replace("0x", "#") + ", " +
+                   lineColor.toString().replace("0x", "#") + ");";
     }
-    return Color.BLACK;
+    return "";
   }
   
   public enum LinePattern {
