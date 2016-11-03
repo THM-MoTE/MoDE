@@ -1,0 +1,69 @@
+package de.thm.mni.mhpp11.shape.interfaces;
+
+import de.thm.mni.mhpp11.util.config.model.Point;
+import de.thm.mni.mhpp11.util.parser.models.graphics.HasSmoothOption;
+import de.thm.mni.mhpp11.util.parser.models.graphics.Utilities.Smooth;
+import javafx.collections.ObservableList;
+import javafx.scene.shape.LineTo;
+import javafx.scene.shape.MoveTo;
+import javafx.scene.shape.PathElement;
+import javafx.scene.shape.QuadCurveTo;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Created by hobbypunk on 03.11.16.
+ */
+public interface CalculatePathElements {
+  
+  HasSmoothOption getData();
+  
+  ObservableList<PathElement> getElements();
+  
+  default Boolean isBezier() {
+    return getData().getSmooth().equals(Smooth.BEZIER);
+  }
+  
+  default void calcElements(List<Point<Double, Double>> points) {
+    getElements().clear();
+    Boolean closed = (points.size() > 3 && points.get(0).equals(points.get(points.size() - 1)));
+    
+    if (isBezier() && points.size() > 2) {
+      getElements().addAll(calcBezierElements(points));
+    } else {
+      for (Point<Double, Double> p : points) {
+        if (getElements().size() == 0) getElements().add(new MoveTo(p.getX(), p.getY()));
+        else getElements().add(new LineTo(p.getX(), p.getY()));
+      }
+    }
+  }
+  
+  default List<PathElement> calcBezierElements(List<Point<Double, Double>> points) {
+    List<PathElement> elements = new ArrayList<>();
+    Point<Double, Double> controlPoint;
+    
+    for (int i = 0; i < points.size(); i++) {
+      Point<Double, Double> p1 = points.get(i);
+      Point<Double, Double> p2 = (points.size() > i + 1) ? points.get(i + 1) : null;
+      
+      if (p2 != null) {
+        controlPoint = calcMiddle(p1, p2);
+        if (elements.isEmpty()) {
+          elements.add(new MoveTo(p1.getX(), p1.getY()));
+          elements.add(new LineTo(controlPoint.getX(), controlPoint.getY()));
+        } else {
+          elements.add(new QuadCurveTo(p1.getX(), p1.getY(), controlPoint.getX(), controlPoint.getY()));
+        }
+      } else {
+        elements.add(new LineTo(p1.getX(), p1.getY()));
+      }
+    }
+    
+    return elements;
+  }
+  
+  default Point<Double, Double> calcMiddle(Point<Double, Double> p1, Point<Double, Double> p2) {
+    return new Point<>((p1.getX() + p2.getX()) / 2, (p1.getY() + p2.getY()) / 2);
+  }
+}

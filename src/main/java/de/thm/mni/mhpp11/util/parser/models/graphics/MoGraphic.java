@@ -3,6 +3,7 @@ package de.thm.mni.mhpp11.util.parser.models.graphics;
 import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.*;
 import de.thm.mni.mhpp11.util.config.model.Point;
 import de.thm.mni.mhpp11.util.parser.OMCompiler;
+import javafx.beans.property.*;
 import lombok.Builder;
 import lombok.Getter;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -16,21 +17,21 @@ import java.util.List;
 @Getter
 public class MoGraphic {
   
-  Boolean visible = true;
-  Point<Double, Double> origin = new Point<>(0.0,0.0); //Ursprung des Elements
-  Double rotation = 0.0;
+  BooleanProperty visible = new SimpleBooleanProperty(true);
+  ObjectProperty<Point<Double, Double>> origin = new SimpleObjectProperty<>(new Point<>(0.0, 0.0)); //Ursprung des Elements
+  DoubleProperty rotation = new SimpleDoubleProperty(0.0);
   
   public MoGraphic(MoGraphic mg) {
-    this.visible = mg.visible;
-    this.origin = mg.origin;
-    this.rotation = mg.rotation;
+    this.visible.setValue(mg.visible.getValue());
+    this.origin.setValue(mg.getOrigin().getValue());
+    this.rotation.setValue(mg.rotation.getValue());
   }
   
   @Builder
   public MoGraphic(Boolean visible, Point<Double, Double> origin, Double rotation) {
-    if(visible != null) this.visible = visible;
-    if(origin != null) this.origin = origin;
-    if(rotation != null) this.rotation = rotation;
+    if (visible != null) this.visible.setValue(visible);
+    if (origin != null) this.origin.setValue(origin);
+    if (rotation != null) this.rotation.setValue(rotation);
   }
   
   public static List<MoGraphic> parse(OMCompiler omc, List<ElementContext> elements) {

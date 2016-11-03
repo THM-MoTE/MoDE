@@ -4,6 +4,10 @@ import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.TransformationContentC
 import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.TransformationContext;
 import de.thm.mni.mhpp11.util.config.model.Point;
 import de.thm.mni.mhpp11.util.parser.models.interfaces.MoExtent;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -14,15 +18,18 @@ import lombok.Getter;
 public class MoTransformation implements MoExtent {
   
   private Point<Double, Double>[] extent = (Point<Double, Double>[]) new Point[2];
-  private Point<Double, Double> origin = new Point<>(0.0, 0.0); //Ursprung des Elements
-  private Double rotation = 0.0;
+  ObjectProperty<Point<DoubleProperty, DoubleProperty>> origin = new SimpleObjectProperty<>(new Point<>(new SimpleDoubleProperty(0.), new SimpleDoubleProperty(0.))); //Ursprung des Elements
+  DoubleProperty rotation = new SimpleDoubleProperty(0.0);
   
   @Builder
   private MoTransformation(Point<Double, Double> first, Point<Double, Double> second, Point<Double, Double> origin, Double rotation) {
     extent[0] = first;
     extent[1] = second;
-    if (origin != null) this.origin = origin;
-    if (rotation != null) this.rotation = rotation;
+    if (origin != null) {
+      this.origin.get().getX().setValue(origin.getX());
+      this.origin.get().getY().setValue(origin.getY());
+    }
+    if (rotation != null) this.rotation.setValue(rotation);
   }
   
   

@@ -2,9 +2,9 @@ package de.thm.mni.mhpp11.controller;
 
 import de.thm.mni.mhpp11.control.DragResizer;
 import de.thm.mni.mhpp11.control.TreeViewWithItems;
-import de.thm.mni.mhpp11.control.icon.MoDiagramPane;
-import de.thm.mni.mhpp11.control.icon.MoIconPane;
-import de.thm.mni.mhpp11.control.icon.MoPane;
+import de.thm.mni.mhpp11.control.icon.MoDiagramGroup;
+import de.thm.mni.mhpp11.control.icon.MoGroup;
+import de.thm.mni.mhpp11.control.icon.MoIconGroup;
 import de.thm.mni.mhpp11.util.config.Settings;
 import de.thm.mni.mhpp11.util.config.model.MainWindow;
 import de.thm.mni.mhpp11.util.config.model.Project;
@@ -103,19 +103,19 @@ public class MainController extends NotifyController {
     tvLibrary.setOnMouseClicked(event -> {
       TreeItem<MoClass> item = tvLibrary.getSelectionModel().getSelectedItem();
       if (item == null) return;
-      MoPane mp = null;
+      MoGroup mp = null;
     
       if (event.getClickCount() == 2)
-        mp = new MoDiagramPane(item.getValue());
+        mp = new MoDiagramGroup(item.getValue());
       if (event.getClickCount() == 3)
-        mp = new MoIconPane(item.getValue(), false);
+        mp = new MoIconGroup(item.getValue(), false);
       if (mp == null || event.getClickCount() <= 1) return;
     
       main.getChildren().removeAll(main.getChildren());
-    
-      mp.scaleTo(800., 800.);
-      mp.setLayoutX(20.);
-      mp.setLayoutY(20.);
+  
+      mp.scaleTo(600., 600.);
+      mp.setLayoutX(100.);
+      mp.setLayoutY(100.);
       mp.setInternalStyle("-fx-background-color: gainsboro;");
       main.getChildren().add(mp);
     
@@ -147,7 +147,7 @@ public class MainController extends NotifyController {
                 setDisable(true);
                 setStyle("-fx-background-color: gainsboro;-fx-font-weight: bold; -fx-font-size: 90%; -fx-padding: 2 -15;");
               } else {
-                setGraphic(new MoIconPane(item).scaleTo(25., 25.));
+                setGraphic(new MoIconGroup(item).scaleTo(25., 25.));
               }
             }
           }

@@ -19,7 +19,7 @@ import java.util.List;
  */
 @SuppressWarnings("unchecked")
 @Getter
-public class MoLine extends MoGraphic {
+public class MoLine extends MoGraphic implements HasSmoothOption {
   
   enum Arrow {
     NONE,

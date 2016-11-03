@@ -4,6 +4,7 @@ import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.PointContext;
 import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.PolygonContext;
 import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.PolygonDataContext;
 import de.thm.mni.mhpp11.util.config.model.Point;
+import de.thm.mni.mhpp11.util.parser.models.graphics.Utilities.Smooth;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Singular;
@@ -15,16 +16,16 @@ import java.util.List;
  * Created by hobbypunk on 19.09.16.
  */
 @Getter
-public class MoPolygon extends MoFilledShape {
+public class MoPolygon extends MoFilledShape implements HasSmoothOption {
   
   List<Point<Double, Double>> points = new ArrayList<>();
-  de.thm.mni.mhpp11.util.parser.models.graphics.Utilities.Smooth smooth = de.thm.mni.mhpp11.util.parser.models.graphics.Utilities.Smooth.NONE;
+  Smooth smooth = Smooth.NONE;
   
   @Builder(builderMethodName = "polygonBuilder")
-  MoPolygon(MoFilledShape mfs, @Singular List<Point<Double, Double>> points, de.thm.mni.mhpp11.util.parser.models.graphics.Utilities.Smooth smooth) {
+  MoPolygon(MoFilledShape mfs, @Singular List<Point<Double, Double>> points, Smooth smooth) {
     super(mfs);
     this.points = points;
-    this.smooth = smooth;
+    if (smooth != null) this.smooth = smooth;
   }
   
   public static MoPolygon parse(PolygonContext elem) {
@@ -38,7 +39,7 @@ public class MoPolygon extends MoFilledShape {
       } else if (data.filledShape() != null) {
         MoFilledShape.parse(mfsb, data.filledShape());
       } else if (data.smooth() != null) {
-        mb.smooth(de.thm.mni.mhpp11.util.parser.models.graphics.Utilities.Smooth.valueOf(data.smooth().type.getText().toUpperCase()));
+        mb.smooth(Smooth.valueOf(data.smooth().type.getText().toUpperCase()));
       } else if (data.points() != null) {
         for (PointContext point : data.points().pointList().point()) {
           mb.point(new Point<>(Double.parseDouble(point.x.getText()), Double.parseDouble(point.y.getText())));
