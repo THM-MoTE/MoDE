@@ -4,12 +4,17 @@ import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.TextContext;
 import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.TextDataContext;
 import de.thm.mni.mhpp11.util.config.model.Point;
 import de.thm.mni.mhpp11.util.parser.models.interfaces.MoExtent;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.paint.Color;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -19,7 +24,8 @@ import java.util.regex.Pattern;
 public class MoText extends MoFilledShape implements MoExtent {
   
   private static final Pattern COMPILE = Pattern.compile("(^[\\\\\\\"]+)|([\\\\\\\"]+$)");
-  private Point<Double, Double>[] extent = (Point<Double, Double>[]) new Point[2];
+  private final List<ObjectProperty<Point<Double, Double>>> extent = Collections.unmodifiableList(Arrays.asList(new SimpleObjectProperty<>(), new SimpleObjectProperty<>()));
+
   public enum TextAlignment {
     LEFT,
     CENTER,
@@ -55,8 +61,8 @@ public class MoText extends MoFilledShape implements MoExtent {
   @Builder(builderMethodName = "textBuilder")
   MoText(MoFilledShape mfs, Point<Double, Double> first, Point<Double, Double> second, String string, Double fontSize, String fontName, Integer textStyle, Color textColor, TextAlignment horizontalAlignment, Integer index) {
     super(mfs);
-    if (first != null) this.extent[0] = first;
-    if (second != null) this.extent[1] = second;
+    extent.get(0).setValue(first);
+    extent.get(1).setValue(second);
     if (string != null) this.string = string;
     if(fontSize != null) this.fontSize = fontSize;
     if(fontName != null) this.fontName = fontName;

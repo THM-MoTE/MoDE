@@ -3,9 +3,15 @@ package de.thm.mni.mhpp11.util.parser.models.graphics;
 import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.CoordinateSystemContext;
 import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.CoordinateSystem_dataContext;
 import de.thm.mni.mhpp11.util.config.model.Point;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by hobbypunk on 16.09.16.
@@ -14,28 +20,28 @@ import lombok.NoArgsConstructor;
 @Getter
 public class MoCoordinateSystem {
   
-  private Point<Double, Double>[] extent = (Point<Double, Double>[]) new Point[2];
-  
+  private final List<ObjectProperty<Point<Double, Double>>> extent = Collections.unmodifiableList(Arrays.asList(new SimpleObjectProperty<>(), new SimpleObjectProperty<>()));
   {
-    this.extent[0] = new Point<>(-100., -100.);
-    this.extent[1] = new Point<>(100., 100.);
+    extent.get(0).setValue(new Point<>(-100., -100.));
+    extent.get(1).setValue(new Point<>(100., 100.));
   }
+  
   private Boolean preserveAspectRatio = true;
   private Double initialScale = 0.1;
   private Point<Double, Double> grid = new Point<>(2., 2.);
   
   @Builder
   private MoCoordinateSystem(Point<Double, Double> first, Point<Double, Double> second, Boolean preserveAspectRatio, Double initialScale, Point<Double, Double> grid) {
-    this.extent[0] = (first != null) ? first : new Point<>(-100., 100.);
-    this.extent[1] = (second != null) ? second : new Point<>(100., -100.);
+    if (first != null) extent.get(0).setValue(first);
+    if (second != null) extent.get(1).setValue(second);
     if (preserveAspectRatio != null) this.preserveAspectRatio = preserveAspectRatio;
     if (initialScale != null) this.initialScale = initialScale;
     if (grid != null) this.grid = grid;
   }
   
   private MoCoordinateSystem(MoCoordinateSystem that) {
-    this.extent[0] = that.extent[0];
-    this.extent[1] = that.extent[1];
+    this.extent.get(0).setValue(that.extent.get(0).getValue());
+    this.extent.get(1).setValue(that.extent.get(1).getValue());
     this.preserveAspectRatio = that.preserveAspectRatio;
     this.initialScale = that.initialScale;
     this.grid = that.grid;

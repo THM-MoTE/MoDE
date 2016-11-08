@@ -70,10 +70,12 @@ public abstract class MoGroup extends Group {
   }
   
   public MoGroup scaleTo(Double newWidth, Double newHeight) {
-    Point<Double, Double>[] extent = this.getMoClass().getIcon().getMoCoordinateSystem().getExtent();
-    
-    Double oldWidth = Math.max(extent[0].getX(), extent[1].getX()) - Math.min(extent[0].getX(), extent[1].getX());
-    Double oldHeight = Math.max(extent[0].getY(), extent[1].getY()) - Math.min(extent[0].getY(), extent[1].getY());
+    Point<Double, Double> extent0 = this.getMoClass().getIcon().getMoCoordinateSystem().getExtent().get(0).getValue();
+    Point<Double, Double> extent1 = this.getMoClass().getIcon().getMoCoordinateSystem().getExtent().get(1).getValue();
+  
+  
+    Double oldWidth = Math.max(extent0.getX(), extent1.getX()) - Math.min(extent0.getX(), extent1.getX());
+    Double oldHeight = Math.max(extent0.getY(), extent1.getY()) - Math.min(extent0.getY(), extent1.getY());
     
     
     scale.setX(newWidth / oldWidth);
@@ -84,23 +86,25 @@ public abstract class MoGroup extends Group {
   
   private void initCoordinateSystem() {
     MoCoordinateSystem mcs = this.getMoClass().getIcon().getMoCoordinateSystem();
-    
-    Point<Double, Double>[] extent = mcs.getExtent();
-    Double minX = Math.min(extent[0].getX(), extent[1].getX());
-    Double minY = Math.min(extent[0].getY(), extent[1].getY());
-    Double width = Math.max(extent[0].getX(), extent[1].getX()) - Math.min(extent[0].getX(), extent[1].getX());
-    Double height = Math.max(extent[0].getY(), extent[1].getY()) - Math.min(extent[0].getY(), extent[1].getY());
+  
+    Point<Double, Double> extent0 = mcs.getExtent().get(0).getValue();
+    Point<Double, Double> extent1 = mcs.getExtent().get(1).getValue();
+  
+    Double minX = Math.min(extent0.getX(), extent1.getX());
+    Double minY = Math.min(extent0.getY(), extent1.getY());
+    Double width = Math.max(extent0.getX(), extent1.getX()) - Math.min(extent0.getX(), extent1.getX());
+    Double height = Math.max(extent0.getY(), extent1.getY()) - Math.min(extent0.getY(), extent1.getY());
   
     basis.getTransforms().add(Transform.scale(1., -1.));
     basis.getTransforms().add(Transform.translate(0, -height));
-    
-    if (extent[1].getX() < extent[0].getX()) {
+  
+    if (extent1.getX() < extent0.getX()) {
       basis.getTransforms().add(Transform.scale(-1., 1.));
       basis.getTransforms().add(Transform.translate(width, 0));
       flippedX = true;
     }
-    
-    if (extent[1].getY() < extent[0].getY()) {
+  
+    if (extent1.getY() < extent0.getY()) {
       basis.getTransforms().add(Transform.scale(1., -1.));
       basis.getTransforms().add(Transform.translate(0, -height));
       flippedY = true;

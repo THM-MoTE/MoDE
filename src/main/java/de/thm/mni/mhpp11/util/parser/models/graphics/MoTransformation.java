@@ -11,20 +11,25 @@ import javafx.beans.property.SimpleObjectProperty;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Created by hobbypunk on 21.10.16.
  */
 @Getter
 public class MoTransformation implements MoExtent {
   
-  private Point<Double, Double>[] extent = (Point<Double, Double>[]) new Point[2];
+  private final List<ObjectProperty<Point<Double, Double>>> extent = Collections.unmodifiableList(Arrays.asList(new SimpleObjectProperty<>(), new SimpleObjectProperty<>()));
+  
   ObjectProperty<Point<DoubleProperty, DoubleProperty>> origin = new SimpleObjectProperty<>(new Point<>(new SimpleDoubleProperty(0.), new SimpleDoubleProperty(0.))); //Ursprung des Elements
   DoubleProperty rotation = new SimpleDoubleProperty(0.0);
   
   @Builder
   private MoTransformation(Point<Double, Double> first, Point<Double, Double> second, Point<Double, Double> origin, Double rotation) {
-    extent[0] = first;
-    extent[1] = second;
+    extent.get(0).setValue(first);
+    extent.get(1).setValue(second);
     if (origin != null) {
       this.origin.get().getX().setValue(origin.getX());
       this.origin.get().getY().setValue(origin.getY());

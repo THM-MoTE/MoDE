@@ -42,12 +42,14 @@ public class Rectangle extends javafx.scene.shape.Rectangle implements Element, 
     Element.super.init();
     FilledElement.super.init();
     StrokedElement.super.init();
-    
-    Point<Double, Double>[] extent = getData().getExtent();
-    this.setX(Math.min(extent[0].getX(), extent[1].getX()));
-    this.setY(Math.min(extent[0].getY(), extent[1].getY()));
-    this.setWidth(Math.abs(extent[0].getX() - extent[1].getX()));
-    this.setHeight(Math.abs(extent[0].getY() - extent[1].getY()));
+  
+    Point<Double, Double> extent0 = getData().getExtent().get(0).getValue();
+    Point<Double, Double> extent1 = getData().getExtent().get(1).getValue();
+  
+    this.setX(Math.min(extent0.getX(), extent1.getX()));
+    this.setY(Math.min(extent0.getY(), extent1.getY()));
+    this.setWidth(Math.abs(extent0.getX() - extent1.getX()));
+    this.setHeight(Math.abs(extent0.getY() - extent1.getY()));
     this.setArcHeight(getData().getRadius() * 2);
     this.setArcWidth(getData().getRadius() * 2);
   }

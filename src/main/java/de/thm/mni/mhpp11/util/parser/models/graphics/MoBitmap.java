@@ -5,10 +5,15 @@ import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.BitmapDataContext;
 import de.thm.mni.mhpp11.util.config.model.Point;
 import de.thm.mni.mhpp11.util.parser.OMCompiler;
 import de.thm.mni.mhpp11.util.parser.models.interfaces.MoExtent;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by hobbypunk on 29.09.16.
@@ -16,15 +21,16 @@ import java.nio.file.Path;
 @Getter
 public class MoBitmap extends MoGraphic implements MoExtent {
   
-  Point<Double, Double>[] extent = (Point<Double, Double>[]) new Point[2];
+  private final List<ObjectProperty<Point<Double, Double>>> extent = Collections.unmodifiableList(Arrays.asList(new SimpleObjectProperty<>(), new SimpleObjectProperty<>()));
+
   Path fileName = null;
   String imageSource = "";
   
   @Builder(builderMethodName = "bitmapBuilder")
   public MoBitmap(MoGraphic mg, Point<Double, Double> first, Point<Double, Double> second, Path fileName, String imageSource) {
     super(mg);
-    this.extent[0] = first;
-    this.extent[1] = second;
+    extent.get(0).setValue(first);
+    extent.get(1).setValue(second);
     this.fileName = fileName;
     this.imageSource = imageSource;
   }

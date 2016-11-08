@@ -64,26 +64,28 @@ public class Text extends Pane implements Element, FilledElement, StrokedElement
     Element.super.init();
     FilledElement.super.init();
     StrokedElement.super.init();
-    
-    Point<Double, Double>[] extent = getData().getExtent();
+  
+    Point<Double, Double> extent0 = getData().getExtent().get(0).getValue();
+    Point<Double, Double> extent1 = getData().getExtent().get(1).getValue();
+
     Font f;
     if (getData().getFontSize() != 0) {
       f = Font.font(getData().getFontName(), getData().getFontSize());
     } else {
       f = Font.font(getData().getFontName(), 20);
-      f = Font.font(f.getFamily(), Utilities.calculateMaxFontSize(f, getData().getString(), Math.abs(-extent[0].getX() + extent[1].getX()), Math.abs(-extent[0].getY() + extent[1].getY())));
+      f = Font.font(f.getFamily(), Utilities.calculateMaxFontSize(f, getData().getString(), Math.abs(-extent0.getX() + extent1.getX()), Math.abs(-extent0.getY() + extent1.getY())));
     }
     
     this.text.setFont(f);
     this.text.setText(getData().getString());
     this.text.setUnderline(MoText.TextStyle.isUnterline(getData().getTextStyle()));
-    
-    
-    Double tlx = Math.min(extent[0].getX(), extent[1].getX());
-    Double tly = Math.min(extent[0].getY(), extent[1].getY());
-    
-    Double widthExtent = Math.abs(extent[0].getX() - extent[1].getX());
-    Double heightExtent = Math.abs(extent[0].getY() - extent[1].getY());
+  
+  
+    Double tlx = Math.min(extent0.getX(), extent1.getX());
+    Double tly = Math.min(extent0.getY(), extent1.getY());
+  
+    Double widthExtent = Math.abs(extent0.getX() - extent1.getX());
+    Double heightExtent = Math.abs(extent0.getY() - extent1.getY());
     
     Double widthText = Utilities.calculateStringWidth(f, getData().getString());
     Double heightText = Utilities.calculateFontHeight(f);

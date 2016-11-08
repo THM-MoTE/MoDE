@@ -75,16 +75,17 @@ public class MoIconGroup extends MoGroup {
     Point<DoubleProperty, DoubleProperty> origin = mt.getOrigin().get();
     getOrigin().xProperty().bindBidirectional(origin.getX());
     getOrigin().yProperty().bindBidirectional(origin.getY());
-    
-    Point<Double, Double>[] extent = mt.getExtent();
-    
-    Double newVariableWidth = Math.max(extent[0].getX(), extent[1].getX()) - Math.min(extent[0].getX(), extent[1].getX());
-    Double newVariableHeight = Math.max(extent[0].getY(), extent[1].getY()) - Math.min(extent[0].getY(), extent[1].getY());
+  
+    Point<Double, Double> extent0 = mt.getExtent().get(0).getValue();
+    Point<Double, Double> extent1 = mt.getExtent().get(1).getValue();
+  
+    Double newVariableWidth = Math.max(extent0.getX(), extent1.getX()) - Math.min(extent0.getX(), extent1.getX());
+    Double newVariableHeight = Math.max(extent0.getY(), extent1.getY()) - Math.min(extent0.getY(), extent1.getY());
     
     this.scaleTo(newVariableWidth, newVariableHeight);
     //TODO remove extra tranforms...
     this.getTransforms().add(getOrigin());
-    this.getTransforms().add(Transform.translate(Math.min(extent[0].getX(), extent[1].getX()), Math.min(extent[0].getY(), extent[1].getY())));
+    this.getTransforms().add(Transform.translate(Math.min(extent0.getX(), extent1.getX()), Math.min(extent0.getY(), extent1.getY())));
     if (getFlippedX()) {
       this.getTransforms().add(Transform.translate(newVariableWidth, 0));
       this.getTransforms().add(Transform.scale(-1, 1));

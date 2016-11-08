@@ -44,14 +44,15 @@ public class Ellipse extends javafx.scene.shape.Ellipse implements Element, Fill
     Element.super.init();
     FilledElement.super.init();
     StrokedElement.super.init();
-    
-    Point<Double, Double>[] extent = getData().getExtent();
-    
-    Double minX = Math.min(extent[0].getX(), extent[1].getX());
-    Double minY = Math.min(extent[0].getY(), extent[1].getY());
-    
-    Double radiusX = Math.abs(extent[0].getX() - extent[1].getX()) / 2;
-    Double radiusY = Math.abs(extent[0].getY() - extent[1].getY()) / 2;
+  
+    Point<Double, Double> extent0 = getData().getExtent().get(0).getValue();
+    Point<Double, Double> extent1 = getData().getExtent().get(1).getValue();
+  
+    Double minX = Math.min(extent0.getX(), extent1.getX());
+    Double minY = Math.min(extent0.getY(), extent1.getY());
+  
+    Double radiusX = Math.abs(extent0.getX() - extent1.getX()) / 2;
+    Double radiusY = Math.abs(extent0.getY() - extent1.getY()) / 2;
     
     this.setCenterX(minX + radiusX);
     this.setCenterY(minY + radiusY);

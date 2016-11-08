@@ -4,8 +4,14 @@ import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.EllipseContext;
 import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.EllipseDataContext;
 import de.thm.mni.mhpp11.util.config.model.Point;
 import de.thm.mni.mhpp11.util.parser.models.interfaces.MoExtent;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import lombok.Builder;
 import lombok.Getter;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by hobbypunk on 19.09.16.
@@ -13,15 +19,16 @@ import lombok.Getter;
 @Getter
 public class MoEllipse extends MoFilledShape implements MoExtent {
   
-  Point<Double, Double>[] extent = (Point<Double, Double>[]) new Point[2];
+  private final List<ObjectProperty<Point<Double, Double>>> extent = Collections.unmodifiableList(Arrays.asList(new SimpleObjectProperty<>(), new SimpleObjectProperty<>()));
+  
   private Double startAngle = 0.0;
   private Double endAngle = 360.0;
   
   @Builder(builderMethodName = "ellipseBuilder")
   MoEllipse(MoFilledShape mfs, Point<Double, Double> first, Point<Double, Double> second, Double startAngle, Double endAngle) {
     super(mfs);
-    this.extent[0] = first;
-    this.extent[1] = second;
+    extent.get(0).setValue(first);
+    extent.get(1).setValue(second);
     if(startAngle != null) this.startAngle = startAngle;
     if(endAngle != null) this.endAngle = endAngle;
   }

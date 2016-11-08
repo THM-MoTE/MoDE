@@ -158,7 +158,10 @@ public class MoClass extends MoElement implements HierarchyData<MoClass> {
     if (this instanceof MoPackage) return MoDefaults.newPackage();
     if (this instanceof MoModel) return MoDefaults.newModel();
     if (this instanceof MoFunction) return MoDefaults.newFunction();
-    else return null;
+    else {
+      System.out.println(this.getClass().getSimpleName() + ": " + this.getName());
+      return MoDefaults.newEmpty();
+    }
   }
   
   private MoIcon getInternalIcon() {

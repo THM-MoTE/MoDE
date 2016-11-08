@@ -90,4 +90,9 @@ public class MoDefaults {
     if (moFunction == null) moFunction = newAnything(Color.GREEN, new ArrayList<>(), Utilities.Smooth.NONE);
     return moFunction;
   }
+  
+  public static MoIcon newEmpty() {
+    if (moFunction == null) moFunction = newAnything(Color.PINK, new ArrayList<>(), Utilities.Smooth.NONE);
+    return moFunction;
+  }
 }

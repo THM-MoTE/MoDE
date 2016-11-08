@@ -4,8 +4,14 @@ import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.RectangleContext;
 import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.RectangleDataContext;
 import de.thm.mni.mhpp11.util.config.model.Point;
 import de.thm.mni.mhpp11.util.parser.models.interfaces.MoExtent;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import lombok.Builder;
 import lombok.Getter;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by hobbypunk on 19.09.16.
@@ -13,7 +19,8 @@ import lombok.Getter;
 @Getter
 public class MoRectangle extends MoFilledShape implements MoExtent {
   
-  private Point<Double, Double>[] extent = (Point<Double, Double>[]) new Point[2];
+  private final List<ObjectProperty<Point<Double, Double>>> extent = Collections.unmodifiableList(Arrays.asList(new SimpleObjectProperty<>(), new SimpleObjectProperty<>()));
+
   private BorderPattern borderPattern = BorderPattern.NONE;
   private Double radius = 0.0;
   
@@ -27,8 +34,8 @@ public class MoRectangle extends MoFilledShape implements MoExtent {
   @Builder(builderMethodName = "rectangleBuilder")
   MoRectangle(MoFilledShape mfs, Point<Double, Double> first, Point<Double, Double> second, BorderPattern borderPattern, Double radius) {
     super(mfs);
-    this.extent[0] = first;
-    this.extent[1] = second;
+    extent.get(0).setValue(first);
+    extent.get(1).setValue(second);
     if (borderPattern != null) this.borderPattern = borderPattern;
     if (radius != null) this.radius = radius;
   }
