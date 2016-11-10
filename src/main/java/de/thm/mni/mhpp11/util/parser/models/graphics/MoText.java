@@ -2,10 +2,10 @@ package de.thm.mni.mhpp11.util.parser.models.graphics;
 
 import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.TextContext;
 import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.TextDataContext;
-import de.thm.mni.mhpp11.util.config.model.Point;
 import de.thm.mni.mhpp11.util.parser.models.interfaces.MoExtent;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 public class MoText extends MoFilledShape implements MoExtent {
   
   private static final Pattern COMPILE = Pattern.compile("(^[\\\\\\\"]+)|([\\\\\\\"]+$)");
-  private final List<ObjectProperty<Point<Double, Double>>> extent = Collections.unmodifiableList(Arrays.asList(new SimpleObjectProperty<>(), new SimpleObjectProperty<>()));
+  private final List<ObjectProperty<Point2D>> extent = Collections.unmodifiableList(Arrays.asList(new SimpleObjectProperty<>(), new SimpleObjectProperty<>()));
 
   public enum TextAlignment {
     LEFT,
@@ -59,7 +59,7 @@ public class MoText extends MoFilledShape implements MoExtent {
   Integer index = 1;
   
   @Builder(builderMethodName = "textBuilder")
-  MoText(MoFilledShape mfs, Point<Double, Double> first, Point<Double, Double> second, String string, Double fontSize, String fontName, Integer textStyle, Color textColor, TextAlignment horizontalAlignment, Integer index) {
+  MoText(MoFilledShape mfs, Point2D first, Point2D second, String string, Double fontSize, String fontName, Integer textStyle, Color textColor, TextAlignment horizontalAlignment, Integer index) {
     super(mfs);
     extent.get(0).setValue(first);
     extent.get(1).setValue(second);
@@ -93,8 +93,8 @@ public class MoText extends MoFilledShape implements MoExtent {
       } else if (data.filledShape() != null) {
         MoFilledShape.parse(mfsb, data.filledShape());
       } else if (data.extent() != null) {
-        mb.first(new Point<>(Double.parseDouble(data.extent().p1.x.getText()), Double.parseDouble(data.extent().p1.y.getText())));
-        mb.second(new Point<>(Double.parseDouble(data.extent().p2.x.getText()), Double.parseDouble(data.extent().p2.y.getText())));
+        mb.first(new Point2D(Double.parseDouble(data.extent().p1.x.getText()), Double.parseDouble(data.extent().p1.y.getText())));
+        mb.second(new Point2D(Double.parseDouble(data.extent().p2.x.getText()), Double.parseDouble(data.extent().p2.y.getText())));
       } else if (data.textString() != null) {
         mb.string(COMPILE.matcher(data.textString().val.getText()).replaceAll(""));
       } else if (data.fontName() != null) {

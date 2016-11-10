@@ -2,9 +2,9 @@ package de.thm.mni.mhpp11.util.parser.models.graphics;
 
 import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.CoordinateSystemContext;
 import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.CoordinateSystem_dataContext;
-import de.thm.mni.mhpp11.util.config.model.Point;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.geometry.Point2D;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,18 +20,18 @@ import java.util.List;
 @Getter
 public class MoCoordinateSystem {
   
-  private final List<ObjectProperty<Point<Double, Double>>> extent = Collections.unmodifiableList(Arrays.asList(new SimpleObjectProperty<>(), new SimpleObjectProperty<>()));
+  private final List<ObjectProperty<Point2D>> extent = Collections.unmodifiableList(Arrays.asList(new SimpleObjectProperty<>(), new SimpleObjectProperty<>()));
   {
-    extent.get(0).setValue(new Point<>(-100., -100.));
-    extent.get(1).setValue(new Point<>(100., 100.));
+    extent.get(0).setValue(new Point2D(-100., -100.));
+    extent.get(1).setValue(new Point2D(100., 100.));
   }
   
   private Boolean preserveAspectRatio = true;
   private Double initialScale = 0.1;
-  private Point<Double, Double> grid = new Point<>(2., 2.);
+  private Point2D grid = new Point2D(2., 2.);
   
   @Builder
-  private MoCoordinateSystem(Point<Double, Double> first, Point<Double, Double> second, Boolean preserveAspectRatio, Double initialScale, Point<Double, Double> grid) {
+  private MoCoordinateSystem(Point2D first, Point2D second, Boolean preserveAspectRatio, Double initialScale, Point2D grid) {
     if (first != null) extent.get(0).setValue(first);
     if (second != null) extent.get(1).setValue(second);
     if (preserveAspectRatio != null) this.preserveAspectRatio = preserveAspectRatio;
@@ -52,14 +52,14 @@ public class MoCoordinateSystem {
     
     for (CoordinateSystem_dataContext data : system.data)
       if (data.extent() != null) {
-        mb.first(new Point<>(Double.parseDouble(data.extent().p1.x.getText()), Double.parseDouble(data.extent().p1.y.getText())));
-        mb.second(new Point<>(Double.parseDouble(data.extent().p2.x.getText()), Double.parseDouble(data.extent().p2.y.getText())));
+        mb.first(new Point2D(Double.parseDouble(data.extent().p1.x.getText()), Double.parseDouble(data.extent().p1.y.getText())));
+        mb.second(new Point2D(Double.parseDouble(data.extent().p2.x.getText()), Double.parseDouble(data.extent().p2.y.getText())));
       } else if (data.preserveAspectRatio() != null) {
         mb.preserveAspectRatio(Boolean.parseBoolean(data.preserveAspectRatio().getText()));
       } else if (data.initialScale() != null) {
         mb.initialScale(Double.parseDouble(data.initialScale().val.getText()));
       } else if (data.grid() != null) {
-        mb.grid(new Point<>(Double.parseDouble(data.grid().val.x.getText()), Double.parseDouble(data.grid().val.y.getText())));
+        mb.grid(new Point2D(Double.parseDouble(data.grid().val.x.getText()), Double.parseDouble(data.grid().val.y.getText())));
       }
   
     return mb.build();

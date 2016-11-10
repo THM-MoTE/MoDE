@@ -2,12 +2,12 @@ package de.thm.mni.mhpp11.util.parser.models.graphics;
 
 import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.TransformationContentContext;
 import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.TransformationContext;
-import de.thm.mni.mhpp11.util.config.model.Point;
 import de.thm.mni.mhpp11.util.parser.models.interfaces.MoExtent;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.geometry.Point2D;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -21,18 +21,17 @@ import java.util.List;
 @Getter
 public class MoTransformation implements MoExtent {
   
-  private final List<ObjectProperty<Point<Double, Double>>> extent = Collections.unmodifiableList(Arrays.asList(new SimpleObjectProperty<>(), new SimpleObjectProperty<>()));
+  private final List<ObjectProperty<Point2D>> extent = Collections.unmodifiableList(Arrays.asList(new SimpleObjectProperty<>(), new SimpleObjectProperty<>()));
   
-  ObjectProperty<Point<DoubleProperty, DoubleProperty>> origin = new SimpleObjectProperty<>(new Point<>(new SimpleDoubleProperty(0.), new SimpleDoubleProperty(0.))); //Ursprung des Elements
+  ObjectProperty<Point2D> origin = new SimpleObjectProperty<>(new Point2D(0.0, 0.0)); //Ursprung des Elements
   DoubleProperty rotation = new SimpleDoubleProperty(0.0);
   
   @Builder
-  private MoTransformation(Point<Double, Double> first, Point<Double, Double> second, Point<Double, Double> origin, Double rotation) {
+  private MoTransformation(Point2D first, Point2D second, Point2D origin, Double rotation) {
     extent.get(0).setValue(first);
     extent.get(1).setValue(second);
     if (origin != null) {
-      this.origin.get().getX().setValue(origin.getX());
-      this.origin.get().getY().setValue(origin.getY());
+      this.origin.setValue(origin);
     }
     if (rotation != null) this.rotation.setValue(rotation);
   }
@@ -43,10 +42,10 @@ public class MoTransformation implements MoExtent {
     
     for (TransformationContentContext data : val.transformationContent()) {
       if (data.extent() != null) {
-        mb.first(new Point<>(Double.parseDouble(data.extent().p1.x.getText()), Double.parseDouble(data.extent().p1.y.getText())));
-        mb.second(new Point<>(Double.parseDouble(data.extent().p2.x.getText()), Double.parseDouble(data.extent().p2.y.getText())));
+        mb.first(new Point2D(Double.parseDouble(data.extent().p1.x.getText()), Double.parseDouble(data.extent().p1.y.getText())));
+        mb.second(new Point2D(Double.parseDouble(data.extent().p2.x.getText()), Double.parseDouble(data.extent().p2.y.getText())));
       } else if (data.origin() != null) {
-        mb.origin(new Point<>(Double.parseDouble(data.origin().point().x.getText()), Double.parseDouble(data.origin().point().y.getText())));
+        mb.origin(new Point2D(Double.parseDouble(data.origin().point().x.getText()), Double.parseDouble(data.origin().point().y.getText())));
       } else if (data.rotation() != null) {
         mb.rotation(Double.parseDouble(data.rotation().val.getText()));
       }

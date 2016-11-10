@@ -20,15 +20,22 @@ import java.util.regex.Pattern;
 public class MoVariable extends MoElement {
   private static final Pattern PATTERN = Pattern.compile("(^\"|\"$)");
   private final MoClass parent;
-  private final Specification kind;
+  private Specification kind;
   @Setter private MoClass type = null;
   @Setter private String comment = "";
   
-  private enum Specification {
+  public enum Specification {
     NONE,
     INPUT,
     OUTPUT,
     FLOW
+  }
+  
+  public MoVariable(@NonNull MoClass parent, MoClass type, String name) {
+    super("v", name, "");
+    this.parent = parent;
+    this.kind = Specification.NONE;
+    this.type = type;
   }
   
   @Builder
@@ -42,6 +49,10 @@ public class MoVariable extends MoElement {
   
   public List<MoVariable> getVariables() {
     return getType().getVariables();
+  }
+  
+  public List<MoConnection> getConnections() {
+    return this.parent.getConnections().stream().filter(moConnection -> moConnection.contains(this.getType())).collect(ImmutableListCollector.toImmutableList());
   }
   
   public MoPlacement getPlacement() {

@@ -5,8 +5,8 @@ import de.thm.mni.mhpp11.shape.interfaces.CalculatePathElements;
 import de.thm.mni.mhpp11.shape.interfaces.Element;
 import de.thm.mni.mhpp11.shape.interfaces.FilledElement;
 import de.thm.mni.mhpp11.shape.interfaces.StrokedElement;
-import de.thm.mni.mhpp11.util.config.model.Point;
 import de.thm.mni.mhpp11.util.parser.models.graphics.MoPolygon;
+import javafx.geometry.Point2D;
 import javafx.scene.shape.ClosePath;
 import javafx.scene.shape.Path;
 import javafx.scene.transform.Rotate;
@@ -44,7 +44,7 @@ public class Polygon extends Path implements Element, StrokedElement, FilledElem
   }
   
   @Override
-  public void calcElements(List<Point<Double, Double>> points) {
+  public void calcElements(List<Point2D> points) {
     CalculatePathElements.super.calcElements(points);
     getElements().add(new ClosePath());
   }

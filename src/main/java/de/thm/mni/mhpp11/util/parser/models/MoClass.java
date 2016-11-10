@@ -164,6 +164,10 @@ public class MoClass extends MoElement implements HierarchyData<MoClass> {
     }
   }
   
+  public boolean hasIcon() {
+    return (getInternalIcon() != null);
+  }
+  
   private MoIcon getInternalIcon() {
     MoIcon mi = null;
     for (MoAnnotation ma : getAnnotations()) {
@@ -287,4 +291,5 @@ public class MoClass extends MoElement implements HierarchyData<MoClass> {
     }
     return null;
   }
+  
 }

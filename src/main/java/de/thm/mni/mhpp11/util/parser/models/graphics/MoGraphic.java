@@ -1,9 +1,9 @@
 package de.thm.mni.mhpp11.util.parser.models.graphics;
 
 import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.*;
-import de.thm.mni.mhpp11.util.config.model.Point;
 import de.thm.mni.mhpp11.util.parser.OMCompiler;
 import javafx.beans.property.*;
+import javafx.geometry.Point2D;
 import lombok.Builder;
 import lombok.Getter;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -18,7 +18,7 @@ import java.util.List;
 public class MoGraphic {
   
   BooleanProperty visible = new SimpleBooleanProperty(true);
-  ObjectProperty<Point<Double, Double>> origin = new SimpleObjectProperty<>(new Point<>(0.0, 0.0)); //Ursprung des Elements
+  ObjectProperty<Point2D> origin = new SimpleObjectProperty<>(new Point2D(0.0, 0.0)); //Ursprung des Elements
   DoubleProperty rotation = new SimpleDoubleProperty(0.0);
   
   public MoGraphic(MoGraphic mg) {
@@ -28,7 +28,7 @@ public class MoGraphic {
   }
   
   @Builder
-  public MoGraphic(Boolean visible, Point<Double, Double> origin, Double rotation) {
+  public MoGraphic(Boolean visible, Point2D origin, Double rotation) {
     if (visible != null) this.visible.setValue(visible);
     if (origin != null) this.origin.setValue(origin);
     if (rotation != null) this.rotation.setValue(rotation);
@@ -65,7 +65,7 @@ public class MoGraphic {
   
   static void parse(MoGraphicBuilder mb, GraphicItemContext ctx) {
     if (ctx.visible() != null) mb.visible(Boolean.parseBoolean(ctx.visible().val.getText()));
-    else if (ctx.origin() != null) mb.origin(new Point<>(Double.parseDouble(ctx.origin().val.x.getText()), Double.parseDouble(ctx.origin().val.y.getText())));
+    else if (ctx.origin() != null) mb.origin(new Point2D(Double.parseDouble(ctx.origin().val.x.getText()), Double.parseDouble(ctx.origin().val.y.getText())));
     else if (ctx.rotation() != null) mb.rotation(Double.parseDouble(ctx.rotation().val.getText()));
   }
 }

@@ -1,10 +1,14 @@
 package de.thm.mni.mhpp11.control.icon;
 
+import de.thm.mni.mhpp11.control.icon.handlers.DragAndDropHandler;
+import de.thm.mni.mhpp11.control.icon.handlers.FocusHandler;
+import de.thm.mni.mhpp11.control.icon.handlers.ModifyLineHandler;
+import de.thm.mni.mhpp11.control.icon.handlers.MoveHandler;
+import de.thm.mni.mhpp11.shape.Line;
 import de.thm.mni.mhpp11.util.parser.models.MoClass;
 import de.thm.mni.mhpp11.util.parser.models.MoConnection;
-import javafx.event.EventHandler;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.transform.Translate;
+import javafx.geometry.Point2D;
+import javafx.scene.transform.NonInvertibleTransformException;
 
 /**
  * Created by hobbypunk on 19.09.16.
@@ -14,6 +18,9 @@ public class MoDiagramGroup extends MoGroup {
   public MoDiagramGroup(MoClass moClass) {
     super(moClass);
     init();
+    this.setOnDragOver(DragAndDropHandler.getInstance());
+    this.setOnDragDropped(DragAndDropHandler.getInstance());
+    this.setOnDragDone(DragAndDropHandler.getInstance());
   }
   
   @Override
@@ -24,34 +31,18 @@ public class MoDiagramGroup extends MoGroup {
   
   private void initVariables() {
     this.getMoClass().getVariables().forEach(super::initVariable);
-    EventHandler<MouseEvent> handler = new EventHandler<MouseEvent>() {
-      Double orgSceneX = 0., orgSceneY = 0.;
-      Double orgOriginX = 0., orgOriginY = 0.;
-      Translate o = null;
+  
+    this.parentProperty().addListener((observable, oldValue, newValue) -> {
+      if (oldValue != null) oldValue.setOnMouseClicked(null);
+      if (newValue != null) newValue.setOnMouseClicked(FocusHandler.getInstance());
+    });
     
-      @Override
-      public void handle(MouseEvent event) {
-        if (event.getEventType().equals(MouseEvent.MOUSE_PRESSED)) {
-          o = ((MoIconGroup) event.getSource()).getOrigin();
-          orgSceneX = event.getSceneX();
-          orgSceneY = event.getSceneY();
-        
-          orgOriginX = o.getX();
-          orgOriginY = o.getY();
-        } else {
-          if (o != null) {
-            o.setX(orgOriginX + ((event.getSceneX() - orgSceneX)) / getScale().getX());
-            o.setY(orgOriginY + ((orgSceneY - event.getSceneY())) / getScale().getY());
-          }
-        }
-      }
-    };
     getBasis().getChildren().stream().filter(node -> node instanceof MoIconGroup && ((MoIconGroup) node).getVariable() != null).forEach(node -> {
+      MoveHandler handler = new MoveHandler(this, (MoIconGroup) node);
       node.setOnMousePressed(handler);
       node.setOnMouseDragged(handler);
-      node.setOnMouseClicked(event -> {
-        System.out.println(((MoIconGroup) node).getMoClass());
-      });
+      node.setOnMouseReleased(handler);
+      node.setOnMouseClicked(FocusHandler.getInstance());
     });
   }
   
@@ -60,9 +51,36 @@ public class MoDiagramGroup extends MoGroup {
   }
   
   private void initConnection(MoConnection connection) {
-    connection.getMoGraphics().forEach(moGraphic -> {
-      super.initImage(moGraphic);
+    connection.getMoGraphics().forEach(super::initImage);
+    getBasis().getChildren().stream().filter(node -> node instanceof Line).forEach(node -> {
+      ModifyLineHandler handler = new ModifyLineHandler(this, (Line) node);
+      node.setOnMousePressed(handler);
+      node.setOnMouseDragged(handler);
+      node.setOnMouseReleased(handler);
+      node.setOnMouseClicked(handler);
     });
   }
   
+  public Point2D convertScenePointToDiagramPoint(Point2D scenePoint) {
+    return convertScenePointToDiagramPoint(scenePoint.getX(), scenePoint.getY());
+  }
+  
+  public Point2D convertScenePointToDiagramPoint(double sceneX, double sceneY) {
+    Point2D p = this.sceneToLocal(sceneX, sceneY);
+    try {
+      p = getScale().inverseDeltaTransform(p.getX(), p.getY());
+      p = getFlipping().deltaTransform(p);
+      
+      Double x, y;
+      if (getFlippedX()) x = -getPosition().getX() - p.getX();
+      else x = -getPosition().getX() + p.getX();
+      if (getFlippedY()) y = getPosition().getY() - p.getY();
+      else y = getPosition().getY() + p.getY();
+      
+      p = new Point2D(x, y);
+    } catch (NonInvertibleTransformException e) {
+      System.out.println("Should never called...");
+    }
+    return new Point2D(p.getX(), p.getY());
+  }
 }

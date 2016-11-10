@@ -3,11 +3,13 @@ package de.thm.mni.mhpp11.util.parser.models.interfaces;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 /**
  * Created by hobbypunk on 20.10.16.
  */
 @Getter
-public abstract class MoElement extends MoAnnotatable {
+public abstract class MoElement extends MoAnnotatable implements Serializable {
   protected String PREFIX = " ";
   protected String name = "";
   @Setter private String comment = "";

@@ -4,8 +4,8 @@ import de.thm.mni.mhpp11.control.icon.MoGroup;
 import de.thm.mni.mhpp11.shape.interfaces.Element;
 import de.thm.mni.mhpp11.shape.interfaces.FilledElement;
 import de.thm.mni.mhpp11.shape.interfaces.StrokedElement;
-import de.thm.mni.mhpp11.util.config.model.Point;
 import de.thm.mni.mhpp11.util.parser.models.graphics.MoRectangle;
+import javafx.geometry.Point2D;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Transform;
 import javafx.scene.transform.Translate;
@@ -43,8 +43,8 @@ public class Rectangle extends javafx.scene.shape.Rectangle implements Element, 
     FilledElement.super.init();
     StrokedElement.super.init();
   
-    Point<Double, Double> extent0 = getData().getExtent().get(0).getValue();
-    Point<Double, Double> extent1 = getData().getExtent().get(1).getValue();
+    Point2D extent0 = getData().getExtent().get(0).getValue();
+    Point2D extent1 = getData().getExtent().get(1).getValue();
   
     this.setX(Math.min(extent0.getX(), extent1.getX()));
     this.setY(Math.min(extent0.getY(), extent1.getY()));

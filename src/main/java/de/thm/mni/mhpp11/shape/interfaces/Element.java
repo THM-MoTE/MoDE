@@ -1,8 +1,8 @@
 package de.thm.mni.mhpp11.shape.interfaces;
 
-import de.thm.mni.mhpp11.util.config.model.Point;
 import de.thm.mni.mhpp11.util.parser.models.graphics.MoGraphic;
 import javafx.collections.ObservableList;
+import javafx.geometry.Point2D;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Transform;
 import javafx.scene.transform.Translate;
@@ -29,7 +29,7 @@ public interface Element {
     getTransforms().add(getOrigin());
   }
   
-  default void updateOrigin(Point<Double, Double> newValue) {
+  default void updateOrigin(Point2D newValue) {
     getOrigin().setX(newValue.getX());
     getOrigin().setY(newValue.getY());
     getRotation().setPivotX(newValue.getX());

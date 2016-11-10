@@ -38,6 +38,24 @@ public class MoConnection {
     if (graphics != null) this.moGraphics.addAll(graphics);
   }
   
+  public boolean fromContains(MoClass moClass) {
+    return contains(moClass, from);
+  }
+  
+  public boolean toContains(MoClass moClass) {
+    return contains(moClass, to);
+  }
+  
+  private boolean contains(MoClass moClass, List<MoVariable> list) {
+    for (MoVariable mv : list) if (mv.getType().equals(moClass)) return true;
+    return false;
+  }
+  
+  public boolean contains(MoClass moClass) {
+    return fromContains(moClass) || toContains(moClass);
+  }
+  
+  
   @Override
   public String toString() {
     return String.format("c > %s - %s", from, to);

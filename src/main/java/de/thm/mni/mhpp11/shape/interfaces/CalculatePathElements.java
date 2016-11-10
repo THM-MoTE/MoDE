@@ -1,9 +1,9 @@
 package de.thm.mni.mhpp11.shape.interfaces;
 
-import de.thm.mni.mhpp11.util.config.model.Point;
 import de.thm.mni.mhpp11.util.parser.models.graphics.HasSmoothOption;
 import de.thm.mni.mhpp11.util.parser.models.graphics.Utilities.Smooth;
 import javafx.collections.ObservableList;
+import javafx.geometry.Point2D;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.PathElement;
@@ -25,27 +25,28 @@ public interface CalculatePathElements {
     return getData().getSmooth().equals(Smooth.BEZIER);
   }
   
-  default void calcElements(List<Point<Double, Double>> points) {
+  default void calcElements(List<Point2D> points) {
     getElements().clear();
     Boolean closed = (points.size() > 3 && points.get(0).equals(points.get(points.size() - 1)));
     
     if (isBezier() && points.size() > 2) {
       getElements().addAll(calcBezierElements(points));
     } else {
-      for (Point<Double, Double> p : points) {
+      for (int i = 0; i < points.size(); i++) {
+        Point2D p = points.get(i);
         if (getElements().size() == 0) getElements().add(new MoveTo(p.getX(), p.getY()));
         else getElements().add(new LineTo(p.getX(), p.getY()));
       }
     }
   }
   
-  default List<PathElement> calcBezierElements(List<Point<Double, Double>> points) {
+  default List<PathElement> calcBezierElements(List<Point2D> points) {
     List<PathElement> elements = new ArrayList<>();
-    Point<Double, Double> controlPoint;
+    Point2D controlPoint;
     
     for (int i = 0; i < points.size(); i++) {
-      Point<Double, Double> p1 = points.get(i);
-      Point<Double, Double> p2 = (points.size() > i + 1) ? points.get(i + 1) : null;
+      Point2D p1 = points.get(i);
+      Point2D p2 = (points.size() > i + 1) ? points.get(i + 1) : null;
       
       if (p2 != null) {
         controlPoint = calcMiddle(p1, p2);
@@ -63,7 +64,7 @@ public interface CalculatePathElements {
     return elements;
   }
   
-  default Point<Double, Double> calcMiddle(Point<Double, Double> p1, Point<Double, Double> p2) {
-    return new Point<>((p1.getX() + p2.getX()) / 2, (p1.getY() + p2.getY()) / 2);
+  default Point2D calcMiddle(Point2D p1, Point2D p2) {
+    return new Point2D((p1.getX() + p2.getX()) / 2, (p1.getY() + p2.getY()) / 2);
   }
 }

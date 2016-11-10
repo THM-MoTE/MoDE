@@ -3,15 +3,16 @@ package de.thm.mni.mhpp11.util.parser.models.graphics;
 import de.thm.mni.mhpp11.parser.modelica.AnnotationParser;
 import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.LineDataContext;
 import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.PointContext;
-import de.thm.mni.mhpp11.util.config.model.Point;
 import de.thm.mni.mhpp11.util.parser.models.graphics.Utilities.LinePattern;
 import de.thm.mni.mhpp11.util.parser.models.graphics.Utilities.Smooth;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Singular;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,7 +29,7 @@ public class MoLine extends MoGraphic implements HasSmoothOption {
     HALF
   }
   
-  List<Point<Double, Double>> points = new ArrayList<>();
+  ObservableList<Point2D> points = FXCollections.observableArrayList();
   Color color = Color.BLACK;
   LinePattern linePattern = LinePattern.SOLID;
   Double thickness = 1.0;
@@ -37,9 +38,9 @@ public class MoLine extends MoGraphic implements HasSmoothOption {
   Smooth smooth = Smooth.NONE;
   
   @Builder(builderMethodName = "lineBuilder")
-  MoLine(MoGraphic mg, @Singular List<Point<Double, Double>> points, Color color, LinePattern linePattern, Double thickness, Arrow start, Arrow end, Double arrowSize, Smooth smooth) {
+  MoLine(MoGraphic mg, @Singular List<Point2D> points, Color color, LinePattern linePattern, Double thickness, Arrow start, Arrow end, Double arrowSize, Smooth smooth) {
     super(mg);
-    this.points = points;
+    this.points.addAll(points);
     this.arrows[0] = start;
     this.arrows[1] = end;
   
@@ -72,7 +73,7 @@ public class MoLine extends MoGraphic implements HasSmoothOption {
         if (data.arrows().a2 != null) mb.end(Arrow.valueOf(data.arrows().a2.type.getText().toUpperCase()));
       } else if (data.points() != null) {
         for (PointContext point : data.points().pointList().point()) {
-          mb.point(new Point<>(Double.parseDouble(point.x.getText()), Double.parseDouble(point.y.getText())));
+          mb.point(new Point2D(Double.parseDouble(point.x.getText()), Double.parseDouble(point.y.getText())));
         }
       }
     }

@@ -1,7 +1,7 @@
 package de.thm.mni.mhpp11.util.parser.models.interfaces;
 
-import de.thm.mni.mhpp11.util.config.model.Point;
 import javafx.beans.property.ObjectProperty;
+import javafx.geometry.Point2D;
 
 import java.util.List;
 
@@ -10,5 +10,5 @@ import java.util.List;
  */
 public interface MoExtent {
   
-  List<ObjectProperty<Point<Double, Double>>> getExtent();
+  List<ObjectProperty<Point2D>> getExtent();
 }

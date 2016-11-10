@@ -4,8 +4,8 @@ import de.thm.mni.mhpp11.control.icon.MoGroup;
 import de.thm.mni.mhpp11.shape.interfaces.Element;
 import de.thm.mni.mhpp11.shape.interfaces.FilledElement;
 import de.thm.mni.mhpp11.shape.interfaces.StrokedElement;
-import de.thm.mni.mhpp11.util.config.model.Point;
 import de.thm.mni.mhpp11.util.parser.models.graphics.MoEllipse;
+import javafx.geometry.Point2D;
 import javafx.scene.shape.ArcType;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Transform;
@@ -40,8 +40,8 @@ public class Arc extends javafx.scene.shape.Arc implements Element, FilledElemen
     FilledElement.super.init();
     StrokedElement.super.init();
   
-    Point<Double, Double> extent0 = getData().getExtent().get(0).getValue();
-    Point<Double, Double> extent1 = getData().getExtent().get(1).getValue();
+    Point2D extent0 = getData().getExtent().get(0).getValue();
+    Point2D extent1 = getData().getExtent().get(1).getValue();
   
     Double minX = Math.min(extent0.getX(), extent1.getX());
     Double minY = Math.min(extent0.getY(), extent1.getY());

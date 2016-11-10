@@ -2,11 +2,11 @@ package de.thm.mni.mhpp11.util.parser.models.graphics;
 
 import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.BitmapContext;
 import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.BitmapDataContext;
-import de.thm.mni.mhpp11.util.config.model.Point;
 import de.thm.mni.mhpp11.util.parser.OMCompiler;
 import de.thm.mni.mhpp11.util.parser.models.interfaces.MoExtent;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.geometry.Point2D;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -21,13 +21,13 @@ import java.util.List;
 @Getter
 public class MoBitmap extends MoGraphic implements MoExtent {
   
-  private final List<ObjectProperty<Point<Double, Double>>> extent = Collections.unmodifiableList(Arrays.asList(new SimpleObjectProperty<>(), new SimpleObjectProperty<>()));
+  private final List<ObjectProperty<Point2D>> extent = Collections.unmodifiableList(Arrays.asList(new SimpleObjectProperty<>(), new SimpleObjectProperty<>()));
 
   Path fileName = null;
   String imageSource = "";
   
   @Builder(builderMethodName = "bitmapBuilder")
-  public MoBitmap(MoGraphic mg, Point<Double, Double> first, Point<Double, Double> second, Path fileName, String imageSource) {
+  public MoBitmap(MoGraphic mg, Point2D first, Point2D second, Path fileName, String imageSource) {
     super(mg);
     extent.get(0).setValue(first);
     extent.get(1).setValue(second);
@@ -43,8 +43,8 @@ public class MoBitmap extends MoGraphic implements MoExtent {
       if (data.graphicItem() != null) {
         MoGraphic.parse(mgb, data.graphicItem());
       } else if (data.extent() != null) {
-        mb.first(new Point<>(Double.parseDouble(data.extent().p1.x.getText()), Double.parseDouble(data.extent().p1.y.getText())));
-        mb.second(new Point<>(Double.parseDouble(data.extent().p2.x.getText()), Double.parseDouble(data.extent().p2.y.getText())));
+        mb.first(new Point2D(Double.parseDouble(data.extent().p1.x.getText()), Double.parseDouble(data.extent().p1.y.getText())));
+        mb.second(new Point2D(Double.parseDouble(data.extent().p2.x.getText()), Double.parseDouble(data.extent().p2.y.getText())));
       } else if (data.fileName() != null) {
         mb.fileName(omc.getPath(data.fileName().getText()));
       } else if (data.imageSource() != null) {

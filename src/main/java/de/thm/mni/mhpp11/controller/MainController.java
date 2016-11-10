@@ -5,6 +5,7 @@ import de.thm.mni.mhpp11.control.TreeViewWithItems;
 import de.thm.mni.mhpp11.control.icon.MoDiagramGroup;
 import de.thm.mni.mhpp11.control.icon.MoGroup;
 import de.thm.mni.mhpp11.control.icon.MoIconGroup;
+import de.thm.mni.mhpp11.control.icon.handlers.DragAndDropHandler;
 import de.thm.mni.mhpp11.util.config.Settings;
 import de.thm.mni.mhpp11.util.config.model.MainWindow;
 import de.thm.mni.mhpp11.util.config.model.Project;
@@ -131,7 +132,7 @@ public class MainController extends NotifyController {
     tvLibrary.setCellFactory(new Callback<TreeView<MoClass>, TreeCell<MoClass>>() {
       @Override
       public TreeCell<MoClass> call(TreeView<MoClass> param) {
-        return new TreeCell<MoClass>() {
+        TreeCell<MoClass> treeCell = new TreeCell<MoClass>() {
           @Override
           protected void updateItem(MoClass item, boolean empty) {
             super.updateItem(item, empty);
@@ -152,6 +153,8 @@ public class MainController extends NotifyController {
             }
           }
         };
+        treeCell.setOnDragDetected(DragAndDropHandler.getInstance());
+        return treeCell;
       }
     });
     initLibs();
