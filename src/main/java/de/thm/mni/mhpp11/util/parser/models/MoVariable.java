@@ -52,7 +52,7 @@ public class MoVariable extends MoElement {
   }
   
   public List<MoConnection> getConnections() {
-    return this.parent.getConnections().stream().filter(moConnection -> moConnection.contains(this.getType())).collect(ImmutableListCollector.toImmutableList());
+    return this.parent.getConnections().stream().filter(moConnection -> moConnection.contains(this)).collect(ImmutableListCollector.toImmutableList());
   }
   
   public MoPlacement getPlacement() {

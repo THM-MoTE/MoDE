@@ -42,7 +42,7 @@ public class MoClass extends MoElement implements HierarchyData<MoClass> {
   private MoClass parent;
   private Boolean complete = false;
   
-  @Getter private List<MoClass> inheritedClasses = new ArrayList<>();
+  private final List<MoClass> inheritedClasses = new ArrayList<>();
   
   private final List<MoVariable> variables = new ArrayList<>();
   private final List<MoConnection> connections = new ArrayList<>();

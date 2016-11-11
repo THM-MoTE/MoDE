@@ -1,5 +1,6 @@
 package de.thm.mni.mhpp11.util.parser.models;
 
+import de.thm.mni.mhpp11.control.icon.MoDiagramGroup;
 import de.thm.mni.mhpp11.parser.modelica.AnnotationLexer;
 import de.thm.mni.mhpp11.parser.modelica.AnnotationParser;
 import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.ConnectAnnotationElementContext;
@@ -38,21 +39,28 @@ public class MoConnection {
     if (graphics != null) this.moGraphics.addAll(graphics);
   }
   
-  public boolean fromContains(MoClass moClass) {
-    return contains(moClass, from);
+  public MoLine getLine() {
+    for (MoGraphic g : moGraphics)
+      if (g instanceof MoLine) return (MoLine) g;
+    
+    return null;
   }
   
-  public boolean toContains(MoClass moClass) {
-    return contains(moClass, to);
+  public boolean fromContains(MoVariable var) {
+    return contains(var, from);
   }
   
-  private boolean contains(MoClass moClass, List<MoVariable> list) {
-    for (MoVariable mv : list) if (mv.getType().equals(moClass)) return true;
+  public boolean toContains(MoVariable var) {
+    return contains(var, to);
+  }
+  
+  private boolean contains(MoVariable var, List<MoVariable> list) {
+    for (MoVariable mv : list) if (mv.equals(var)) return true;
     return false;
   }
   
-  public boolean contains(MoClass moClass) {
-    return fromContains(moClass) || toContains(moClass);
+  public boolean contains(MoVariable var) {
+    return fromContains(var) || toContains(var);
   }
   
   
@@ -100,5 +108,10 @@ public class MoConnection {
     }
     if (list.isEmpty()) throw new NoSuchElementException();
     return list;
+  }
+  
+  public Integer getVariablePos(MoDiagramGroup diagram, MoVariable variable) {
+    
+    return null;
   }
 }
