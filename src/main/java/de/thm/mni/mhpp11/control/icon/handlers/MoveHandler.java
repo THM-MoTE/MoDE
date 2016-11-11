@@ -18,7 +18,6 @@ import java.util.Map;
 /**
  * Created by hobbypunk on 08.11.16.
  */
-//TODO: connections
 @Value
 public class MoveHandler implements EventHandler<MouseEvent> {
   @NonFinal Point2D startMousePos = null;
