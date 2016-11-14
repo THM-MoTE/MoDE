@@ -56,18 +56,20 @@ public class MoIconGroup extends MoGroup implements Focusable {
   
   private void initConnectors() {
     getMoClass().getConnectorVariables().forEach(super::initVariable);
-    getBasis().getChildren().stream().filter(node -> node instanceof MoIconGroup).forEach(node -> {
+    getBasis().getChildren().stream().filter(node -> node instanceof MoIconGroup && ((MoIconGroup) node).getMoClass() instanceof MoConnector).forEach(node -> {
       MoIconGroup mip = (MoIconGroup) node;
       mip.setOnMouseClicked(event -> {
         System.out.println(mip.getMoClass());
         event.consume();
       });
-      if (mip.getMoClass() instanceof MoConnector) {
-        mip.setOnMouseDragged(event -> {
-          System.out.println("detect drag...");
-          event.consume();
-        });
-      }
+      mip.setOnMouseDragged(event -> {
+        System.out.println("detect drag...");
+        event.consume();
+      });
+      mip.setOnMouseReleased(event -> {
+        System.out.println(mip.getMoClass());
+        event.consume();
+      });
     });
   }
   

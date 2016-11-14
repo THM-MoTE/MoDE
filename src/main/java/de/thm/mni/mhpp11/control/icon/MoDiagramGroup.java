@@ -36,9 +36,9 @@ public class MoDiagramGroup extends MoGroup {
       if (oldValue != null) oldValue.setOnMouseClicked(null);
       if (newValue != null) newValue.setOnMouseClicked(FocusHandler.getInstance());
     });
-    
+  
+    MoveHandler handler = MoveHandler.getInstance(this);
     getBasis().getChildren().stream().filter(node -> node instanceof MoIconGroup && ((MoIconGroup) node).getVariable() != null).forEach(node -> {
-      MoveHandler handler = new MoveHandler(this, (MoIconGroup) node);
       node.setOnMousePressed(handler);
       node.setOnMouseDragged(handler);
       node.setOnMouseReleased(handler);
@@ -52,8 +52,8 @@ public class MoDiagramGroup extends MoGroup {
   
   private void initConnection(MoConnection connection) {
     connection.getMoGraphics().forEach(super::initImage);
+    ModifyLineHandler handler = ModifyLineHandler.getInstance(this);
     getBasis().getChildren().stream().filter(node -> node instanceof Line).forEach(node -> {
-      ModifyLineHandler handler = new ModifyLineHandler(this, (Line) node);
       node.setOnMousePressed(handler);
       node.setOnMouseDragged(handler);
       node.setOnMouseReleased(handler);

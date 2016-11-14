@@ -20,32 +20,58 @@ import java.util.Map;
  */
 @Value
 public class MoveHandler implements EventHandler<MouseEvent> {
+  static private Map<MoDiagramGroup, MoveHandler> INSTANCES = new HashMap<>();
+  
   @NonFinal Point2D startMousePos = null;
   @NonFinal Point2D startOrigin = null;
   Map<MoConnection, List<Point2D>> startConnectionPoints = new HashMap<>();
   Map<MoConnection, List<Integer>> startConnectionPointPoses = new HashMap<>();
   
-  
-  Translate o;
-  MoIconGroup src;
+  @NonFinal Translate o;
+  @NonFinal MoIconGroup source;
   MoDiagramGroup parent;
   
-  public MoveHandler(MoDiagramGroup parent, MoIconGroup src) {
-    this.src = src;
+  public static MoveHandler getInstance(MoDiagramGroup parent) {
+    if (!INSTANCES.containsKey(parent)) {
+      INSTANCES.put(parent, new MoveHandler(parent));
+    }
+    return INSTANCES.get(parent);
+  }
+  
+  
+  private MoveHandler(MoDiagramGroup parent) {
     this.parent = parent;
-    this.o = src.getOrigin();
   }
   
   @Override
   public void handle(MouseEvent event) {
+    Boolean eventHandled = false;
+    MoIconGroup src = (MoIconGroup) event.getSource();
+  
+    if (source != null && src != source) return;
+
+    if (event.getEventType().equals(MouseEvent.MOUSE_PRESSED)) {
+      this.source = src;
+      this.o = source.getOrigin();
+    }
+  
     if (event.getEventType().equals(MouseEvent.MOUSE_PRESSED)) {
       handlePressed(event);
+      eventHandled = true;
+    } else if (event.getEventType().equals(MouseEvent.MOUSE_DRAGGED)) {
+      handleMove(event);
+      eventHandled = true;
     } else if (event.getEventType().equals(MouseEvent.MOUSE_RELEASED)) {
       handleRelease(event);
-      System.out.println(parent.convertScenePointToDiagramPoint(event.getSceneX(), event.getSceneY()));
-    } else {
-      handleMove(event);
+      eventHandled = true;
     }
+  
+    if (event.getEventType().equals(MouseEvent.MOUSE_RELEASED)) {
+      this.source = null;
+      this.o = null;
+    }
+  
+    if (eventHandled) event.consume();
   }
   
   private void handleMove(MouseEvent event) {
@@ -70,13 +96,13 @@ public class MoveHandler implements EventHandler<MouseEvent> {
   }
   
   private void handlePressed(MouseEvent event) {
-    src.setOpacity(0.8);
-    FocusHandler.getInstance().setFocus(src);
+    source.setOpacity(0.8);
+    FocusHandler.getInstance().setFocus(source);
     startMousePos = parent.convertScenePointToDiagramPoint(event.getSceneX(), event.getSceneY());
     startOrigin = new Point2D(o.getX(), o.getY());
-    src.getVariable().getConnections().forEach(moConn -> {
-      Boolean to = moConn.toContains(src.getVariable());
-      Boolean from = moConn.fromContains(src.getVariable());
+    source.getVariable().getConnections().forEach(moConn -> {
+      Boolean to = moConn.toContains(source.getVariable());
+      Boolean from = moConn.fromContains(source.getVariable());
       if (!startConnectionPointPoses.containsKey(moConn)) {
         startConnectionPointPoses.put(moConn, new ArrayList<>());
         startConnectionPoints.put(moConn, new ArrayList<>());
@@ -95,7 +121,7 @@ public class MoveHandler implements EventHandler<MouseEvent> {
   }
   
   private void handleRelease(MouseEvent event) {
-    src.setOpacity(1.0);
+    source.setOpacity(1.0);
     startMousePos = null;
     startOrigin = null;
     startConnectionPointPoses.clear();
