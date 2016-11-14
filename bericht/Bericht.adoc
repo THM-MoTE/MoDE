@@ -1,0 +1,21 @@
+:chapters: chapters
+:other: other
+
+include::{other}/preamble.adoc[]
+
+= Projektbericht
+{author}
+{date}
+
+:toc: left
+:toc-title: Inhaltsverzeichnis
+
+include::{other}/abstract.adoc[]
+
+include::{chapters}/1_einleitung.adoc[]
+include::{chapters}/2_ähnliche_programme.adoc[]
+include::{chapters}/3_grundlagen.adoc[]
+include::{chapters}/4_umsetzung.adoc[]
+include::{chapters}/5_ergebnisse.adoc[]
+include::{chapters}/6_fazit_ausblick.adoc[]
+

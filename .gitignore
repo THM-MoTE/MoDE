@@ -1,6 +1,11 @@
 .idea/
 gen/
 target/
+
+bericht/*.html
+bericht/*.pdf
+
+
 *.iml
 *~
 /*.mo
