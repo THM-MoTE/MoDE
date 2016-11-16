@@ -1,59 +1,71 @@
-package de.thm.mni.mhpp11.control.icon.handlers;
+package de.thm.mni.mhpp11.statemachine.states;
 
 import de.thm.mni.mhpp11.control.icon.MoDiagramGroup;
+import de.thm.mni.mhpp11.control.icon.handlers.FocusHandler;
 import de.thm.mni.mhpp11.shape.Line;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
 import javafx.scene.input.MouseEvent;
-import lombok.Value;
-import lombok.experimental.NonFinal;
-
-import java.util.HashMap;
-import java.util.Map;
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
+import lombok.experimental.FieldDefaults;
 
 /**
- * Created by hobbypunk on 10.11.16.
+ * Created by hobbypunk on 16.11.16.
  */
-@Value
-public class ModifyLineHandler implements EventHandler<MouseEvent> {
-  static private Map<MoDiagramGroup, ModifyLineHandler> INSTANCES = new HashMap<>();
-
+@Getter
+@FieldDefaults(level = AccessLevel.PRIVATE)
+@ToString
+@EqualsAndHashCode(callSuper = false)
+public class ConnectionModifyState extends State<MouseEvent> {
+  
   private enum STATUS {
     NOTHING,
     POINT,
     LINE
   }
   
-  @NonFinal MoDiagramGroup parent;
-  @NonFinal Line source;
-  @NonFinal STATUS status = STATUS.NOTHING;
-  @NonFinal Point2D startMousePos = null;
-  @NonFinal Integer firstPointPos = null;
-  @NonFinal Integer secondPointPos = null;
-  @NonFinal Point2D firstPoint = null;
-  @NonFinal Point2D secondPoint = null;
+  final MoDiagramGroup parent;
+  Line source;
+  STATUS status = STATUS.NOTHING;
+  Point2D startMousePos = null;
+  Integer firstPointPos = null;
+  Integer secondPointPos = null;
+  Point2D firstPoint = null;
+  Point2D secondPoint = null;
   
-  
-  public static ModifyLineHandler getInstance(MoDiagramGroup parent) {
-    if (!INSTANCES.containsKey(parent)) {
-      INSTANCES.put(parent, new ModifyLineHandler(parent));
-    }
-    return INSTANCES.get(parent);
+  public ConnectionModifyState(MoDiagramGroup parent) {
+    this.parent = parent;
   }
   
+  @Override
+  public void enter() {
+    getMachine().getScene().setCursor(Cursor.HAND);
+  }
   
-  private ModifyLineHandler(MoDiagramGroup parent) {
-    this.parent = parent;
+  @Override
+  public void exit() {
+    FocusHandler.getInstance().clearFocus();
+    status = STATUS.NOTHING;
+    firstPoint = null;
+    secondPoint = null;
+    firstPointPos = null;
+    secondPointPos = null;
+    startMousePos = null;
   }
   
   @Override
   public void handle(MouseEvent event) {
     Boolean eventHandled = false;
     Line src = (Line) event.getSource();
-  
-    if (source != null && src != source) return;
+    
+    if (source != null && src != source) {
+      this.getMachine().switchToNoState();
+      return;
+    }
     
     if (event.getEventType().equals(MouseEvent.MOUSE_PRESSED) || event.getEventType().equals(MouseEvent.MOUSE_CLICKED)) {
       source = src;
@@ -73,11 +85,11 @@ public class ModifyLineHandler implements EventHandler<MouseEvent> {
       handleClick(event);
       eventHandled = true;
     }
-  
+    
     if (event.getEventType().equals(MouseEvent.MOUSE_RELEASED) || event.getEventType().equals(MouseEvent.MOUSE_CLICKED)) {
       source = null;
     }
-  
+    
     if (eventHandled) event.consume();
   }
   
@@ -85,7 +97,7 @@ public class ModifyLineHandler implements EventHandler<MouseEvent> {
     Point2D mousePos = parent.convertScenePointToDiagramPoint(event.getSceneX(), event.getSceneY());
     
     if (event.getClickCount() == 2 || (event.getClickCount() == 1 && event.isShiftDown())) {
-      Integer[] poses = findNearLinePos(mousePos, false);
+      Integer[] poses = findNearLinePos(mousePos, true);
       if (poses != null) {
         source.getData().getPoints().add(poses[1], mousePos);
       }
@@ -129,13 +141,7 @@ public class ModifyLineHandler implements EventHandler<MouseEvent> {
   }
   
   private void handleRelease(MouseEvent event) {
-    status = STATUS.NOTHING;
-    firstPoint = null;
-    secondPoint = null;
-    firstPointPos = null;
-    secondPointPos = null;
-    startMousePos = null;
-    parent.getScene().setCursor(Cursor.DEFAULT);
+    this.getMachine().switchToNoState();
   }
   
   private Integer findNearPointPos(Point2D point) {

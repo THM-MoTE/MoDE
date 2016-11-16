@@ -1,0 +1,33 @@
+== Literaturverzeichnis
+
+[bibliography]
+:short: m1
+:title: ..
+:url: https://www.modelica.org/
+:date: 14.11.2016
+include::variables.adoc[11]
+
+:short: m2
+:title: ..
+:url: https://www.openmodelica.org/?id=51:open-modelica-compiler-omc&catid=10:main-category
+:date: 14.11.2016
+include::variables.adoc[11]
+
+:short: a1
+:title: ..
+:url: http://www.antlr.org/about.html
+:date: 14.11.2016
+include::variables.adoc[11]
+
+:short: j1
+:title: ..
+:url: http://www.oracle.com/technetwork/java/javafx/overview/faq-1446554.html
+:date: 14.11.2016
+include::variables.adoc[11]
+
+:short: l1
+:title: ..
+:url: https://projectlombok.org/features/index.html
+:date: 14.11.2016
+include::variables.adoc[11]
+

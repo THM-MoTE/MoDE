@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Tab?>
+<fx:root text="" type="Tab" xmlns="http://javafx.com/javafx/8.0.76-ea" xmlns:fx="http://javafx.com/fxml/1">
+  <ScrollPane fx:id="main" fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0"/>
+</fx:root>

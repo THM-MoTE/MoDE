@@ -22,11 +22,11 @@ public abstract class MoAnnotatable {
     annotations.add(index, annotation);
   }
   
-  public void addAllAnnotation(List<MoAnnotation> list) {
+  public void addAllAnnotations(List<MoAnnotation> list) {
     annotations.addAll(list);
   }
   
-  public void addAllAnnotation(int index, List<MoAnnotation> list) {
+  public void addAllAnnotations(int index, List<MoAnnotation> list) {
     annotations.addAll(index, list);
   }
   

@@ -44,7 +44,7 @@ public class MoVariable extends MoElement {
     this.parent = parent;
     this.kind = kind;
     if (type != null) this.type = type;
-    if (annotations != null) this.addAllAnnotation(annotations);
+    if (annotations != null) this.addAllAnnotations(annotations);
   }
   
   public List<MoVariable> getVariables() {

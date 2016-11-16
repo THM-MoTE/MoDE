@@ -37,6 +37,11 @@ public class MoLine extends MoGraphic implements HasSmoothOption {
   Double arrowSize = 3.0;
   Smooth smooth = Smooth.NONE;
   
+  public MoLine(Point2D start, Point2D end) {
+    super();
+    this.points.addAll(start, end);
+  }
+  
   @Builder(builderMethodName = "lineBuilder")
   MoLine(MoGraphic mg, @Singular List<Point2D> points, Color color, LinePattern linePattern, Double thickness, Arrow start, Arrow end, Double arrowSize, Smooth smooth) {
     super(mg);

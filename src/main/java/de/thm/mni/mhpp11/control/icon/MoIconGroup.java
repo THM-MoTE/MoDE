@@ -8,25 +8,27 @@ import de.thm.mni.mhpp11.util.parser.models.graphics.MoText;
 import de.thm.mni.mhpp11.util.parser.models.graphics.MoTransformation;
 import javafx.beans.property.ObjectProperty;
 import javafx.geometry.Point2D;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Transform;
 import javafx.scene.transform.Translate;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.experimental.FieldDefaults;
 
 /**
  * Created by hobbypunk on 19.09.16.
  */
 @Getter
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class MoIconGroup extends MoGroup implements Focusable {
-  private final Translate origin = new Translate();
-  private final Rotate rotation = new Rotate();
-  private final Affine transformation = new Affine();
-
-  private final Boolean iconOnly;
-  private final MoVariable variable;
+  Translate origin = new Translate();
+  Rotate rotation = new Rotate();
+  Affine transformation = new Affine();
+  
+  Boolean iconOnly;
+  MoVariable variable;
   
   public MoIconGroup(MoClass parent) {
     this(parent, null, true);
@@ -56,21 +58,6 @@ public class MoIconGroup extends MoGroup implements Focusable {
   
   private void initConnectors() {
     getMoClass().getConnectorVariables().forEach(super::initVariable);
-    getBasis().getChildren().stream().filter(node -> node instanceof MoIconGroup && ((MoIconGroup) node).getMoClass() instanceof MoConnector).forEach(node -> {
-      MoIconGroup mip = (MoIconGroup) node;
-      mip.setOnMouseClicked(event -> {
-        System.out.println(mip.getMoClass());
-        event.consume();
-      });
-      mip.setOnMouseDragged(event -> {
-        System.out.println("detect drag...");
-        event.consume();
-      });
-      mip.setOnMouseReleased(event -> {
-        System.out.println(mip.getMoClass());
-        event.consume();
-      });
-    });
   }
   
   private void initTransformation() {
@@ -104,8 +91,8 @@ public class MoIconGroup extends MoGroup implements Focusable {
   
     Double newVariableWidth = Math.max(extent0.getX(), extent1.getX()) - Math.min(extent0.getX(), extent1.getX());
     Double newVariableHeight = Math.max(extent0.getY(), extent1.getY()) - Math.min(extent0.getY(), extent1.getY());
-    
-    this.scaleTo(newVariableWidth, newVariableHeight);
+  
+    this.scaleToSize(newVariableWidth, newVariableHeight);
   
     this.getTransforms().addAll(this.origin, this.rotation, this.transformation);
     this.transformation.append(Transform.translate(Math.min(extent0.getX(), extent1.getX()), Math.min(extent0.getY(), extent1.getY())));
@@ -120,11 +107,15 @@ public class MoIconGroup extends MoGroup implements Focusable {
   
   @Override
   public void setFocus() {
-    this.setEffect(new DropShadow(2., Color.CORNFLOWERBLUE));
+    Color color = (getMoClass() instanceof MoConnector) ? Color.RED : Color.CORNFLOWERBLUE;
+    //this.setEffect(new DropShadow(5., color));
+    this.getCoordianteSystem().setStroke(color);
+    this.getCoordianteSystem().setOpacity(1);
   }
   
   @Override
   public void clearFocus() {
     this.setEffect(null);
+    this.getCoordianteSystem().setStroke(null);
   }
 }

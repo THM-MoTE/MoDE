@@ -80,21 +80,9 @@
                         </VBox>
                      </children>
                   </GridPane>
-                  <TabPane prefHeight="200.0" prefWidth="200.0">
-                    <tabs>
-                      <Tab text="Untitled Tab 1">
-                        <content>
-                              <ScrollPane fitToHeight="true" fitToWidth="true">
-                                 <content>
-                                   <AnchorPane fx:id="main" layoutX="500.0" layoutY="500.0"
-                                               maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
-                                               minHeight="0.0" minWidth="0.0" prefHeight="500.0" prefWidth="500.0"/>
-                                 </content>
-                              </ScrollPane>
-                        </content>
-                      </Tab>
-                    </tabs>
-                  </TabPane>
+                 <TabPane fx:id="tabPane" prefHeight="200.0" prefWidth="200.0">
+  
+                 </TabPane>
                </children>
             </StackPane>
          </center>
@@ -143,7 +131,8 @@
             </HBox>
          </left>
          <right>
-            <HBox fx:id="hbRight" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="200.0" BorderPane.alignment="CENTER">
+           <HBox fx:id="hbRight" maxWidth="0.0" minWidth="0.0" prefHeight="606.0" prefWidth="1.0" visible="false"
+                 BorderPane.alignment="CENTER">
                <children>
                   <Separator fx:id="sRight" nodeOrientation="LEFT_TO_RIGHT" orientation="VERTICAL" />
                   <VBox alignment="TOP_CENTER" HBox.hgrow="ALWAYS">

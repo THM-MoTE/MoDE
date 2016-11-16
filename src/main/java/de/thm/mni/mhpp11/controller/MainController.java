@@ -1,11 +1,11 @@
 package de.thm.mni.mhpp11.controller;
 
 import de.thm.mni.mhpp11.control.DragResizer;
+import de.thm.mni.mhpp11.control.MainTabControl;
 import de.thm.mni.mhpp11.control.TreeViewWithItems;
-import de.thm.mni.mhpp11.control.icon.MoDiagramGroup;
-import de.thm.mni.mhpp11.control.icon.MoGroup;
 import de.thm.mni.mhpp11.control.icon.MoIconGroup;
 import de.thm.mni.mhpp11.control.icon.handlers.DragAndDropHandler;
+import de.thm.mni.mhpp11.statemachine.StateMachine;
 import de.thm.mni.mhpp11.util.config.Settings;
 import de.thm.mni.mhpp11.util.config.model.MainWindow;
 import de.thm.mni.mhpp11.util.config.model.Project;
@@ -18,7 +18,6 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.util.Callback;
@@ -41,9 +40,9 @@ public class MainController extends NotifyController {
   @FXML private HBox hbRight;
   @FXML private Separator sRight;
   
-  @FXML private TreeViewWithItems<MoClass> tvLibrary;
+  @FXML private TabPane tabPane;
   
-  @FXML private AnchorPane main;
+  @FXML private TreeViewWithItems<MoClass> tvLibrary;
   
   private ObservableList<MoClass> data = FXCollections.observableArrayList();
   private MoRoot mrSystemLibraries = new MoRoot("System Libraries");
@@ -64,6 +63,7 @@ public class MainController extends NotifyController {
   
   public void lateInitialize(Stage stage, Scene scene, Project project) {
     super.lateInitialize(stage, scene);
+    StateMachine.getInstance(scene);
     this.project = project;
     initTreeView();
   }
@@ -73,8 +73,8 @@ public class MainController extends NotifyController {
     super.deinitialize();
     
     MainWindow mw = settings.getMainwindow();
-    mw.setPos((int) stage.getX(), (int) stage.getY());
-    mw.setSize((int) stage.getWidth(), (int) stage.getHeight());
+    mw.setPos(stage.getX(), stage.getY());
+    mw.setSize(stage.getWidth(), stage.getHeight());
     mw.setWidthLeftPane((int) hbLeft.getPrefWidth());
     mw.setWidthRightPane((int) hbRight.getPrefWidth());
   }
@@ -91,7 +91,6 @@ public class MainController extends NotifyController {
     
     hbLeft.setPrefWidth(mw.getWidthLeftPane());
     hbRight.setPrefWidth(mw.getWidthRightPane());
-    
     stage.setScene(scene);
     stage.setTitle(String.format("%1$s - %2$s %3$s", project.getName(), Settings.NAME, Settings.VERSION));
     stage.setResizable(true);
@@ -104,22 +103,14 @@ public class MainController extends NotifyController {
     tvLibrary.setOnMouseClicked(event -> {
       TreeItem<MoClass> item = tvLibrary.getSelectionModel().getSelectedItem();
       if (item == null) return;
-      MoGroup mp = null;
-    
-      if (event.getClickCount() == 2)
-        mp = new MoDiagramGroup(item.getValue());
-      if (event.getClickCount() == 3)
-        mp = new MoIconGroup(item.getValue(), false);
-      if (mp == null || event.getClickCount() <= 1) return;
-    
-      main.getChildren().removeAll(main.getChildren());
+      MainTabControl tab = null;
+      if (event.getClickCount() == 2) tab = new MainTabControl(item.getValue(), true);
+      if (event.getClickCount() == 3) tab = new MainTabControl(item.getValue(), false);
+      if (tab == null || event.getClickCount() <= 1) return;
   
-      mp.scaleTo(600., 600.);
-      mp.setLayoutX(100.);
-      mp.setLayoutY(100.);
-      mp.setInternalStyle("-fx-background-color: gainsboro;");
-      main.getChildren().add(mp);
-    
+      if (!tabPane.getTabs().contains(tab)) tabPane.getTabs().add(tab);
+      tabPane.getSelectionModel().select(tab);
+      
     });
     tvLibrary.setTreeItemExpandListener(parent -> parent.update(OMCompiler.getInstance()));
     tvLibrary.setTreeItemConfigurer((treeItem, value) -> {
@@ -148,7 +139,7 @@ public class MainController extends NotifyController {
                 setDisable(true);
                 setStyle("-fx-background-color: gainsboro;-fx-font-weight: bold; -fx-font-size: 90%; -fx-padding: 2 -15;");
               } else {
-                setGraphic(new MoIconGroup(item).scaleTo(25., 25.));
+                setGraphic(new MoIconGroup(item).scaleToSize(25., 25.));
               }
             }
           }

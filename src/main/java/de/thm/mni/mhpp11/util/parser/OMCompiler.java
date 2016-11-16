@@ -133,7 +133,7 @@ public class OMCompiler {
 //    List<String> list = toStringArray(result.result);
     String[] first = new String[]{"Modelica", "ModelicaServices", "ModelicaReference", "Complex"};
 //    list.removeAll(Arrays.asList(first));
-//    list.addAllAnnotation(0, Arrays.asList(first));
+//    list.addAllAnnotations(0, Arrays.asList(first));
 //    return list;
     return Arrays.asList(first);
   }

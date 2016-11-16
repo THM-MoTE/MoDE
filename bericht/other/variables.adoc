@@ -1,0 +1,1 @@
+* [[[{short}]]] *{title}*. URL: {url} (besucht am {date})

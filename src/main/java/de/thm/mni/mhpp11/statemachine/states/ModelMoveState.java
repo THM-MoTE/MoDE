@@ -1,10 +1,11 @@
-package de.thm.mni.mhpp11.control.icon.handlers;
+package de.thm.mni.mhpp11.statemachine.states;
 
 import de.thm.mni.mhpp11.control.icon.MoDiagramGroup;
 import de.thm.mni.mhpp11.control.icon.MoIconGroup;
+import de.thm.mni.mhpp11.control.icon.handlers.FocusHandler;
 import de.thm.mni.mhpp11.util.parser.models.MoConnection;
-import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
+import javafx.scene.Cursor;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.transform.Translate;
 import lombok.Value;
@@ -16,12 +17,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by hobbypunk on 08.11.16.
+ * Created by hobbypunk on 16.11.16.
  */
+
 @Value
-public class MoveHandler implements EventHandler<MouseEvent> {
-  static private Map<MoDiagramGroup, MoveHandler> INSTANCES = new HashMap<>();
-  
+public class ModelMoveState extends State<MouseEvent> {
   @NonFinal Point2D startMousePos = null;
   @NonFinal Point2D startOrigin = null;
   Map<MoConnection, List<Point2D>> startConnectionPoints = new HashMap<>();
@@ -31,47 +31,49 @@ public class MoveHandler implements EventHandler<MouseEvent> {
   @NonFinal MoIconGroup source;
   MoDiagramGroup parent;
   
-  public static MoveHandler getInstance(MoDiagramGroup parent) {
-    if (!INSTANCES.containsKey(parent)) {
-      INSTANCES.put(parent, new MoveHandler(parent));
-    }
-    return INSTANCES.get(parent);
-  }
-  
-  
-  private MoveHandler(MoDiagramGroup parent) {
+  public ModelMoveState(MoDiagramGroup parent) {
     this.parent = parent;
   }
   
   @Override
-  public void handle(MouseEvent event) {
-    Boolean eventHandled = false;
-    MoIconGroup src = (MoIconGroup) event.getSource();
+  public void enter() {
+    this.getMachine().getScene().setCursor(Cursor.CLOSED_HAND);
+  }
   
+  @Override
+  public void exit() {
+    FocusHandler.getInstance().clearFocus();
+    if (source != null) source.setOpacity(1.0);
+    startMousePos = null;
+    startOrigin = null;
+    startConnectionPointPoses.clear();
+    startConnectionPoints.clear();
+  }
+  
+  @Override
+  public void handle(MouseEvent event) {
+    MoIconGroup src = (MoIconGroup) event.getSource();
+    
     if (source != null && src != source) return;
-
+    
     if (event.getEventType().equals(MouseEvent.MOUSE_PRESSED)) {
       this.source = src;
       this.o = source.getOrigin();
     }
-  
+    
     if (event.getEventType().equals(MouseEvent.MOUSE_PRESSED)) {
       handlePressed(event);
-      eventHandled = true;
     } else if (event.getEventType().equals(MouseEvent.MOUSE_DRAGGED)) {
       handleMove(event);
-      eventHandled = true;
     } else if (event.getEventType().equals(MouseEvent.MOUSE_RELEASED)) {
       handleRelease(event);
-      eventHandled = true;
     }
-  
+    
     if (event.getEventType().equals(MouseEvent.MOUSE_RELEASED)) {
       this.source = null;
       this.o = null;
     }
-  
-    if (eventHandled) event.consume();
+    
   }
   
   private void handleMove(MouseEvent event) {
@@ -96,6 +98,7 @@ public class MoveHandler implements EventHandler<MouseEvent> {
   }
   
   private void handlePressed(MouseEvent event) {
+    source.toFront();
     source.setOpacity(0.8);
     FocusHandler.getInstance().setFocus(source);
     startMousePos = parent.convertScenePointToDiagramPoint(event.getSceneX(), event.getSceneY());
@@ -114,17 +117,13 @@ public class MoveHandler implements EventHandler<MouseEvent> {
         startConnectionPointPoses.get(moConn).add(0);
       else if (to)        // to is always the last point in a connection
         startConnectionPointPoses.get(moConn).add(moConn.getLine().getPoints().size() - 1);
-    
+      
       for (Integer pos : startConnectionPointPoses.get(moConn))
         startConnectionPoints.get(moConn).add(moConn.getLine().getPoints().get(pos));
     });
   }
   
   private void handleRelease(MouseEvent event) {
-    source.setOpacity(1.0);
-    startMousePos = null;
-    startOrigin = null;
-    startConnectionPointPoses.clear();
-    startConnectionPoints.clear();
+    this.getMachine().switchToNoState();
   }
 }

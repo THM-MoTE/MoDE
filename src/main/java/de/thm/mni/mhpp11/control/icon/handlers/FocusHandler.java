@@ -36,7 +36,7 @@ public class FocusHandler implements EventHandler<MouseEvent> {
     focused.setFocus();
   }
   
-  private void clearFocus() {
+  public void clearFocus() {
     if (focused != null) {
       focused.clearFocus();
       focused = null;

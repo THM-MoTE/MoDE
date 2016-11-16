@@ -44,8 +44,8 @@ public class MoClass extends MoElement implements HierarchyData<MoClass> {
   
   private final List<MoClass> inheritedClasses = new ArrayList<>();
   
-  private final List<MoVariable> variables = new ArrayList<>();
-  private final List<MoConnection> connections = new ArrayList<>();
+  private final ObservableList<MoVariable> variables = FXCollections.observableArrayList();
+  private final ObservableList<MoConnection> connections = FXCollections.observableArrayList();
   
   private final ObservableList<MoClass> children = FXCollections.observableArrayList();
   
@@ -107,27 +107,48 @@ public class MoClass extends MoElement implements HierarchyData<MoClass> {
     return this.name;
   }
   
-  private void addAllVariables(List<MoVariable> list) {
-    this.variables.addAll(list);
-  }
-  public List<MoVariable> getVariables() {
-    List<MoVariable> list = new ArrayList<>();
-    list.addAll(this.variables);
-    inheritedClasses.forEach(inheritedClass -> list.addAll(0, inheritedClass.getVariables()));
-    return Collections.unmodifiableList(list);
+  
+  public ObservableList<MoVariable> getVariables() {
+    inheritedClasses.forEach(inheritedClass -> inheritedClass.getVariables().forEach(variable -> {
+      if (!this.variables.contains(variable)) this.variables.add(variable);
+    }));
+    
+    return this.variables;
   }
   
-  private void addAllConnections(List<MoConnection> list) {
-    this.connections.addAll(list);
+  public void addVariable(MoVariable variable) {
+    this.variables.add(variable);
   }
   
-  public List<MoConnection> getConnections() {
-    List<MoConnection> list = new ArrayList<>();
-    list.addAll(this.connections);
-    inheritedClasses.forEach(inheritedClass -> list.addAll(0, inheritedClass.getConnections()));
-    return Collections.unmodifiableList(list);
+  public void addAllVariables(MoVariable... variables) {
+    this.variables.addAll(variables);
   }
   
+  public void addAllVariables(List<MoVariable> variables) {
+    this.variables.addAll(variables);
+  }
+  
+  
+  public ObservableList<MoConnection> getConnections() {
+    inheritedClasses.forEach(inheritedClass -> inheritedClass.getConnections().forEach(connection -> {
+      if (!this.connections.contains(connection)) this.connections.add(connection);
+    }));
+    return this.connections;
+  }
+  
+  public void addConnection(MoConnection connection) {
+    this.connections.add(connection);
+  }
+  
+  public void addAllConnections(MoConnection... connections) {
+    this.connections.addAll(connections);
+  }
+  
+  public void addAllConnections(List<MoConnection> connections) {
+    this.connections.addAll(connections);
+  }
+  
+
   public Boolean hasConnectors() {
     for (MoVariable mv : getVariables())
       if (mv.getType() instanceof MoConnector) return true;
@@ -166,6 +187,10 @@ public class MoClass extends MoElement implements HierarchyData<MoClass> {
   
   public boolean hasIcon() {
     return (getInternalIcon() != null);
+  }
+  
+  public boolean hasDiagram() {
+    return !getVariables().isEmpty();
   }
   
   private MoIcon getInternalIcon() {
@@ -229,7 +254,7 @@ public class MoClass extends MoElement implements HierarchyData<MoClass> {
       }
     }
   
-    this.addAllAnnotation(MoAnnotation.parse(omc, this));
+    this.addAllAnnotations(MoAnnotation.parse(omc, this));
     this.addAllVariables(MoVariable.parse(omc, this));
     this.addAllConnections(MoConnection.parse(omc, this));
     complete = true;

@@ -6,6 +6,7 @@ import javafx.beans.property.*;
 import javafx.geometry.Point2D;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import java.util.List;
  * Created by hobbypunk on 16.09.16.
  */
 @Getter
+@NoArgsConstructor
 public class MoGraphic {
   
   BooleanProperty visible = new SimpleBooleanProperty(true);

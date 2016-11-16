@@ -26,16 +26,16 @@ import java.util.*;
 @Getter
 public class MoConnection {
   private final MoClass parent;
-  private final List<MoVariable> from;
-  private final List<MoVariable> to;
+  private final List<MoVariable> from = new ArrayList<>();
+  private final List<MoVariable> to = new ArrayList<>();
   
   private final List<MoGraphic> moGraphics = new ArrayList<>();
   
   @Builder
-  private MoConnection(@NonNull MoClass parent, @NonNull List<MoVariable> from, @NonNull List<MoVariable> to, @Singular List<MoGraphic> graphics) {
+  public MoConnection(@NonNull MoClass parent, @NonNull List<MoVariable> from, @NonNull List<MoVariable> to, @Singular List<MoGraphic> graphics) {
     this.parent = parent;
-    this.from = from;
-    this.to = to;
+    this.from.addAll(from);
+    this.to.addAll(to);
     if (graphics != null) this.moGraphics.addAll(graphics);
   }
   

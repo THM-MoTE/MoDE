@@ -1,13 +1,14 @@
 package de.thm.mni.mhpp11.control.icon;
 
-import de.thm.mni.mhpp11.control.icon.handlers.DragAndDropHandler;
-import de.thm.mni.mhpp11.control.icon.handlers.FocusHandler;
-import de.thm.mni.mhpp11.control.icon.handlers.ModifyLineHandler;
-import de.thm.mni.mhpp11.control.icon.handlers.MoveHandler;
+import de.thm.mni.mhpp11.control.icon.handlers.*;
 import de.thm.mni.mhpp11.shape.Line;
 import de.thm.mni.mhpp11.util.parser.models.MoClass;
 import de.thm.mni.mhpp11.util.parser.models.MoConnection;
+import de.thm.mni.mhpp11.util.parser.models.MoConnector;
+import javafx.collections.ListChangeListener;
+import javafx.event.EventType;
 import javafx.geometry.Point2D;
+import javafx.scene.Node;
 import javafx.scene.transform.NonInvertibleTransformException;
 
 /**
@@ -27,7 +28,68 @@ public class MoDiagramGroup extends MoGroup {
   protected void initImage() {
     initVariables();
     initConnections();
+    initListeners(this);
   }
+  
+  private void initListeners(MoGroup group) {
+    if (group.equals(this)) {
+      this.addEventHandler(EventType.ROOT, new DiagramHandler(this));
+      group.getBasis().getChildren().forEach(this::addGroupListeners);
+    } else if (group instanceof MoIconGroup) group.getBasis().getChildren().forEach(this::addIconListeners);
+    
+    group.getBasis().getChildren().addListener(new ListChangeListener<Node>() {
+      @Override
+      public void onChanged(Change<? extends Node> c) {
+        while (c.next()) {
+          c.getAddedSubList().forEach(n -> {
+            if (group.equals(MoDiagramGroup.this)) addGroupListeners(n);
+            else if (group instanceof MoIconGroup) addIconListeners(n);
+          });
+          c.getRemoved().forEach(n -> {
+            removeListeners(n);
+          });
+        }
+      }
+    });
+  }
+  
+  private void addIconListeners(Node node) {
+    if (node instanceof MoIconGroup && ((MoIconGroup) node).getMoClass() instanceof MoConnector) {
+      CreateConnectionHandler handler = CreateConnectionHandler.getInstance(this);
+      node.setOnMousePressed(handler);
+      node.setOnMouseDragged(handler);
+      node.setOnMouseReleased(handler);
+      node.setOnMouseClicked(handler);
+    }
+  }
+  
+  private void addGroupListeners(Node node) {
+    if ((node instanceof MoIconGroup)) {
+      if (((MoIconGroup) node).getVariable() == null) return;
+      ModelHandler handler = ModelHandler.getInstance(this);
+      node.setOnMousePressed(handler);
+      node.setOnMouseDragged(handler);
+      node.setOnMouseReleased(handler);
+      node.setOnMouseClicked(handler);
+      initListeners((MoIconGroup) node);
+    } else if (node instanceof Line) {
+      ModifyConnectionHandler handler = ModifyConnectionHandler.getInstance(this);
+      node.setOnMousePressed(handler);
+      node.setOnMouseDragged(handler);
+      node.setOnMouseReleased(handler);
+      node.setOnMouseClicked(handler);
+    }
+    
+  }
+  
+  private void removeListeners(Node node) {
+    node.setOnMouseClicked(null);
+    node.setOnMousePressed(null);
+    node.setOnMouseDragged(null);
+    node.setOnMouseReleased(null);
+    if (node instanceof MoGroup) ((MoGroup) node).getBasis().getChildren().forEach(this::removeListeners);
+  }
+  
   
   private void initVariables() {
     this.getMoClass().getVariables().forEach(super::initVariable);
@@ -36,29 +98,22 @@ public class MoDiagramGroup extends MoGroup {
       if (oldValue != null) oldValue.setOnMouseClicked(null);
       if (newValue != null) newValue.setOnMouseClicked(FocusHandler.getInstance());
     });
-  
-    MoveHandler handler = MoveHandler.getInstance(this);
-    getBasis().getChildren().stream().filter(node -> node instanceof MoIconGroup && ((MoIconGroup) node).getVariable() != null).forEach(node -> {
-      node.setOnMousePressed(handler);
-      node.setOnMouseDragged(handler);
-      node.setOnMouseReleased(handler);
-      node.setOnMouseClicked(FocusHandler.getInstance());
-    });
   }
   
   private void initConnections() {
     this.getMoClass().getConnections().forEach(this::initConnection);
+    this.getMoClass().getConnections().addListener(new ListChangeListener<MoConnection>() {
+      @Override
+      public void onChanged(Change<? extends MoConnection> c) {
+        while (c.next()) {
+          c.getAddedSubList().forEach(MoDiagramGroup.this::initConnection);
+        }
+      }
+    });
   }
   
   private void initConnection(MoConnection connection) {
     connection.getMoGraphics().forEach(super::initImage);
-    ModifyLineHandler handler = ModifyLineHandler.getInstance(this);
-    getBasis().getChildren().stream().filter(node -> node instanceof Line).forEach(node -> {
-      node.setOnMousePressed(handler);
-      node.setOnMouseDragged(handler);
-      node.setOnMouseReleased(handler);
-      node.setOnMouseClicked(handler);
-    });
   }
   
   public Point2D convertScenePointToDiagramPoint(Point2D scenePoint) {
@@ -83,4 +138,5 @@ public class MoDiagramGroup extends MoGroup {
     }
     return new Point2D(p.getX(), p.getY());
   }
+  
 }

@@ -19,3 +19,5 @@ include::{chapters}/4_umsetzung.adoc[]
 include::{chapters}/5_ergebnisse.adoc[]
 include::{chapters}/6_fazit_ausblick.adoc[]
 
+include::{other}/bibliography.adoc[]
+

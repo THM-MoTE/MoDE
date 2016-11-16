@@ -73,7 +73,18 @@ public abstract class MoGroup extends Group {
     });
   }
   
-  public MoGroup scaleTo(Double newWidth, Double newHeight) {
+  public MoGroup scaleDelta(Double deltaX, Double deltaY) {
+    Point2D extent0 = this.getMoClass().getIcon().getMoCoordinateSystem().getExtent().get(0).getValue();
+    Point2D extent1 = this.getMoClass().getIcon().getMoCoordinateSystem().getExtent().get(1).getValue();
+    
+    Double oldWidth = Math.max(extent0.getX(), extent1.getX()) - Math.min(extent0.getX(), extent1.getX());
+    Double oldHeight = Math.max(extent0.getY(), extent1.getY()) - Math.min(extent0.getY(), extent1.getY());
+    
+    return scaleToSize(oldWidth + deltaX, oldHeight + deltaY);
+  }
+  
+  
+  public MoGroup scaleToSize(Double newWidth, Double newHeight) {
     Point2D extent0 = this.getMoClass().getIcon().getMoCoordinateSystem().getExtent().get(0).getValue();
     Point2D extent1 = this.getMoClass().getIcon().getMoCoordinateSystem().getExtent().get(1).getValue();
   
@@ -82,11 +93,12 @@ public abstract class MoGroup extends Group {
     Double oldHeight = Math.max(extent0.getY(), extent1.getY()) - Math.min(extent0.getY(), extent1.getY());
     
     
-    scale.setX(newWidth / oldWidth);
-    scale.setY(newHeight / oldHeight);
+    scale.setX(scale.getX() * newWidth / oldWidth);
+    scale.setY(scale.getY() * newHeight / oldHeight);
     preventScaling(1., 1.);
     return this;
   }
+  
   
   private void initCoordinateSystem() {
     MoCoordinateSystem mcs = this.getMoClass().getIcon().getMoCoordinateSystem();
@@ -100,10 +112,10 @@ public abstract class MoGroup extends Group {
     Double height = Math.max(extent0.getY(), extent1.getY()) - Math.min(extent0.getY(), extent1.getY());
   
     coordianteSystem = new javafx.scene.shape.Rectangle(minX, minY, width, height);
-    coordianteSystem.setStrokeWidth(1.);
-    coordianteSystem.setStroke(Color.BLACK);
-    coordianteSystem.setFill(Color.BLACK);
-    coordianteSystem.setOpacity(.1);
+//    coordianteSystem.setStrokeWidth(1.);
+//    coordianteSystem.setStroke(Color.BLACK);
+    coordianteSystem.setFill(Color.TRANSPARENT);
+//    coordianteSystem.setOpacity(.1);
     basis.getChildren().add(coordianteSystem);
   
   
@@ -168,10 +180,11 @@ public abstract class MoGroup extends Group {
     } else if (mg instanceof MoPolygon) {
       this.add(new Polygon(this, (MoPolygon) mg));
     }
+  
+    preventScaling(1., 1.);
   }
   
   public void setInternalStyle(String style) {
     basis.setStyle(style);
   }
-  
 }
