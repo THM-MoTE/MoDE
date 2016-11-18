@@ -28,7 +28,7 @@ import java.util.Map;
 @Getter(AccessLevel.PROTECTED)
 @Setter(AccessLevel.PROTECTED)
 public abstract class MoGroup extends Group {
-  private final Group basis = new Group();
+  @Getter private final Group basis = new Group();
   javafx.scene.shape.Rectangle coordianteSystem = null; //TODO: add InitialStroke Interface
   @Getter private final MoClass moClass;
   

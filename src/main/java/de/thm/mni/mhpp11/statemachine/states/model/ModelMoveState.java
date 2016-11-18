@@ -1,4 +1,4 @@
-package de.thm.mni.mhpp11.statemachine.states;
+package de.thm.mni.mhpp11.statemachine.states.model;
 
 import de.thm.mni.mhpp11.control.icon.MoDiagramGroup;
 import de.thm.mni.mhpp11.control.icon.MoIconGroup;
@@ -11,29 +11,34 @@ import javafx.scene.transform.Translate;
 import lombok.Value;
 import lombok.experimental.NonFinal;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by hobbypunk on 16.11.16.
  */
 
 @Value
-public class ModelMoveState extends State<MouseEvent> {
+public class ModelMoveState extends ModelModifyState {
   @NonFinal Point2D startMousePos = null;
   @NonFinal Point2D startOrigin = null;
   Map<MoConnection, List<Point2D>> startConnectionPoints = new HashMap<>();
   Map<MoConnection, List<Integer>> startConnectionPointPoses = new HashMap<>();
   
-  @NonFinal Translate o;
-  @NonFinal MoIconGroup source;
+  Translate o;
   MoDiagramGroup parent;
   
-  public ModelMoveState(MoDiagramGroup parent) {
+  public ModelMoveState(MoDiagramGroup parent, MoIconGroup source) {
+    super(source);
     this.parent = parent;
+    this.o = source.getOrigin();
   }
+  
+  @Override
+  protected void initTransitions() {
+    getTransitions().put(MouseEvent.MOUSE_DRAGGED, Arrays.asList(this.getClass()));
+    getTransitions().put(MouseEvent.MOUSE_RELEASED, Arrays.asList(ModelModifyState.class));
+  }
+  
   
   @Override
   public void enter() {
@@ -42,41 +47,13 @@ public class ModelMoveState extends State<MouseEvent> {
   
   @Override
   public void exit() {
+    MoIconGroup source = getSource();
     FocusHandler.getInstance().clearFocus();
     if (source != null) source.setOpacity(1.0);
-    startMousePos = null;
-    startOrigin = null;
-    startConnectionPointPoses.clear();
-    startConnectionPoints.clear();
   }
   
   @Override
-  public void handle(MouseEvent event) {
-    MoIconGroup src = (MoIconGroup) event.getSource();
-    
-    if (source != null && src != source) return;
-    
-    if (event.getEventType().equals(MouseEvent.MOUSE_PRESSED)) {
-      this.source = src;
-      this.o = source.getOrigin();
-    }
-    
-    if (event.getEventType().equals(MouseEvent.MOUSE_PRESSED)) {
-      handlePressed(event);
-    } else if (event.getEventType().equals(MouseEvent.MOUSE_DRAGGED)) {
-      handleMove(event);
-    } else if (event.getEventType().equals(MouseEvent.MOUSE_RELEASED)) {
-      handleRelease(event);
-    }
-    
-    if (event.getEventType().equals(MouseEvent.MOUSE_RELEASED)) {
-      this.source = null;
-      this.o = null;
-    }
-    
-  }
-  
-  private void handleMove(MouseEvent event) {
+  protected void handleDragged(MouseEvent event) {
     if (o != null) {
       Point2D mousePos = parent.convertScenePointToDiagramPoint(event.getSceneX(), event.getSceneY());
       Point2D delta = mousePos.subtract(startMousePos);
@@ -87,17 +64,9 @@ public class ModelMoveState extends State<MouseEvent> {
     }
   }
   
-  private void updateConnections(Point2D delta) {
-    startConnectionPointPoses.keySet().forEach(moConn -> {
-      for (int i = 0, size = startConnectionPointPoses.get(moConn).size(); i < size; i++) {
-        Integer pos = startConnectionPointPoses.get(moConn).get(i);
-        Point2D point = startConnectionPoints.get(moConn).get(i);
-        moConn.getLine().getPoints().set(pos, point.add(delta));
-      }
-    });
-  }
-  
-  private void handlePressed(MouseEvent event) {
+  @Override
+  protected void handlePressed(MouseEvent event) {
+    MoIconGroup source = getSource();
     source.toFront();
     source.setOpacity(0.8);
     FocusHandler.getInstance().setFocus(source);
@@ -123,7 +92,19 @@ public class ModelMoveState extends State<MouseEvent> {
     });
   }
   
-  private void handleRelease(MouseEvent event) {
-    this.getMachine().switchToNoState();
+  @Override
+  protected void handleReleased(MouseEvent event) {
+    this.getMachine().switchToState(new ModelModifyState(getSource()));
+  }
+  
+  
+  private void updateConnections(Point2D delta) {
+    startConnectionPointPoses.keySet().forEach(moConn -> {
+      for (int i = 0, size = startConnectionPointPoses.get(moConn).size(); i < size; i++) {
+        Integer pos = startConnectionPointPoses.get(moConn).get(i);
+        Point2D point = startConnectionPoints.get(moConn).get(i);
+        moConn.getLine().getPoints().set(pos, point.add(delta));
+      }
+    });
   }
 }

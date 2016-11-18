@@ -1,7 +1,8 @@
 package de.thm.mni.mhpp11.control.icon;
 
-import de.thm.mni.mhpp11.control.icon.handlers.*;
-import de.thm.mni.mhpp11.shape.Line;
+import de.thm.mni.mhpp11.control.icon.handlers.DragAndDropHandler;
+import de.thm.mni.mhpp11.control.icon.handlers.FocusHandler;
+import de.thm.mni.mhpp11.control.icon.handlers.StateHandler;
 import de.thm.mni.mhpp11.util.parser.models.MoClass;
 import de.thm.mni.mhpp11.util.parser.models.MoConnection;
 import de.thm.mni.mhpp11.util.parser.models.MoConnector;
@@ -33,7 +34,8 @@ public class MoDiagramGroup extends MoGroup {
   
   private void initListeners(MoGroup group) {
     if (group.equals(this)) {
-      this.addEventHandler(EventType.ROOT, new DiagramHandler(this));
+      StateHandler.getInstance(this);
+      this.addEventHandler(EventType.ROOT, StateHandler.getInstance(this));
       group.getBasis().getChildren().forEach(this::addGroupListeners);
     } else if (group instanceof MoIconGroup) group.getBasis().getChildren().forEach(this::addIconListeners);
     
@@ -55,38 +57,21 @@ public class MoDiagramGroup extends MoGroup {
   
   private void addIconListeners(Node node) {
     if (node instanceof MoIconGroup && ((MoIconGroup) node).getMoClass() instanceof MoConnector) {
-      CreateConnectionHandler handler = CreateConnectionHandler.getInstance(this);
-      node.setOnMousePressed(handler);
-      node.setOnMouseDragged(handler);
-      node.setOnMouseReleased(handler);
-      node.setOnMouseClicked(handler);
+      node.addEventHandler(EventType.ROOT, StateHandler.getInstance(this));
     }
   }
   
   private void addGroupListeners(Node node) {
+    if ((node instanceof MoIconGroup) && ((MoIconGroup) node).getVariable() == null) return;
+  
+    node.addEventHandler(EventType.ROOT, StateHandler.getInstance(this));
     if ((node instanceof MoIconGroup)) {
-      if (((MoIconGroup) node).getVariable() == null) return;
-      ModelHandler handler = ModelHandler.getInstance(this);
-      node.setOnMousePressed(handler);
-      node.setOnMouseDragged(handler);
-      node.setOnMouseReleased(handler);
-      node.setOnMouseClicked(handler);
       initListeners((MoIconGroup) node);
-    } else if (node instanceof Line) {
-      ModifyConnectionHandler handler = ModifyConnectionHandler.getInstance(this);
-      node.setOnMousePressed(handler);
-      node.setOnMouseDragged(handler);
-      node.setOnMouseReleased(handler);
-      node.setOnMouseClicked(handler);
     }
-    
   }
   
   private void removeListeners(Node node) {
-    node.setOnMouseClicked(null);
-    node.setOnMousePressed(null);
-    node.setOnMouseDragged(null);
-    node.setOnMouseReleased(null);
+    node.removeEventHandler(EventType.ROOT, StateHandler.getInstance(this));
     if (node instanceof MoGroup) ((MoGroup) node).getBasis().getChildren().forEach(this::removeListeners);
   }
   

@@ -1,19 +1,24 @@
-package de.thm.mni.mhpp11.statemachine.states;
+package de.thm.mni.mhpp11.statemachine.states.connection;
 
 import de.thm.mni.mhpp11.control.icon.MoDiagramGroup;
 import de.thm.mni.mhpp11.control.icon.MoIconGroup;
-import de.thm.mni.mhpp11.control.icon.handlers.FocusHandler;
+import de.thm.mni.mhpp11.shape.Line;
+import de.thm.mni.mhpp11.statemachine.states.NoState;
+import de.thm.mni.mhpp11.statemachine.states.State;
 import de.thm.mni.mhpp11.util.parser.models.MoConnection;
 import de.thm.mni.mhpp11.util.parser.models.MoVariable;
 import de.thm.mni.mhpp11.util.parser.models.graphics.MoLine;
+import javafx.collections.ListChangeListener;
 import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
+import lombok.EqualsAndHashCode;
 import lombok.Value;
 import lombok.experimental.NonFinal;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -21,14 +26,22 @@ import java.util.List;
  * Created by hobbypunk on 15.11.16.
  */
 @Value
-public class ConnectionNewState extends State<MouseEvent> {
+@EqualsAndHashCode(exclude = {"parent", "startPos"})
+public class ConnectionCreateState extends State<MouseEvent, MoIconGroup> {
   
   MoDiagramGroup parent;
-  @NonFinal private List<MoVariable> startConnector;
+  private List<MoVariable> startConnector;
   @NonFinal private Point2D startPos;
   
-  public ConnectionNewState(MoDiagramGroup parent) {
+  public ConnectionCreateState(MoDiagramGroup parent, MoIconGroup source) {
+    super(source);
     this.parent = parent;
+    startConnector = getVariables(source);
+  }
+  
+  @Override
+  protected void initTransitions() {
+    getTransitions().put(MouseEvent.MOUSE_CLICKED, Arrays.asList(NoState.class, this.getClass(), ConnectionModifyState.class));
   }
   
   @Override
@@ -37,29 +50,26 @@ public class ConnectionNewState extends State<MouseEvent> {
   }
   
   @Override
-  public void exit() {
-    startConnector = null;
-    startPos = null;
-  }
-  
-  @Override
-  public void handle(MouseEvent event) {
-    if (event.getEventType().equals(MouseEvent.MOUSE_CLICKED)) {
-      FocusHandler.getInstance().handle(event);
-      handleClick(event);
-      event.consume();
-    }
-  }
-  
-  private void handleClick(MouseEvent event) {
+  protected void handleClicked(MouseEvent event) {
     MoIconGroup src = (MoIconGroup) event.getSource();
     Point2D mousePos = parent.convertScenePointToDiagramPoint(event.getSceneX(), event.getSceneY());
-    if (startConnector == null) {
-      startConnector = getVariables(src);
+    if (startPos == null) {
       startPos = mousePos;
     } else {
+      parent.getBasis().getChildren().addListener(new ListChangeListener<Node>() {
+        @Override
+        public void onChanged(Change<? extends Node> c) {
+          while (c.next()) {
+            for (Node n : c.getAddedSubList()) {
+              if (n instanceof Line) {
+                ConnectionCreateState.this.getMachine().switchToState(new ConnectionModifyState(parent, (Line) n));
+              }
+            }
+            parent.getBasis().getChildren().removeListener(this);
+          }
+        }
+      });
       parent.getMoClass().addConnection(new MoConnection(parent.getMoClass(), startConnector, getVariables(src), Collections.singletonList(new MoLine(startPos, mousePos))));
-      this.getMachine().switchToNoState();
     }
   }
   
