@@ -39,7 +39,8 @@ public class ConnectionModifyState extends State<MouseEvent, Line> {
   @Override
   protected void initTransitions() {
     getTransitions().put(MyMouseEvent.MOUSE_CTRL_CLICKED, Arrays.asList(ConnectionDeleteState.class));
-    getTransitions().put(MyMouseEvent.MOUSE_DOUBLE_CLICKED, Arrays.asList(this.getClass()));
+    getTransitions().put(MyMouseEvent.MOUSE_SHIFT_CLICKED, Arrays.asList(ConnectionAddPointState.class));
+    getTransitions().put(MyMouseEvent.MOUSE_DOUBLE_CLICKED, Arrays.asList(ConnectionAddPointState.class));
     getTransitions().put(MouseEvent.MOUSE_CLICKED, Arrays.asList(NoState.class, this.getClass(), ConnectionCreateState.class));
     getTransitions().put(MouseEvent.MOUSE_PRESSED, Arrays.asList(ConnectionMoveState.class));
     getTransitions().put(ScrollEvent.SCROLL, Arrays.asList(DiagramZoomState.class));
@@ -54,20 +55,6 @@ public class ConnectionModifyState extends State<MouseEvent, Line> {
   @Override
   public void exit() {
     FocusHandler.getInstance().clearFocus();
-  }
-  
-  @Override
-  protected void handleClicked(MouseEvent event) {
-    Point2D mousePos = parent.convertScenePointToDiagramPoint(event.getSceneX(), event.getSceneY());
-    
-    if (event.getClickCount() == 2 || (event.getClickCount() == 1 && event.isShiftDown())) {
-      Integer[] poses = findNearLinePos(mousePos, true);
-      if (poses != null) {
-        getSource().getData().getPoints().add(poses[1], mousePos);
-      }
-    } else if (event.getClickCount() == 1 && event.isControlDown()) {
-  
-    }
   }
   
   protected Integer findNearPointPos(Point2D point) {

@@ -5,10 +5,7 @@ import de.thm.mni.mhpp11.control.icon.MoIconGroup;
 import de.thm.mni.mhpp11.shape.Line;
 import de.thm.mni.mhpp11.statemachine.StateMachine;
 import de.thm.mni.mhpp11.statemachine.states.State;
-import de.thm.mni.mhpp11.statemachine.states.connection.ConnectionCreateState;
-import de.thm.mni.mhpp11.statemachine.states.connection.ConnectionDeleteState;
-import de.thm.mni.mhpp11.statemachine.states.connection.ConnectionModifyState;
-import de.thm.mni.mhpp11.statemachine.states.connection.ConnectionMoveState;
+import de.thm.mni.mhpp11.statemachine.states.connection.*;
 import de.thm.mni.mhpp11.statemachine.states.diagram.DiagramZoomState;
 import de.thm.mni.mhpp11.statemachine.states.model.ModelModifyState;
 import de.thm.mni.mhpp11.statemachine.states.model.ModelMoveState;
@@ -94,8 +91,11 @@ public class StateHandler implements EventHandler<Event> {
       } else if (this.sm.isSwitchAllowed(type, ConnectionMoveState.class)) {   //press && drag
         this.sm.switchToState(new ConnectionMoveState(getParent(), line), false);
         return true;
-      } else if (this.sm.isSwitchAllowed(type, ConnectionDeleteState.class)) { //strg + click
+      } else if (this.sm.isSwitchAllowed(type, ConnectionDeleteState.class)) { //strg+click
         this.sm.switchToState(new ConnectionDeleteState(getParent(), line), false);
+        return true;
+      } else if (this.sm.isSwitchAllowed(type, ConnectionAddPointState.class)) { //double click & shift+click
+        this.sm.switchToState(new ConnectionAddPointState(getParent(), line), false);
         return true;
       }
     }
