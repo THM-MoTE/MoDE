@@ -1,6 +1,7 @@
 package de.thm.mni.mhpp11.control.icon;
 
 import de.thm.mni.mhpp11.shape.*;
+import de.thm.mni.mhpp11.shape.interfaces.Element;
 import de.thm.mni.mhpp11.shape.interfaces.HasInitialStroke;
 import de.thm.mni.mhpp11.util.parser.models.MoClass;
 import de.thm.mni.mhpp11.util.parser.models.MoVariable;
@@ -165,6 +166,18 @@ public abstract class MoGroup extends Group {
   
   public void add(Node node) {
     basis.getChildren().add(node);
+  }
+  
+  public void remove(MoGraphic mg) {
+    for (int i = 0, size = basis.getChildren().size(); i < size; i++) {
+      if (basis.getChildren().get(i) instanceof Element) {
+        Element child = (Element) basis.getChildren().get(i);
+        if (child.getData().equals(mg)) {
+          basis.getChildren().remove(i);
+          return;
+        }
+      }
+    }
   }
   
   void initImage(MoGraphic mg) {

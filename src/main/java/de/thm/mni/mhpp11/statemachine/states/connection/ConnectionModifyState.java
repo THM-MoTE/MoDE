@@ -26,7 +26,7 @@ import java.util.Arrays;
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @ToString
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
 public class ConnectionModifyState extends State<MouseEvent, Line> {
   
   final MoDiagramGroup parent;
@@ -38,6 +38,7 @@ public class ConnectionModifyState extends State<MouseEvent, Line> {
   
   @Override
   protected void initTransitions() {
+    getTransitions().put(MyMouseEvent.MOUSE_CTRL_CLICKED, Arrays.asList(ConnectionDeleteState.class));
     getTransitions().put(MyMouseEvent.MOUSE_DOUBLE_CLICKED, Arrays.asList(this.getClass()));
     getTransitions().put(MouseEvent.MOUSE_CLICKED, Arrays.asList(NoState.class, this.getClass(), ConnectionCreateState.class));
     getTransitions().put(MouseEvent.MOUSE_PRESSED, Arrays.asList(ConnectionMoveState.class));
@@ -65,8 +66,7 @@ public class ConnectionModifyState extends State<MouseEvent, Line> {
         getSource().getData().getPoints().add(poses[1], mousePos);
       }
     } else if (event.getClickCount() == 1 && event.isControlDown()) {
-      Integer pos = findNearPointPos(mousePos);
-      if (pos != null) getSource().getData().getPoints().remove(pos.intValue());
+  
     }
   }
   

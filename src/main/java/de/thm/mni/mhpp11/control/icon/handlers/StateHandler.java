@@ -6,6 +6,7 @@ import de.thm.mni.mhpp11.shape.Line;
 import de.thm.mni.mhpp11.statemachine.StateMachine;
 import de.thm.mni.mhpp11.statemachine.states.State;
 import de.thm.mni.mhpp11.statemachine.states.connection.ConnectionCreateState;
+import de.thm.mni.mhpp11.statemachine.states.connection.ConnectionDeleteState;
 import de.thm.mni.mhpp11.statemachine.states.connection.ConnectionModifyState;
 import de.thm.mni.mhpp11.statemachine.states.connection.ConnectionMoveState;
 import de.thm.mni.mhpp11.statemachine.states.diagram.DiagramZoomState;
@@ -59,9 +60,12 @@ public class StateHandler implements EventHandler<Event> {
     if (this.parent == null || event.isConsumed()) return;
     
     EventType type = event.getEventType();
-    if (type.equals(MouseEvent.MOUSE_CLICKED) && ((MouseEvent) event).getClickCount() % 2 == 0)
-      type = MyMouseEvent.MOUSE_DOUBLE_CLICKED;
-    
+  
+    if (type.equals(MouseEvent.MOUSE_CLICKED) && ((MouseEvent) event).isAltDown()) type = MyMouseEvent.MOUSE_ALT_CLICKED;
+    else if (type.equals(MouseEvent.MOUSE_CLICKED) && ((MouseEvent) event).isShiftDown()) type = MyMouseEvent.MOUSE_SHIFT_CLICKED;
+    else if (type.equals(MouseEvent.MOUSE_CLICKED) && ((MouseEvent) event).isControlDown()) type = MyMouseEvent.MOUSE_CTRL_CLICKED;
+    else if (type.equals(MouseEvent.MOUSE_CLICKED) && ((MouseEvent) event).getClickCount() % 2 == 0) type = MyMouseEvent.MOUSE_DOUBLE_CLICKED;
+  
     Node src = (Node) event.getSource();
     if (event.getEventType().equals(MouseEvent.MOUSE_CLICKED)) {
       String clazz = src.getClass().getSimpleName();
@@ -90,7 +94,8 @@ public class StateHandler implements EventHandler<Event> {
       } else if (this.sm.isSwitchAllowed(type, ConnectionMoveState.class)) {   //press && drag
         this.sm.switchToState(new ConnectionMoveState(getParent(), line), false);
         return true;
-      } else if (this.sm.isSwitchAllowed(type, ConnectionModifyState.class)) { //release
+      } else if (this.sm.isSwitchAllowed(type, ConnectionDeleteState.class)) { //strg + click
+        this.sm.switchToState(new ConnectionDeleteState(getParent(), line), false);
         return true;
       }
     }

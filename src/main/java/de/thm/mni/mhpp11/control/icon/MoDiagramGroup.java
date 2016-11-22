@@ -12,6 +12,8 @@ import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.transform.NonInvertibleTransformException;
 
+import java.util.function.Consumer;
+
 /**
  * Created by hobbypunk on 19.09.16.
  */
@@ -90,8 +92,12 @@ public class MoDiagramGroup extends MoGroup {
     this.getMoClass().getConnections().addListener(new ListChangeListener<MoConnection>() {
       @Override
       public void onChanged(Change<? extends MoConnection> c) {
+  
         while (c.next()) {
           c.getAddedSubList().forEach(MoDiagramGroup.this::initConnection);
+          c.getRemoved().forEach((Consumer<MoConnection>) connection -> {
+            connection.getMoGraphics().forEach(MoDiagramGroup.this::remove);
+          });
         }
       }
     });
