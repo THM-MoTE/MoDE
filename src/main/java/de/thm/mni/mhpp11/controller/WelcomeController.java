@@ -123,7 +123,7 @@ public class WelcomeController extends NotifyController {
     settings.getRecent().add(p);
     FXMLLoader loader = new FXMLLoader();
     loader.setLocation(Utilities.getView("Main"));
-    //TODO: loader.setResources();
+    loader.setResources(Utilities.getBundle("Main"));
     try {
       Pane rootLayout = loader.load();
       MainController controller = loader.getController();

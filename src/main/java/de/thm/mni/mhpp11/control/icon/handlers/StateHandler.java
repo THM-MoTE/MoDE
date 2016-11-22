@@ -26,9 +26,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Created by hobbypunk on 16.11.16.
  */
@@ -37,26 +34,29 @@ import java.util.Map;
 @Setter(AccessLevel.PROTECTED)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class StateHandler implements EventHandler<Event> {
-  final StateMachine sm;
-  private final MoDiagramGroup parent;
+  final StateMachine sm = StateMachine.getInstance();
+  private MoDiagramGroup parent = null;
   State<? extends Event, ? extends Node> state;
   
-  static private Map<MoDiagramGroup, StateHandler> INSTANCES = new HashMap<>();
+  static private StateHandler INSTANCE = new StateHandler();
   
-  public static StateHandler getInstance(MoDiagramGroup parent) {
-    if (!INSTANCES.containsKey(parent)) {
-      INSTANCES.put(parent, new StateHandler(parent));
-    }
-    return INSTANCES.get(parent);
+  public static StateHandler getInstance() {
+    return getInstance(null);
   }
   
-  private StateHandler(MoDiagramGroup parent) {
-    this.sm = StateMachine.getInstance();
+  public static StateHandler getInstance(MoDiagramGroup parent) {
+    if (parent != null && (INSTANCE.getParent() == null || !INSTANCE.getParent().equals(parent)))
+      INSTANCE.setParent(parent);
+    return INSTANCE;
+  }
+  
+  public void setParent(MoDiagramGroup parent) {
+    this.sm.switchToNoState();
     this.parent = parent;
   }
   
   public void handle(Event event) {
-    if (event.isConsumed()) return;
+    if (this.parent == null || event.isConsumed()) return;
     
     EventType type = event.getEventType();
     if (type.equals(MouseEvent.MOUSE_CLICKED) && ((MouseEvent) event).getClickCount() % 2 == 0)
@@ -79,7 +79,6 @@ public class StateHandler implements EventHandler<Event> {
       this.sm.handle(event);
     }
   }
-  
   
   private Boolean handleLine(Node src, EventType type, Event event) {
     if (src instanceof Line) {

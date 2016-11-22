@@ -1,10 +1,11 @@
 package de.thm.mni.mhpp11.controller;
 
+import de.thm.mni.mhpp11.control.ContextMenuItem;
 import de.thm.mni.mhpp11.control.DragResizer;
 import de.thm.mni.mhpp11.control.MainTabControl;
 import de.thm.mni.mhpp11.control.TreeViewWithItems;
 import de.thm.mni.mhpp11.control.icon.MoIconGroup;
-import de.thm.mni.mhpp11.control.icon.handlers.DragAndDropHandler;
+import de.thm.mni.mhpp11.control.icon.handlers.LibraryHandler;
 import de.thm.mni.mhpp11.statemachine.StateMachine;
 import de.thm.mni.mhpp11.util.config.Settings;
 import de.thm.mni.mhpp11.util.config.model.MainWindow;
@@ -100,17 +101,37 @@ public class MainController extends NotifyController {
   private void initTreeView() {
     tvLibrary.setRoot(new TreeItem<>());
     tvLibrary.setShowRoot(false);
+    tvLibrary.setContextMenu(createLibraryMenu());
+    tvLibrary.setOnContextMenuRequested(event -> tvLibrary.getContextMenu().getItems().forEach(menuItem -> {
+      ContextMenuItem cmi = (ContextMenuItem) menuItem;
+      MoClass moClass = tvLibrary.getSelectionModel().getSelectedItem().getValue();
+    
+      if (cmi.getAction().equals("add.to.diagram")) {
+        MainTabControl mtc = (MainTabControl) tabPane.getSelectionModel().getSelectedItem();
+        cmi.setDisable(!moClass.hasIcon() || mtc == null || !mtc.isDiagram());
+      } else {
+        if (cmi.getAction().equals("open.as.diagram")) cmi.setDisable(!moClass.hasDiagram());
+        else if (cmi.getAction().equals("open.as.icon")) cmi.setDisable(!moClass.hasIcon());
+      }
+    }));
+    
     tvLibrary.setOnMouseClicked(event -> {
       TreeItem<MoClass> item = tvLibrary.getSelectionModel().getSelectedItem();
-      if (item == null) return;
-      MainTabControl tab = null;
-      if (event.getClickCount() == 2) tab = new MainTabControl(item.getValue(), true);
-      if (event.getClickCount() == 3) tab = new MainTabControl(item.getValue(), false);
-      if (tab == null || event.getClickCount() <= 1) return;
+      if (item == null || !item.getValue().hasDiagram()) return;
   
-      if (!tabPane.getTabs().contains(tab)) tabPane.getTabs().add(tab);
-      tabPane.getSelectionModel().select(tab);
-      
+      for (Tab t : tabPane.getTabs()) {
+        if (t instanceof MainTabControl && ((MainTabControl) t).getData().equals(item.getValue())) {
+          tabPane.getSelectionModel().select(t);
+          return;
+        }
+      }
+  
+      if (event.getClickCount() == 2) {
+        if (tabPane.getSelectionModel().getSelectedItem() != null && ((MainTabControl) tabPane.getSelectionModel().getSelectedItem()).isDiagram())
+          LibraryHandler.getInstance().handleMenu(tabPane, item.getValue(), "add.to.diagram");
+        else
+          LibraryHandler.getInstance().handleMenu(tabPane, item.getValue(), "open.as.diagram");
+      }
     });
     tvLibrary.setTreeItemExpandListener(parent -> parent.update(OMCompiler.getInstance()));
     tvLibrary.setTreeItemConfigurer((treeItem, value) -> {
@@ -123,7 +144,7 @@ public class MainController extends NotifyController {
     tvLibrary.setCellFactory(new Callback<TreeView<MoClass>, TreeCell<MoClass>>() {
       @Override
       public TreeCell<MoClass> call(TreeView<MoClass> param) {
-        TreeCell<MoClass> treeCell = new TreeCell<MoClass>() {
+        return new TreeCell<MoClass>() {
           @Override
           protected void updateItem(MoClass item, boolean empty) {
             super.updateItem(item, empty);
@@ -144,8 +165,6 @@ public class MainController extends NotifyController {
             }
           }
         };
-        treeCell.setOnDragDetected(DragAndDropHandler.getInstance());
-        return treeCell;
       }
     });
     initLibs();
@@ -159,6 +178,21 @@ public class MainController extends NotifyController {
   private void initProject() {
     PackageParser.collectProjectLibs(OMCompiler.getInstance(), mrProjectLibraries, project.getFile());
     PackageParser.collectProject(OMCompiler.getInstance(), mrProject, project.getFile());
+  }
+  
+  private ContextMenu createLibraryMenu() {
+    ContextMenu cm = new ContextMenu();
+    
+    for (String action : new String[]{"open.as.diagram", "open.as.icon", "add.to.diagram"}) {
+      MenuItem tmp = new ContextMenuItem(i18n.getString("menu.context." + action), action);   //todo multilingual
+      
+      tmp.setOnAction(event -> {
+        LibraryHandler.getInstance().handleMenu(tabPane, tvLibrary.getSelectionModel().getSelectedItem().getValue(), action);
+      });
+      
+      cm.getItems().add(tmp);
+    }
+    return cm;
   }
 }
 
