@@ -6,10 +6,12 @@ import de.thm.mni.mhpp11.control.icon.handlers.StateHandler;
 import de.thm.mni.mhpp11.util.parser.models.MoClass;
 import de.thm.mni.mhpp11.util.parser.models.MoConnection;
 import de.thm.mni.mhpp11.util.parser.models.MoConnector;
+import de.thm.mni.mhpp11.util.parser.models.MoVariable;
 import javafx.collections.ListChangeListener;
 import javafx.event.EventType;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
+import javafx.scene.paint.Color;
 import javafx.scene.transform.NonInvertibleTransformException;
 
 import java.util.function.Consumer;
@@ -32,6 +34,7 @@ public class MoDiagramGroup extends MoGroup {
     initVariables();
     initConnections();
     initListeners(this);
+    coordianteSystem.setFill(Color.WHITE);
   }
   
   private void initListeners(MoGroup group) {
@@ -40,19 +43,16 @@ public class MoDiagramGroup extends MoGroup {
       this.addEventHandler(EventType.ROOT, StateHandler.getInstance(this));
       group.getBasis().getChildren().forEach(this::addGroupListeners);
     } else if (group instanceof MoIconGroup) group.getBasis().getChildren().forEach(this::addIconListeners);
-    
-    group.getBasis().getChildren().addListener(new ListChangeListener<Node>() {
-      @Override
-      public void onChanged(Change<? extends Node> c) {
-        while (c.next()) {
-          c.getAddedSubList().forEach(n -> {
-            if (group.equals(MoDiagramGroup.this)) addGroupListeners(n);
-            else if (group instanceof MoIconGroup) addIconListeners(n);
-          });
-          c.getRemoved().forEach(n -> {
-            removeListeners(n);
-          });
-        }
+  
+    group.getBasis().getChildren().addListener((ListChangeListener<Node>) c -> {
+      while (c.next()) {
+        c.getAddedSubList().forEach(n -> {
+          if (group.equals(MoDiagramGroup.this)) addGroupListeners(n);
+          else if (group instanceof MoIconGroup) addIconListeners(n);
+        });
+        c.getRemoved().forEach(n -> {
+          removeListeners(n);
+        });
       }
     });
   }
@@ -81,6 +81,13 @@ public class MoDiagramGroup extends MoGroup {
   private void initVariables() {
     this.getMoClass().getVariables().forEach(super::initVariable);
   
+    this.getMoClass().getVariables().addListener((ListChangeListener<MoVariable>) c -> {
+      while (c.next()) {
+        c.getAddedSubList().forEach(MoDiagramGroup.this::initVariable);
+        c.getRemoved().forEach(MoDiagramGroup.this::remove);
+      }
+    });
+  
     this.parentProperty().addListener((observable, oldValue, newValue) -> {
       if (oldValue != null) oldValue.setOnMouseClicked(null);
       if (newValue != null) newValue.setOnMouseClicked(FocusHandler.getInstance());
@@ -89,16 +96,12 @@ public class MoDiagramGroup extends MoGroup {
   
   private void initConnections() {
     this.getMoClass().getConnections().forEach(this::initConnection);
-    this.getMoClass().getConnections().addListener(new ListChangeListener<MoConnection>() {
-      @Override
-      public void onChanged(Change<? extends MoConnection> c) {
-  
-        while (c.next()) {
-          c.getAddedSubList().forEach(MoDiagramGroup.this::initConnection);
-          c.getRemoved().forEach((Consumer<MoConnection>) connection -> {
-            connection.getMoGraphics().forEach(MoDiagramGroup.this::remove);
-          });
-        }
+    this.getMoClass().getConnections().addListener((ListChangeListener<MoConnection>) c -> {
+      while (c.next()) {
+        c.getAddedSubList().forEach(MoDiagramGroup.this::initConnection);
+        c.getRemoved().forEach((Consumer<MoConnection>) connection -> {
+          connection.getMoGraphics().forEach(MoDiagramGroup.this::remove);
+        });
       }
     });
   }

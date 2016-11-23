@@ -7,6 +7,7 @@ import de.thm.mni.mhpp11.statemachine.StateMachine;
 import de.thm.mni.mhpp11.statemachine.states.State;
 import de.thm.mni.mhpp11.statemachine.states.connection.*;
 import de.thm.mni.mhpp11.statemachine.states.diagram.DiagramZoomState;
+import de.thm.mni.mhpp11.statemachine.states.model.ModelDeleteState;
 import de.thm.mni.mhpp11.statemachine.states.model.ModelModifyState;
 import de.thm.mni.mhpp11.statemachine.states.model.ModelMoveState;
 import de.thm.mni.mhpp11.statemachine.states.model.ModelOpenState;
@@ -113,13 +114,16 @@ public class StateHandler implements EventHandler<Event> {
   }
   
   private Boolean handleModel(Node src, EventType type, Event event) {
-    if (src instanceof MoIconGroup) {
+    if (src instanceof MoIconGroup && src.getParent().getParent() instanceof MoDiagramGroup) {
       MoIconGroup mig = (MoIconGroup) src;
       if (this.sm.isSwitchAllowed(type, ModelOpenState.class)) {           //double click
-        this.sm.switchToState(new ModelOpenState(mig));
+        this.sm.switchToState(new ModelOpenState(getParent(), mig));
         return true;
       } else if (this.sm.isSwitchAllowed(type, ModelMoveState.class)) {    //Press & Drag
         this.sm.switchToState(new ModelMoveState(getParent(), mig), false);
+        return true;
+      } else if (this.sm.isSwitchAllowed(type, ModelDeleteState.class)) { //strg+click
+        this.sm.switchToState(new ModelDeleteState(getParent(), mig), false);
         return true;
       } else if (this.sm.isSwitchAllowed(type, ModelModifyState.class)) {  //click & Release
         return true;

@@ -25,11 +25,9 @@ public class ModelMoveState extends ModelModifyState {
   Map<MoConnection, List<Integer>> startConnectionPointPoses = new HashMap<>();
   
   Translate o;
-  MoDiagramGroup parent;
   
   public ModelMoveState(MoDiagramGroup parent, MoIconGroup source) {
-    super(source);
-    this.parent = parent;
+    super(parent, source);
     this.o = source.getOrigin();
   }
   
@@ -55,7 +53,7 @@ public class ModelMoveState extends ModelModifyState {
   @Override
   protected void handleDragged(MouseEvent event) {
     if (o != null) {
-      Point2D mousePos = parent.convertScenePointToDiagramPoint(event.getSceneX(), event.getSceneY());
+      Point2D mousePos = getParent().convertScenePointToDiagramPoint(event.getSceneX(), event.getSceneY());
       Point2D delta = mousePos.subtract(startMousePos);
       updateConnections(delta);
       Point2D origin = startOrigin.add(delta);
@@ -70,7 +68,7 @@ public class ModelMoveState extends ModelModifyState {
     source.toFront();
     source.setOpacity(0.8);
     FocusHandler.getInstance().setFocus(source);
-    startMousePos = parent.convertScenePointToDiagramPoint(event.getSceneX(), event.getSceneY());
+    startMousePos = getParent().convertScenePointToDiagramPoint(event.getSceneX(), event.getSceneY());
     startOrigin = new Point2D(o.getX(), o.getY());
     source.getVariable().getConnections().forEach(moConn -> {
       Boolean to = moConn.toContains(source.getVariable());
@@ -94,7 +92,7 @@ public class ModelMoveState extends ModelModifyState {
   
   @Override
   protected void handleReleased(MouseEvent event) {
-    this.getMachine().switchToState(new ModelModifyState(getSource()));
+    this.getMachine().switchToState(new ModelModifyState(getParent(), getSource()));
   }
   
   

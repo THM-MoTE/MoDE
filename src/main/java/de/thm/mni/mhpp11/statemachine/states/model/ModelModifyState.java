@@ -1,9 +1,12 @@
 package de.thm.mni.mhpp11.statemachine.states.model;
 
+import de.thm.mni.mhpp11.control.icon.MoDiagramGroup;
 import de.thm.mni.mhpp11.control.icon.MoIconGroup;
 import de.thm.mni.mhpp11.control.icon.handlers.FocusHandler;
 import de.thm.mni.mhpp11.statemachine.states.NoState;
 import de.thm.mni.mhpp11.statemachine.states.State;
+import de.thm.mni.mhpp11.statemachine.states.connection.ConnectionCreateState;
+import de.thm.mni.mhpp11.statemachine.states.connection.ConnectionMoveState;
 import de.thm.mni.mhpp11.statemachine.states.diagram.DiagramZoomState;
 import de.thm.mni.mhpp11.util.ui.MyMouseEvent;
 import javafx.scene.Cursor;
@@ -24,19 +27,22 @@ import java.util.Arrays;
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @ToString
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(callSuper = true)
 public class ModelModifyState extends State<MouseEvent, MoIconGroup> {
   
-  public ModelModifyState(MoIconGroup source) {
+  private final MoDiagramGroup parent;
+  
+  public ModelModifyState(MoDiagramGroup parent, MoIconGroup source) {
     super(source);
-    
+    this.parent = parent;
   }
   
   @Override
   protected void initTransitions() {
     getTransitions().put(MyMouseEvent.MOUSE_DOUBLE_CLICKED, Arrays.asList(ModelOpenState.class));
-    getTransitions().put(MouseEvent.MOUSE_CLICKED, Arrays.asList(NoState.class, this.getClass()));
-    getTransitions().put(MouseEvent.MOUSE_PRESSED, Arrays.asList(ModelMoveState.class));
+    getTransitions().put(MyMouseEvent.MOUSE_CTRL_CLICKED, Arrays.asList(ModelDeleteState.class));
+    getTransitions().put(MouseEvent.MOUSE_CLICKED, Arrays.asList(NoState.class, this.getClass(), ConnectionCreateState.class));
+    getTransitions().put(MouseEvent.MOUSE_PRESSED, Arrays.asList(ModelMoveState.class, ConnectionMoveState.class));
     getTransitions().put(ScrollEvent.SCROLL, Arrays.asList(DiagramZoomState.class));
   }
   

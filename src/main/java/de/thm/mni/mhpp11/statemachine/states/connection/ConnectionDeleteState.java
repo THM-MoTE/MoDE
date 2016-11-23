@@ -2,14 +2,11 @@ package de.thm.mni.mhpp11.statemachine.states.connection;
 
 import de.thm.mni.mhpp11.control.icon.MoDiagramGroup;
 import de.thm.mni.mhpp11.shape.Line;
-import de.thm.mni.mhpp11.statemachine.states.NoState;
 import de.thm.mni.mhpp11.util.parser.models.MoConnection;
-import de.thm.mni.mhpp11.util.ui.MyMouseEvent;
 import javafx.geometry.Point2D;
 import javafx.scene.input.MouseEvent;
 import lombok.EqualsAndHashCode;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -23,10 +20,7 @@ public class ConnectionDeleteState extends ConnectionModifyState {
   }
   
   @Override
-  protected void initTransitions() {
-    getTransitions().put(MyMouseEvent.MOUSE_CTRL_CLICKED, Arrays.asList(NoState.class, ConnectionModifyState.class));
-    
-  }
+  protected void initTransitions() {}
   
   @Override
   protected void handleClicked(MouseEvent event) {

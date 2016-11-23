@@ -9,6 +9,7 @@ import de.thm.mni.mhpp11.util.parser.models.annotations.MoAnnotation;
 import de.thm.mni.mhpp11.util.parser.models.annotations.MoDiagram;
 import de.thm.mni.mhpp11.util.parser.models.annotations.MoDocumentation;
 import de.thm.mni.mhpp11.util.parser.models.annotations.MoIcon;
+import de.thm.mni.mhpp11.util.parser.models.graphics.MoCoordinateSystem;
 import de.thm.mni.mhpp11.util.parser.models.graphics.MoDefaults;
 import de.thm.mni.mhpp11.util.parser.models.interfaces.MoElement;
 import javafx.collections.FXCollections;
@@ -128,6 +129,13 @@ public class MoClass extends MoElement implements HierarchyData<MoClass> {
     this.variables.addAll(variables);
   }
   
+  public void removeVariable(MoVariable variable) {
+    for (MoConnection connection : variable.getConnections()) {
+      this.connections.remove(connection);
+    }
+    this.variables.remove(variable);
+  }
+  
   
   public ObservableList<MoConnection> getConnections() {
     inheritedClasses.forEach(inheritedClass -> inheritedClass.getConnections().forEach(connection -> {
@@ -189,8 +197,28 @@ public class MoClass extends MoElement implements HierarchyData<MoClass> {
     return (getInternalIcon() != null);
   }
   
+  public MoCoordinateSystem getIconCoordinateSystem() {
+    if (this.getIcon() != null && this.getIcon().getMoCoordinateSystem() != null)
+      return this.getIcon().getMoCoordinateSystem();
+    return new MoCoordinateSystem();
+  }
+  
   public boolean hasDiagram() {
-    return !getVariables().isEmpty();
+    return !getVariables().isEmpty() || getDiagram() != null;
+  }
+  
+  public MoDiagram getDiagram() {
+    for (MoAnnotation ma : getAnnotations())
+      if (ma instanceof MoDiagram)
+        return (MoDiagram) ma;
+    
+    return null;
+  }
+  
+  public MoCoordinateSystem getDiagramCoordinateSystem() {
+    if (this.getDiagram() != null && this.getDiagram().getMoCoordinateSystem() != null)
+      return this.getDiagram().getMoCoordinateSystem();
+    return new MoCoordinateSystem();
   }
   
   private MoIcon getInternalIcon() {
@@ -316,5 +344,4 @@ public class MoClass extends MoElement implements HierarchyData<MoClass> {
     }
     return null;
   }
-  
 }

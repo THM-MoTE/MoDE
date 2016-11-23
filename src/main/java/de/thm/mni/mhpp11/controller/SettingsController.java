@@ -120,7 +120,10 @@ public class SettingsController extends Controller {
   
   @FXML
   private void onModelicaCompilerClick() {
-    Path f = fileDialog(settings.getModelica().getCompiler(), i18n.getString("settings.select.modelica.compiler"), true);
+    Path f = fileDialog(
+        settings.getModelica().getCompiler(),
+        i18n.getString("settings.select.modelica.compiler"),
+        true);
     
     if (f == null) return;
     tfModelicaCompiler.setText(f.toString());

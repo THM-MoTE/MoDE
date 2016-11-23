@@ -10,6 +10,7 @@ import de.thm.mni.mhpp11.util.parser.PackageParser;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
@@ -35,6 +36,9 @@ public class WelcomeController extends NotifyController {
   @FXML private Label lVersion;
   @FXML private VBox vbRecent;
   
+  @FXML private Button btnNewProject;
+  @FXML private Button btnOpenProject;
+  
   @FXML @Override
   public void initialize(URL location, ResourceBundle resources) {
     super.initialize(location, resources);
@@ -42,12 +46,27 @@ public class WelcomeController extends NotifyController {
     lName.setText(Settings.NAME);
     lVersion.setText(Settings.VERSION);
     updateRecentList();
-    Modelica m = settings.getModelica();
+  
+    startOMC();
+  }
+  
+  private Boolean startOMC() {
+    
     try {
+      Modelica m = settings.getModelica();
       OMCompiler.getInstance(m.getCompiler(), m.getLibrary(), settings.getLang());
-    } catch (IOException e) {
+    } catch (IOException | IllegalStateException e) {
       logger.error(e);
     }
+    
+    if (OMCompiler.getInstance() != null) {
+      //btnNewProject.setDisable(false);
+      btnOpenProject.setDisable(false);
+      return true;
+    }
+    btnNewProject.setDisable(true);
+    btnOpenProject.setDisable(true);
+    return false;
   }
   
   @Override
@@ -70,6 +89,7 @@ public class WelcomeController extends NotifyController {
     this.stage.centerOnScreen();
     this.stage.show();
   }
+  
   
   private void onRemoveLastProject(Project project) {
     settings.getRecent().remove(project);
@@ -145,7 +165,7 @@ public class WelcomeController extends NotifyController {
       DialogPane dp = loader.load();
       d.setDialogPane(dp);
       d.show();
-  
+      d.setOnCloseRequest(event -> startOMC());
     } catch (IOException e) {
       logger.error(e);
     }

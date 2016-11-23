@@ -36,7 +36,7 @@ public class OMCompiler {
   private static final Pattern connect = Pattern.compile("^\\s*connect\\s*\\(.*");
   private static OMCompiler ourInstance;
   
-  public static OMCompiler getInstance(Path compiler, Path library, Locale locale) throws IOException {
+  public static OMCompiler getInstance(Path compiler, Path library, Locale locale) throws IOException, IllegalStateException {
     if (ourInstance == null) ourInstance = new OMCompiler(compiler, library, locale);
     return ourInstance;
   }
@@ -69,7 +69,7 @@ public class OMCompiler {
   @Getter private List<Pair<String, Path>> projectLibraries = new ArrayList<>();
   @Getter private Pair<String, Path> project = null;
   
-  private OMCompiler(Path compiler, Path library, Locale locale) throws IOException {
+  private OMCompiler(Path compiler, Path library, Locale locale) throws IOException, IllegalStateException {
     this.library = library;
     client = new OMCClient(compiler.toString(), locale.toString());
     client.connect();

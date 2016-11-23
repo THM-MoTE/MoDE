@@ -127,7 +127,7 @@ public class MainController extends NotifyController {
       }
   
       if (event.getClickCount() == 2) {
-        if (tabPane.getSelectionModel().getSelectedItem() != null && ((MainTabControl) tabPane.getSelectionModel().getSelectedItem()).isDiagram())
+        if (tabPane.getSelectionModel().getSelectedItem() != null && ((MainTabControl) tabPane.getSelectionModel().getSelectedItem()).isDiagram() && item.getValue().hasIcon())
           LibraryHandler.getInstance().handleMenu(tabPane, item.getValue(), "add.to.diagram");
         else
           LibraryHandler.getInstance().handleMenu(tabPane, item.getValue(), "open.as.diagram");

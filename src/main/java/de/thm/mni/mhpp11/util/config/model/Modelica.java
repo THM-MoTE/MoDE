@@ -1,5 +1,6 @@
 package de.thm.mni.mhpp11.util.config.model;
 
+import de.thm.mni.mhpp11.util.Utilities;
 import lombok.Getter;
 import org.simpleframework.xml.Element;
 
@@ -11,8 +12,8 @@ import java.nio.file.Paths;
  */
 @Getter
 public class Modelica extends MyObservable {
-  @Element(required = false) Path compiler = Paths.get("/usr/bin/omc");
-  @Element(required = false) Path library = Paths.get("/usr/lib/omlibrary");
+  @Element(required = false) Path compiler = Paths.get(Utilities.isWin() ? "C:/omc.exe" : "/usr/bin/omc");
+  @Element(required = false) Path library = Paths.get(Utilities.isWin() ? "C:/omc.exe" : "/usr/lib/omlibrary");
   @Element(required = false) Integer depth = 2;
   
   public void setCompiler(Path compiler) {

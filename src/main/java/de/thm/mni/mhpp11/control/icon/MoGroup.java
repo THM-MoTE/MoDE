@@ -102,7 +102,10 @@ public abstract class MoGroup extends Group {
   
   
   private void initCoordinateSystem() {
-    MoCoordinateSystem mcs = this.getMoClass().getIcon().getMoCoordinateSystem();
+  
+    MoCoordinateSystem mcs;
+    if (this instanceof MoIconGroup) mcs = this.getMoClass().getIconCoordinateSystem();
+    else mcs = this.getMoClass().getDiagramCoordinateSystem();
   
     Point2D extent0 = mcs.getExtent().get(0).getValue();
     Point2D extent1 = mcs.getExtent().get(1).getValue();
@@ -173,6 +176,18 @@ public abstract class MoGroup extends Group {
       if (basis.getChildren().get(i) instanceof Element) {
         Element child = (Element) basis.getChildren().get(i);
         if (child.getData().equals(mg)) {
+          basis.getChildren().remove(i);
+          return;
+        }
+      }
+    }
+  }
+  
+  public void remove(MoVariable mv) {
+    for (int i = 0, size = basis.getChildren().size(); i < size; i++) {
+      if (basis.getChildren().get(i) instanceof MoIconGroup) {
+        MoIconGroup child = (MoIconGroup) basis.getChildren().get(i);
+        if (child.getVariable().equals(mv)) {
           basis.getChildren().remove(i);
           return;
         }

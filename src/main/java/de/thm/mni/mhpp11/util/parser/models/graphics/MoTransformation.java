@@ -27,7 +27,7 @@ public class MoTransformation implements MoExtent {
   DoubleProperty rotation = new SimpleDoubleProperty(0.0);
   
   @Builder
-  private MoTransformation(Point2D first, Point2D second, Point2D origin, Double rotation) {
+  public MoTransformation(Point2D first, Point2D second, Point2D origin, Double rotation) {
     extent.get(0).setValue(first);
     extent.get(1).setValue(second);
     if (origin != null) {

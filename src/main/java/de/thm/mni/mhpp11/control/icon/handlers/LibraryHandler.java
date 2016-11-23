@@ -2,6 +2,11 @@ package de.thm.mni.mhpp11.control.icon.handlers;
 
 import de.thm.mni.mhpp11.control.MainTabControl;
 import de.thm.mni.mhpp11.util.parser.models.MoClass;
+import de.thm.mni.mhpp11.util.parser.models.MoVariable;
+import de.thm.mni.mhpp11.util.parser.models.annotations.MoPlacement;
+import de.thm.mni.mhpp11.util.parser.models.graphics.MoCoordinateSystem;
+import de.thm.mni.mhpp11.util.parser.models.graphics.MoTransformation;
+import javafx.geometry.Point2D;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 
@@ -28,6 +33,22 @@ public class LibraryHandler {
         tab = new MainTabControl(selectedClass, false);
       tabPane.getTabs().add(tab);
       tabPane.getSelectionModel().select(tab);
+    } else if (action.equals("add.to.diagram")) {
+      MainTabControl tab = (MainTabControl) tabPane.getSelectionModel().getSelectedItem();
+    
+      Integer counter = 0;
+      for (MoVariable mv : tab.getData().getVariables()) {
+        if (mv.getName().equals(selectedClass.getSimpleName().toLowerCase() + "_" + counter)) counter++;
+      }
+      //todo: add placement to variable
+      MoVariable mv = new MoVariable(tab.getData(), selectedClass, selectedClass.getSimpleName().toLowerCase() + "_" + counter);
+      MoCoordinateSystem mcs = mv.getType().getDiagramCoordinateSystem();
+      Point2D first = mcs.getExtent().get(0).get().multiply(0.1);
+      Point2D second = mcs.getExtent().get(1).get().multiply(0.1);
+    
+      MoTransformation trans = new MoTransformation(first, second, new Point2D(0, 0), 0.);
+      mv.add(new MoPlacement(true, null, trans));
+      tab.getData().addVariable(mv);
     }
   }
 }

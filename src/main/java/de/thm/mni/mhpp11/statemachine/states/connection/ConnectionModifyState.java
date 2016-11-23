@@ -6,6 +6,7 @@ import de.thm.mni.mhpp11.shape.Line;
 import de.thm.mni.mhpp11.statemachine.states.NoState;
 import de.thm.mni.mhpp11.statemachine.states.State;
 import de.thm.mni.mhpp11.statemachine.states.diagram.DiagramZoomState;
+import de.thm.mni.mhpp11.statemachine.states.model.ModelMoveState;
 import de.thm.mni.mhpp11.util.ui.MyMouseEvent;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
@@ -42,7 +43,7 @@ public class ConnectionModifyState extends State<MouseEvent, Line> {
     getTransitions().put(MyMouseEvent.MOUSE_SHIFT_CLICKED, Arrays.asList(ConnectionAddPointState.class));
     getTransitions().put(MyMouseEvent.MOUSE_DOUBLE_CLICKED, Arrays.asList(ConnectionAddPointState.class));
     getTransitions().put(MouseEvent.MOUSE_CLICKED, Arrays.asList(NoState.class, this.getClass(), ConnectionCreateState.class));
-    getTransitions().put(MouseEvent.MOUSE_PRESSED, Arrays.asList(ConnectionMoveState.class));
+    getTransitions().put(MouseEvent.MOUSE_PRESSED, Arrays.asList(ConnectionMoveState.class, ModelMoveState.class));
     getTransitions().put(ScrollEvent.SCROLL, Arrays.asList(DiagramZoomState.class));
   }
   

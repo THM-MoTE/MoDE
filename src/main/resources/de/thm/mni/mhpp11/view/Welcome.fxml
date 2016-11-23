@@ -37,12 +37,14 @@
                </font>
             </Label>
          </HBox>
-         <Button alignment="CENTER_LEFT" layoutX="80.0" layoutY="215.0" onAction="#onCreateProject" prefHeight="24.0" prefWidth="240.0" text="%action.create.new.project">
+        <Button fx:id="btnNewProject" alignment="CENTER_LEFT" disable="true" layoutX="80.0" layoutY="215.0"
+                onAction="#onCreateProject" prefHeight="24.0" prefWidth="240.0" text="%action.create.new.project">
             <graphic>
                <FontIcon iconColor="darkorange" iconLiteral="mdi-creation" iconSize="18" />
             </graphic>
          </Button>
-         <Button alignment="CENTER_LEFT" layoutX="80.0" layoutY="242.0" onAction="#onOpenProject" prefHeight="24.0" prefWidth="240.0" text="%action.open.project">
+        <Button fx:id="btnOpenProject" alignment="CENTER_LEFT" layoutX="80.0" layoutY="242.0" onAction="#onOpenProject"
+                prefHeight="24.0" prefWidth="240.0" text="%action.open.project">
             <graphic>
                <FontIcon iconColor="chocolate" iconLiteral="gmi-folder-open" iconSize="18" />
             </graphic>

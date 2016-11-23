@@ -1,20 +1,26 @@
 package de.thm.mni.mhpp11.statemachine.states.model;
 
 import de.thm.mni.mhpp11.control.MainTabControl;
+import de.thm.mni.mhpp11.control.icon.MoDiagramGroup;
 import de.thm.mni.mhpp11.control.icon.MoIconGroup;
 import de.thm.mni.mhpp11.statemachine.states.State;
 import de.thm.mni.mhpp11.util.parser.models.MoClass;
 import javafx.scene.Parent;
 import javafx.scene.control.TabPane;
 import javafx.scene.input.MouseEvent;
+import lombok.Getter;
 
 /**
  * Created by hobbypunk on 18.11.16.
  */
+@Getter
 public class ModelOpenState extends State<MouseEvent, MoIconGroup> {
   
-  public ModelOpenState(MoIconGroup src) {
+  private final MoDiagramGroup parent;
+  
+  public ModelOpenState(MoDiagramGroup parent, MoIconGroup src) {
     super(src);
+    this.parent = parent;
   }
   
   @Override
@@ -28,7 +34,7 @@ public class ModelOpenState extends State<MouseEvent, MoIconGroup> {
         TabPane tb = findTabPane(this.getSource());
         if (tb != null) tb.getTabs().add(new MainTabControl(mc, true));
       }
-      getMachine().switchToState(new ModelModifyState(getSource()));
+      getMachine().switchToState(new ModelModifyState(getParent(), getSource()));
     }
   }
   
