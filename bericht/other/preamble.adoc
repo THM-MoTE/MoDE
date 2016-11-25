@@ -2,5 +2,5 @@
 :Author: Marcel Hoppe
 :Email: marcel.hoppe@mni.thm.de
 
+:allow-uri-read:
 :experimental:
-

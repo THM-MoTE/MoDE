@@ -12,12 +12,14 @@ include::{other}/preamble.adoc[]
 
 include::{other}/abstract.adoc[]
 
+:leveloffset: +1
+
 include::{chapters}/1_einleitung.adoc[]
 include::{chapters}/2_ähnliche_programme.adoc[]
 include::{chapters}/3_grundlagen.adoc[]
 include::{chapters}/4_umsetzung.adoc[]
 include::{chapters}/5_ergebnisse.adoc[]
 include::{chapters}/6_fazit_ausblick.adoc[]
-
 include::{other}/bibliography.adoc[]
 
+:leveloffset: -1

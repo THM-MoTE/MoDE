@@ -1,23 +1,67 @@
-== Grundlagen
 
-=== Modelica
+= Grundlagen
+
+== Design Pattern
+
+=== [[builder-pattern]] Builder Pattern
+
+Das Builder Pattern trennt die Konstruktion und Repräsentation komplexer Objekte. Hierdurch kann ein Objekt in mehreren Teilschritten erzeugt werden. <<dp1>>
+
+=== [[state-pattern]] State Pattern
+
+Mit dem State Pattern kann ein zustandsabhängiges Verhalten eines Objekts modelliert werden.
+Hierbei wird eine einheitliche Schnittstelle für den Zustand definiert. Jeder konkrete Zustand muss diese Schnittstelle dann implementieren. <<dp2>>
+
+image::https://www.philipphauer.de/study/se/design-pattern/state/state.svg[caption="Figure 1: ", title="State Pattern <<dp2>>"]
+
+== Modelica
 
 bla bla bla <<m1>>
 
-=== OpenModelica Compiler
+== OpenModelica Compiler
 btn:[test]
 menu:File[close]
 <<m2>>
 
-=== JavaFX
+== JavaFX
 
 <<j1>>
 
-=== ANTLR
+== ANTLR
 
 <<a1>>
 
-=== Project Lombok
+== Project Lombok
 
-<<l1>>
+Project Lombok ist eine Java Bibliothek, die sich zum Ziel gesetzt hat Quellcode, der sich in ähnlicher Weise in jedem Java Projekt wiederholt, zu beseitigen. Um dies zu erreichen werden Annotationen genutzt, die vor dem Kompilieren des Programms Quellcode hinzufügen. <<l1>>
 
+In meiner Projektphase habe ich hauptsächlich folgende Funktionen aus Project Lombok benutzt:
+
+=== @Setter/@Getter
+Durch das Angeben dieser Annotationen an bestimmten Feldern, werden für diese _get_ und _set_ Funktionen generiert. Wenn sie direkt an die Klasse geschrieben werden, werden für alle Felder die Funktionen generiert. <<l2>>
+
+[source,java]
+----
+include::../source/GetterSetter.java[tags=withLombok]
+----
+
+=== @Builder & @Singular
+
+Mit der @Builder Annotation wird das Erbauer Pattern(siehe <<builder-pattern,Builder Pattern>>) als innere Klasse umgesetzt. <<l3>>
+
+[source,java]
+----
+include::../source/Builder.java[tags=withLombok]
+----
+
+=== @EqualsAndHashCode
+
+Diese Annotation erzeugt für die annotierte Klasse die _equals_ und _hashcode_ Funktionen. Ohne weitere Angaben werden alle Felder der Klasse benutzt, es kann aber auch Festgelegt werden, dass bestimmte Felder für _equals_ und _hashcode_ nicht beachtet werden sollen. <<l4>>
+
+=== @NonNull
+
+Ein @NonNull an einem Methodenparameter fügt direkt zum Beginn der Methode eine Überprüfung auf Null hinzu und würft eine NullPointerException, wenn der Parameter Null ist. <<l5>>
+
+=== @UtilityClass
+
+Die Annotation @UtilityClass sorgt dafür, dass die Klasse selbst *final* wird, alle Felder und Methoden der annotierten Klasse *static* werden und ein privater Kontruktor erzeugt wird, sodass kein Objekt dieser Klasse erzeugt werden kann. <<l6>>

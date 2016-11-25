@@ -1,6 +1,4 @@
-== Ergebnisse
+
+= Ergebnisse
 
 vorstellung der anwendung, wie was funktioniert, mit screenshots
-
-
-

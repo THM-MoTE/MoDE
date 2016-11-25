@@ -1,6 +1,22 @@
-== Literaturverzeichnis
+
+<<<
+
+= Literaturverzeichnis
 
 [bibliography]
+
+:short: dp1
+:title: ..
+:url: http://wwwswt.informatik.uni-rostock.de/patterns/Builder/
+:date: 25.11.2016
+include::variables.adoc[11]
+
+:short: dp2
+:title: ..
+:url: https://www.philipphauer.de/study/se/design-pattern/state.php
+:date: 25.11.2016
+include::variables.adoc[11]
+
 :short: m1
 :title: ..
 :url: https://www.modelica.org/
@@ -25,9 +41,38 @@ include::variables.adoc[11]
 :date: 14.11.2016
 include::variables.adoc[11]
 
-:short: l1
+:short: dp1
 :title: ..
-:url: https://projectlombok.org/features/index.html
-:date: 14.11.2016
+:url: http://wwwswt.informatik.uni-rostock.de/patterns/Builder/
+:date: 25.11.2016
 include::variables.adoc[11]
 
+:short: l1
+:title: ..
+:url: http://jnb.ociweb.com/jnb/jnbJan2010.html
+include::variables.adoc[11]
+
+:short: l2
+:title: ..
+:url: https://projectlombok.org/features/GetterSetter.html
+include::variables.adoc[11]
+
+:short: l3
+:title: ..
+:url: https://projectlombok.org/features/Builder.html
+include::variables.adoc[11]
+
+:short: l4
+:title: ..
+:url: https://projectlombok.org/features/EqualsAndHashCode.html
+include::variables.adoc[11]
+
+:short: l5
+:title: ..
+:url: https://projectlombok.org/features/NonNull.html
+include::variables.adoc[11]
+
+:short: l6
+:title: ..
+:url: https://projectlombok.org/features/experimental/UtilityClass.html
+include::variables.adoc[11]
