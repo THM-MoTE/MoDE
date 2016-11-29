@@ -7,11 +7,11 @@ import de.thm.mni.mhpp11.statemachine.states.connection.ConnectionMoveState;
 import de.thm.mni.mhpp11.statemachine.states.diagram.DiagramZoomState;
 import de.thm.mni.mhpp11.statemachine.states.model.ModelModifyState;
 import de.thm.mni.mhpp11.statemachine.states.model.ModelMoveState;
+import de.thm.mni.mhpp11.util.ui.MyEvents;
 import javafx.event.Event;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.input.ScrollEvent;
 
 import java.util.Arrays;
 
@@ -26,10 +26,9 @@ public class NoState extends State<Event, Node> {
   
   @Override
   protected void initTransitions() {
-//    getTransitions().put(MyMouseEvent.MOUSE_DOUBLE_CLICKED, Arrays.asList(ModelOpenState.class));
     getTransitions().put(MouseEvent.MOUSE_CLICKED, Arrays.asList(ModelModifyState.class, ConnectionCreateState.class, ConnectionModifyState.class));
     getTransitions().put(MouseEvent.MOUSE_PRESSED, Arrays.asList(ModelMoveState.class, ConnectionMoveState.class));
-    getTransitions().put(ScrollEvent.SCROLL, Arrays.asList(DiagramZoomState.class));
+    getTransitions().put(MyEvents.SCROLL_SHIFT, Arrays.asList(DiagramZoomState.class));
   }
   
   @Override

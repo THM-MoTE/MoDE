@@ -5,6 +5,7 @@ import de.thm.mni.mhpp11.statemachine.states.NoState;
 import de.thm.mni.mhpp11.statemachine.states.State;
 import de.thm.mni.mhpp11.statemachine.states.connection.ConnectionModifyState;
 import de.thm.mni.mhpp11.statemachine.states.model.ModelModifyState;
+import de.thm.mni.mhpp11.util.ui.MyEvents;
 import javafx.scene.input.ScrollEvent;
 
 import java.util.Arrays;
@@ -20,7 +21,7 @@ public class DiagramZoomState extends State<ScrollEvent, MoDiagramGroup> {
   
   @Override
   protected void initTransitions() {
-    getTransitions().put(ScrollEvent.SCROLL, Arrays.asList(NoState.class, ModelModifyState.class, ConnectionModifyState.class));
+    getTransitions().put(MyEvents.SCROLL_SHIFT, Arrays.asList(NoState.class, ModelModifyState.class, ConnectionModifyState.class));
   }
   
   @Override

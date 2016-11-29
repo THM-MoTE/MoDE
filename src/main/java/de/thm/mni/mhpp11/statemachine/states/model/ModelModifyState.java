@@ -8,10 +8,9 @@ import de.thm.mni.mhpp11.statemachine.states.State;
 import de.thm.mni.mhpp11.statemachine.states.connection.ConnectionCreateState;
 import de.thm.mni.mhpp11.statemachine.states.connection.ConnectionMoveState;
 import de.thm.mni.mhpp11.statemachine.states.diagram.DiagramZoomState;
-import de.thm.mni.mhpp11.util.ui.MyMouseEvent;
+import de.thm.mni.mhpp11.util.ui.MyEvents;
 import javafx.scene.Cursor;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.input.ScrollEvent;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -39,11 +38,11 @@ public class ModelModifyState extends State<MouseEvent, MoIconGroup> {
   
   @Override
   protected void initTransitions() {
-    getTransitions().put(MyMouseEvent.MOUSE_DOUBLE_CLICKED, Arrays.asList(ModelOpenState.class));
-    getTransitions().put(MyMouseEvent.MOUSE_CTRL_CLICKED, Arrays.asList(ModelDeleteState.class));
+    getTransitions().put(MyEvents.MOUSE_DOUBLE_CLICKED, Arrays.asList(ModelOpenState.class));
+    getTransitions().put(MyEvents.MOUSE_CTRL_CLICKED, Arrays.asList(ModelDeleteState.class));
     getTransitions().put(MouseEvent.MOUSE_CLICKED, Arrays.asList(NoState.class, this.getClass(), ConnectionCreateState.class));
     getTransitions().put(MouseEvent.MOUSE_PRESSED, Arrays.asList(ModelMoveState.class, ConnectionMoveState.class));
-    getTransitions().put(ScrollEvent.SCROLL, Arrays.asList(DiagramZoomState.class));
+    getTransitions().put(MyEvents.SCROLL_SHIFT, Arrays.asList(DiagramZoomState.class));
   }
   
   @Override

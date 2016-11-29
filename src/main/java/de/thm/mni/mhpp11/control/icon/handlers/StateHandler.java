@@ -12,7 +12,7 @@ import de.thm.mni.mhpp11.statemachine.states.model.ModelModifyState;
 import de.thm.mni.mhpp11.statemachine.states.model.ModelMoveState;
 import de.thm.mni.mhpp11.statemachine.states.model.ModelOpenState;
 import de.thm.mni.mhpp11.util.parser.models.MoConnector;
-import de.thm.mni.mhpp11.util.ui.MyMouseEvent;
+import de.thm.mni.mhpp11.util.ui.MyEvents;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
@@ -59,10 +59,11 @@ public class StateHandler implements EventHandler<Event> {
     
     EventType type = event.getEventType();
   
-    if (type.equals(MouseEvent.MOUSE_CLICKED) && ((MouseEvent) event).isAltDown()) type = MyMouseEvent.MOUSE_ALT_CLICKED;
-    else if (type.equals(MouseEvent.MOUSE_CLICKED) && ((MouseEvent) event).isShiftDown()) type = MyMouseEvent.MOUSE_SHIFT_CLICKED;
-    else if (type.equals(MouseEvent.MOUSE_CLICKED) && ((MouseEvent) event).isControlDown()) type = MyMouseEvent.MOUSE_CTRL_CLICKED;
-    else if (type.equals(MouseEvent.MOUSE_CLICKED) && ((MouseEvent) event).getClickCount() % 2 == 0) type = MyMouseEvent.MOUSE_DOUBLE_CLICKED;
+    if (type.equals(MouseEvent.MOUSE_CLICKED) && ((MouseEvent) event).isAltDown()) type = MyEvents.MOUSE_ALT_CLICKED;
+    else if (type.equals(MouseEvent.MOUSE_CLICKED) && ((MouseEvent) event).isShiftDown()) type = MyEvents.MOUSE_SHIFT_CLICKED;
+    else if (type.equals(MouseEvent.MOUSE_CLICKED) && ((MouseEvent) event).isControlDown()) type = MyEvents.MOUSE_CTRL_CLICKED;
+    else if (type.equals(MouseEvent.MOUSE_CLICKED) && ((MouseEvent) event).getClickCount() % 2 == 0) type = MyEvents.MOUSE_DOUBLE_CLICKED;
+    else if (type.equals(ScrollEvent.SCROLL) && ((ScrollEvent) event).isShiftDown()) type = MyEvents.SCROLL_SHIFT;
   
     Node src = (Node) event.getSource();
     if (event.getEventType().equals(MouseEvent.MOUSE_CLICKED)) {
@@ -122,7 +123,7 @@ public class StateHandler implements EventHandler<Event> {
       } else if (this.sm.isSwitchAllowed(type, ModelMoveState.class)) {    //Press & Drag
         this.sm.switchToState(new ModelMoveState(getParent(), mig), false);
         return true;
-      } else if (this.sm.isSwitchAllowed(type, ModelDeleteState.class)) { //strg+click
+      } else if (this.sm.isSwitchAllowed(type, ModelDeleteState.class)) { //strg + click
         this.sm.switchToState(new ModelDeleteState(getParent(), mig), false);
         return true;
       } else if (this.sm.isSwitchAllowed(type, ModelModifyState.class)) {  //click & Release
@@ -137,12 +138,12 @@ public class StateHandler implements EventHandler<Event> {
       MoDiagramGroup mdg = (MoDiagramGroup) src;
       
       if (event.getEventType().equals(KeyEvent.KEY_PRESSED)) System.out.println(((KeyEvent) event).getCharacter());
-      
-      if (this.sm.isSwitchToNoStateAllowed(type)) {
-        this.sm.switchToNoState();
-        return true;
-      } else if (event.getEventType().equals(ScrollEvent.SCROLL) && ((ScrollEvent) event).isControlDown()) {
+  
+      if (this.sm.isSwitchAllowed(type, DiagramZoomState.class)) {      //shift + scroll
         this.sm.switchToState(new DiagramZoomState(mdg));
+        return true;
+      } else if (this.sm.isSwitchToNoStateAllowed(type)) {
+        this.sm.switchToNoState();
         return true;
       }
     }
