@@ -11,8 +11,12 @@ import de.thm.mni.mhpp11.util.parser.models.annotations.MoDocumentation;
 import de.thm.mni.mhpp11.util.parser.models.annotations.MoIcon;
 import de.thm.mni.mhpp11.util.parser.models.graphics.MoCoordinateSystem;
 import de.thm.mni.mhpp11.util.parser.models.graphics.MoDefaults;
+import de.thm.mni.mhpp11.util.parser.models.interfaces.Changeable;
 import de.thm.mni.mhpp11.util.parser.models.interfaces.MoElement;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import lombok.Getter;
 import lombok.NonNull;
@@ -41,6 +45,7 @@ public class MoClass extends MoElement implements HierarchyData<MoClass> {
   
   private ClassInformation classInformation;
   private MoClass parent;
+  private final BooleanProperty unsavedChanges = new SimpleBooleanProperty(false);
   private Boolean complete = false;
   
   private final List<MoClass> inheritedClasses = new ArrayList<>();
@@ -50,12 +55,36 @@ public class MoClass extends MoElement implements HierarchyData<MoClass> {
   
   private final ObservableList<MoClass> children = FXCollections.observableArrayList();
   
-  
   MoClass(ClassInformation classInformation, String name, MoClass parent) {
     super("c", name, "");
     this.classInformation = classInformation;
     this.parent = parent;
     if (parent != null) parent.getChildren().add(this);
+    
+    initChangeListeners();
+  }
+  
+  private void initChangeListeners() {
+    Changeable.ChangeListener listener = () -> {
+      if (complete) unsavedChanges.setValue(true);
+    };
+    
+    
+    this.variables.addListener((ListChangeListener<? super MoVariable>) c -> {
+      if (complete) unsavedChanges.setValue(true);
+      while (c.next()) {
+        c.getAddedSubList().forEach(element -> element.setChangeListener(listener));
+        c.getRemoved().forEach(element -> element.setChangeListener(null));
+      }
+    });
+    
+    this.connections.addListener((ListChangeListener<? super MoConnection>) c -> {
+      if (complete) unsavedChanges.setValue(true);
+      while (c.next()) {
+        c.getAddedSubList().forEach(element -> element.setChangeListener(listener));
+        c.getRemoved().forEach(element -> element.setChangeListener(null));
+      }
+    });
   }
   
   public synchronized void moveTo(MoClass newParent) {
@@ -343,5 +372,11 @@ public class MoClass extends MoElement implements HierarchyData<MoClass> {
       if (clazz != null) return clazz;
     }
     return null;
+  }
+  
+  public void save() {
+    if (!this.getUnsavedChanges().getValue()) return;
+    
+    this.getUnsavedChanges().setValue(false);
   }
 }

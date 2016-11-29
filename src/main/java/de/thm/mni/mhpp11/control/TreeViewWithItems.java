@@ -26,7 +26,7 @@ import java.util.Map;
  * <p/>
  * Each item in the list must implement the {@link HierarchyData} interface, in order to map the recursive nature of the tree data to the tree view.
  * <p/>
- * Each change in the underlying data (adding, removing, sorting) will then be automatically reflected in the UI.
+ * Each changed in the underlying data (adding, removing, sorting) will then be automatically reflected in the UI.
  *
  * @author Christian Schudt
  */

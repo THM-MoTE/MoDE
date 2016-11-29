@@ -6,6 +6,7 @@ import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.PointContext;
 import de.thm.mni.mhpp11.util.parser.models.graphics.Utilities.LinePattern;
 import de.thm.mni.mhpp11.util.parser.models.graphics.Utilities.Smooth;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
@@ -40,6 +41,7 @@ public class MoLine extends MoGraphic implements HasSmoothOption {
   public MoLine(Point2D start, Point2D end) {
     super();
     this.points.addAll(start, end);
+    initChangeListeners();
   }
   
   @Builder(builderMethodName = "lineBuilder")
@@ -54,6 +56,15 @@ public class MoLine extends MoGraphic implements HasSmoothOption {
     if (thickness != null) this.thickness = thickness;
     if (arrowSize != null) this.arrowSize = arrowSize;
     if (smooth != null) this.smooth = smooth;
+    initChangeListeners();
+  }
+  
+  @Override
+  protected void initChangeListeners() {
+    super.initChangeListeners();
+    this.points.addListener((ListChangeListener<? super Point2D>) c -> {
+      changed();
+    });
   }
   
   public static MoLine parse(AnnotationParser.LineContext elem) {

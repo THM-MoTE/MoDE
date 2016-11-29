@@ -2,11 +2,12 @@ package de.thm.mni.mhpp11.util.parser.models.graphics;
 
 import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.*;
 import de.thm.mni.mhpp11.util.parser.OMCompiler;
+import de.thm.mni.mhpp11.util.parser.models.interfaces.Changeable;
 import javafx.beans.property.*;
 import javafx.geometry.Point2D;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.ArrayList;
@@ -16,17 +17,19 @@ import java.util.List;
  * Created by hobbypunk on 16.09.16.
  */
 @Getter
-@NoArgsConstructor
-public class MoGraphic {
+public class MoGraphic implements Changeable {
+  @Setter private ChangeListener internalChangeListener = null;
   
   BooleanProperty visible = new SimpleBooleanProperty(true);
   ObjectProperty<Point2D> origin = new SimpleObjectProperty<>(new Point2D(0.0, 0.0)); //Ursprung des Elements
   DoubleProperty rotation = new SimpleDoubleProperty(0.0);
   
+  public MoGraphic() {
+    initChangeListeners();
+  }
+  
   public MoGraphic(MoGraphic mg) {
-    this.visible.setValue(mg.visible.getValue());
-    this.origin.setValue(mg.getOrigin().getValue());
-    this.rotation.setValue(mg.rotation.getValue());
+    this(mg.visible.getValue(), mg.getOrigin().getValue(), mg.rotation.getValue());
   }
   
   @Builder
@@ -35,6 +38,14 @@ public class MoGraphic {
     if (origin != null) this.origin.setValue(origin);
     if (rotation != null) this.rotation.setValue(rotation);
   }
+  
+  
+  protected void initChangeListeners() {
+    visible.addListener((observable, oldValue, newValue) -> changed());
+    origin.addListener((observable, oldValue, newValue) -> changed());
+    rotation.addListener((observable, oldValue, newValue) -> changed());
+  }
+  
   
   public static List<MoGraphic> parse(OMCompiler omc, List<ElementContext> elements) {
     List<MoGraphic> l = new ArrayList<>();

@@ -54,19 +54,29 @@ public class MainTabControl extends Tab implements Initializable {
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     this.setClosable(true);
-    this.setText(data.getSimpleName());
+    data.getUnsavedChanges().setValue(false);
     MoGroup mp;
     this.setGraphic(new MoIconGroup(data).scaleToSize(20., 20.));
     if (diagram) mp = new MoDiagramGroup(data);
-    else {
-      mp = new MoIconGroup(data, false);
-      this.setText(this.getText() + " (icon)");
-    }
+    else mp = new MoIconGroup(data, false);
+  
+    updateText(false);
+  
     mp.scaleToSize(600., 600.);
     mp.setLayoutX(100.);
     mp.setLayoutY(100.);
     mp.setInternalStyle("-fx-background-color: white;");
     main.setContent(mp);
+  
+    data.getUnsavedChanges().addListener((observable, oldValue, newValue) -> {
+      updateText(newValue);
+    });
+  }
+  
+  private void updateText(Boolean unsavedChanges) {
+    this.setText(data.getSimpleName() + ((diagram) ? "" : "(icon)"));
+    if (unsavedChanges) this.setText(this.getText() + "*");
+    //TODO: text color
   }
   
   public Boolean isDiagram() {

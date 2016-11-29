@@ -1,6 +1,5 @@
 package de.thm.mni.mhpp11.control.icon;
 
-import de.thm.mni.mhpp11.control.icon.handlers.DragAndDropHandler;
 import de.thm.mni.mhpp11.control.icon.handlers.FocusHandler;
 import de.thm.mni.mhpp11.control.icon.handlers.StateHandler;
 import de.thm.mni.mhpp11.util.parser.models.MoClass;
@@ -24,9 +23,6 @@ public class MoDiagramGroup extends MoGroup {
   public MoDiagramGroup(MoClass moClass) {
     super(moClass);
     init();
-    this.setOnDragOver(DragAndDropHandler.getInstance());
-    this.setOnDragDropped(DragAndDropHandler.getInstance());
-    this.setOnDragDone(DragAndDropHandler.getInstance());
   }
   
   @Override

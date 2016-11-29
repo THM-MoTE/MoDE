@@ -6,6 +6,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 <?import org.controlsfx.control.BreadCrumbBar?>
+<?import org.kordamp.ikonli.javafx.*?>
 <GridPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" stylesheets="@../css/Main.css" xmlns="http://javafx.com/javafx/8.0.76-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.thm.mni.mhpp11.controller.MainController">
   <columnConstraints>
     <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
@@ -22,19 +23,79 @@
                <children>
                   <MenuBar>
                     <menus>
-                      <Menu mnemonicParsing="false" text="File">
+                      <Menu mnemonicParsing="false" text="%menu.file">
                         <items>
-                          <MenuItem mnemonicParsing="false" text="Close" />
+                          <MenuItem disable="true" mnemonicParsing="false" text="%menu.file.new_project"
+                                    accelerator="Shortcut+N">
+                            <graphic>
+                              <FontIcon iconColor="darkorange" iconLiteral="mdi-creation" iconSize="18"/>
+                            </graphic>
+                          </MenuItem>
+                          <MenuItem disable="true" mnemonicParsing="false" text="%menu.file.open"
+                                    accelerator="Shortcut+O">
+                            <graphic>
+                              <FontIcon iconColor="chocolate" iconLiteral="gmi-folder-open" iconSize="18"/>
+                            </graphic>
+                          </MenuItem>
+                          <Menu disable="true" mnemonicParsing="false" text="%menu.file.open_recent"/>
+                          <MenuItem disable="true" mnemonicParsing="false" text="%menu.file.close_project"/>
+                          <SeparatorMenuItem mnemonicParsing="false"/>
+                          <MenuItem disable="true" mnemonicParsing="false" text="%menu.file.add_library">
+                            <graphic>
+                              <FontIcon iconColor="cadetblue" iconLiteral="gmi-add-to-photos" iconSize="18"/>
+                            </graphic>
+                          </MenuItem>
+                          <SeparatorMenuItem mnemonicParsing="false"/>
+                          <MenuItem mnemonicParsing="false" onAction="#handleSave" text="%menu.file.save"
+                                    accelerator="Shortcut+S">
+                            <graphic>
+                              <FontIcon iconColor="deepskyblue" iconLiteral="mdi-content-save" iconSize="18"/>
+                            </graphic>
+                          </MenuItem>
+                          <MenuItem mnemonicParsing="false" onAction="#handleSaveAll" text="%menu.file.save_all"
+                                    accelerator="Shortcut+Shift+S">
+                            <graphic>
+                              <FontIcon iconColor="deepskyblue" iconLiteral="mdi-content-save-all" iconSize="18"/>
+                            </graphic>
+                          </MenuItem>
+                          <SeparatorMenuItem mnemonicParsing="false"/>
+                          <MenuItem mnemonicParsing="false" text="%menu.file.exit" accelerator="Shortcut+X"/>
                         </items>
                       </Menu>
-                      <Menu mnemonicParsing="false" text="Edit">
+                      <Menu mnemonicParsing="false" text="%menu.edit">
                         <items>
-                          <MenuItem mnemonicParsing="false" text="Delete" />
+                          <MenuItem disable="true" mnemonicParsing="false" text="%menu.edit.undo"
+                                    accelerator="Shortcut+Z">
+                            <graphic>
+                              <FontIcon iconColor="mediumpurple" iconLiteral="gmi-undo" iconSize="18"/>
+                            </graphic>
+                          </MenuItem>
+                          <MenuItem disable="true" mnemonicParsing="false" text="%menu.edit.redo"
+                                    accelerator="Shortcut+Y">
+                            <graphic>
+                              <FontIcon iconColor="mediumpurple" iconLiteral="gmi-redo" iconSize="18"/>
+                            </graphic>
+                          </MenuItem>
+                          <SeparatorMenuItem mnemonicParsing="false"/>
+                          <MenuItem mnemonicParsing="false" text="%menu.edit.settings" accelerator="Shortcut+Alt+S">
+                            <graphic>
+                              <FontIcon iconColor="darkgrey" iconLiteral="gmi-settings" iconSize="18"/>
+                            </graphic>
+                          </MenuItem>
                         </items>
                       </Menu>
-                      <Menu mnemonicParsing="false" text="Help">
+                      <Menu mnemonicParsing="false" text="%menu.help">
                         <items>
-                          <MenuItem mnemonicParsing="false" text="About" />
+                          <MenuItem mnemonicParsing="false" text="%menu.help.help" accelerator="F1">
+                            <graphic>
+                              <FontIcon iconColor="deepskyblue" iconLiteral="gmi-help" iconSize="18"/>
+                            </graphic>
+                          </MenuItem>
+                          <MenuItem mnemonicParsing="false" text="%menu.help.about">
+                            <graphic>
+                              <FontIcon iconColor="deepskyblue" iconLiteral="gmi-info" iconSize="18"/>
+                            </graphic>
+                          </MenuItem>
                         </items>
                       </Menu>
                     </menus>

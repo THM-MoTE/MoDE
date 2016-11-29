@@ -9,10 +9,11 @@ import de.thm.mni.mhpp11.util.parser.OMCompiler;
 import de.thm.mni.mhpp11.util.parser.models.graphics.MoGraphic;
 import de.thm.mni.mhpp11.util.parser.models.graphics.MoLine;
 import de.thm.mni.mhpp11.util.parser.models.graphics.MoText;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.Singular;
+import de.thm.mni.mhpp11.util.parser.models.interfaces.Changeable;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
+import lombok.*;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 
@@ -24,12 +25,14 @@ import java.util.*;
  * Created by hobbypunk on 01.11.16.
  */
 @Getter
-public class MoConnection {
+public class MoConnection implements Changeable {
+  @Setter private ChangeListener internalChangeListener = null;
+  
   private final MoClass parent;
   private final List<MoVariable> from = new ArrayList<>();
   private final List<MoVariable> to = new ArrayList<>();
   
-  private final List<MoGraphic> moGraphics = new ArrayList<>();
+  private final ObservableList<MoGraphic> moGraphics = FXCollections.observableArrayList();
   
   @Builder
   public MoConnection(@NonNull MoClass parent, @NonNull List<MoVariable> from, @NonNull List<MoVariable> to, @Singular List<MoGraphic> graphics) {
@@ -37,6 +40,21 @@ public class MoConnection {
     this.from.addAll(from);
     this.to.addAll(to);
     if (graphics != null) this.moGraphics.addAll(graphics);
+    initListeners();
+  }
+  
+  private void initListeners() {
+    this.moGraphics.addListener((ListChangeListener<? super MoGraphic>) c -> {
+      while (c.next()) {
+        c.getAddedSubList().forEach(moGraphics -> moGraphics.setChangeListener(getChangeListener()));
+        c.getRemoved().forEach(moGraphics -> moGraphics.setChangeListener(null));
+      }
+    });
+  }
+  
+  @Override
+  public void updateChangeListeners(ChangeListener changeListener) {
+    moGraphics.forEach(moGraphic -> moGraphic.setChangeListener(changeListener));
   }
   
   public MoLine getLine() {

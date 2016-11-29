@@ -17,7 +17,8 @@ import java.util.List;
 /**
  * Created by hobbypunk on 16.09.16.
  */
-public class MoAnnotation {
+public abstract class MoAnnotation {
+  
   public static List<MoAnnotation> parse(OMCompiler omc, MoElement parent) {
     return MoAnnotation.parse(omc, omc.getAnnotationStrings(parent.getName()));
   }

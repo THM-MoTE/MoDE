@@ -2,6 +2,7 @@ package de.thm.mni.mhpp11.util.parser.models.graphics;
 
 import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.TransformationContentContext;
 import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.TransformationContext;
+import de.thm.mni.mhpp11.util.parser.models.interfaces.Changeable;
 import de.thm.mni.mhpp11.util.parser.models.interfaces.MoExtent;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
@@ -10,6 +11,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Point2D;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -19,7 +21,9 @@ import java.util.List;
  * Created by hobbypunk on 21.10.16.
  */
 @Getter
-public class MoTransformation implements MoExtent {
+public class MoTransformation implements MoExtent, Changeable {
+  
+  @Setter private ChangeListener internalChangeListener = null;
   
   private final List<ObjectProperty<Point2D>> extent = Collections.unmodifiableList(Arrays.asList(new SimpleObjectProperty<>(), new SimpleObjectProperty<>()));
   
@@ -34,8 +38,16 @@ public class MoTransformation implements MoExtent {
       this.origin.setValue(origin);
     }
     if (rotation != null) this.rotation.setValue(rotation);
+  
+    initListeners();
   }
   
+  private void initListeners() {
+    origin.addListener((observable, oldValue, newValue) -> changed());
+    rotation.addListener((observable, oldValue, newValue) -> changed());
+    extent.get(0).addListener((observable, oldValue, newValue) -> changed());
+    extent.get(1).addListener((observable, oldValue, newValue) -> changed());
+  }
   
   public static MoTransformation parse(TransformationContext val) {
     MoTransformationBuilder mb = builder();
@@ -53,4 +65,5 @@ public class MoTransformation implements MoExtent {
     
     return mb.build();
   }
+  
 }

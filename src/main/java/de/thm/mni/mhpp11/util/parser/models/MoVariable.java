@@ -4,6 +4,7 @@ import de.thm.mni.mhpp11.util.ImmutableListCollector;
 import de.thm.mni.mhpp11.util.parser.OMCompiler;
 import de.thm.mni.mhpp11.util.parser.models.annotations.MoAnnotation;
 import de.thm.mni.mhpp11.util.parser.models.annotations.MoPlacement;
+import de.thm.mni.mhpp11.util.parser.models.interfaces.Changeable;
 import de.thm.mni.mhpp11.util.parser.models.interfaces.MoElement;
 import lombok.*;
 
@@ -17,12 +18,13 @@ import java.util.regex.Pattern;
  * Created by hobbypunk on 20.10.16.
  */
 @Getter
-public class MoVariable extends MoElement {
+public class MoVariable extends MoElement implements Changeable {
   private static final Pattern PATTERN = Pattern.compile("(^\"|\"$)");
   private final MoClass parent;
   private Specification kind;
   @Setter private MoClass type = null;
   @Setter private String comment = "";
+  @Setter private ChangeListener internalChangeListener = null;
   
   public enum Specification {
     NONE,
@@ -45,6 +47,11 @@ public class MoVariable extends MoElement {
     this.kind = kind;
     if (type != null) this.type = type;
     if (annotations != null) this.addAllAnnotations(annotations);
+  }
+  
+  @Override
+  public void updateChangeListeners(ChangeListener changeListener) {
+    if (getPlacement() != null) getPlacement().setChangeListener(changeListener);
   }
   
   public List<MoVariable> getVariables() {

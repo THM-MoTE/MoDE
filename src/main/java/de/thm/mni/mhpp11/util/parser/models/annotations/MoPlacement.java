@@ -3,22 +3,44 @@ package de.thm.mni.mhpp11.util.parser.models.annotations;
 import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.PlacementContentContext;
 import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.PlacementContext;
 import de.thm.mni.mhpp11.util.parser.models.graphics.MoTransformation;
-import lombok.AllArgsConstructor;
+import de.thm.mni.mhpp11.util.parser.models.interfaces.Changeable;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Created by hobbypunk on 21.10.16.
  */
 
 @Getter
-@Builder
-@AllArgsConstructor
-public class MoPlacement extends MoAnnotation {
+public class MoPlacement extends MoAnnotation implements Changeable {
   
-  private Boolean visible = true;
+  @Setter private ChangeListener internalChangeListener = null;
+  
+  private BooleanProperty visible = new SimpleBooleanProperty(true);
   private MoTransformation iconTransformation;
   private MoTransformation diagramTransformation;
+  
+  @Builder
+  public MoPlacement(Boolean visible, MoTransformation iconTransformation, MoTransformation diagramTransformation) {
+    if (visible != null) this.visible.setValue(visible);
+    this.iconTransformation = iconTransformation;
+    this.diagramTransformation = diagramTransformation;
+    
+    initListeners();
+  }
+  
+  @Override
+  public void updateChangeListeners(ChangeListener changeListener) {
+    this.iconTransformation.setChangeListener(changeListener);
+    this.diagramTransformation.setChangeListener(changeListener);
+  }
+  
+  private void initListeners() {
+    this.visible.addListener((observable, oldValue, newValue) -> changed());
+  }
   
   public static MoPlacement parse(PlacementContext placement) {
     MoPlacementBuilder mb = builder();
@@ -29,4 +51,5 @@ public class MoPlacement extends MoAnnotation {
     }
     return mb.build();
   }
+  
 }
