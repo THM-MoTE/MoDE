@@ -1,6 +1,20 @@
 
 = Umsetzung
 
-wofür habe ich mich warum entschieden
+In diesem Kapitel werden die wichtigsten Entscheidungen wärend der Umsetzung meiner Projektphase vorgestellt.
+
+== jModelica oder Open Modelica Compiler
+
+Zuerst setzte ich bei der Umsetzung von MoDE auf jModelica, um Abhängigkeiten zu Anwendungen, die für jedes Betriebssystem extra kompiliert werden müssen, zu vermeiden. Ich musste feststellen, dass jModelica noch weit davon entfernt ist als Ersatz für den Open Modelica Compiler zu fungieren. Einfache Modelle lassen sich problemlos von jModelica parsen, aber bei komplexeren Modellen haben sich dann Probleme eingestellt. Damit jModelica Modelle parsen kann, müssen diese in einer festen Reihenfolge aufgebaut sein. Sobald diese nicht mehr stimmt, schlägt das Parsen fehl.
+
+Deshalb musste ich zum Open Modelica Compiler wechseln. Dieser kann auch komplexere Modelle problemlos laden. Die Daten zu Modellen können über die CORBA Schnittstelle abgerufen werden. Die Daten werden nur als Zeichenketten bereitgestellt, wodurch ein weiterer Parser nötig ist um die Annotationen aufzuschlüsseln. Hierbei habe ich mich für ANTLR als Parsergenerator entschieden.
+
+== State Pattern
+
+Für das Editieren von Diagrammen habe ich mich für das State Pattern entschieden, da dadurch ohne große Änderungen an anderen Stellen neue Funktionen für den Editor hinzugefügt werden können.
 
 == Schwierigkeiten
+
+Das größte Problem war die Umstellung von jModelica auf den OMC. Für die Umstellung benötigte ich 3 Wochen.
+
+[big red]#TODO: kleinere stolperer mit libs...#

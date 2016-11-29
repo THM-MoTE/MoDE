@@ -5,74 +5,19 @@
 
 [bibliography]
 
-:short: dp1
-:title: ..
-:url: http://wwwswt.informatik.uni-rostock.de/patterns/Builder/
-:date: 25.11.2016
-include::variables.adoc[11]
-
-:short: dp2
-:title: ..
-:url: https://www.philipphauer.de/study/se/design-pattern/state.php
-:date: 25.11.2016
-include::variables.adoc[11]
-
-:short: m1
-:title: ..
-:url: https://www.modelica.org/
-:date: 14.11.2016
-include::variables.adoc[11]
-
-:short: m2
-:title: ..
-:url: https://www.openmodelica.org/?id=51:open-modelica-compiler-omc&catid=10:main-category
-:date: 14.11.2016
-include::variables.adoc[11]
-
-:short: a1
-:title: ..
-:url: http://www.antlr.org/about.html
-:date: 14.11.2016
-include::variables.adoc[11]
-
-:short: j1
-:title: ..
-:url: http://www.oracle.com/technetwork/java/javafx/overview/faq-1446554.html
-:date: 14.11.2016
-include::variables.adoc[11]
-
-:short: dp1
-:title: ..
-:url: http://wwwswt.informatik.uni-rostock.de/patterns/Builder/
-:date: 25.11.2016
-include::variables.adoc[11]
-
-:short: l1
-:title: ..
-:url: http://jnb.ociweb.com/jnb/jnbJan2010.html
-include::variables.adoc[11]
-
-:short: l2
-:title: ..
-:url: https://projectlombok.org/features/GetterSetter.html
-include::variables.adoc[11]
-
-:short: l3
-:title: ..
-:url: https://projectlombok.org/features/Builder.html
-include::variables.adoc[11]
-
-:short: l4
-:title: ..
-:url: https://projectlombok.org/features/EqualsAndHashCode.html
-include::variables.adoc[11]
-
-:short: l5
-:title: ..
-:url: https://projectlombok.org/features/NonNull.html
-include::variables.adoc[11]
-
-:short: l6
-:title: ..
-:url: https://projectlombok.org/features/experimental/UtilityClass.html
-include::variables.adoc[11]
+[horizontal]
+[[[mvc]]]:: *...*, URL: https://glossar.hs-augsburg.de/Model-View-Controller-Paradigma (besucht am 27.11.2016)
+[[[dp1]]]:: *..*, URL: http://wwwswt.informatik.uni-rostock.de/patterns/Builder/ (besucht am 25.11.2016)
+[[[dp2]]]:: *..*, URL: https://www.philipphauer.de/study/se/design-pattern/state.php (besucht am 25.11.2016)
+[[[m1]]]:: *..*, URL: https://www.modelica.org/ (besucht am 14.11.2016)
+[[[omc]]]:: *..*, URL: https://openmodelica.org/?id=51:open-modelica-compiler-omc&catid=10:main-category (besucht am 27.11.2016)
+[[[a1]]]:: *..*, URL: http://www.antlr.org/about.html (besucht am 14.11.2016)
+[[[j1]]]:: *..*, URL: http://www.oracle.com/technetwork/java/javafx/overview/faq-1446554.html (besucht am 14.11.2016)
+[[[j2]]]:: *..*, URL: http://docs.oracle.com/javase/8/javafx/get-started-tutorial/jfx-overview.htm#JFXST784 (besucht am 17.11.2016)
+[[[dp1]]]:: *..*, URL: http://wwwswt.informatik.uni-rostock.de/patterns/Builder/ (besucht am 25.11.2016)
+[[[l1]]]:: *..*, URL: http://jnb.ociweb.com/jnb/jnbJan2010.html (besucht am 25.11.2016)
+[[[l2]]]:: *..*, URL: https://projectlombok.org/features/GetterSetter.html (besucht am 25.11.2016)
+[[[l3]]]:: *..*, URL: https://projectlombok.org/features/Builder.html (besucht am 25.11.2016)
+[[[l4]]]:: *..*, URL: https://projectlombok.org/features/EqualsAndHashCode.html (besucht am 25.11.2016)
+[[[l5]]]:: *..*, URL: https://projectlombok.org/features/NonNull.html (besucht am 25.11.2016)
+[[[l6]]]:: *..*, URL: https://projectlombok.org/features/experimental/UtilityClass.html (besucht am 25.11.2016)

@@ -7,7 +7,7 @@ include::{other}/preamble.adoc[]
 {author}
 {date}
 
-:toc: left
+:toc:
 :toc-title: Inhaltsverzeichnis
 
 include::{other}/abstract.adoc[]

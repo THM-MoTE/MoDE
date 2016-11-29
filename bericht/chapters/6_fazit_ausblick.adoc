@@ -1,6 +1,6 @@
 
 = Fazit & Ausblick
 
-fazit: wie gut ist es benutzbar, taugts was
+[big red]#TODO: fazit: wie gut ist es benutzbar, taugts was#
 
-ausblick: was sollte man noch verbessern
+[big red]#TODO: ausblick: was sollte man noch verbessern#

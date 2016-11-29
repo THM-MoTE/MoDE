@@ -1,7 +1,21 @@
 
 = Grundlagen
 
+In diesem Kapitel werden einige wichtige Grundlagen für dieser Arbeit erläutert.
+
 == Design Pattern
+
+=== [[mvc-pattern]] MVC Pattern
+
+Das MVC Pattern ist ein Architekturmuster bei dem eine Anwendung in 3 eigenständige Bereiche gegliedert wird:
+
+* Das **M**odel ist für die Haltung der Daten zuständig und informiert andere Module über Änderungen.
+* Die **V**iew dient zur Anzeige des Models.
+* Der **C**ontroller nimmt Eingaben entgegen und reicht diese an das entsprechende Model weiter.
+
+<<mvc>>
+
+image::https://glossar.hs-augsburg.de/static/media/f/fa/MVC-Module_01.png[caption="Figure 1: ", title="Model-View-Controller Pattern <<mvc>>"]
 
 === [[builder-pattern]] Builder Pattern
 
@@ -12,23 +26,25 @@ Das Builder Pattern trennt die Konstruktion und Repräsentation komplexer Objekt
 Mit dem State Pattern kann ein zustandsabhängiges Verhalten eines Objekts modelliert werden.
 Hierbei wird eine einheitliche Schnittstelle für den Zustand definiert. Jeder konkrete Zustand muss diese Schnittstelle dann implementieren. <<dp2>>
 
-image::https://www.philipphauer.de/study/se/design-pattern/state/state.svg[caption="Figure 1: ", title="State Pattern <<dp2>>"]
+image::https://www.philipphauer.de/study/se/design-pattern/state/state.svg[caption="Figure 2: ", title="State Pattern <<dp2>>"]
 
 == Modelica
 
-bla bla bla <<m1>>
+vllt nicht nötig? <<m1>>
 
-== OpenModelica Compiler
-btn:[test]
-menu:File[close]
-<<m2>>
+== OMC (OpenModelica Compiler)
+
+Der OMC ist ein quelloffener Compiler für Modelica. Er kann als interaktiver Server gestartet und über eine API angesprochen werden. Dadurch ist es möglich Modelle zuladen und Informationen über diese vom OMC zu erfragen.
+<<omc>>
 
 == JavaFX
 
-<<j1>>
+JavaFX ist ein Java Framework für die Entwicklung von grafischen Anwendungen. Durch das Beschreiben der Oberflächen in der XML-Sprache FXML wird eine strikte Trennung nach dem MVC Pattern(siehe <<mvc-pattern, MVC Pattern>>) realisiert.
+<<j1>><<j2>>
 
 == ANTLR
 
+ANTLR steht für **AN**other **T**ool for **L**anguage **R**ecognition und ist ein, seit 1989 von Terence Parr, an der Universität von San Francisco, in Java entwickelter, objektorientierter Parsergenerator.
 <<a1>>
 
 == Project Lombok
@@ -45,7 +61,7 @@ Durch das Angeben dieser Annotationen an bestimmten Feldern, werden für diese _
 include::../source/GetterSetter.java[tags=withLombok]
 ----
 
-=== @Builder & @Singular
+=== @Builder
 
 Mit der @Builder Annotation wird das Erbauer Pattern(siehe <<builder-pattern,Builder Pattern>>) als innere Klasse umgesetzt. <<l3>>
 

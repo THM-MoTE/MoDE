@@ -1,4 +1,63 @@
 
 = Ergebnisse
 
-vorstellung der anwendung, wie was funktioniert, mit screenshots
+In diesem Kapitel wird die Funktionsweise meiner Arbeit erläutert.
+
+[big red]#TODO: Screenshots#
+
+== Start der Anwendung
+
+Wenn die Anwendung gestartet wird, öffnet sich das Willkommensfenster(Bild 1). Beim ersten Start muss zuerst der Einstellungsdialog(Bild 2) geöffnet werden(Bild 1, 3) und der Pfad zum OMC und zur Open Modelica Bibliothek ausgewählt werden. Erst dannach stehen weitere Optionen im Willkommensfenster zur Verfügung.
+
+== Erstellen eines neuen Modells
+
+Um ein neues Modell zu erstellen muss der Erstellungsdialog über btn:[Erstelle neues Projekt] geöffnet werden.
+
+[big red]#TODO:wie gehts weiter#
+
+== Öffnen eines Modells
+
+Zum Öffen eines vorhandenen Modells muss dieses über btn:[Öffne Projekt] ausgewählt werden(Bild 1,2). MoDE sucht sich dann das Basismodell des ausgewählt Modells und öffnet dieses im Editor.
+
+== Funktionen im Editor
+
+=== Neues Modell erstellen
+
+Innerhalb eines Projektes wird über menu:Context Menü[neues Modell] ein Dialog zum Erstellen eines neuen Modells innerhalb des vorher ausgewählten Modells, geöffnet.
+
+=== Auswählen eines Modells
+
+In der Baumansicht auf der linken Seite wird zu dem zu öffnenden Modell navigiert und dieses über Doppelklick oder über menu:Context Menü[Als Diagramm öffnen] geöffnet. Das Modell wird dann in einem neuen Tab geöffnet.
+
+=== Hinzufügen eines Modells zu einem bestehenden Diagramm
+
+Um ein Modell zu einem Diagramm hinzuzufügen muss dieses in der Baumansicht gesucht und über Doppelklick oder über menu:Context Menü[Zum Diagramm hinzufügen] hinzugefügt werden. Es ist nur möglich Modelle mit einem Icon und Konnektoren einem Diagramm hinzuzufügen.
+
+=== Manipulieren von Modellen
+
+Ein Klick selektiert ein Modell, dies erkennt man an einem blauen Rahmen um das Modell. Ein Doppelklick auf auf das Modell öffnet die dazugehörige Diagrammansicht in einem neuen Tab.
+
+Modelle können mit Drag and Drop im Diagramm verschoben werden.
+
+Über kbd:[STRG] + Klick wird das Modell mit allen dazugehörigen Gleichungen gelöscht.
+
+=== Erstellen von Gleichungen
+
+Mit einem Klick auf einen Konnektor wird dieser selektiert. Wird jetzt auf einen zweiten Konnektor geklickt wird eine Verbindung zwischen diesen erzeugt und selektiert.
+
+=== Manipulieren von Gleichungen
+
+Ein einfacher Klick selektiert die Gleichung, diese färbt sich dann Rot.
+Mit einem Doppelklick auf die Gleichung wird ein neuer Knotenpunkt hinzugefügt.
+
+Mittels Drag and Drop kann entweder ein einzelner Punkt, wenn dieser angeklickt wurde, oder ein Linienabschnitt, wenn die Linie zwischen 2 Punkten angeklickt wurde, verschoben werden.
+
+Mit einem kbd:[STRG] + Klick auf einen Punkt wird dieser gelöscht. Ein kbd:[STRG] + Klick auf die Linie zwischen 2 Punkten löscht die gesamte Verbindung zwischen den Konnektoren.
+
+=== Zoomen
+
+Mit kbd:[SHIFT] + Scroll wird kann innerhalb der Diagrammansicht gezoomt werden.
+
+=== Speichern
+
+Die Tastenkombination kbd:[STRG + S] oder menu:Menü[Datei > Speichern] speichert das aktuelle Diagramm. Mit kbd:[STRG + SHIFT + S] oder über menu:Menü[Datei > Alles Speichern] werden alle offenen Diagramme gespeichert.

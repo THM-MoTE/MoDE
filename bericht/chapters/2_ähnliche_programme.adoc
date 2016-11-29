@@ -1,4 +1,9 @@
 
 = Ähnliche Programme
 
-welche gibts, was können die, was können die nicht
+== OMEdit
+
+Mit OMEdit gibt es einen leistungsstarken Editor für Modelica.
+Dieser unterstüzt alle Funktionen von Modellica. OMEdit bietet nicht nur die Möglichkeit Diagramme zu erstellen und zu bearbeiten, sondern auch Funktionen zum Zeichnen und Bearbeiten von Icons. Außerdem bringt OMEdit einen erweiterten Texteditor für Modelica mit.
+
+Aber gerade dieser große Funktionsumfang von OMEdit führt zu langen Ladezeiten. Beim Importieren von Modellen muss der User selbst darauf achten, sie in der richtigen Reihenfolge zu öffnen. Hierbei muss immer das Basismodell zuerst geladen werden. Außerdem ist es nicht möglich ein Diagramm zu speichern, solange dieses noch Fehler enthält.
