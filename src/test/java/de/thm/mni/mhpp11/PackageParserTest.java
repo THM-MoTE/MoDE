@@ -1,6 +1,6 @@
 package de.thm.mni.mhpp11;
 
-import de.thm.mni.mhpp11.util.parser.PackageParser;
+import de.thm.mni.mhpp11.parser.PackageParser;
 import org.junit.Test;
 
 import java.nio.file.Paths;

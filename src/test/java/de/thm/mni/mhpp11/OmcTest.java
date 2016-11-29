@@ -1,12 +1,12 @@
 package de.thm.mni.mhpp11;
 
-import de.thm.mni.mhpp11.util.config.Settings;
-import de.thm.mni.mhpp11.util.config.model.Modelica;
-import de.thm.mni.mhpp11.util.parser.ClassInformation;
-import de.thm.mni.mhpp11.util.parser.OMCompiler;
-import de.thm.mni.mhpp11.util.parser.ParserException;
-import de.thm.mni.mhpp11.util.parser.models.MoClass;
-import de.thm.mni.mhpp11.util.parser.models.MoRoot;
+import de.thm.mni.mhpp11.config.Settings;
+import de.thm.mni.mhpp11.config.model.Modelica;
+import de.thm.mni.mhpp11.parser.ClassInformation;
+import de.thm.mni.mhpp11.parser.OMCompiler;
+import de.thm.mni.mhpp11.parser.ParserException;
+import de.thm.mni.mhpp11.parser.models.MoClass;
+import de.thm.mni.mhpp11.parser.models.MoRoot;
 import javafx.util.Pair;
 import omc.corba.Result;
 import org.junit.After;

@@ -1,20 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ButtonType?>
-<?import javafx.scene.control.ChoiceBox?>
-<?import javafx.scene.control.DialogPane?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Slider?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
-
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <DialogPane prefHeight="650.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/8.0.76-ea"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.thm.mni.mhpp11.controller.SettingsController">
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.thm.mni.mhpp11.ui.controller.SettingsController">
    <content>
       <GridPane hgap="10.0">
         <columnConstraints>

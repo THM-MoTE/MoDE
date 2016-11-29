@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import de.thm.mni.mhpp11.control.TreeViewWithItems?>
+<?import de.thm.mni.mhpp11.ui.control.TreeViewWithItems?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 <?import org.controlsfx.control.BreadCrumbBar?>
 <?import org.kordamp.ikonli.javafx.*?>
-<GridPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" stylesheets="@../css/Main.css" xmlns="http://javafx.com/javafx/8.0.76-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.thm.mni.mhpp11.controller.MainController">
+<GridPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+          prefHeight="700.0" prefWidth="1000.0" stylesheets="@../css/Main.css"
+          xmlns="http://javafx.com/javafx/8.0.76-ea" xmlns:fx="http://javafx.com/fxml/1"
+          fx:controller="de.thm.mni.mhpp11.ui.controller.MainController">
   <columnConstraints>
     <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
     <ColumnConstraints hgrow="SOMETIMES" minWidth="5.0" />

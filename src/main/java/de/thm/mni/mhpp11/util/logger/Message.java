@@ -1,6 +1,6 @@
 package de.thm.mni.mhpp11.util.logger;
 
-import de.thm.mni.mhpp11.util.config.Settings;
+import de.thm.mni.mhpp11.config.Settings;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

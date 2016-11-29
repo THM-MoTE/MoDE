@@ -1,8 +1,8 @@
 package de.thm.mni.mhpp11;
 
-import de.thm.mni.mhpp11.controller.WelcomeController;
+import de.thm.mni.mhpp11.config.Settings;
+import de.thm.mni.mhpp11.ui.controller.WelcomeController;
 import de.thm.mni.mhpp11.util.Utilities;
-import de.thm.mni.mhpp11.util.config.Settings;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;

@@ -1,6 +1,7 @@
 package de.thm.mni.mhpp11.util;
 
-import de.thm.mni.mhpp11.util.config.Settings;
+import de.thm.mni.mhpp11.config.Settings;
+import de.thm.mni.mhpp11.ui.utilities.UTF8ResourceBundleControl;
 import lombok.experimental.UtilityClass;
 
 import java.io.IOException;
@@ -25,7 +26,15 @@ public class Utilities {
   }
   
   public URL getView(String view) {
-    return Utilities.getRessources("view/" + view + ".fxml");
+    return getView(".", view);
+  }
+  
+  public URL getControlView(String view) {
+    return getView("control", view);
+  }
+  
+  public URL getView(String prefix, String view) {
+    return Utilities.getRessources(prefix + "/view/" + view + ".fxml");
   }
   
   public ResourceBundle getBundle(String bundle) {
@@ -34,7 +43,15 @@ public class Utilities {
   }
   
   public ResourceBundle getBundle(String bundle, Locale lang) {
-    return ResourceBundle.getBundle("de/thm/mni/mhpp11/i18n/" + bundle, lang, new UTF8ResourceBundleControl());
+    return getBundle(".", bundle, lang);
+  }
+  
+  public ResourceBundle getControlBundle(String bundle, Locale lang) {
+    return getBundle("control", bundle, lang);
+  }
+  
+  public ResourceBundle getBundle(String prefix, String bundle, Locale lang) {
+    return ResourceBundle.getBundle("de/thm/mni/mhpp11/" + prefix + "/i18n/" + bundle, lang, new UTF8ResourceBundleControl());
   }
   
   public Path getHome() {
