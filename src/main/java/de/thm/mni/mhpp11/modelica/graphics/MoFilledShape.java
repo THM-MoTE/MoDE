@@ -5,6 +5,8 @@ import javafx.scene.paint.Color;
 import lombok.Builder;
 import lombok.Getter;
 
+import static de.thm.mni.mhpp11.modelica.graphics.Utilities.*;
+
 /**
  * Created by hobbypunk on 20.09.16.
  */
@@ -13,8 +15,8 @@ public class MoFilledShape extends MoGraphic {
   
   Color lineColor = Color.BLACK;
   Color fillColor = Color.BLACK;
-  de.thm.mni.mhpp11.modelica.graphics.Utilities.LinePattern pattern = de.thm.mni.mhpp11.modelica.graphics.Utilities.LinePattern.SOLID;
-  de.thm.mni.mhpp11.modelica.graphics.Utilities.FillPattern fillPattern = de.thm.mni.mhpp11.modelica.graphics.Utilities.FillPattern.NONE;
+  LinePattern pattern = LinePattern.SOLID;
+  FillPattern fillPattern = FillPattern.NONE;
   Double lineThickness = 0.25;
   
   MoFilledShape(MoFilledShape mfs) {
@@ -27,7 +29,7 @@ public class MoFilledShape extends MoGraphic {
   }
   
   @Builder(builderMethodName = "filledShapeBuilder")
-  MoFilledShape(MoGraphic mg, Color lineColor, Color fillColor, de.thm.mni.mhpp11.modelica.graphics.Utilities.LinePattern pattern, de.thm.mni.mhpp11.modelica.graphics.Utilities.FillPattern fillPattern, Double lineThickness) {
+  MoFilledShape(MoGraphic mg, Color lineColor, Color fillColor, LinePattern pattern, FillPattern fillPattern, Double lineThickness) {
     super(mg);
     if (lineColor != null) this.lineColor = lineColor;
     if (fillColor != null) this.fillColor = fillColor;
@@ -38,13 +40,13 @@ public class MoFilledShape extends MoGraphic {
   
   static void parse(MoFilledShapeBuilder mfsb, FilledShapeContext ctx) {
     if (ctx.fillColor() != null) {
-      mfsb.fillColor(de.thm.mni.mhpp11.modelica.graphics.Utilities.convertColor(ctx.fillColor().val));
+      mfsb.fillColor(convertColor(ctx.fillColor().val));
     } else if (ctx.lineColor() != null) {
-      mfsb.lineColor(de.thm.mni.mhpp11.modelica.graphics.Utilities.convertColor(ctx.lineColor().val));
+      mfsb.lineColor(convertColor(ctx.lineColor().val));
     } else if (ctx.linePattern() != null) {
-      mfsb.pattern(de.thm.mni.mhpp11.modelica.graphics.Utilities.LinePattern.valueOf(ctx.linePattern().type.getText().toUpperCase()));
+      mfsb.pattern(LinePattern.valueOf(ctx.linePattern().type.getText().toUpperCase()));
     } else if (ctx.fillPattern() != null) {
-      mfsb.fillPattern(de.thm.mni.mhpp11.modelica.graphics.Utilities.FillPattern.valueOf(ctx.fillPattern().type.getText().toUpperCase()));
+      mfsb.fillPattern(FillPattern.valueOf(ctx.fillPattern().type.getText().toUpperCase()));
     } else if (ctx.lineThickness() != null) {
       mfsb.lineThickness(Double.parseDouble(ctx.lineThickness().getText()));
     }

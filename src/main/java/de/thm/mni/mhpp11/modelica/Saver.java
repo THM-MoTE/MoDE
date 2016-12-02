@@ -20,38 +20,21 @@ public class Saver {
     if (moClass.getUnsavedChanges().getValue().equals(Change.NONE)) return;
     //TODO: create imports
     
-    List<String> tmp = new ArrayList<>();
-    
-    System.out.println("Edited Variables");
-    moClass.getVariables().filtered(moVariable -> moVariable.getUnsavedChanges().get().equals(Change.EDIT)).forEach(moVariable -> {
-      String str = moVariable.toString();
-      if (!str.isEmpty()) tmp.add(str);
-    });
-    
-    
-    System.out.println("==================================================");
-    
-    System.out.println("Edited Connections");
-    
-    
-    //TODO: save
     ClassInformation ci = moClass.getClassInformation();
     List<String> fileContent = new ArrayList<>();
     try {
       Files.lines(ci.getFileName()).forEachOrdered(fileContent::add);
       Integer end = saveVariables(fileContent, moClass);
       saveConnections(fileContent, moClass, end);
-      
-      fileContent.forEach(System.out::println);
+  
+      //fileContent.forEach(System.out::println);
       //Files.write(Files.createTempFile("MoDE_", ".mo"), fileContent);
       
       Files.write(ci.getFileName(), fileContent);
+      moClass.getUnsavedChanges().setValue(Change.NONE);
     } catch (IOException e) {
       e.printStackTrace();
     }
-    
-    
-    moClass.getUnsavedChanges().setValue(Change.NONE);
   }
   
   private Integer saveVariables(List<String> fileContent, MoClass moClass) {
@@ -106,10 +89,6 @@ public class Saver {
     String tmp = mv.toString();
     str += tmp.substring(tmp.indexOf("annotation"));
     return str;
-  }
-  
-  private void saveConnections(List<String> fileContent, MoClass moClass) {
-    saveConnections(fileContent, moClass, moClass.getClassInformation().getLineNumberEnd());
   }
   
   private void saveConnections(List<String> fileContent, MoClass moClass, Integer end) {

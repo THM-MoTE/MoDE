@@ -5,6 +5,7 @@ import de.thm.mni.mhpp11.modelica.graphics.Utilities.Smooth;
 import de.thm.mni.mhpp11.parser.modelica.AnnotationParser;
 import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.LineDataContext;
 import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.PointContext;
+import de.thm.mni.mhpp11.util.StringBuilderUtilities;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -18,8 +19,6 @@ import lombok.Singular;
 
 import java.util.List;
 
-import static de.thm.mni.mhpp11.util.Utilities.addProperty;
-import static de.thm.mni.mhpp11.util.Utilities.addString;
 
 /**
  * Created by hobbypunk on 19.09.16.
@@ -59,8 +58,8 @@ public class MoLine extends MoGraphic implements HasSmoothOption {
     this.arrows[0] = start;
     this.arrows[1] = end;
   
-    this.color.set((color == null) ? DEFAULT_COLOR : color);
-    this.linePattern.set((linePattern == null) ? DEFAULT_LINEPATTERN : linePattern);
+    if (color != null) this.color.set(color);
+    if (linePattern != null) this.linePattern.set(linePattern);
     if (thickness != null) this.thickness = thickness;
     if (arrowSize != null) this.arrowSize = arrowSize;
     if (smooth != null) this.smooth = smooth;
@@ -81,9 +80,9 @@ public class MoLine extends MoGraphic implements HasSmoothOption {
   public String toString() {
     StringBuilder sb = new StringBuilder("Line(");
     sb.append(super.toString());
-    addString(sb, "points = " + Utilities.toString(points));
-    if (!DEFAULT_COLOR.equals(this.color.get())) addProperty(sb, this.color);
-    if (!DEFAULT_LINEPATTERN.equals(this.linePattern.get())) addProperty(sb, this.linePattern, "LinePattern.");
+    StringBuilderUtilities.addString(sb, "points = " + Utilities.toString(points), "Line\\(");
+    if (!DEFAULT_COLOR.equals(this.color.get())) StringBuilderUtilities.addProperty(sb, this.color);
+    if (!DEFAULT_LINEPATTERN.equals(this.linePattern.get())) StringBuilderUtilities.addProperty(sb, this.linePattern, "LinePattern.");
     
     return sb.append(')').toString();
   }

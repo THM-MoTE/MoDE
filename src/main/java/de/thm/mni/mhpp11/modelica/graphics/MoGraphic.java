@@ -3,6 +3,7 @@ package de.thm.mni.mhpp11.modelica.graphics;
 import de.thm.mni.mhpp11.modelica.interfaces.Changeable;
 import de.thm.mni.mhpp11.parser.OMCompiler;
 import de.thm.mni.mhpp11.parser.modelica.AnnotationParser.*;
+import de.thm.mni.mhpp11.util.StringBuilderUtilities;
 import javafx.beans.property.*;
 import javafx.geometry.Point2D;
 import lombok.Builder;
@@ -11,9 +12,8 @@ import lombok.Setter;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-
-import static de.thm.mni.mhpp11.util.Utilities.addProperty;
 
 /**
  * Created by hobbypunk on 16.09.16.
@@ -52,7 +52,7 @@ public class MoGraphic implements Changeable {
   
   @Override
   public List<Changeable> getChangeChildren() {
-    return null;
+    return Collections.EMPTY_LIST;
   }
   
   protected void initChangeListeners() {
@@ -65,9 +65,9 @@ public class MoGraphic implements Changeable {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    if (!DEFAULT_VISIBLE.equals(this.visible.get())) addProperty(sb, this.visible);
-    if (!DEFAULT_ORIGIN.equals(this.origin.get())) addProperty(sb, this.origin);
-    if (!DEFAULT_ROTATION.equals(this.rotation.get())) addProperty(sb, this.rotation);
+    if (!DEFAULT_VISIBLE.equals(this.visible.get())) StringBuilderUtilities.addProperty(sb, this.visible);
+    if (!DEFAULT_ORIGIN.equals(this.origin.get())) StringBuilderUtilities.addProperty(sb, this.origin);
+    if (!DEFAULT_ROTATION.equals(this.rotation.get())) StringBuilderUtilities.addProperty(sb, this.rotation);
     
     return sb.toString().replaceAll(", $", "");
   }

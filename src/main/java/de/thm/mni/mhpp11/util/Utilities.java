@@ -2,8 +2,6 @@ package de.thm.mni.mhpp11.util;
 
 import de.thm.mni.mhpp11.config.Settings;
 import de.thm.mni.mhpp11.ui.utilities.UTF8ResourceBundleControl;
-import javafx.beans.property.ReadOnlyProperty;
-import javafx.scene.paint.Color;
 import lombok.experimental.UtilityClass;
 
 import java.io.IOException;
@@ -126,25 +124,4 @@ public class Utilities {
     return numberFormat;
   }
   
-  public StringBuilder addProperty(StringBuilder sb, ReadOnlyProperty<?> property) {
-    return addProperty(sb, property, "");
-  }
-  
-  public StringBuilder addProperty(StringBuilder sb, ReadOnlyProperty<?> property, String valuePrefix) {
-    if (!sb.toString().isEmpty()) sb.append(", ");
-    sb.append(property.getName()).append(" = ");
-    if (property.getValue() instanceof Double)
-      sb.append(getFormatter().format(property.getValue()));
-    else if (property.getValue() instanceof Color)
-      de.thm.mni.mhpp11.modelica.graphics.Utilities.convertColor(property.getValue());
-    else
-      sb.append(valuePrefix).append(property.getValue());
-    return sb;
-  }
-  
-  public StringBuilder addString(StringBuilder sb, String str) {
-    if (!sb.toString().isEmpty()) sb.append(", ");
-    sb.append(str);
-    return sb;
-  }
 }
