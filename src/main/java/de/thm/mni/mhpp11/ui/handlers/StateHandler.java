@@ -1,6 +1,6 @@
 package de.thm.mni.mhpp11.ui.handlers;
 
-import de.thm.mni.mhpp11.parser.models.MoConnector;
+import de.thm.mni.mhpp11.modelica.MoConnector;
 import de.thm.mni.mhpp11.ui.control.modelica.MoDiagramGroup;
 import de.thm.mni.mhpp11.ui.control.modelica.MoIconGroup;
 import de.thm.mni.mhpp11.ui.shape.Line;

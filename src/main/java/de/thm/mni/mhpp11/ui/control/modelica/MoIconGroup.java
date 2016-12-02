@@ -1,10 +1,10 @@
 package de.thm.mni.mhpp11.ui.control.modelica;
 
-import de.thm.mni.mhpp11.parser.models.MoClass;
-import de.thm.mni.mhpp11.parser.models.MoConnector;
-import de.thm.mni.mhpp11.parser.models.MoVariable;
-import de.thm.mni.mhpp11.parser.models.graphics.MoText;
-import de.thm.mni.mhpp11.parser.models.graphics.MoTransformation;
+import de.thm.mni.mhpp11.modelica.MoClass;
+import de.thm.mni.mhpp11.modelica.MoConnector;
+import de.thm.mni.mhpp11.modelica.MoVariable;
+import de.thm.mni.mhpp11.modelica.graphics.MoText;
+import de.thm.mni.mhpp11.modelica.graphics.MoTransformation;
 import de.thm.mni.mhpp11.ui.shape.interfaces.Focusable;
 import javafx.beans.property.ObjectProperty;
 import javafx.geometry.Point2D;

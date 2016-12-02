@@ -1,6 +1,6 @@
 package de.thm.mni.mhpp11.ui.statemachine.states.connection;
 
-import de.thm.mni.mhpp11.parser.models.MoConnection;
+import de.thm.mni.mhpp11.modelica.MoConnection;
 import de.thm.mni.mhpp11.ui.control.modelica.MoDiagramGroup;
 import de.thm.mni.mhpp11.ui.shape.Line;
 import javafx.geometry.Point2D;
@@ -38,7 +38,7 @@ public class ConnectionDeleteState extends ConnectionModifyState {
         for (int i = 0, size = connections.size(); i < size; i++) {
           conn = connections.get(i);
           if (conn.getMoGraphics().contains(getSource().getData())) {
-            connections.remove(i);
+            getParent().getMoClass().removeConnection(conn);
             break;
           }
         }

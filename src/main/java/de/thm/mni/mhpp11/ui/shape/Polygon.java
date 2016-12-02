@@ -1,6 +1,6 @@
 package de.thm.mni.mhpp11.ui.shape;
 
-import de.thm.mni.mhpp11.parser.models.graphics.MoPolygon;
+import de.thm.mni.mhpp11.modelica.graphics.MoPolygon;
 import de.thm.mni.mhpp11.ui.control.modelica.MoGroup;
 import de.thm.mni.mhpp11.ui.shape.interfaces.CalculatePathElements;
 import de.thm.mni.mhpp11.ui.shape.interfaces.Element;

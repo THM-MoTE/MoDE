@@ -1,7 +1,7 @@
 package de.thm.mni.mhpp11.ui.shape.interfaces;
 
-import de.thm.mni.mhpp11.parser.models.graphics.HasSmoothOption;
-import de.thm.mni.mhpp11.parser.models.graphics.Utilities.Smooth;
+import de.thm.mni.mhpp11.modelica.graphics.HasSmoothOption;
+import de.thm.mni.mhpp11.modelica.graphics.Utilities.Smooth;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.LineTo;

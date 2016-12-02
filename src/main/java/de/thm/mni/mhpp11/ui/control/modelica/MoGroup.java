@@ -1,8 +1,8 @@
 package de.thm.mni.mhpp11.ui.control.modelica;
 
-import de.thm.mni.mhpp11.parser.models.MoClass;
-import de.thm.mni.mhpp11.parser.models.MoVariable;
-import de.thm.mni.mhpp11.parser.models.graphics.*;
+import de.thm.mni.mhpp11.modelica.MoClass;
+import de.thm.mni.mhpp11.modelica.MoVariable;
+import de.thm.mni.mhpp11.modelica.graphics.*;
 import de.thm.mni.mhpp11.ui.shape.*;
 import de.thm.mni.mhpp11.ui.shape.interfaces.Element;
 import de.thm.mni.mhpp11.ui.shape.interfaces.HasInitialStroke;

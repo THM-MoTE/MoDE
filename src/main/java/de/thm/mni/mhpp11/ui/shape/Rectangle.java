@@ -1,6 +1,6 @@
 package de.thm.mni.mhpp11.ui.shape;
 
-import de.thm.mni.mhpp11.parser.models.graphics.MoRectangle;
+import de.thm.mni.mhpp11.modelica.graphics.MoRectangle;
 import de.thm.mni.mhpp11.ui.control.modelica.MoGroup;
 import de.thm.mni.mhpp11.ui.shape.interfaces.Element;
 import de.thm.mni.mhpp11.ui.shape.interfaces.FilledElement;

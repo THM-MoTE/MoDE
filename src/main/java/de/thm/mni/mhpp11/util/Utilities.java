@@ -2,6 +2,8 @@ package de.thm.mni.mhpp11.util;
 
 import de.thm.mni.mhpp11.config.Settings;
 import de.thm.mni.mhpp11.ui.utilities.UTF8ResourceBundleControl;
+import javafx.beans.property.ReadOnlyProperty;
+import javafx.scene.paint.Color;
 import lombok.experimental.UtilityClass;
 
 import java.io.IOException;
@@ -10,6 +12,9 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -20,6 +25,13 @@ import java.util.ResourceBundle;
  */
 @UtilityClass
 public class Utilities {
+  
+  private final NumberFormat numberFormat;
+  
+  static {
+    DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.ENGLISH);
+    numberFormat = new DecimalFormat("#.##", symbols);
+  }
   
   public URL getRessources(String postfix) {
     return Utilities.class.getResource("/de/thm/mni/mhpp11/" + postfix);
@@ -108,5 +120,31 @@ public class Utilities {
   public Boolean isLinux() {
     String os = System.getProperty("os.name").toLowerCase();
     return os.contains("linux");
+  }
+  
+  public NumberFormat getFormatter() {
+    return numberFormat;
+  }
+  
+  public StringBuilder addProperty(StringBuilder sb, ReadOnlyProperty<?> property) {
+    return addProperty(sb, property, "");
+  }
+  
+  public StringBuilder addProperty(StringBuilder sb, ReadOnlyProperty<?> property, String valuePrefix) {
+    if (!sb.toString().isEmpty()) sb.append(", ");
+    sb.append(property.getName()).append(" = ");
+    if (property.getValue() instanceof Double)
+      sb.append(getFormatter().format(property.getValue()));
+    else if (property.getValue() instanceof Color)
+      de.thm.mni.mhpp11.modelica.graphics.Utilities.convertColor(property.getValue());
+    else
+      sb.append(valuePrefix).append(property.getValue());
+    return sb;
+  }
+  
+  public StringBuilder addString(StringBuilder sb, String str) {
+    if (!sb.toString().isEmpty()) sb.append(", ");
+    sb.append(str);
+    return sb;
   }
 }

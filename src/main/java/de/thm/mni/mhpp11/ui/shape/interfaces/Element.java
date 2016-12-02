@@ -1,6 +1,6 @@
 package de.thm.mni.mhpp11.ui.shape.interfaces;
 
-import de.thm.mni.mhpp11.parser.models.graphics.MoGraphic;
+import de.thm.mni.mhpp11.modelica.graphics.MoGraphic;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.transform.Rotate;

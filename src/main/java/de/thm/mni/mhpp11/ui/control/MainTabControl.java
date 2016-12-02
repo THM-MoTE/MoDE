@@ -1,6 +1,6 @@
 package de.thm.mni.mhpp11.ui.control;
 
-import de.thm.mni.mhpp11.parser.models.MoClass;
+import de.thm.mni.mhpp11.modelica.MoClass;
 import de.thm.mni.mhpp11.ui.control.modelica.MoDiagramGroup;
 import de.thm.mni.mhpp11.ui.control.modelica.MoGroup;
 import de.thm.mni.mhpp11.ui.control.modelica.MoIconGroup;
@@ -17,6 +17,8 @@ import lombok.Getter;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+
+import static de.thm.mni.mhpp11.modelica.interfaces.Changeable.Change;
 
 @Getter
 @EqualsAndHashCode(callSuper = false, exclude = {"main", "loader"})
@@ -55,13 +57,13 @@ public class MainTabControl extends Tab implements Initializable {
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     this.setClosable(true);
-    data.getUnsavedChanges().setValue(false);
+    //data.getUnsavedChanges().setValue(Change.NONE);
     MoGroup mp;
     this.setGraphic(new MoIconGroup(data).scaleToSize(20., 20.));
     if (diagram) mp = new MoDiagramGroup(data);
     else mp = new MoIconGroup(data, false);
   
-    updateText(false);
+    updateText(Change.NONE);
   
     mp.scaleToSize(600., 600.);
     mp.setLayoutX(100.);
@@ -74,9 +76,9 @@ public class MainTabControl extends Tab implements Initializable {
     });
   }
   
-  private void updateText(Boolean unsavedChanges) {
+  private void updateText(Change unsavedChanges) {
     this.setText(data.getSimpleName() + ((diagram) ? "" : "(modelica)"));
-    if (unsavedChanges) this.setText(this.getText() + "*");
+    if (!unsavedChanges.equals(Change.NONE)) this.setText(this.getText() + "*");
     //TODO: text color
   }
   

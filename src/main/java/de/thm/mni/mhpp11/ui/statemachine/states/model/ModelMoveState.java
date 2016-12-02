@@ -1,6 +1,6 @@
 package de.thm.mni.mhpp11.ui.statemachine.states.model;
 
-import de.thm.mni.mhpp11.parser.models.MoConnection;
+import de.thm.mni.mhpp11.modelica.MoConnection;
 import de.thm.mni.mhpp11.ui.control.modelica.MoDiagramGroup;
 import de.thm.mni.mhpp11.ui.control.modelica.MoIconGroup;
 import de.thm.mni.mhpp11.ui.handlers.FocusHandler;

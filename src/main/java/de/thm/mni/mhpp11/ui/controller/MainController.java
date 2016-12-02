@@ -3,10 +3,11 @@ package de.thm.mni.mhpp11.ui.controller;
 import de.thm.mni.mhpp11.config.Settings;
 import de.thm.mni.mhpp11.config.model.MainWindow;
 import de.thm.mni.mhpp11.config.model.Project;
+import de.thm.mni.mhpp11.modelica.MoClass;
+import de.thm.mni.mhpp11.modelica.MoRoot;
+import de.thm.mni.mhpp11.modelica.Saver;
 import de.thm.mni.mhpp11.parser.OMCompiler;
 import de.thm.mni.mhpp11.parser.PackageParser;
-import de.thm.mni.mhpp11.parser.models.MoClass;
-import de.thm.mni.mhpp11.parser.models.MoRoot;
 import de.thm.mni.mhpp11.ui.control.ContextMenuItem;
 import de.thm.mni.mhpp11.ui.control.DragResizer;
 import de.thm.mni.mhpp11.ui.control.MainTabControl;
@@ -212,7 +213,7 @@ public class MainController extends NotifyController {
   
   private void handleSave(MoClass moClass) {
     System.out.println(moClass);
-    moClass.save();
+    Saver.save(moClass);
   }
 }
 

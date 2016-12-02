@@ -1,10 +1,10 @@
 package de.thm.mni.mhpp11.ui.handlers;
 
-import de.thm.mni.mhpp11.parser.models.MoClass;
-import de.thm.mni.mhpp11.parser.models.MoVariable;
-import de.thm.mni.mhpp11.parser.models.annotations.MoPlacement;
-import de.thm.mni.mhpp11.parser.models.graphics.MoCoordinateSystem;
-import de.thm.mni.mhpp11.parser.models.graphics.MoTransformation;
+import de.thm.mni.mhpp11.modelica.MoClass;
+import de.thm.mni.mhpp11.modelica.MoVariable;
+import de.thm.mni.mhpp11.modelica.annotations.MoPlacement;
+import de.thm.mni.mhpp11.modelica.graphics.MoCoordinateSystem;
+import de.thm.mni.mhpp11.modelica.graphics.MoTransformation;
 import de.thm.mni.mhpp11.ui.control.MainTabControl;
 import javafx.geometry.Point2D;
 import javafx.scene.control.Tab;

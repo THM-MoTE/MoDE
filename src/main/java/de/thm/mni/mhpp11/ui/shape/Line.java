@@ -1,7 +1,7 @@
 package de.thm.mni.mhpp11.ui.shape;
 
-import de.thm.mni.mhpp11.parser.models.graphics.MoLine;
-import de.thm.mni.mhpp11.parser.models.graphics.Utilities;
+import de.thm.mni.mhpp11.modelica.graphics.MoLine;
+import de.thm.mni.mhpp11.modelica.graphics.Utilities;
 import de.thm.mni.mhpp11.ui.control.modelica.MoGroup;
 import de.thm.mni.mhpp11.ui.shape.interfaces.CalculatePathElements;
 import de.thm.mni.mhpp11.ui.shape.interfaces.Element;
@@ -61,9 +61,9 @@ public class Line extends Path implements Element, HasInitialStroke, CalculatePa
     
     calcElements(getData().getPoints());
     this.getStrokeDashArray().clear();
-    this.getStrokeDashArray().addAll(Utilities.getLinePattern(getData().getLinePattern()));
+    this.getStrokeDashArray().addAll(Utilities.getLinePattern(getData().getLinePattern().get()));
     this.setInitialStrokeWidth(getData().getThickness());
-    this.setStroke(getData().getColor());
+    this.setStroke(getData().getColor().get());
   }
   
   @Override

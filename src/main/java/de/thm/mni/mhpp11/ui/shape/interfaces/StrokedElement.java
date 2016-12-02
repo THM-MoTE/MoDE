@@ -1,7 +1,7 @@
 package de.thm.mni.mhpp11.ui.shape.interfaces;
 
-import de.thm.mni.mhpp11.parser.models.graphics.MoFilledShape;
-import de.thm.mni.mhpp11.parser.models.graphics.Utilities;
+import de.thm.mni.mhpp11.modelica.graphics.MoFilledShape;
+import de.thm.mni.mhpp11.modelica.graphics.Utilities;
 import javafx.collections.ObservableList;
 
 /**

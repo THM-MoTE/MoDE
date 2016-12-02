@@ -1,7 +1,7 @@
 package de.thm.mni.mhpp11.parser;
 
 import de.thm.mni.mhpp11.config.Settings;
-import de.thm.mni.mhpp11.parser.models.MoClass;
+import de.thm.mni.mhpp11.modelica.MoClass;
 import javafx.util.Pair;
 
 import java.io.IOException;

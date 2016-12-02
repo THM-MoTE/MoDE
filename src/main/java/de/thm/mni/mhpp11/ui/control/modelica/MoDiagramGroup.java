@@ -1,9 +1,9 @@
 package de.thm.mni.mhpp11.ui.control.modelica;
 
-import de.thm.mni.mhpp11.parser.models.MoClass;
-import de.thm.mni.mhpp11.parser.models.MoConnection;
-import de.thm.mni.mhpp11.parser.models.MoConnector;
-import de.thm.mni.mhpp11.parser.models.MoVariable;
+import de.thm.mni.mhpp11.modelica.MoClass;
+import de.thm.mni.mhpp11.modelica.MoConnection;
+import de.thm.mni.mhpp11.modelica.MoConnector;
+import de.thm.mni.mhpp11.modelica.MoVariable;
 import de.thm.mni.mhpp11.ui.handlers.FocusHandler;
 import de.thm.mni.mhpp11.ui.handlers.StateHandler;
 import javafx.collections.ListChangeListener;

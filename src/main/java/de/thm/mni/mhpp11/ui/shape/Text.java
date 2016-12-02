@@ -1,7 +1,7 @@
 package de.thm.mni.mhpp11.ui.shape;
 
-import de.thm.mni.mhpp11.parser.models.graphics.MoText;
-import de.thm.mni.mhpp11.parser.models.graphics.Utilities;
+import de.thm.mni.mhpp11.modelica.graphics.MoText;
+import de.thm.mni.mhpp11.modelica.graphics.Utilities;
 import de.thm.mni.mhpp11.ui.control.modelica.MoGroup;
 import de.thm.mni.mhpp11.ui.shape.interfaces.Element;
 import de.thm.mni.mhpp11.ui.shape.interfaces.FilledElement;

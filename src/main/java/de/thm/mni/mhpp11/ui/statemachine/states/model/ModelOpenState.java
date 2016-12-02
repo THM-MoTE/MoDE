@@ -1,6 +1,6 @@
 package de.thm.mni.mhpp11.ui.statemachine.states.model;
 
-import de.thm.mni.mhpp11.parser.models.MoClass;
+import de.thm.mni.mhpp11.modelica.MoClass;
 import de.thm.mni.mhpp11.ui.control.MainTabControl;
 import de.thm.mni.mhpp11.ui.control.modelica.MoDiagramGroup;
 import de.thm.mni.mhpp11.ui.control.modelica.MoIconGroup;

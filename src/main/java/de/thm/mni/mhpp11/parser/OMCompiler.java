@@ -21,6 +21,7 @@ import java.util.*;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -226,8 +227,9 @@ public class OMCompiler {
             return alwaysReturn || match;
           }
         }).map(String::trim).reduce((s, s2) -> s + s2).ifPresent(s -> {
-          m.put("line", s);
+          m.put("isParam", Boolean.toString(s.trim().startsWith("parameter")));
           if (s.contains("annotation")) m.put("annotation", s.substring(s.indexOf("annotation(")));
+          m.put("line", s);
         });
       }
     }
@@ -270,19 +272,28 @@ public class OMCompiler {
   public List<Map<String, String>> getConnections(ClassInformation ci) {
     try (Stream<String> lines = Files.lines(ci.getFileName())) {
       return lines.limit(ci.getLineNumberEnd()).skip(ci.getLineNumberStart() - 1).filter(new Predicate<String>() {
-        Boolean match = false;
+        Boolean equationFound = false;
         
         @Override
         public boolean test(String s) {
-          Boolean alwaysReturn = false;
-          if (connect.matcher(s).matches()) alwaysReturn = match = true;
-          if (s.endsWith(";")) {
-            if (match) alwaysReturn = true;
-            match = false;
+          if (s.trim().startsWith("equation")) {
+            equationFound = true;
+            return false;
           }
-          return alwaysReturn || match;
+          return equationFound;
         }
-      }).filter(s -> s.contains("annotation")).map(String::trim).map(s -> {
+      }).collect(ArrayList::new, new BiConsumer<ArrayList<String>, String>() {
+        String tmp = "";
+  
+        @Override
+        public void accept(ArrayList<String> objects, String s) {
+          if (s.trim().startsWith("connect(")) tmp = "";
+          tmp += s.trim();
+          if (s.trim().endsWith(";")) {
+            if (tmp.startsWith("connect(") && tmp.contains("annotation")) objects.add(tmp);
+          }
+        }
+      }, ArrayList::addAll).stream().map(s -> {
         Map<String, String> map = new HashMap<>();
         Pattern p = Pattern.compile("connect\\(\\s*([^,\\)\\s]+)\\s*,\\s*([^,\\)\\s]+)\\s*\\)\\s");
         Matcher m = p.matcher(s);
@@ -293,6 +304,7 @@ public class OMCompiler {
         }
         return Collections.unmodifiableMap(map);
       }).filter(map -> !map.isEmpty()).collect(ImmutableListCollector.toImmutableList());
+  
     } catch (IOException e) {
       e.printStackTrace();
     }
