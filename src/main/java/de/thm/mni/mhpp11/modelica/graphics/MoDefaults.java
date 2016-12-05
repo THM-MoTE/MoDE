@@ -39,21 +39,33 @@ public class MoDefaults {
     if (moPackage == null) {
       List<Point2D> points = new ArrayList<>();
       points.add(new Point2D(-40., -70.));
+      points.add(new Point2D(-40., -69.));
+      points.add(new Point2D(-40., 69.));
       points.add(new Point2D(-40., 70.));
+      points.add(new Point2D(-39., 70.));
       points.add(new Point2D(-20., 70.));
       points.add(new Point2D(0., 70.));
       points.add(new Point2D(30., 35.));
       points.add(new Point2D(0., 0.));
+      points.add(new Point2D(-19., 0.));
       points.add(new Point2D(-20., 0.));
   
-      points.add(new Point2D(-20., 50.));
-      points.add(new Point2D(-5., 50.));
-      points.add(new Point2D(10., 35.));
-      points.add(new Point2D(-5., 20.));
+      points.add(new Point2D(-20., 1.));
+      points.add(new Point2D(-20., 19.));
       points.add(new Point2D(-20., 20.));
+      points.add(new Point2D(-19., 20.));
+      points.add(new Point2D(-5., 20.));
+      points.add(new Point2D(10., 35.));
+      points.add(new Point2D(-5., 50.));
+      points.add(new Point2D(-19., 50.));
+      points.add(new Point2D(-20., 50.));
+      points.add(new Point2D(-20., 49.));
   
       points.add(new Point2D(-20., 0.));
+      points.add(new Point2D(-20., -69.));
       points.add(new Point2D(-20., -70.));
+      points.add(new Point2D(-21., -70.));
+      points.add(new Point2D(-39., -70.));
       points.add(new Point2D(-40., -70.));
     
       moPackage = newAnything(Color.DARKRED, points, Utilities.Smooth.BEZIER);
