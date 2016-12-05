@@ -41,14 +41,8 @@ public class Saver {
     ClassInformation ci = moClass.getClassInformation();
     Integer start = ci.getLineNumberStart();
     Integer end = ci.getLineNumberEnd();
-    
-    for (MoVariable moVariable : moClass.getVariables().filtered(moVariable -> moVariable.getUnsavedChanges().get().equals(Change.NEW))) {
-      String str = moVariable.toString();
-      if (!str.isEmpty()) {
-        fileContent.add(start, str);
-        end++;
-      }
-    }
+  
+    String leading = fileContent.get(start).replaceAll("^(\\s*).+", "$1") + "  ";
     
     for (int i = start; i < end; i++) {
       for (MoVariable mv : moClass.getDeletedVariables()) {
@@ -73,13 +67,21 @@ public class Saver {
             fileContent.remove(i);
             end--;
           } while (!line.endsWith(";"));
-          fileContent.add(i, generateSaveString(mv));
+          fileContent.add(i, leading + generateSaveString(mv));
           mv.getUnsavedChanges().set(Change.NONE);
           break;
         }
       }
     }
-    
+  
+    for (MoVariable moVariable : moClass.getVariables().filtered(moVariable -> moVariable.getUnsavedChanges().get().equals(Change.NEW))) {
+      String str = moVariable.toString();
+      if (!str.isEmpty()) {
+        fileContent.add(start, leading + str);
+        end++;
+      }
+    }
+  
     return end;
   }
   
@@ -101,11 +103,13 @@ public class Saver {
         break;
       }
     }
-    
+    String leading = "";
     if (pos == -1) {
       pos = end - 1;
-      fileContent.add(pos++, "equation");
+      leading = fileContent.get(ci.getColumnNumberStart() - 1).replaceAll("^(\\s*).+", "$1") + "  ";
+      fileContent.add(pos++, leading + "equation");
     }
+    leading = fileContent.get(pos - 1).replaceAll("^(\\s*).+", "$1") + "  ";
     
     for (int i = pos; i < end; i++) {
       for (MoConnection mc : moClass.getDeletedConnections()) {
@@ -130,7 +134,7 @@ public class Saver {
             fileContent.remove(i);
             end--;
           } while (!line.endsWith(";"));
-          fileContent.add(i, mc.toString());
+          fileContent.add(i, leading + "  " + mc.toString());
           mc.getUnsavedChanges().set(Change.NONE);
           break;
         }
@@ -141,7 +145,7 @@ public class Saver {
     for (MoConnection mc : moClass.getConnections().filtered(moConnection -> moConnection.getUnsavedChanges().get().equals(Change.NEW))) {
       String str = mc.toString();
       if (!str.isEmpty()) {
-        fileContent.add(pos, mc.toString());
+        fileContent.add(pos, leading + "  " + mc.toString());
         mc.getUnsavedChanges().set(Change.NONE);
       }
     }
