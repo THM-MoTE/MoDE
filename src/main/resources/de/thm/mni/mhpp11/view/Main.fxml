@@ -5,7 +5,6 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
-<?import org.controlsfx.control.BreadCrumbBar?>
 <?import org.kordamp.ikonli.javafx.*?>
 <GridPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
           prefHeight="700.0" prefWidth="1000.0" stylesheets="@../css/Main.css"
@@ -103,11 +102,11 @@
                       </Menu>
                     </menus>
                   </MenuBar>
-                  <ToolBar prefHeight="40.0" prefWidth="200.0">
-                     <items>
-                        <BreadCrumbBar />
-                     </items>
-                  </ToolBar>
+                 <!--<ToolBar prefHeight="40.0" prefWidth="200.0">
+                    <items>
+                       <BreadCrumbBar />
+                    </items>
+                 </ToolBar>-->
                </children>
             </VBox>
          </top>
@@ -155,14 +154,11 @@
                <children>
                   <VBox alignment="TOP_CENTER" HBox.hgrow="ALWAYS">
                      <children>
-                        <ToolBar>
-                           <VBox.margin>
-                              <Insets />
-                           </VBox.margin>
-                           <items>
-                              <TextField fx:id="tfLibFilter" alignment="TOP_LEFT" promptText="Filter" />
-                           </items>
-                        </ToolBar>
+                       <!--                        <ToolBar visible="false">
+                                                  <items>
+                                                     <TextField fx:id="tfLibFilter" alignment="TOP_LEFT" promptText="Filter" visible="false" />
+                                                  </items>
+                                               </ToolBar>-->
                         <HBox VBox.vgrow="ALWAYS">
                            <VBox.margin>
                               <Insets bottom="-1.0" left="-1.0" right="-1.0" top="-1.0" />
