@@ -21,7 +21,7 @@ import java.util.Observer;
 public class Configuration extends MyObservable implements Observer {
   
   @Element(required = false)
-  protected Locale lang = new Locale("en", "US");
+  protected Locale lang = Locale.ENGLISH;
   @Element(required = false)
   protected Recent recent = new Recent();
   @Element(required = false)
