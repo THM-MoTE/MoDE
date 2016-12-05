@@ -1,4 +1,5 @@
 :chapters: chapters
+:images: images
 :other: other
 
 include::{other}/preamble.adoc[]

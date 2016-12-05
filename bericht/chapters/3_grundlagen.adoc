@@ -30,7 +30,7 @@ image::https://www.philipphauer.de/study/se/design-pattern/state/state.svg[capti
 
 == Modelica
 
-vllt nicht nötig? <<m1>>
+Modelica ist eine objektorientierte Sprache zur Erstellung von physikalischen Modellen. Diese werden in zum Lösen in Mathematische übersetzt. Modelica arbeitet mit Gleichungen anstatt mit Zuweisungen. Dadurch muss nicht händisch auf die gesuchte Variable aufgelöst werden. <<m1>>
 
 == OMC (OpenModelica Compiler)
 

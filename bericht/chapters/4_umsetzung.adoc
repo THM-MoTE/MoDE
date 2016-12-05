@@ -1,20 +1,20 @@
 
 = Umsetzung
 
-In diesem Kapitel werden die wichtigsten Entscheidungen wärend der Umsetzung meiner Projektphase vorgestellt.
+Während der Umsetzung sind einige Schwierigkeiten überwunden und Entscheidungen getroffen werden. Einige wichtige Aspekte der Umsetzung kurz vorgestellt.
 
 == jModelica oder Open Modelica Compiler
 
-Zuerst setzte ich bei der Umsetzung von MoDE auf jModelica, um Abhängigkeiten zu Anwendungen, die für jedes Betriebssystem extra kompiliert werden müssen, zu vermeiden. Ich musste feststellen, dass jModelica noch weit davon entfernt ist als Ersatz für den Open Modelica Compiler zu fungieren. Einfache Modelle lassen sich problemlos von jModelica parsen, aber bei komplexeren Modellen haben sich dann Probleme eingestellt. Damit jModelica Modelle parsen kann, müssen diese in einer festen Reihenfolge aufgebaut sein. Sobald diese nicht mehr stimmt, schlägt das Parsen fehl.
+Der ursprüngliche Plan war, zur Umsetzung von MoDE jModelica zu verwenden, da es in Java entwickelt und dadurch plattformunabhängig ist.
+Leider stellte sich während der Implementierung heraus, dass jModelica den Funktionsumfang von Open Modelica Compiler noch lange nicht erreicht hat.
+Einfache Modelle lassen sich problemlos von jModelica parsen, aber bei komplexeren Modellen traten dann einige Probleme auf, weil jModelica nur Modelle parsen kann, die in einer festen Reihenfolge aufgebaut sind. Sobald diese Reihenfolge nicht stimmte, schlug das Parsen fehl.
 
-Deshalb musste ich zum Open Modelica Compiler wechseln. Dieser kann auch komplexere Modelle problemlos laden. Die Daten zu Modellen können über die CORBA Schnittstelle abgerufen werden. Die Daten werden nur als Zeichenketten bereitgestellt, wodurch ein weiterer Parser nötig ist um die Annotationen aufzuschlüsseln. Hierbei habe ich mich für ANTLR als Parsergenerator entschieden.
+Deshalb wird für die, in dieser Arbeit vorgestellte, Anwendung nun der Open Modelica Compiler verwendet. Dieser kann auch komplexere Modelle problemlos laden. Die Daten zu Modellen können über eine Schnittstelle abgerufen werden. Allerdings werden die Daten nur als Zeichenketten bereitgestellt, wodurch ein weiterer Parser nötig ist um die Annotationen aufzuschlüsseln. Hierbei habe ich mich für ANTLR als Parsergenerator entschieden.
+
+Die Umstellung von jModelica auf den Open Modelica Compiler (OMC) dauerte drei Wochen.
 
 == State Pattern
 
-Für das Editieren von Diagrammen habe ich mich für das State Pattern entschieden, da dadurch ohne große Änderungen an anderen Stellen neue Funktionen für den Editor hinzugefügt werden können.
-
-== Schwierigkeiten
-
-Das größte Problem war die Umstellung von jModelica auf den OMC. Für die Umstellung benötigte ich 3 Wochen.
+Bei der Implementierung des Editierens von Diagrammen habe ich mich am State Pattern orientiert, da dadurch ohne große Änderungen an anderen Stellen neue Funktionen für den Editor hinzugefügt werden können.
 
 [big red]#TODO: kleinere stolperer mit libs...#

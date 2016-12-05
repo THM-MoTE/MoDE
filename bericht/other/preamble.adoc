@@ -2,5 +2,4 @@
 :Author: Marcel Hoppe
 :Email: marcel.hoppe@mni.thm.de
 
-:data-uri:
 :experimental:
