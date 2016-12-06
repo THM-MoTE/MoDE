@@ -24,7 +24,6 @@ public class LibraryHandler {
   }
   
   public void handleMenu(TabPane tabPane, MoClass selectedClass, String action) {
-    System.out.println(action);
     if (action.startsWith("open.as")) {
       Tab tab;
       if (action.equals("open.as.diagram"))

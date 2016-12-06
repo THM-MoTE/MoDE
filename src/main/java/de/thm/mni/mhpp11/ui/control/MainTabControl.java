@@ -45,7 +45,6 @@ public class MainTabControl extends Tab implements Initializable {
   
     setOnSelectionChanged(event -> {
       if (MainTabControl.this.isSelected()) {
-        System.out.println(event + " " + MainTabControl.this.getText());
         if (main.getContent() instanceof MoDiagramGroup)
           StateHandler.getInstance((MoDiagramGroup) main.getContent());
         else

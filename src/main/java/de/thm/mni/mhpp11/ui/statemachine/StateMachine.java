@@ -53,7 +53,7 @@ public class StateMachine {
   
   public void switchToState(@NonNull State<? extends Event, ? extends Node> newState, Boolean switchIfSameInstance) {
     if ((switchIfSameInstance && !this.curState.equals(newState)) || (!switchIfSameInstance && !this.curState.getClass().equals(newState.getClass()))) {
-      System.out.println("SM: from " + this.curState.getClass().getSimpleName() + " to " + newState.getClass().getSimpleName());
+      //System.out.println("SM: from " + this.curState.getClass().getSimpleName() + " to " + newState.getClass().getSimpleName());
       this.curState.exit();
       this.lastState = this.curState;
       this.curState = newState;

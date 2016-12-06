@@ -31,20 +31,22 @@ public class Utilities {
     numberFormat = new DecimalFormat("#.##", symbols);
   }
   
-  public URL getRessources(String postfix) {
+  private URL getRessources(String postfix) {
     return Utilities.class.getResource("/de/thm/mni/mhpp11/" + postfix);
   }
   
   public URL getView(String view) {
-    return getView(".", view);
+    return getView("", view);
   }
   
   public URL getControlView(String view) {
     return getView("control", view);
   }
   
-  public URL getView(String prefix, String view) {
-    return Utilities.getRessources(prefix + "/view/" + view + ".fxml");
+  private URL getView(String prefix, String view) {
+    if (!prefix.isEmpty())
+      prefix += "/";
+    return Utilities.getRessources(prefix + "view/" + view + ".fxml");
   }
   
   public ResourceBundle getBundle(String bundle) {
@@ -53,15 +55,19 @@ public class Utilities {
   }
   
   public ResourceBundle getBundle(String bundle, Locale lang) {
-    return getBundle(".", bundle, lang);
+    return getBundle("", bundle, lang);
   }
   
   public ResourceBundle getControlBundle(String bundle, Locale lang) {
     return getBundle("control", bundle, lang);
   }
   
-  public ResourceBundle getBundle(String prefix, String bundle, Locale lang) {
-    return ResourceBundle.getBundle("de/thm/mni/mhpp11/" + prefix + "/i18n/" + bundle, lang, new UTF8ResourceBundleControl());
+  private ResourceBundle getBundle(String prefix, String bundle, Locale lang) {
+    String path = "de/thm/mni/mhpp11/";
+    if (!prefix.isEmpty())
+      path += prefix + "/";
+    
+    return ResourceBundle.getBundle(path + "i18n/" + bundle, lang, new UTF8ResourceBundleControl());
   }
   
   public Path getHome() {

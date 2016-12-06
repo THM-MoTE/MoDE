@@ -17,7 +17,6 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.scene.Node;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import lombok.AccessLevel;
@@ -69,7 +68,6 @@ public class StateHandler implements EventHandler<Event> {
     if (event.getEventType().equals(MouseEvent.MOUSE_CLICKED)) {
       String clazz = src.getClass().getSimpleName();
       if (src instanceof MoIconGroup) clazz = ((MoIconGroup) src).getMoClass().getClass().getSimpleName();
-      System.out.println("Node: " + clazz + " State: " + getSm().getCurState().getClass().getSimpleName());
     }
     
     Boolean handle = handleConnector(src, type, event);
@@ -137,8 +135,6 @@ public class StateHandler implements EventHandler<Event> {
     if (src instanceof MoDiagramGroup) {
       MoDiagramGroup mdg = (MoDiagramGroup) src;
       
-      if (event.getEventType().equals(KeyEvent.KEY_PRESSED)) System.out.println(((KeyEvent) event).getCharacter());
-  
       if (this.sm.isSwitchAllowed(type, DiagramZoomState.class)) {      //shift + scroll
         this.sm.switchToState(new DiagramZoomState(mdg));
         return true;

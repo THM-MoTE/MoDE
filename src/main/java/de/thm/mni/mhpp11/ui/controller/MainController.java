@@ -199,7 +199,6 @@ public class MainController extends NotifyController {
   @FXML
   private void handleSave() {
     if (!tabPane.getSelectionModel().isEmpty()) {
-      System.out.println("save");
       handleSave(((MainTabControl) tabPane.getSelectionModel().getSelectedItem()).getData());
     }
     
@@ -207,12 +206,10 @@ public class MainController extends NotifyController {
   
   @FXML
   private void handleSaveAll() {
-    System.out.println("save all");
     tabPane.getTabs().forEach(tab -> handleSave(((MainTabControl) tab).getData()));
   }
   
   private void handleSave(MoClass moClass) {
-    System.out.println(moClass);
     Saver.save(moClass);
   }
 }
