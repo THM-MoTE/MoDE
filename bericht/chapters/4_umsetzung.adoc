@@ -1,20 +1,18 @@
 
-= Umsetzung
+= [[umsetzung]] Umsetzung
 
 Während der Umsetzung sind einige Schwierigkeiten überwunden und Entscheidungen getroffen werden. Einige wichtige Aspekte der Umsetzung kurz vorgestellt.
 
 == jModelica oder Open Modelica Compiler
 
-Der ursprüngliche Plan war, zur Umsetzung von MoDE jModelica zu verwenden, da es in Java entwickelt und dadurch plattformunabhängig ist.
+Der ursprüngliche Plan war, zur Umsetzung von MoDE den Parser von <<jmodelica,jModelica>> zu verwenden, da dieser in Java entwickelt ist und dadurch direkt als Bibliothek eingebunden werden kann.
 Leider stellte sich während der Implementierung heraus, dass jModelica den Funktionsumfang von Open Modelica Compiler noch lange nicht erreicht hat.
 Einfache Modelle lassen sich problemlos von jModelica parsen, aber bei komplexeren Modellen traten dann einige Probleme auf, weil jModelica nur Modelle parsen kann, die in einer festen Reihenfolge aufgebaut sind. Sobald diese Reihenfolge nicht stimmte, schlug das Parsen fehl.
 
-Deshalb wird für die, in dieser Arbeit vorgestellte, Anwendung nun der Open Modelica Compiler verwendet. Dieser kann auch komplexere Modelle problemlos laden. Die Daten zu Modellen können über eine Schnittstelle abgerufen werden. Allerdings werden die Daten nur als Zeichenketten bereitgestellt, wodurch ein weiterer Parser nötig ist um die Annotationen aufzuschlüsseln. Hierbei habe ich mich für ANTLR als Parsergenerator entschieden.
+Deshalb wird für die, in dieser Arbeit vorgestellte, Anwendung nun der <<omc,Open Modelica Compiler>> verwendet. Dieser kann auch komplexere Modelle problemlos laden. Die Daten zu Modellen können über eine Schnittstelle abgerufen werden. Allerdings werden die Daten nur als Zeichenketten bereitgestellt, wodurch ein weiterer Parser nötig ist um die Annotationen aufzuschlüsseln. Hierbei habe ich mich für ANTLR als Parsergenerator entschieden.
 
 Die Umstellung von jModelica auf den Open Modelica Compiler (OMC) dauerte drei Wochen.
 
 == State Pattern
 
-Bei der Implementierung des Editierens von Diagrammen habe ich mich am State Pattern orientiert, da dadurch ohne große Änderungen an anderen Stellen neue Funktionen für den Editor hinzugefügt werden können.
-
-[big red]#TODO: kleinere stolperer mit libs...#
+Die Implementierung des Editierens von Diagrammen orientiert sich am <<state-pattern,State Pattern>>, da dadurch ohne Änderungen außerhalb der Statemachine neue Funktionen für den Editor hinzugefügt werden können.

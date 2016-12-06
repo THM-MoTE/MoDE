@@ -1,14 +1,11 @@
 
-= Fazit & Ausblick
+<<<
+= [[fazit]] Fazit & Ausblick
 
-[big red]#TODO: fazit: wie gut ist es benutzbar, taugts was#
-
-[big red]#TODO: ausblick: was sollte man noch verbessern#
-
-Im derzeitigen Zustand kann schon grundlegend mit MoDE gearbeitet werden. Wie aus Kapitel xx ersichtlich, wurden alle geforderten Funktionen umgesetzt. Außerdem können Linienpunkte verschoben werden und beim Verschieben von modellen werden die Konektorlinien aktualisiert, was für diese Arbeit nicht zwingend gefordert war, die Benutzung von MoDE aber komfortabler macht.
+Im derzeitigen Zustand kann schon grundlegend mit MoDE gearbeitet werden. Wie aus Kapitel <<ergebnisse, 5>> ersichtlich, wurden alle geforderten Funktionen umgesetzt (siehe Kapitel <<aufgabenstellung, 1.1>>). Außerdem können Linienpunkte verschoben werden und beim Verschieben von Modellen werden die Konektorlinien aktualisiert, was für diese Arbeit nicht zwingend gefordert war, die Benutzung von MoDE aber komfortabler macht.
 
 Dennoch fehlen noch einige Funktionen um MoDE massentauglich zu machen.
-Es fehlen noch viele Funktionen, die für eine sichere und intuitive Nutzung wichtig sind, wie zum Beispiel das Überprüfen der Gleichungen auf Korrektheit.
+Es fehlen noch viele Funktionen, die für eine sichere und intuitive Nutzung wichtig sind, zum Beispiel das Überprüfen der Gleichungen auf Korrektheit.
 Außerdem fehlen noch einige wenige Teile der Sprachdefinition, wie zum Beispiel die Pfeilspitzen an Linienenden.
 
 Eine sinnvolle Erweiterung wäre es, wenn Linien der Gleichungen über verschiedene Algorithmen automatisch angeordnet werden könnten, um möglichst wenige Überschneidungen zu haben und das Diagramm übersichtlicher zu machen.
