@@ -4,7 +4,9 @@
   <groupId>de.thm.mni.mhpp11</groupId>
   <artifactId>MoDE</artifactId>
   <version>0.5.1</version>
+  
   <packaging>jar</packaging>
+  
   <properties>
     <app.main.class>de.thm.mni.mhpp11.Main</app.main.class>
     <maven.compile.source>1.8</maven.compile.source>
@@ -17,7 +19,7 @@
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
-      <version>1.16.10</version>
+      <version>1.16.12</version>
     </dependency>
     
     <dependency>
@@ -62,22 +64,22 @@
     <dependency>
       <groupId>org.kordamp.ikonli</groupId>
       <artifactId>ikonli-core</artifactId>
-      <version>1.7.0</version>
+      <version>1.9.0</version>
     </dependency>
     <dependency>
       <groupId>org.kordamp.ikonli</groupId>
       <artifactId>ikonli-javafx</artifactId>
-      <version>1.7.0</version>
+      <version>1.9.0</version>
     </dependency>
     <dependency>
       <groupId>org.kordamp.ikonli</groupId>
       <artifactId>ikonli-material-pack</artifactId>
-      <version>1.7.0</version>
+      <version>1.9.0</version>
     </dependency>
     <dependency>
       <groupId>org.kordamp.ikonli</groupId>
       <artifactId>ikonli-materialdesign-pack</artifactId>
-      <version>1.7.0</version>
+      <version>1.9.0</version>
     </dependency>
   
     <!-- https://mvnrepository.com/artifact/org.antlr/antlr4-runtime -->
@@ -139,7 +141,7 @@
       
       <plugin>
         <artifactId>maven-resources-plugin</artifactId>
-        <version>3.0.1</version>
+        <version>3.0.2</version>
         <configuration>
           <includeEmptyDirs>true</includeEmptyDirs>
         </configuration>
@@ -147,7 +149,7 @@
       
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.5.1</version>
+        <version>3.6.0</version>
         <configuration>
           <source>${maven.compile.source}</source>
           <target>${maven.compile.target}</target>
