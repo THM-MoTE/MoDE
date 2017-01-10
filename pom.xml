@@ -1,14 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>de.thm.mni.mhpp11</groupId>
+  <groupId>de.thm.mni.mote.mode</groupId>
   <artifactId>MoDE</artifactId>
   <version>0.5.1</version>
   
   <packaging>jar</packaging>
   
   <properties>
-    <app.main.class>de.thm.mni.mhpp11.Main</app.main.class>
+    <app.main.class>de.thm.mni.mote.mode.Main</app.main.class>
     <maven.compile.source>1.8</maven.compile.source>
     <maven.compile.target>1.8</maven.compile.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -125,9 +125,9 @@
         <configuration>
           <arguments>
             <argument>-package</argument>
-            <argument>de.thm.mni.mhpp11.parser.modelica</argument>
+            <argument>de.thm.mni.mote.mode.parser.modelica</argument>
           </arguments>
-          <outputDirectory>${project.build.directory}/generated-sources/antlr4/de/thm/mni/mhpp11/parser/modelica
+          <outputDirectory>${project.build.directory}/generated-sources/antlr4/de/thm/mni/mote/mode/parser/modelica
           </outputDirectory>
         </configuration>
         <executions>

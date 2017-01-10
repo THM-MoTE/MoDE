@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<DialogPane prefHeight="650.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/8.0.76-ea"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.thm.mni.mote.mode.ui.controller.SettingsController">
+   <content>
+      <GridPane hgap="10.0">
+        <columnConstraints>
+          <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="275.0" minWidth="10.0" prefWidth="191.0" />
+          <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="277.0" minWidth="10.0" prefWidth="277.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="-Infinity" prefHeight="30.0" vgrow="SOMETIMES"/>
+          <RowConstraints minHeight="-Infinity" prefHeight="30.0" vgrow="SOMETIMES"/>
+          <RowConstraints minHeight="-Infinity" prefHeight="30.0" vgrow="SOMETIMES"/>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+        </rowConstraints>
+         <children>
+            <ChoiceBox fx:id="cbLanguage" prefWidth="150.0" GridPane.columnIndex="1">
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin>
+            </ChoiceBox>
+            <Label alignment="CENTER_RIGHT" text="%settings.select.language" />
+           <Label alignment="CENTER_RIGHT" text="%settings.select.modelica.library" GridPane.rowIndex="7"/>
+           <Label alignment="CENTER_RIGHT" text="%settings.select.recent.count" textAlignment="RIGHT" wrapText="true"
+                  GridPane.rowIndex="2"/>
+           <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.columnIndex="1"
+                 GridPane.rowIndex="2">
+               <children>
+                  <TextField fx:id="tfRecentCount" editable="false" prefWidth="35.0" />
+                  <Slider fx:id="sRecentCount" max="20.0" min="3.0" showTickMarks="true" value="5.0" HBox.hgrow="ALWAYS" />
+               </children>
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin>
+               <padding>
+                  <Insets right="10.0" />
+               </padding>
+            </HBox>
+           <Label alignment="CENTER_RIGHT" text="%settings.select.notify.seconds" GridPane.rowIndex="4"/>
+           <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.columnIndex="1"
+                 GridPane.rowIndex="4">
+               <children>
+                  <TextField fx:id="tfNotifySeconds" editable="false" prefWidth="35.0" />
+                  <Slider fx:id="sNotifySeconds" max="15.0" showTickMarks="true" value="5.0" HBox.hgrow="ALWAYS" />
+               </children>
+               <padding>
+                  <Insets right="10.0" />
+               </padding>
+            </HBox>
+           <Label alignment="CENTER_RIGHT" text="%settings.select.logger.level" GridPane.rowIndex="13"/>
+           <Label alignment="CENTER_RIGHT" text="%settings.select.logger.notifyLevel" GridPane.rowIndex="14"/>
+           <ChoiceBox fx:id="cbLoggerLevel" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="13"/>
+           <ChoiceBox fx:id="cbLoggerNotifyLevel" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="14"/>
+           <HBox alignment="CENTER_LEFT" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
+             <children>
+               <TextField fx:id="tfModelicaCompiler" editable="false" HBox.hgrow="ALWAYS"/>
+               <Button minWidth="80.0" mnemonicParsing="false" onAction="#onModelicaCompilerClick" text="File"/>
+             </children>
+             <padding>
+               <Insets right="10.0"/>
+             </padding>
+           </HBox>
+           <HBox alignment="CENTER_LEFT" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="7">
+             <children>
+               <TextField fx:id="tfModelicaLibrary" editable="false" HBox.hgrow="ALWAYS"/>
+               <Button minWidth="80.0" mnemonicParsing="false" onAction="#onModelicaLibraryClick" text="File"/>
+             </children>
+             <padding>
+               <Insets right="10.0"/>
+             </padding>
+           </HBox>
+           <Label alignment="CENTER_RIGHT" text="%settings.select.modelica.compiler" GridPane.rowIndex="6"/>
+           <Label alignment="CENTER_RIGHT" text="%settings.select.modelica.depth" GridPane.rowIndex="8"/>
+           <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.columnIndex="1"
+                 GridPane.rowIndex="8">
+             <children>
+               <TextField fx:id="tfModelicaDepth" editable="false" prefWidth="35.0"/>
+               <Slider fx:id="sModelicaDepth" max="15.0" showTickMarks="true" value="5.0" HBox.hgrow="ALWAYS"/>
+             </children>
+             <padding>
+               <Insets right="10.0"/>
+             </padding>
+           </HBox>
+         </children>
+      </GridPane>
+   </content>
+   <buttonTypes>
+      <ButtonType fx:constant="CLOSE" />
+   </buttonTypes>
+</DialogPane>
