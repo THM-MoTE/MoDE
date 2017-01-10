@@ -1,6 +1,0 @@
-:Date: 13.11.2016
-:Author: Marcel Hoppe
-:Email: marcel.hoppe@mni.thm.de
-
-:sectnumlevels: 2
-:experimental:
