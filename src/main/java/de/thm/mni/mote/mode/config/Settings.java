@@ -9,6 +9,7 @@ import org.simpleframework.xml.core.Persister;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Properties;
@@ -19,8 +20,9 @@ import java.util.Properties;
  */
 public class Settings extends Configuration implements Observer {
   
-  public static String NAME;
+  public static String TITLE;
   public static String VERSION;
+  public static String SUBTITLE = "The Modelica Diagram Editor";
   
   static {
     Properties props = new Properties();
@@ -30,14 +32,17 @@ public class Settings extends Configuration implements Observer {
     try {
       if(is != null) {
         props.load(is);
-        NAME = props.getProperty("artifactId");
+        TITLE = props.getProperty("artifactId");
         VERSION = props.getProperty("version");
       } else {
-        BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream("pom.xml")));
+        Path fileName = Paths.get("pom.xml");
+        if (!Files.exists(fileName))
+          fileName = Paths.get("MoDE/pom.xml");
+        BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(fileName.toFile())));
         String line;
         while((line = br.readLine()) != null) {
           if(line.contains("artifactId")) {
-            NAME = line.replaceAll("\\s*\\<\\/?artifactId>", "");
+            TITLE = line.replaceAll("\\s*\\<\\/?artifactId>", "");
           } else if(line.contains("version")) {
             VERSION = line.replaceAll("\\s*\\<\\/?version>", "") + " src";
             break;
@@ -45,7 +50,7 @@ public class Settings extends Configuration implements Observer {
         }
       }
     } catch (NullPointerException | IOException e) {
-      NAME = "MoDE";
+      TITLE = "MoDE";
       VERSION = "0.1";
     }
   }

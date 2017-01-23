@@ -8,6 +8,6 @@ import de.thm.mni.mote.mode.parser.ClassInformation;
 public class MoConnector extends MoClass {
   MoConnector(ClassInformation classInformation, String name, MoClass parent) {
     super(classInformation, name, parent);
-    PREFIX = "t";
+    PREFIX = "actors";
   }
 }

@@ -75,8 +75,8 @@ public class MoTransformation implements MoExtent, Changeable {
   
   public String toString(boolean isIcon) {
     NumberFormat fmt = de.thm.mni.mote.mode.util.Utilities.getFormatter();
-    
-    return ((isIcon) ? "iconT" : "t") +
+  
+    return ((isIcon) ? "iconT" : "actors") +
                String.format("ransformation(origin = %s, extent = {%s, %s}, rotation = %s)",
                    Utilities.toString(origin.get()),
                    Utilities.toString(extent.get(0).get()),

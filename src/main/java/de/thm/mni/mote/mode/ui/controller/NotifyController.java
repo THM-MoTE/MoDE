@@ -64,6 +64,4 @@ public abstract class NotifyController extends Controller implements Observer {
       Platform.runLater(() -> this.addNotification(new NotificationControl(msg)));
     }
   }
-  
-  public abstract void show();
 }

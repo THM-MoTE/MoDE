@@ -32,13 +32,16 @@ public class OmcTest {
   @Before
   public void before() throws IOException {
     Modelica m = Settings.load().getModelica();
-    omc = OMCompiler.getInstance(m.getCompiler(), m.getLibrary(), Locale.GERMANY);
+    omc = new OMCompiler(m.getCompiler(), Paths.get("/usr/lib/omclibrary"), Locale.GERMANY);
+    System.out.println(omc.sendExpression("getModelicaPath()"));
     omc.sendExpression("getClassNames()");
   }
   
   @After
   public void after() {
-    if (omc != null) omc.disconnect();
+    if (omc != null) {
+      omc.disconnect();
+    }
   }
   
   @Test

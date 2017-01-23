@@ -281,7 +281,7 @@ public class MoClass extends MoElement implements HierarchyData<MoClass>, Change
         c.moveTo(i, this);
         c.parseExtra(omc);
       } else {
-        Settings.load().getLogger().error(String.format("Error in %s", this.getName()), String.format("Can't replace Child \"%s\"", child.getSimpleName()));
+        Settings.load().getLogger().error(String.format("Error in %s", this.getName()), String.format("Can'actors replace Child \"%s\"", child.getSimpleName()));
       }
     }
   }
@@ -302,7 +302,7 @@ public class MoClass extends MoElement implements HierarchyData<MoClass>, Change
         }
       }
       if (!classFound) {
-        Settings.load().getLogger().error(String.format("Error in \"%s\"", name), String.format("Can't find package \"%s\"", s));
+        Settings.load().getLogger().error(String.format("Error in \"%s\"", name), String.format("Can'actors find package \"%s\"", s));
       }
     }
   
@@ -342,7 +342,7 @@ public class MoClass extends MoElement implements HierarchyData<MoClass>, Change
     }
     
     if (parent instanceof MoRoot && tmp != null) bases.add(tmp);
-    if (tmp == null) Settings.load().getLogger().error(String.format("Error in \"%s\"", name), String.format("Can't parse Type %s", ci.getType()));
+    if (tmp == null) Settings.load().getLogger().error(String.format("Error in \"%s\"", name), String.format("Can'actors parse Type %s", ci.getType()));
     if (tmp != null && !(tmp instanceof MoLater)) {
       parseChildren(omc, tmp, n, depth, noExtra);
       if (!noExtra) tmp.parseExtra(omc);

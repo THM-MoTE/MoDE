@@ -18,7 +18,7 @@ import javafx.scene.layout.Region;
 public class DragResizer {
   
   /**
-   * The margin around the control that a user can click in to start resizing
+   * The margin around the control that a user can click in to configure resizing
    * the region.
    */
   private static final int RESIZE_MARGIN = 5;

@@ -6,8 +6,6 @@ import de.thm.mni.mote.mode.config.model.Project;
 import de.thm.mni.mote.mode.modelica.MoClass;
 import de.thm.mni.mote.mode.modelica.MoRoot;
 import de.thm.mni.mote.mode.modelica.Saver;
-import de.thm.mni.mote.mode.parser.OMCompiler;
-import de.thm.mni.mote.mode.parser.PackageParser;
 import de.thm.mni.mote.mode.ui.control.ContextMenuItem;
 import de.thm.mni.mote.mode.ui.control.DragResizer;
 import de.thm.mni.mote.mode.ui.control.MainTabControl;
@@ -26,6 +24,7 @@ import javafx.util.Callback;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.UUID;
 
 /**
  * Created by hobbypunk on 15.09.16.
@@ -63,6 +62,11 @@ public class MainController extends NotifyController {
     DragResizer.makeResizable(sRight, hbRight, DragResizer.RTL);
   }
   
+  @Override
+  public void lateInitialize(UUID group, Stage stage) {
+    
+  }
+  
   public void lateInitialize(Stage stage, Scene scene, Project project) {
     super.lateInitialize(stage, scene);
     StateMachine.getInstance(scene);
@@ -75,28 +79,33 @@ public class MainController extends NotifyController {
     super.deinitialize();
     
     MainWindow mw = settings.getMainwindow();
-    mw.setPos(stage.getX(), stage.getY());
-    mw.setSize(stage.getWidth(), stage.getHeight());
+    mw.setPos(getStage().getX(), getStage().getY());
+    mw.setSize(getStage().getWidth(), getStage().getHeight());
     mw.setWidthLeftPane((int) hbLeft.getPrefWidth());
     mw.setWidthRightPane((int) hbRight.getPrefWidth());
   }
   
   @Override
   public void show() {
-    stage.hide();
+    getStage().hide();
     MainWindow mw = settings.getMainwindow();
-    
-    stage.setX(mw.getPos().getX());
-    stage.setY(mw.getPos().getY());
-    stage.setWidth(mw.getSize().getX());
-    stage.setHeight(mw.getSize().getY());
+  
+    getStage().setX(mw.getPos().getX());
+    getStage().setY(mw.getPos().getY());
+    getStage().setWidth(mw.getSize().getX());
+    getStage().setHeight(mw.getSize().getY());
     
     hbLeft.setPrefWidth(mw.getWidthLeftPane());
     hbRight.setPrefWidth(mw.getWidthRightPane());
-    stage.setScene(scene);
-    stage.setTitle(String.format("%1$s - %2$s %3$s", project.getName(), Settings.NAME, Settings.VERSION));
-    stage.setResizable(true);
-    stage.show();
+    getStage().setScene(scene);
+    getStage().setTitle(String.format("%1$s - %2$s %3$s", project.getName(), Settings.TITLE, Settings.VERSION));
+    getStage().setResizable(true);
+    getStage().show();
+  }
+  
+  @Override
+  public void start() {
+    show();
   }
   
   private void initTreeView() {
@@ -134,7 +143,7 @@ public class MainController extends NotifyController {
           LibraryHandler.getInstance().handleMenu(tabPane, item.getValue(), "open.as.diagram");
       }
     });
-    tvLibrary.setTreeItemExpandListener(parent -> parent.update(OMCompiler.getInstance()));
+    //TODO: tvLibrary.setTreeItemExpandListener(parent -> parent.update(OMCompiler.getInstance()));
     tvLibrary.setTreeItemConfigurer((treeItem, value) -> {
       if (value instanceof MoRoot) {
         treeItem.setExpanded(true);
@@ -173,12 +182,12 @@ public class MainController extends NotifyController {
   }
   
   private void initLibs() {
-    PackageParser.collectSystemLibs(OMCompiler.getInstance(), mrSystemLibraries);
+    //TODO: PackageParser.collectSystemLibs(OMCompiler.getInstance(), mrSystemLibraries);
   }
   
   private void initProject() {
-    PackageParser.collectProjectLibs(OMCompiler.getInstance(), mrProjectLibraries, project.getFile());
-    PackageParser.collectProject(OMCompiler.getInstance(), mrProject, project.getFile());
+    //TODO: PackageParser.collectProjectLibs(OMCompiler.getInstance(), mrProjectLibraries, project.getFile());
+    //TODO: PackageParser.collectProject(OMCompiler.getInstance(), mrProject, project.getFile());
   }
   
   private ContextMenu createLibraryMenu() {

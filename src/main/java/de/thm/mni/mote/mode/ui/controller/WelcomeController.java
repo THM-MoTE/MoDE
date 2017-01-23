@@ -1,12 +1,18 @@
 package de.thm.mni.mote.mode.ui.controller;
 
+import de.thm.mni.mhpp11.jActor.actors.messagebus.messages.StartMessage;
+import de.thm.mni.mhpp11.jActor.actors.ui.interfaces.AbstractUIActor;
+import de.thm.mni.mhpp11.jActor.actors.ui.interfaces.ActorController;
+import de.thm.mni.mhpp11.jActor.messages.interfaces.Message;
 import de.thm.mni.mote.mode.config.Settings;
-import de.thm.mni.mote.mode.config.model.Modelica;
 import de.thm.mni.mote.mode.config.model.Project;
-import de.thm.mni.mote.mode.parser.OMCompiler;
+import de.thm.mni.mote.mode.omcactor.OMCActor;
+import de.thm.mni.mote.mode.omcactor.messages.OMCErrorMessage;
+import de.thm.mni.mote.mode.omcactor.messages.OMCStartedMessage;
 import de.thm.mni.mote.mode.parser.PackageParser;
 import de.thm.mni.mote.mode.ui.control.RecentProjectControl;
 import de.thm.mni.mote.mode.util.Utilities;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -18,8 +24,10 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 
+import javax.management.ReflectionException;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -42,37 +50,19 @@ public class WelcomeController extends NotifyController {
   @FXML @Override
   public void initialize(URL location, ResourceBundle resources) {
     super.initialize(location, resources);
-    
-    lName.setText(Settings.NAME);
+  
+    lName.setText(Settings.TITLE);
     lVersion.setText(Settings.VERSION);
     updateRecentList();
-  
-    startOMC();
   }
   
-  private Boolean startOMC() {
-    
-    try {
-      Modelica m = settings.getModelica();
-      OMCompiler.getInstance(m.getCompiler(), m.getLibrary(), settings.getLang());
-    } catch (IOException | IllegalStateException e) {
-      logger.error(e);
-    }
-    
-    if (OMCompiler.getInstance() != null) {
-      //btnNewProject.setDisable(false);
-      btnOpenProject.setDisable(false);
-      return true;
-    }
-    btnNewProject.setDisable(true);
-    btnOpenProject.setDisable(true);
-    return false;
+  public static void configure() throws ReflectionException, InvocationTargetException, IOException, InstantiationException, IllegalAccessException, NoSuchMethodException {
+    ActorController controller = configure(Utilities.getView("Welcome"), Utilities.getBundle("Welcome"));
+    controller.start();
   }
   
   @Override
   public void deinitialize() {
-    OMCompiler omc = OMCompiler.getInstance();
-    if (omc != null) omc.disconnect();
     super.deinitialize();
   }
   
@@ -83,11 +73,18 @@ public class WelcomeController extends NotifyController {
   
   @Override
   public void show() {
-    this.stage.setTitle(i18n.getString("title.title") + " " + Settings.NAME + " " + Settings.VERSION);
-    this.stage.setScene(this.scene);
-    this.stage.setResizable(false);
-    this.stage.centerOnScreen();
-    this.stage.show();
+    this.getStage().setTitle(i18n.getString("title.title") + " " + Settings.TITLE + " " + Settings.VERSION);
+    this.getStage().setScene(this.scene);
+    this.getStage().setResizable(false);
+    this.getStage().centerOnScreen();
+    super.show();
+  }
+  
+  @Override
+  public void start() {
+    updateUI(false);
+    hide();
+    getActor().send(new StartMessage(OMCActor.class, this.getGroup()));
   }
   
   
@@ -148,7 +145,7 @@ public class WelcomeController extends NotifyController {
       Pane rootLayout = loader.load();
       MainController controller = loader.getController();
       Scene scene = new Scene(rootLayout);
-      controller.lateInitialize(this.stage, scene, p);
+      controller.lateInitialize(this.getStage(), scene, p);
       controller.show();
     } catch (IOException e) {
       logger.error(e);
@@ -157,6 +154,7 @@ public class WelcomeController extends NotifyController {
   
   @FXML
   void onOpenSettings() {
+    Path omc = Settings.load().getModelica().getCompiler();
     Dialog d = new Dialog();
     FXMLLoader loader = new FXMLLoader();
     loader.setLocation(Utilities.getView("Settings"));
@@ -165,7 +163,9 @@ public class WelcomeController extends NotifyController {
       DialogPane dp = loader.load();
       d.setDialogPane(dp);
       d.show();
-      d.setOnCloseRequest(event -> startOMC());
+      d.setOnCloseRequest(event -> {
+        if (!omc.equals(Settings.load().getModelica().getCompiler())) start();
+      });
     } catch (IOException e) {
       logger.error(e);
     }
@@ -197,5 +197,34 @@ public class WelcomeController extends NotifyController {
   @FXML
   void onOpenAbout() {
     System.out.println("onOpenAbout");
+  }
+  
+  private void updateUI(Boolean omcStarted) {
+    if (omcStarted) {
+      //btnNewProject.setDisable(false);
+      btnOpenProject.setDisable(false);
+    } else {
+      btnNewProject.setDisable(true);
+      btnOpenProject.setDisable(true);
+    }
+  }
+  
+  
+  private static class WelcomeActor extends AbstractUIActor<WelcomeController, Message> {
+    
+    protected WelcomeActor(WelcomeController controller) {
+      super(controller);
+    }
+    
+    @Override
+    public void executeUI(Message msg) {
+      if (msg instanceof OMCStartedMessage) {
+        getController().updateUI(true);
+        Platform.runLater(() -> getController().show());
+      } else if (msg instanceof OMCErrorMessage) {
+        getController().updateUI(false);
+        Platform.runLater(() -> getController().show());
+      }
+    }
   }
 }

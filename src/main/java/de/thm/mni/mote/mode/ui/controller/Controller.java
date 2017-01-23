@@ -1,9 +1,8 @@
 package de.thm.mni.mote.mode.ui.controller;
 
+import de.thm.mni.mhpp11.jActor.actors.ui.interfaces.ActorController;
 import de.thm.mni.mote.mode.config.Settings;
 import de.thm.mni.mote.mode.config.model.Logger;
-import de.thm.mni.mote.mode.parser.OMCompiler;
-import de.thm.mni.mote.mode.parser.PackageParser;
 import de.thm.mni.mote.mode.util.logger.ConsoleLogger;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
@@ -15,11 +14,10 @@ import java.util.ResourceBundle;
 /**
  * Created by hobbypunk on 14.09.16.
  */
-public abstract class Controller implements Initializable {
+public abstract class Controller extends ActorController implements Initializable {
   protected Settings settings;
   protected Logger logger;
   
-  protected Stage stage;
   protected Scene scene;
   
   ResourceBundle i18n;
@@ -41,18 +39,12 @@ public abstract class Controller implements Initializable {
   }
   
   public void lateInitialize(Stage stage, Scene scene) {
-    this.stage = stage;
     this.scene = scene;
-    this.stage.setOnCloseRequest(value -> close());
   }
   
-  public void close() {
+  @Override
+  public void onClose() {
     this.deinitialize();
-    PackageParser.close();
-    try {
-      OMCompiler.getInstance().disconnect();
-    } catch (Exception e) {
-    }
     settings.save();
   }
   

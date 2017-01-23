@@ -41,7 +41,7 @@ COMMA   : ',';
 
 SEMICOLON : ';';
 
-WHITESPACE  : [ \r\n\t] + -> channel (HIDDEN);
+WHITESPACE  : [ \r\n\throwable] + -> channel (HIDDEN);
 
 string  : STRING
         | S_STRING

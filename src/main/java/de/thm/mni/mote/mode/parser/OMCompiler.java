@@ -18,9 +18,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
@@ -35,16 +32,6 @@ public class OMCompiler {
   private static final Pattern lineEnd = Pattern.compile(";\\s*$");
   private static final Pattern removeQuotes = Pattern.compile("(^\")|(\"$)");
   private static final Pattern connect = Pattern.compile("^\\s*connect\\s*\\(.*");
-  private static OMCompiler ourInstance;
-  
-  public static OMCompiler getInstance(Path compiler, Path library, Locale locale) throws IOException, IllegalStateException {
-    if (ourInstance == null) ourInstance = new OMCompiler(compiler, library, locale);
-    return ourInstance;
-  }
-  
-  public static OMCompiler getInstance() {
-    return ourInstance;
-  }
   
   public enum TYPE {
     TYPE,
@@ -63,35 +50,32 @@ public class OMCompiler {
   private final Path library;
   private OMCInterface client;
   
-  private Lock lock = new ReentrantLock();
-  private Condition systemLibs;
-  
+  private Set<Path> systemLibraryPaths = new HashSet<>();
   private List<Pair<String, Path>> systemLibraries = new ArrayList<>();
   @Getter private List<Pair<String, Path>> projectLibraries = new ArrayList<>();
   @Getter private Pair<String, Path> project = null;
   
-  private OMCompiler(Path compiler, Path library, Locale locale) throws IOException, IllegalStateException {
+  public OMCompiler(Path compiler, Path library, Locale locale) throws IOException, IllegalStateException {
     this.library = library;
     client = new OMCClient(compiler.toString(), locale.toString());
     client.connect();
-    this.preloadSystemLibraries();
+    this.loadLibraryPath();
+  }
+  
+  private void loadLibraryPath() {
+    Result r = sendExpression("getModelicaPath()");
+    String paths = ScriptingHelper.killTrailingQuotes(r.result);
+    for (String path : paths.split(":")) {
+      systemLibraryPaths.add(Paths.get(path));
+    }
   }
   
   private void preloadSystemLibraries() {
-    Thread t = new Thread(() -> {
-      lock.lock();
-      systemLibs = lock.newCondition();
-      List<String> list = OMCompiler.this.getAvailableLibraries();
-      for (String s : list) {
-        sendExpression(String.format("loadModel(%s)", s), true);
-      }
-      loadSystemLibraries(list);
-      Condition s = systemLibs;
-      systemLibs = null;
-      s.signal();
-      lock.unlock();
-    });
-    t.start();
+    List<String> list = OMCompiler.this.getAvailableLibraries();
+    for (String s : list) {
+      sendExpression(String.format("loadModel(%s)", s), true);
+    }
+    loadSystemLibraries(list);
   }
   
   public void setProject(Path f) throws ParserException {
@@ -140,7 +124,6 @@ public class OMCompiler {
   }
   
   private void loadSystemLibraries(List<String> list1) {
-    if (list1 == null) waitLibs();
     if (systemLibraries.isEmpty()) {
       Result result = sendExpression("getLoadedLibraries()", true);
       
@@ -156,7 +139,6 @@ public class OMCompiler {
   }
   
   public List<Pair<String, Path>> getSystemLibraries() {
-    waitLibs();
     return this.systemLibraries;
   }
   
@@ -317,7 +299,6 @@ public class OMCompiler {
   }
   
   public void disconnect() {
-    waitLibs();
     try {
       client.disconnect();
     } catch (IOException e) {
@@ -360,21 +341,6 @@ public class OMCompiler {
   }
   
   private Result sendExpression(String s, Boolean ignoreLoaded) {
-    if (!ignoreLoaded)
-      waitLibs();
-    Result r = client.sendExpression(s);
-    return r;
-  }
-  
-  private void waitLibs() {
-    lock.lock();
-    try {
-      if (systemLibs != null) {
-        systemLibs.await();
-      }
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
-    lock.unlock();
+    return client.sendExpression(s);
   }
 }

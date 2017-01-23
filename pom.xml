@@ -89,25 +89,25 @@
       <version>4.5.3</version>
     </dependency>
   
-    <!-- local Repo -->
     <dependency>
-      <groupId>de.thm.mni.njss90</groupId>
-      <artifactId>omc</artifactId>
+      <groupId>de.thm.mni.mote</groupId>
+      <artifactId>omc-java-api</artifactId>
       <version>0.2</version>
     </dependency>
+  
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-nop</artifactId>
-      <version>1.7.21</version>
+      <groupId>de.thm.mni.mhpp11</groupId>
+      <artifactId>jActor</artifactId>
+      <version>0.1</version>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>1.1.8</version>
     </dependency>
   </dependencies>
   
   <repositories>
-    <repository>
-      <id>Local Repo</id>
-      <url>file://lib</url>
-    </repository>
-  
     <repository>
       <id>central</id>
       <name>jcenter</name>

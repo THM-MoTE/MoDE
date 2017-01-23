@@ -78,15 +78,15 @@ public class Utilities {
   private Path getConfDir() {
     Path f;
     if (isWin())
-      f = Paths.get(System.getenv("APPDATA") + "/" + Settings.NAME);
+      f = Paths.get(System.getenv("APPDATA") + "/" + Settings.TITLE);
     else
-      f = Paths.get(System.getenv("HOME") + "/.config/" + Settings.NAME);
+      f = Paths.get(System.getenv("HOME") + "/.config/" + Settings.TITLE);
     
     if (!Files.exists(f)) {
       try {
         f = Files.createDirectories(f);
       } catch (IOException e) {
-        throw new RuntimeException("can't create folders");
+        throw new RuntimeException("can'actors create folders");
       }
     }
     return f;
@@ -106,7 +106,7 @@ public class Utilities {
           e.printStackTrace();
         }
       } catch (Exception e) {
-        throw new RuntimeException("can't create file");
+        throw new RuntimeException("can'actors create file");
       }
     }
     return f;

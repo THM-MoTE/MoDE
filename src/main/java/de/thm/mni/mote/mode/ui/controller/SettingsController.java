@@ -41,7 +41,6 @@ public class SettingsController extends Controller {
   @FXML private ChoiceBox<Logger.LEVEL> cbLoggerNotifyLevel;
   
   @FXML private TextField tfModelicaCompiler;
-  @FXML private TextField tfModelicaLibrary;
   @FXML private TextField tfModelicaDepth;
   @FXML private Slider sModelicaDepth;
   
@@ -91,13 +90,6 @@ public class SettingsController extends Controller {
     }
     tfModelicaCompiler.textProperty().addListener((observable, oldValue, newValue) -> settings.getModelica().setCompiler(Paths.get(newValue)));
   
-    if (settings.getModelica().getLibrary() != null) {
-      Path f = settings.getModelica().getLibrary();
-      tfModelicaLibrary.setText(f.toString());
-      tfModelicaLibrary.positionCaret(f.toString().length() + 1);
-    }
-    tfModelicaLibrary.textProperty().addListener((observable, oldValue, newValue) -> settings.getModelica().setLibrary(Paths.get(newValue)));
-
     initSlider(sRecentCount, tfRecentCount, settings.getRecent().getCount(), (observable, oldValue, newValue) -> {
       if(oldValue.intValue() != newValue.intValue()) settings.getRecent().setCount(newValue.intValue());
     });
@@ -131,16 +123,6 @@ public class SettingsController extends Controller {
     tfModelicaCompiler.positionCaret(f.toString().length() + 1);
   }
   
-  @FXML
-  private void onModelicaLibraryClick() {
-    Path f = (settings.getModelica().getLibrary() != null) ? settings.getModelica().getLibrary() : settings.getModelica().getCompiler();
-    f = fileDialog(f, i18n.getString("settings.select.modelica.library"), false);
-    
-    if (f == null) return;
-    tfModelicaLibrary.setText(f.toString());
-    tfModelicaLibrary.positionCaret(f.toString().length() + 1);
-  }
-  
   private Path fileDialog(Path init, String title, Boolean file) {
     title = title.replaceAll(":$", "");
     File f;
@@ -151,7 +133,7 @@ public class SettingsController extends Controller {
         fc.setInitialDirectory(init.getParent().toFile());
         fc.setInitialFileName(init.getFileName().toString());
       }
-      f = fc.showOpenDialog(this.stage);
+      f = fc.showOpenDialog(this.getStage());
     } else {
       DirectoryChooser dc = new DirectoryChooser();
       dc.setTitle(title);
@@ -159,9 +141,12 @@ public class SettingsController extends Controller {
         if (!Files.isDirectory(init)) init = init.getParent();
         dc.setInitialDirectory(init.toFile());
       }
-      
-      f = dc.showDialog(this.stage);
+  
+      f = dc.showDialog(this.getStage());
     }
     return (f == null) ? null : f.toPath();
   }
+  
+  @Override
+  public void start() {}
 }

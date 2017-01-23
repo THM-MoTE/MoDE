@@ -34,7 +34,7 @@ import java.util.Map;
 public class TreeViewWithItems<T extends HierarchyData<T>> extends TreeView<T> {
   
   /**
-   * Keep hard references for each listener, so that they don't get garbage collected too soon.
+   * Keep hard references for each listener, so that they don'actors get garbage collected too soon.
    */
   private final Map<TreeItem<T>, ListChangeListener<T>> hardReferences = new HashMap<>();
   
@@ -74,8 +74,8 @@ public class TreeViewWithItems<T extends HierarchyData<T>> extends TreeView<T> {
     });
     
     setItems(FXCollections.<T>observableArrayList());
-    
-    // Do not use ChangeListener, because it won't trigger if old list equals new list (but in fact different references).
+  
+    // Do not use ChangeListener, because it won'actors trigger if old list equals new list (but in fact different references).
     items.addListener(new InvalidationListener() {
       @Override
       public void invalidated(Observable observable) {
