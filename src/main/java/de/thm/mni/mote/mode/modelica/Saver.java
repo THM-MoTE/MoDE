@@ -1,6 +1,5 @@
 package de.thm.mni.mote.mode.modelica;
 
-import de.thm.mni.mote.mode.parser.ClassInformation;
 import lombok.experimental.UtilityClass;
 
 import java.io.IOException;

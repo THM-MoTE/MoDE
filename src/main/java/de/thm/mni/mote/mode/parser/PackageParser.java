@@ -1,7 +1,9 @@
 package de.thm.mni.mote.mode.parser;
 
-import de.thm.mni.mote.mode.config.Settings;
+import de.thm.mni.mhpp11.jActor.actors.logging.messages.ErrorMessage;
+import de.thm.mni.mhpp11.jActor.actors.messagebus.MessageBus;
 import de.thm.mni.mote.mode.modelica.MoClass;
+import de.thm.mni.mote.mode.omcactor.OMCompiler;
 import javafx.util.Pair;
 
 import java.io.IOException;
@@ -47,7 +49,7 @@ public class PackageParser {
       Iterator<Path> iterator = ds.iterator();
       if (iterator.hasNext()) return iterator.next();
     } catch (IOException e) {
-      Settings.load().getLogger().error(e);
+  
     }
     return f;
   }
@@ -70,13 +72,18 @@ public class PackageParser {
       collect(omc, parent, omc.getProjectLibraries());
     } catch (IOException | ParserException e) {
   
-      Settings.load().getLogger().error(e);
     }
   }
   
   private static void collect(OMCompiler omc, MoClass parent, List<Pair<String, Path>> list) {
     for (Pair<String, Path> lib : list) {
-      es.execute(() -> MoClass.parse(omc, lib.getKey(), parent, 1));
+      es.execute(() -> {
+        try {
+          MoClass.parse(omc, lib.getKey(), parent, 1);
+        } catch (ParserException e) {
+          MessageBus.getInstance().send(new ErrorMessage(PackageParser.class, e));
+        }
+      });
     }
   }
   
@@ -85,7 +92,6 @@ public class PackageParser {
       omc.setProject(file);
       collect(omc, parent, Collections.singletonList(omc.getProject()));
     } catch (ParserException e) {
-      Settings.load().getLogger().error(e);
     }
   }
   

@@ -3,7 +3,8 @@ package de.thm.mni.mote.mode.modelica.graphics;
 import com.sun.javafx.tk.FontLoader;
 import com.sun.javafx.tk.FontMetrics;
 import com.sun.javafx.tk.Toolkit;
-import de.thm.mni.mote.mode.config.Settings;
+import de.thm.mni.mhpp11.jActor.actors.logging.messages.DebugMessage;
+import de.thm.mni.mhpp11.jActor.actors.messagebus.MessageBus;
 import de.thm.mni.mote.mode.parser.modelica.AnnotationParser;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -109,7 +110,7 @@ public class Utilities {
       AnnotationParser.ColorTypeContext ctx = (AnnotationParser.ColorTypeContext) val;
       return Color.rgb(Integer.parseInt(ctx.r.getText()), Integer.parseInt(ctx.g.getText()), Integer.parseInt(ctx.b.getText()));
     } else {
-      Settings.load().getLogger().debug("MoLine", "color: Not implemented");
+      MessageBus.getInstance().send(new DebugMessage(Utilities.class, "MoLine", "color: Not implemented"));
     }
     return BLACK;
   }

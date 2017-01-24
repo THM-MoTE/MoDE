@@ -1,7 +1,7 @@
 package de.thm.mni.mote.mode.modelica.annotations;
 
 import de.thm.mni.mote.mode.modelica.interfaces.MoElement;
-import de.thm.mni.mote.mode.parser.OMCompiler;
+import de.thm.mni.mote.mode.omcactor.OMCompiler;
 import de.thm.mni.mote.mode.parser.modelica.AnnotationLexer;
 import de.thm.mni.mote.mode.parser.modelica.AnnotationParser;
 import de.thm.mni.mote.mode.parser.modelica.AnnotationParser.AnnotationElementContext;

@@ -1,7 +1,5 @@
 package de.thm.mni.mote.mode.modelica;
 
-import de.thm.mni.mote.mode.parser.ClassInformation;
-
 /**
  * Created by hobbypunk on 16.09.16.
  */

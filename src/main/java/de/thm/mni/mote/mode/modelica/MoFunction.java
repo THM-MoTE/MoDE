@@ -1,7 +1,6 @@
 package de.thm.mni.mote.mode.modelica;
 
 
-import de.thm.mni.mote.mode.parser.ClassInformation;
 import lombok.Builder;
 import lombok.Getter;
 

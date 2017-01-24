@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import de.thm.mni.mote.mode.ui.control.TreeViewWithItems?>
+<?import de.thm.mni.mote.mode.uiactor.control.TreeViewWithItems?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -9,7 +9,7 @@
 <GridPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
           prefHeight="700.0" prefWidth="1000.0" stylesheets="@../css/Main.css"
           xmlns="http://javafx.com/javafx/8.0.76-ea" xmlns:fx="http://javafx.com/fxml/1"
-          fx:controller="de.thm.mni.mote.mode.ui.controller.MainController">
+          fx:controller="de.thm.mni.mote.mode.uiactor.controller.MainController">
   <columnConstraints>
     <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
     <ColumnConstraints hgrow="SOMETIMES" minWidth="5.0" />
@@ -61,7 +61,8 @@
                             </graphic>
                           </MenuItem>
                           <SeparatorMenuItem mnemonicParsing="false"/>
-                          <MenuItem mnemonicParsing="false" text="%menu.file.exit" accelerator="Shortcut+X"/>
+                          <MenuItem mnemonicParsing="false" onAction="#handleClose" text="%menu.file.exit"
+                                    accelerator="Shortcut+X"/>
                         </items>
                       </Menu>
                       <Menu mnemonicParsing="false" text="%menu.edit">

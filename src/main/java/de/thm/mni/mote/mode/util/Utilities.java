@@ -1,7 +1,7 @@
 package de.thm.mni.mote.mode.util;
 
 import de.thm.mni.mote.mode.config.Settings;
-import de.thm.mni.mote.mode.ui.utilities.UTF8ResourceBundleControl;
+import de.thm.mni.mote.mode.uiactor.utilities.UTF8ResourceBundleControl;
 import lombok.experimental.UtilityClass;
 
 import java.io.IOException;

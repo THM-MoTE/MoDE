@@ -1,7 +1,7 @@
 package de.thm.mni.mote.mode.modelica.graphics;
 
 import de.thm.mni.mote.mode.modelica.interfaces.MoExtent;
-import de.thm.mni.mote.mode.parser.OMCompiler;
+import de.thm.mni.mote.mode.omcactor.OMCompiler;
 import de.thm.mni.mote.mode.parser.modelica.AnnotationParser.BitmapContext;
 import de.thm.mni.mote.mode.parser.modelica.AnnotationParser.BitmapDataContext;
 import javafx.beans.property.ObjectProperty;

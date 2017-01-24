@@ -1,5 +1,7 @@
 package de.thm.mni.mote.mode.config;
 
+import de.thm.mni.mhpp11.jActor.actors.logging.messages.ErrorMessage;
+import de.thm.mni.mhpp11.jActor.actors.messagebus.MessageBus;
 import de.thm.mni.mote.mode.config.model.Configuration;
 import de.thm.mni.mote.mode.config.xml.MyMatcher;
 import de.thm.mni.mote.mode.util.Utilities;
@@ -90,7 +92,7 @@ public class Settings extends Configuration implements Observer {
       try {
         serializer.write(this, this.file.toFile());
       } catch (Exception e) {
-        getLogger().error(e);
+        MessageBus.getInstance().send(new ErrorMessage(this.getClass(), e));
       }
     });
     t.start();

@@ -4,8 +4,8 @@ import de.thm.mni.mote.mode.config.Settings;
 import de.thm.mni.mote.mode.config.model.Modelica;
 import de.thm.mni.mote.mode.modelica.MoClass;
 import de.thm.mni.mote.mode.modelica.MoRoot;
-import de.thm.mni.mote.mode.parser.ClassInformation;
-import de.thm.mni.mote.mode.parser.OMCompiler;
+import de.thm.mni.mote.mode.modelica.ClassInformation;
+import de.thm.mni.mote.mode.omcactor.OMCompiler;
 import de.thm.mni.mote.mode.parser.ParserException;
 import javafx.util.Pair;
 import omc.corba.Result;
@@ -32,7 +32,7 @@ public class OmcTest {
   @Before
   public void before() throws IOException {
     Modelica m = Settings.load().getModelica();
-    omc = new OMCompiler(m.getCompiler(), Paths.get("/usr/lib/omclibrary"), Locale.GERMANY);
+    omc = new OMCompiler(m.getCompiler(), Locale.GERMANY);
     System.out.println(omc.sendExpression("getModelicaPath()"));
     omc.sendExpression("getClassNames()");
   }
@@ -52,7 +52,11 @@ public class OmcTest {
     for (Pair<String, Path> p : omc.getSystemLibraries()) {
       executor.execute(() -> {
         System.out.println(p);
-        l.add(MoClass.parse(omc, p.getKey(), mr, 3));
+        try {
+          l.add(MoClass.parse(omc, p.getKey(), mr, 3));
+        } catch (ParserException e) {
+          e.printStackTrace();
+        }
       });
     }
     executor.shutdown();

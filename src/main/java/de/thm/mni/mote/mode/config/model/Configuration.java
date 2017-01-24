@@ -1,6 +1,5 @@
 package de.thm.mni.mote.mode.config.model;
 
-import de.thm.mni.mote.mode.util.logger.ConsoleLogger;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.simpleframework.xml.Element;
@@ -25,7 +24,7 @@ public class Configuration extends MyObservable implements Observer {
   @Element(required = false)
   protected Recent recent = new Recent();
   @Element(required = false)
-  protected Logger logger = new ConsoleLogger();
+  protected Logger logger = new Logger();
   @Element(required = false)
   protected Notification notification = new Notification();
   @Element(required = false)

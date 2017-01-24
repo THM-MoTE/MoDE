@@ -4,7 +4,7 @@ import de.thm.mni.mote.mode.modelica.annotations.MoAnnotation;
 import de.thm.mni.mote.mode.modelica.annotations.MoPlacement;
 import de.thm.mni.mote.mode.modelica.interfaces.Changeable;
 import de.thm.mni.mote.mode.modelica.interfaces.MoElement;
-import de.thm.mni.mote.mode.parser.OMCompiler;
+import de.thm.mni.mote.mode.omcactor.OMCompiler;
 import de.thm.mni.mote.mode.util.ImmutableListCollector;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
