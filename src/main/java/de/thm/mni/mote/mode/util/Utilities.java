@@ -13,10 +13,7 @@ import java.nio.file.Paths;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.ResourceBundle;
+import java.util.*;
 
 /**
  * Created by hobbypunk on 14.09.16.
@@ -50,12 +47,12 @@ public class Utilities {
     return Utilities.getRessources(prefix + "view/" + view + ".fxml");
   }
   
-  public ResourceBundle getBundle(String bundle) {
+  public ResourceBundle getBundle(String bundle) throws MissingResourceException {
     Settings settings = Settings.load();
     return getBundle(bundle, settings.getLang());
   }
   
-  public ResourceBundle getBundle(String bundle, Locale lang) {
+  public ResourceBundle getBundle(String bundle, Locale lang) throws MissingResourceException {
     return getBundle("", bundle, lang);
   }
   
@@ -63,7 +60,7 @@ public class Utilities {
     return getBundle("control", bundle, lang);
   }
   
-  private ResourceBundle getBundle(String prefix, String bundle, Locale lang) {
+  private ResourceBundle getBundle(String prefix, String bundle, Locale lang) throws MissingResourceException {
     String path = BASEPATH;
     if (!prefix.isEmpty())
       path += prefix + "/";

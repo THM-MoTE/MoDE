@@ -1,0 +1,7 @@
+.vbox-base {
+    -fx-background-color: #eeeeee;
+}
+
+.list-cell:disabled {
+    -fx-text-fill: #cccccc;
+}

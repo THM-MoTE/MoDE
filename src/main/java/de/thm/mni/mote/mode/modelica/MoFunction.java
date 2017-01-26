@@ -27,7 +27,7 @@ public class MoFunction extends MoClass {
 
 //  public static MoFunction parse(FunctionCall fc) {
 //    MoFunctionBuilder mb = builder();
-//    mb.name(fc.getName().asID());
+//    mb.name(fc.getText().asID());
 //    mb.parent(null);
 //
 //    MoFunction mf = mb.build();

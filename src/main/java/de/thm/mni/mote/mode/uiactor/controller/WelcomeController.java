@@ -10,10 +10,12 @@ import de.thm.mni.mote.mode.config.Settings;
 import de.thm.mni.mote.mode.config.model.Project;
 import de.thm.mni.mote.mode.omcactor.OMCActor;
 import de.thm.mni.mote.mode.omcactor.OMCException;
+import de.thm.mni.mote.mode.omcactor.messages.GetAvailableLibsOMCMessage;
 import de.thm.mni.mote.mode.omcactor.messages.SetProjectOMCMessage;
 import de.thm.mni.mote.mode.omcactor.messages.StartDataCollectionOMCMessage;
-import de.thm.mni.mote.mode.parser.PackageParser;
+import de.thm.mni.mote.mode.uiactor.control.NewProjectFirstPageControl;
 import de.thm.mni.mote.mode.uiactor.control.RecentProjectControl;
+import de.thm.mni.mote.mode.uiactor.messages.OMCAvailableLibsUIMessage;
 import de.thm.mni.mote.mode.uiactor.messages.OMCSetProjectUIMessage;
 import de.thm.mni.mote.mode.uiactor.messages.OMCStartedMessage;
 import de.thm.mni.mote.mode.util.Utilities;
@@ -24,6 +26,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 
@@ -39,7 +42,7 @@ import java.util.List;
 import java.util.Observable;
 import java.util.ResourceBundle;
 
-import static de.thm.mni.mote.mode.omcactor.messages.StartDataCollectionOMCMessage.*;
+import static de.thm.mni.mote.mode.omcactor.messages.StartDataCollectionOMCMessage.TYPE;
 
 
 /**
@@ -61,10 +64,13 @@ public class WelcomeController extends NotifyController {
   @FXML private Button btnNewProject;
   @FXML private Button btnOpenProject;
   
-  @FXML @Override
+  @FXML private StackPane dialogStack;
+  
+  @FXML
+  @Override
   public void initialize(URL location, ResourceBundle resources) {
     super.initialize(location, resources);
-  
+    
     lName.setText(Settings.TITLE);
     lVersion.setText(Settings.VERSION);
     updateRecentList();
@@ -81,7 +87,14 @@ public class WelcomeController extends NotifyController {
     else {
       String file = (String) getParams().get(0);
       if (file.isEmpty()) showIgnoreParams();
-      else onOpenProject(Paths.get(file)); //TODO: is path valid?
+      else {
+        try {
+          onOpenProject(Paths.get(file));
+        } catch (Exception e) {
+          showIgnoreParams();
+          getActor().send(new ErrorMessage(Project.class, this.getGroup(), e));
+        }
+      }
     }
   }
   
@@ -102,7 +115,7 @@ public class WelcomeController extends NotifyController {
   
   
   private void onRemoveLastProject(Project project) {
-    getSettings().getRecent().remove(project);
+    getSettings().getRecent().remove(project.getProjectPath());
   }
   
   private void onOpenLastProject(Project project) {
@@ -111,7 +124,12 @@ public class WelcomeController extends NotifyController {
   
   @FXML
   private void onCreateProject() {
-    System.out.println("onCreateProject");
+    getActor().send(new GetAvailableLibsOMCMessage(getGroup()));
+  }
+  
+  private void onCreateProject(List<String> libs) {
+    NewProjectFirstPageControl tmp = new NewProjectFirstPageControl(dialogStack, libs);
+    tmp.setOnFinishListener(this::onOpenProject);
   }
   
   @FXML
@@ -119,38 +137,36 @@ public class WelcomeController extends NotifyController {
     Path p = getSettings().getRecent().getLastPath();
     FileChooser fc = new FileChooser();
     if (p != null) fc.setInitialDirectory(p.toFile());
-    fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("Modelica Files", "*.mo"));
+    fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("MoDE Project Files", "*.mp"));
     File f = fc.showOpenDialog(root.getScene().getWindow());
-    if(f == null) return;
-    onOpenProject(f.toPath());
-  }
+    if (f == null) return;
   
-  private void onOpenProject(Path f) {
-    Project p = null;
-    String name;
-  
-    getActor().send(new DebugMessage(this.getClass(), getGroup(), "Load File", f.toString()));
-  
-    f = PackageParser.findBasePackage(f);
-    if (f.getFileName().toString().toLowerCase().equals("package.mo")) name = f.getParent().getFileName().toString();
-    else name = f.getFileName().toString().replaceAll(".mo$", "");
-    for (Project tmp : getSettings().getRecent().getAll()) {
-      if(tmp.getFile().equals(f)) {
-        p = tmp;
-        break;
-      }
+    try {
+      onOpenProject(f.toPath());
+    } catch (Exception e) {
+      getActor().send(new ErrorMessage(Project.class, this.getGroup(), e));
     }
-  
-    if(p == null) p = new Project(name, f);
-  
-    onOpenProject(p);
-    
   }
   
-  private void onOpenProject(Project p) {
+  private void onOpenProject(Path f) throws Exception {
+    Project p = null;
+    
+    getActor().send(new DebugMessage(this.getClass(), getGroup(), "Load File", f.toString()));
+    
+    if (getSettings().getRecent().getAll().contains(f)) p = Project.load(f);
+    
+    if (p == null) {
+      p = Project.load(f);
+      getSettings().getRecent().add(f);
+    }
+    
+    onOpenProject(p);
+  }
+  
+  void onOpenProject(Project p) {
     p.updateLastOpened();
-    getSettings().getRecent().remove(p);
-    getSettings().getRecent().add(p);
+    getSettings().getRecent().remove(p.getProjectPath());
+    getSettings().getRecent().add(p.getProjectPath());
     getActor().send(new SetProjectOMCMessage(getGroup(), p));
   }
   
@@ -176,18 +192,23 @@ public class WelcomeController extends NotifyController {
   @Override
   public void update(Observable o, Object arg) {
     super.update(o, arg);
-    if(arg instanceof String && ((String) arg).contains("Recent")) {
+    if (arg instanceof String && ((String) arg).contains("Recent")) {
       updateRecentList();
     }
   }
   
   private void updateRecentList() {
     vbRecent.getChildren().clear();
-    for (Project p : getSettings().getRecent().getAll()) {
-      RecentProjectControl rpc = new RecentProjectControl(p, getSettings().getLang());
-      vbRecent.getChildren().add(rpc);
-      rpc.setOnClick(event -> onOpenLastProject(rpc.getProject()));
-      rpc.setOnClose(event -> onRemoveLastProject(rpc.getProject()));
+    for (Path tmp : getSettings().getRecent().getAll()) {
+      try {
+        Project p = Project.load(tmp);
+        RecentProjectControl rpc = new RecentProjectControl(p, getSettings().getLang());
+        vbRecent.getChildren().add(rpc);
+        rpc.setOnClick(event -> onOpenLastProject(rpc.getProject()));
+        rpc.setOnClose(event -> onRemoveLastProject(rpc.getProject()));
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
     }
   }
   
@@ -203,7 +224,7 @@ public class WelcomeController extends NotifyController {
   
   private void updateUI(Boolean omcStarted) {
     if (omcStarted) {
-      //btnNewProject.setDisable(false);
+      btnNewProject.setDisable(false);
       btnOpenProject.setDisable(false);
     } else {
       btnNewProject.setDisable(true);
@@ -221,7 +242,7 @@ public class WelcomeController extends NotifyController {
     @Override
     public void executeUI(Message msg) {
       if (msg instanceof OMCStartedMessage) {
-        send(new StartDataCollectionOMCMessage(getGroup(), TYPE.SYSTEM));
+        //send(new StartDataCollectionOMCMessage(getGroup(), TYPE.SYSTEM));
         Platform.runLater(() -> {
           getController().updateUI(true);
           getController().show();
@@ -235,6 +256,8 @@ public class WelcomeController extends NotifyController {
         send(new StartDataCollectionOMCMessage(getGroup(), TYPE.PROJECTLIB));
         send(new StartDataCollectionOMCMessage(getGroup(), TYPE.PROJECT));
         send(new StartUIMessage(MainController.class, Arrays.asList(getGroup(), ((OMCSetProjectUIMessage) msg).getProject())));
+      } else if (msg instanceof OMCAvailableLibsUIMessage) {
+        Platform.runLater(() -> getController().onCreateProject(((OMCAvailableLibsUIMessage) msg).getLibs()));
       }
   
       super.executeUI(msg);

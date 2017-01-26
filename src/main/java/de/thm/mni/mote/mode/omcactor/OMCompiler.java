@@ -24,6 +24,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -124,14 +125,11 @@ public class OMCompiler {
     }
   }
   
-  private List<String> getAvailableLibraries() {
-//    Result result = client.sendExpression("getAvailableLibraries()");
-//    List<String> list = toStringArray(result.result);
-    String[] first = new String[]{"Modelica", "ModelicaServices", "ModelicaReference", "Complex"};
-//    list.removeAll(Arrays.asList(first));
-//    list.addAllAnnotations(0, Arrays.asList(first));
-//    return list;
-    return Arrays.asList(first);
+  public List<String> getAvailableLibraries() {
+    Result result = client.sendExpression("getAvailableLibraries()");
+    List<String> list = toStringArray(result.result);
+    list = list.stream().filter(lib -> !(lib.toLowerCase().contains("obsolete") || lib.toLowerCase().contains("test"))).collect(Collectors.toList());
+    return list;
   }
   
   public List<String> getAnnotationStrings(String className) {

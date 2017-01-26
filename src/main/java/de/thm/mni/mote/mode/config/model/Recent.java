@@ -23,14 +23,11 @@ public class Recent extends MyObservable {
   @Getter private Integer count = 10;
   
   @ElementList(required = false)
-  private List<Project> projects = new ArrayList<>();
+  private List<Path> projects = new ArrayList<>();
   
   @Override
   public void init() {
     super.init();
-    for(Project p: projects) {
-      p.init();
-    }
   }
   
   public void setLastPath(Path lastPath) {
@@ -44,21 +41,23 @@ public class Recent extends MyObservable {
     this.notifyObservers("Count");
   }
   
-  public void add(Project project) {
+  public void add(Path project) {
     this.projects.add(project);
-    this.setLastPath(project.getFile().getParent());
+    this.setLastPath(project.getParent());
     this.checkLength();
     this.notifyObservers("AddRecent");
   }
   
-  public void remove(Project project) {
-    this.projects.remove(project);
-    this.notifyObservers("RemoveRecent");
+  public void remove(Path project) {
+    if (this.projects.contains(project)) {
+      this.projects.remove(project);
+      this.notifyObservers("RemoveRecent");
+    }
   }
   
-  public List<Project> getAll() {
-    List<Project> ret = new ArrayList<>();
-    for(Project p: this.projects)
+  public List<Path> getAll() {
+    List<Path> ret = new ArrayList<>();
+    for (Path p : this.projects)
       ret.add(0, p);
     return ret;
   }
@@ -71,7 +70,7 @@ public class Recent extends MyObservable {
   @Override
   public String toString() {
     String tmp = "";
-    for (Project p : projects) {
+    for (Path p : projects) {
       tmp += ((tmp.isEmpty()) ? "" : ", ") + p;
     }
     return String.format("{ lastPath: %s, count: %d, projects: [ %s ] }", lastPath, count, tmp);

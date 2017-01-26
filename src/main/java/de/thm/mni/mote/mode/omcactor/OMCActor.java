@@ -14,6 +14,7 @@ import de.thm.mni.mote.mode.modelica.MoClass;
 import de.thm.mni.mote.mode.modelica.MoRoot;
 import de.thm.mni.mote.mode.omcactor.messages.*;
 import de.thm.mni.mote.mode.omcactor.messages.StartDataCollectionOMCMessage.TYPE;
+import de.thm.mni.mote.mode.uiactor.messages.OMCAvailableLibsUIMessage;
 import de.thm.mni.mote.mode.uiactor.messages.OMCDataUIMessage;
 import de.thm.mni.mote.mode.uiactor.messages.OMCSetProjectUIMessage;
 import de.thm.mni.mote.mode.uiactor.messages.OMCStartedMessage;
@@ -22,7 +23,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.Getter;
 
-import java.io.IOException;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -62,7 +62,7 @@ public class OMCActor extends AbstractActor {
       started = true;
       omc.loadSystemLibrary();
       send(new OMCStartedMessage(getGroup(), Constants.UI));
-    } catch (IOException e) {
+    } catch (Exception e) {
       started = false;
       send(new ErrorMessage(OMCActor.class, getGroup(), new OMCException(e)));
     }
@@ -71,7 +71,7 @@ public class OMCActor extends AbstractActor {
   public void setProject(Project project) {
     this.project = project;
     try {
-      omc.setProject(project.getFile());
+      omc.setProject(project.getMoFile());
       send(new OMCSetProjectUIMessage(getGroup(), this.project));
     } catch (Exception e) {
       send(new ErrorMessage(OMCActor.class, getGroup(), new OMCException(e)));
@@ -123,6 +123,8 @@ public class OMCActor extends AbstractActor {
         collectDataInBackground(((StartDataCollectionOMCMessage) msg).getType());
       } else if (msg instanceof UpdateClassOMCMessage) {
         updateClass(((UpdateClassOMCMessage) msg).getMoClass());
+      } else if (msg instanceof GetAvailableLibsOMCMessage) {
+        send(new OMCAvailableLibsUIMessage(getGroup(), omc.getAvailableLibraries()));
       }
     }
   }
