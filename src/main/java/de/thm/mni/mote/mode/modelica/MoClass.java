@@ -1,7 +1,5 @@
 package de.thm.mni.mote.mode.modelica;
 
-import de.thm.mni.mhpp11.jActor.actors.logging.messages.ErrorMessage;
-import de.thm.mni.mhpp11.jActor.actors.messagebus.MessageBus;
 import de.thm.mni.mote.mode.modelica.annotations.MoAnnotation;
 import de.thm.mni.mote.mode.modelica.annotations.MoDiagram;
 import de.thm.mni.mote.mode.modelica.annotations.MoDocumentation;
@@ -12,7 +10,6 @@ import de.thm.mni.mote.mode.modelica.interfaces.Changeable;
 import de.thm.mni.mote.mode.modelica.interfaces.MoElement;
 import de.thm.mni.mote.mode.omcactor.OMCompiler;
 import de.thm.mni.mote.mode.parser.ParserException;
-import de.thm.mni.mote.mode.util.HierarchyData;
 import de.thm.mni.mote.mode.util.ImmutableListCollector;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -21,6 +18,7 @@ import javafx.collections.ObservableList;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,25 +29,24 @@ import java.util.NoSuchElementException;
  * Created by hobbypunk on 07.09.16.
  */
 @Getter
-public class MoClass extends MoElement implements HierarchyData<MoClass>, Changeable {
+public class MoClass extends MoElement implements Changeable, Comparable<MoClass> {
   
-  @Getter private static final List<MoClass> bases;
+  @Getter private static final List<MoContainer> bases;
   
   static {
     bases = new ArrayList<>();
-    bases.add(new MoClass(null, "Real", null));
-    bases.add(new MoClass(null, "Boolean", null));
-    bases.add(new MoClass(null, "Integer", null));
-    bases.add(new MoClass(null, "String", null));
-    bases.add(new MoClass(null, "Enum", null));
+    bases.add(new MoContainer(null, null, "Real").setElement(new MoClass()));
+    bases.add(new MoContainer(null, null, "Boolean").setElement(new MoClass()));
+    bases.add(new MoContainer(null, null, "Integer").setElement(new MoClass()));
+    bases.add(new MoContainer(null, null, "String").setElement(new MoClass()));
+    bases.add(new MoContainer(null, null, "Enum").setElement(new MoClass()));
   }
   
   private ClassInformation classInformation;
-  private MoClass parent;
+  @Setter(AccessLevel.PACKAGE) private MoContainer container = null;
   private final ObjectProperty<Change> unsavedChanges = new SimpleObjectProperty<>(Change.NONE);
   private Boolean complete = false;
   
-  private final List<MoClass> inheritedClasses = new ArrayList<>();
   
   private final ObservableList<MoVariable> variables = FXCollections.observableArrayList();
   @Getter(value = AccessLevel.PROTECTED) private final List<MoVariable> deletedVariables = new ArrayList<>();
@@ -57,15 +54,20 @@ public class MoClass extends MoElement implements HierarchyData<MoClass>, Change
   private final ObservableList<MoConnection> connections = FXCollections.observableArrayList();
   @Getter(value = AccessLevel.PROTECTED) private final List<MoConnection> deletedConnections = new ArrayList<>();
   
-  private final ObservableList<MoClass> children = FXCollections.observableArrayList();
   
-  MoClass(ClassInformation classInformation, String name, MoClass parent) {
-    super("c", name, "");
+  MoClass() {
+    this("b", "");
+  }
+  
+  MoClass(String prefix, String comment) {
+    super(prefix, comment);
+  }
+  
+  MoClass(ClassInformation classInformation, @NonNull MoLater that) {
+    super("c", "");
     this.classInformation = classInformation;
-    this.parent = parent;
-    if (parent != null) parent.getChildren().add(this);
-  
-    initChangeListener();
+    this.container = that.getContainer();
+    if (!(this instanceof MoLater)) initChangeListener();
   }
   
   @Override
@@ -81,61 +83,23 @@ public class MoClass extends MoElement implements HierarchyData<MoClass>, Change
     return list;
   }
   
-  public synchronized void moveTo(MoClass newParent) {
-    moveTo(-1, newParent);
-  }
-  
-  private synchronized void moveTo(Integer index, MoClass newParent) {
-    if (this.parent != null) this.parent.getChildren().remove(this);
-    if (index > -1) newParent.getChildren().set(index, this);
-    else newParent.getChildren().add(this);
-    this.parent = newParent;
-  }
-  
-  private Boolean contains(OMCompiler omc, MoClass child) {
-    if (children.contains(child)) return true;
-    
-    this.update(omc);
-    
-    for (MoClass c : children)
-      if (c.contains(omc, child)) return true;
-    return false;
-  }
-  
-  public MoClass find(OMCompiler omc, String s) {
-    if (this.getName().equals(s)) return this;
-    
-    if (!s.startsWith(this.getName())) return null;
-    
-    this.update(omc, s);
-    
-    for (MoClass child : this.getChildren()) {
-      MoClass result = child.find(omc, s);
-      if (result != null) return result;
-    }
-    return null;
-  }
-  
   public MoVariable findVariable(String name) throws NoSuchElementException {
     for (MoVariable mv : getVariables())
       if (mv.getName().equals(name)) return mv;
     throw new NoSuchElementException(String.format("No Variable named \"%s\" found", name));
   }
   
-  public String getName() {
-    if (this.parent == null || this.parent instanceof MoRoot) return this.name;
-    return this.parent.getName() + "." + this.name;
-  }
-  
-  public String getSimpleName() {
-    return this.name;
-  }
-  
-  
   public ObservableList<MoVariable> getVariables() {
-    inheritedClasses.forEach(inheritedClass -> inheritedClass.getVariables().forEach(variable -> {
-      if (!this.variables.contains(variable)) this.variables.add(variable);
-    }));
+  
+    this.container.getInheritedClasses().forEach(inheritedClass -> {
+      try {
+        inheritedClass.getElement().getVariables().forEach(variable -> {
+          if (!this.variables.contains(variable)) this.variables.add(variable);
+        });
+      } catch (ParserException e) {
+        e.printStackTrace(); //TODO: send msg
+      }
+    });
     
     return this.variables;
   }
@@ -160,9 +124,15 @@ public class MoClass extends MoElement implements HierarchyData<MoClass>, Change
   
   
   public ObservableList<MoConnection> getConnections() {
-    inheritedClasses.forEach(inheritedClass -> inheritedClass.getConnections().forEach(connection -> {
-      if (!this.connections.contains(connection)) this.connections.add(connection);
-    }));
+    this.container.getInheritedClasses().forEach(inheritedClass -> {
+      try {
+        inheritedClass.getElement().getConnections().forEach(connection -> {
+          if (!this.connections.contains(connection)) this.connections.add(connection);
+        });
+      } catch (ParserException e) {
+        e.printStackTrace(); //TODO: send msg
+      }
+    });
     return this.connections;
   }
   
@@ -181,22 +151,33 @@ public class MoClass extends MoElement implements HierarchyData<MoClass>, Change
     this.connections.addAll(connections);
   }
   
-
-  public Boolean hasConnectors() {
+  
+  public Boolean hasConnectors() throws ParserException {
     for (MoVariable mv : getVariables())
-      if (mv.getType() instanceof MoConnector) return true;
+      if (mv.getType().getElement() instanceof MoConnector) return true;
     return false;
   }
   
   public List<MoVariable> getConnectorVariables() {
-    return getVariables().stream().filter(moVariable -> moVariable.getType() instanceof MoConnector).collect(ImmutableListCollector.toImmutableList());
+    return getVariables().stream().filter(moVariable -> {
+      try {
+        return moVariable.getType().getElement() instanceof MoConnector;
+      } catch (ParserException e) {
+        e.printStackTrace(); //TODO: send msg
+        return false;
+      }
+    }).collect(ImmutableListCollector.toImmutableList());
   }
   
   public List<MoAnnotation> getAnnotations() {
     List<MoAnnotation> annotations = new ArrayList<>();
     annotations.addAll(super.getAnnotations());
-    inheritedClasses.forEach(inheritedClass -> {
-      annotations.addAll(0, inheritedClass.getAnnotations());
+    this.container.getInheritedClasses().forEach(inheritedClass -> {
+      try {
+        annotations.addAll(0, inheritedClass.getElement().getAnnotations());
+      } catch (ParserException e) {
+        e.printStackTrace(); //TODO: send msg
+      }
     });
     
     return Collections.unmodifiableList(annotations);
@@ -213,7 +194,7 @@ public class MoClass extends MoElement implements HierarchyData<MoClass>, Change
     if (this instanceof MoModel) return MoDefaults.newModel();
     if (this instanceof MoFunction) return MoDefaults.newFunction();
     else {
-      System.out.println(this.getClass().getSimpleName() + ": " + this.getName());
+      System.out.println(this.getClass().getSimpleName() + ": " + this.container.getName());
       return MoDefaults.newEmpty();
     }
   }
@@ -259,56 +240,44 @@ public class MoClass extends MoElement implements HierarchyData<MoClass>, Change
   }
   
   
-  private void update(@NonNull OMCompiler omc, String name) {
-    for (Integer i = 0; i < getChildren().size(); i++) {
-      MoClass child = getChildren().get(i);
-      if (name.startsWith(child.getName()) && child instanceof MoLater) {
-        try {
-          update(omc, i);
-        } catch (ParserException e) {
-          MessageBus.getInstance().send(new ErrorMessage(this.getClass(), e));
-        }
-      }
+  static MoClass parse(@NonNull OMCompiler omc, MoLater that) throws ParserException {
+    ClassInformation ci = omc.getClassInformation(that.getName());
+    MoClass tmp = null;
+    switch (ci.getType()) {
+      case PACKAGE:
+        tmp = new MoPackage(ci, that);
+        break;
+      case MODEL:
+        tmp = new MoModel(ci, that);
+        break;
+      case CLASS:
+        tmp = new MoClass(ci, that);
+        break;
+      case CONNECTOR:
+        tmp = new MoConnector(ci, that);
+        break;
     }
-  }
-  
-  public void update(@NonNull OMCompiler omc) {
-    for (Integer i = 0; i < getChildren().size(); i++) {
-      try {
-        update(omc, i);
-      } catch (ParserException e) {
-        MessageBus.getInstance().send(new ErrorMessage(this.getClass(), e));
-      }
-    }
-  }
-  
-  private void update(OMCompiler omc, Integer i) throws ParserException {
-    MoClass child = getChildren().get(i);
-    if (child instanceof MoLater) {
-      MoClass c = MoClass.parse(omc, child.getSimpleName(), null, this.getName(), 1, true);
-      if (c == null) throw new ParserException(String.format("Error in %s", this.getName()), String.format("Can't replace Child \"%s\"", child.getSimpleName()));
-  
-      c.moveTo(i, this);
-      c.parseExtra(omc);
-    }
+    
+    if (tmp == null) throw new ParserException(String.format("Error in %s", that.getSimpleName()), String.format("Can't parse Type %s", ci.getType()));
+    tmp.parseExtra(omc);
+    return tmp;
   }
   
   private void parseExtra(@NonNull OMCompiler omc) throws ParserException {
     if (complete) return;
-    List<String> list = omc.getInheritedClasses(this.getName());
+    List<String> list = omc.getInheritedClasses(this.container.getName());
     Boolean classFound;
     for (String s : list) {
       classFound = false;
-      for (MoClass mc : bases) {
-        MoClass p = mc.find(omc, s);
+      for (MoContainer mc : bases) {
+        MoContainer p = mc.find(s);
         if (p != null) {
-          this.getInheritedClasses().add(p);
-          p.parseExtra(omc);
+          this.container.getInheritedClasses().add(p);
           classFound = true;
           break;
         }
       }
-      if (!classFound) throw new ParserException(String.format("Error in %s", this.getName()), String.format("Can't find package \"%s\"", s));
+      if (!classFound) throw new ParserException(String.format("Error in %s", this.container.getName()), String.format("Can't find package \"%s\"", s));
     }
   
     this.addAllAnnotations(MoAnnotation.parse(omc, this));
@@ -317,62 +286,27 @@ public class MoClass extends MoElement implements HierarchyData<MoClass>, Change
     complete = true;
   }
   
-  
-  public static MoClass parse(@NonNull OMCompiler omc, @NonNull String name, @NonNull MoClass parent, Integer depth) throws ParserException {
-    return MoClass.parse(omc, name, parent, (parent instanceof MoRoot) ? "" : parent.getName(), depth, false);
-  }
-  
-  private static MoClass parse(@NonNull OMCompiler omc, @NonNull String name, MoClass parent, @NonNull String parentName, Integer depth, Boolean noExtra) throws ParserException {
-    if (depth == 0) return new MoLater(name, parent);
-    String n = (parentName.equals("")) ? name : parentName + "." + name;
-    ClassInformation ci = omc.getClassInformation(n);
-    if (parent instanceof MoLater) {
-      n = parent.getName();
-      parent = null;
-    }
-    MoClass tmp = null;
-    switch (ci.getType()) {
-      case PACKAGE:
-        tmp = new MoPackage(ci, name, parent);
-        break;
-      case MODEL:
-        tmp = new MoModel(ci, name, parent);
-        break;
-      case CLASS:
-        tmp = new MoClass(ci, name, parent);
-        break;
-      case CONNECTOR:
-        tmp = new MoConnector(ci, name, parent);
-        break;
-    }
-    
-    if (parent instanceof MoRoot && tmp != null) bases.add(tmp);
-    if (tmp == null) throw new ParserException(String.format("Error in %s", name), String.format("Can't parse Type %s", ci.getType()));
-    if (!(tmp instanceof MoLater)) {
-      parseChildren(omc, tmp, n, depth, noExtra);
-      if (!noExtra) tmp.parseExtra(omc);
-    }
-    return tmp;
-  }
-  
-  private static List<MoClass> parseChildren(@NonNull OMCompiler omc, MoClass parent, String parentName, Integer depth, Boolean noExtra) {
-    List<String> names = omc.getChildren(parentName);
-    for (String name : names) {
-      try {
-        MoClass.parse(omc, name, parent, parentName, depth - 1, noExtra);
-      } catch (ParserException e) {
-        MessageBus.getInstance().send(new ErrorMessage(MoClass.class, e));
-      }
-    }
-    return parent.getChildren();
-  }
-  
-  static MoClass findClass(OMCompiler omc, String s) {
-    MoClass clazz;
-    for (MoClass c : bases) {
-      clazz = c.find(omc, s);
-      if (clazz != null) return clazz;
+  static MoContainer findClass(String s) {
+    MoContainer container;
+    for (MoContainer c : bases) {
+      container = c.find(s);
+      if (container != null) return container;
     }
     return null;
+  }
+  
+  @Override
+  public int compareTo(MoClass that) {
+    return this.getName().compareTo(that.getName());
+  }
+  
+  @Override
+  public String getName() {
+    return this.getContainer().getName();
+  }
+  
+  @Override
+  public String getSimpleName() {
+    return this.getContainer().getSimpleName();
   }
 }

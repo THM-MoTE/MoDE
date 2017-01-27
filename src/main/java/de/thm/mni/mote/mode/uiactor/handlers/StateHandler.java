@@ -1,6 +1,7 @@
 package de.thm.mni.mote.mode.uiactor.handlers;
 
 import de.thm.mni.mote.mode.modelica.MoConnector;
+import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoDiagramGroup;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoIconGroup;
 import de.thm.mni.mote.mode.uiactor.shape.Line;
@@ -67,7 +68,11 @@ public class StateHandler implements EventHandler<Event> {
     Node src = (Node) event.getSource();
     if (event.getEventType().equals(MouseEvent.MOUSE_CLICKED)) {
       String clazz = src.getClass().getSimpleName();
-      if (src instanceof MoIconGroup) clazz = ((MoIconGroup) src).getMoClass().getClass().getSimpleName();
+      if (src instanceof MoIconGroup) try {
+        clazz = ((MoIconGroup) src).getMoClass().getClass().getSimpleName();
+      } catch (ParserException e) {
+        e.printStackTrace(); //TODO send msg
+      }
     }
     
     Boolean handle = handleConnector(src, type, event);
@@ -103,11 +108,15 @@ public class StateHandler implements EventHandler<Event> {
   }
   
   private Boolean handleConnector(Node src, EventType type, Event event) {
-    if (src instanceof MoIconGroup && ((MoIconGroup) src).getMoClass() instanceof MoConnector) {
-      if (this.sm.isSwitchAllowed(type, ConnectionCreateState.class)) {          //click
-        this.sm.switchToState(new ConnectionCreateState(getParent(), (MoIconGroup) src), false);
-        return true;
+    try {
+      if (src instanceof MoIconGroup && ((MoIconGroup) src).getMoClass() instanceof MoConnector) {
+        if (this.sm.isSwitchAllowed(type, ConnectionCreateState.class)) {          //click
+          this.sm.switchToState(new ConnectionCreateState(getParent(), (MoIconGroup) src), false);
+          return true;
+        }
       }
+    } catch (ParserException e) {
+      e.printStackTrace(); //TODO send msg
     }
     return false;
   }

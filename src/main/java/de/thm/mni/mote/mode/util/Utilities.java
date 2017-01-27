@@ -29,7 +29,7 @@ public class Utilities {
     numberFormat = new DecimalFormat("#.##", symbols);
   }
   
-  private URL getRessources(String postfix) {
+  public URL getRessources(String postfix) {
     return Utilities.class.getResource("/" + BASEPATH + postfix);
   }
   
@@ -83,7 +83,7 @@ public class Utilities {
       try {
         f = Files.createDirectories(f);
       } catch (IOException e) {
-        throw new RuntimeException("can'actors create folders");
+        throw new RuntimeException("can't create folders");
       }
     }
     return f;
@@ -103,7 +103,7 @@ public class Utilities {
           e.printStackTrace();
         }
       } catch (Exception e) {
-        throw new RuntimeException("can'actors create file");
+        throw new RuntimeException("can't create file");
       }
     }
     return f;

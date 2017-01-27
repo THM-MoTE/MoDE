@@ -119,7 +119,7 @@ public class ProjectFromSourceControl extends GridPane implements NewProject, In
   public Project.ProjectBuilder getProjectBuilder() {
     Path path = Paths.get(tfPath.getText());
     String name = tfName.getText();
-    Path projectPath = Paths.get(path.getParent().toString(), name + ".mp");
+    Path projectPath = path.getParent().resolve(name + ".mp");
     
     this.projectBuilder.name(name).moFile(path).projectPath(projectPath);
     return projectBuilder;

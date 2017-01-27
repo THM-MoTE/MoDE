@@ -1,6 +1,7 @@
 package de.thm.mni.mote.mode.uiactor.statemachine.states.model;
 
 import de.thm.mni.mote.mode.modelica.MoConnection;
+import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoDiagramGroup;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoIconGroup;
 import de.thm.mni.mote.mode.uiactor.handlers.FocusHandler;
@@ -67,7 +68,11 @@ public class ModelMoveState extends ModelModifyState {
     MoIconGroup source = getSource();
     source.toFront();
     source.setOpacity(0.8);
-    FocusHandler.getInstance().setFocus(source);
+    try {
+      FocusHandler.getInstance().setFocus(source);
+    } catch (ParserException e) {
+      e.printStackTrace(); //TODO send msg
+    }
     startMousePos = getParent().convertScenePointToDiagramPoint(event.getSceneX(), event.getSceneY());
     startOrigin = new Point2D(o.getX(), o.getY());
     source.getVariable().getConnections().forEach(moConn -> {

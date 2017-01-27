@@ -1,4 +1,4 @@
-package de.thm.mni.mote.mode;
+package de.thm.mni.mote.mode.omcactor;
 
 import de.thm.mni.mote.mode.parser.PackageParser;
 import org.junit.Test;

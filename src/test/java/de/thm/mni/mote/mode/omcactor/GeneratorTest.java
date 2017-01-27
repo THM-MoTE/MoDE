@@ -1,4 +1,4 @@
-package de.thm.mni.mote.mode;
+package de.thm.mni.mote.mode.omcactor;
 
 import de.thm.mni.mote.mode.parser.modelica.AnnotationLexer;
 import de.thm.mni.mote.mode.parser.modelica.AnnotationParser;

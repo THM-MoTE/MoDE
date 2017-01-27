@@ -13,25 +13,27 @@ import java.util.List;
  */
 public class MoLater extends MoClass {
   
-  MoLater(String name, MoClass parent) {
-    super(null, name, parent);
-    PREFIX = "l";
+  private MoLater() {
+    super("l", MoLater.class.getSimpleName());
   }
   
   
-  public static void lightParse(@NonNull OMCompiler omc, @NonNull String name, @NonNull MoClass parent) throws ParserException {
-    lightParse(omc, name, parent, "");
+  public static void lightParsing(@NonNull OMCompiler omc, @NonNull String name, @NonNull MoContainer parent) throws ParserException {
+    lightParsing(omc, name, parent, "");
   }
   
-  private static void lightParse(@NonNull OMCompiler omc, @NonNull String name, MoClass parent, @NonNull String parentName) throws ParserException {
+  private static void lightParsing(@NonNull OMCompiler omc, @NonNull String name, MoContainer parent, @NonNull String parentName) throws ParserException {
     String n = (parentName.equals("")) ? name : parentName + "." + name;
     
-    MoLater tmp = new MoLater(name, parent);
-    
+    MoContainer tmp = new MoContainer(omc, parent, name).setElement(new MoLater());
+    parent.getChildren().add(tmp);
+    if (parent instanceof MoRoot && !MoClass.getBases().contains(tmp)) {
+      MoClass.getBases().add(tmp);
+    }
     List<String> names = omc.getChildren(n);
     names.forEach(childName -> {
       try {
-        if (!childName.isEmpty()) MoLater.lightParse(omc, childName, tmp, n);
+        if (!childName.isEmpty()) MoLater.lightParsing(omc, childName, tmp, n);
       } catch (ParserException e) {
         MessageBus.getInstance().send(new ErrorMessage(MoLater.class, e));
       }

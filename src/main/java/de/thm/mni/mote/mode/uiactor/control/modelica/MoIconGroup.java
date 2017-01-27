@@ -1,10 +1,11 @@
 package de.thm.mni.mote.mode.uiactor.control.modelica;
 
-import de.thm.mni.mote.mode.modelica.MoClass;
 import de.thm.mni.mote.mode.modelica.MoConnector;
+import de.thm.mni.mote.mode.modelica.MoContainer;
 import de.thm.mni.mote.mode.modelica.MoVariable;
 import de.thm.mni.mote.mode.modelica.graphics.MoText;
 import de.thm.mni.mote.mode.modelica.graphics.MoTransformation;
+import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.Focusable;
 import javafx.beans.property.ObjectProperty;
 import javafx.geometry.Point2D;
@@ -30,37 +31,47 @@ public class MoIconGroup extends MoGroup implements Focusable {
   Boolean iconOnly;
   MoVariable variable;
   
-  public MoIconGroup(MoClass parent) {
+  public MoIconGroup(MoContainer parent) {
     this(parent, null, true);
   }
   
-  public MoIconGroup(MoClass parent, Boolean iconOnly) {
+  public MoIconGroup(MoContainer parent, Boolean iconOnly) {
     this(parent, null, iconOnly);
   }
   
-  MoIconGroup(MoVariable variable, Boolean iconOnly) {
+  MoIconGroup(MoVariable variable, Boolean iconOnly) throws ParserException {
     this(variable.getType(), variable, iconOnly);
   }
   
-  private MoIconGroup(MoClass parent, MoVariable variable, Boolean iconOnly) {
+  private MoIconGroup(MoContainer parent, MoVariable variable, Boolean iconOnly) {
     super(parent);
     this.variable = variable;
     this.iconOnly = iconOnly;
-    init();
+    try {
+      init();
+    } catch (ParserException e) {
+      e.printStackTrace(); //TODO send msg
+    }
   }
   
-  protected void initImage() {
+  protected void initImage() throws ParserException {
     this.getMoClass().getIcon().getMoGraphics().stream().filter(mg -> !iconOnly || (!(mg instanceof MoText))).forEach(this::initImage);
     if (!iconOnly)
       initConnectors();
     if (variable != null) initTransformation();
   }
   
-  private void initConnectors() {
-    getMoClass().getConnectorVariables().forEach(super::initVariable);
+  private void initConnectors() throws ParserException {
+    getMoClass().getConnectorVariables().forEach((mv) -> {
+      try {
+        super.initVariable(mv);
+      } catch (ParserException e) {
+        e.printStackTrace(); //TODO: send msg
+      }
+    });
   }
   
-  private void initTransformation() {
+  private void initTransformation() throws ParserException {
     MoTransformation mt;
     mt = getVariable().getPlacement().getIconTransformation();
     if (mt == null) mt = getVariable().getPlacement().getDiagramTransformation();
@@ -106,7 +117,7 @@ public class MoIconGroup extends MoGroup implements Focusable {
   }
   
   @Override
-  public void setFocus() {
+  public void setFocus() throws ParserException {
     Color color = (getMoClass() instanceof MoConnector) ? Color.RED : Color.CORNFLOWERBLUE;
     //this.setEffect(new DropShadow(5., color));
     this.getCoordianteSystem().setStroke(color);

@@ -1,5 +1,6 @@
 package de.thm.mni.mote.mode.modelica;
 
+import de.thm.mni.mote.mode.parser.ParserException;
 import lombok.experimental.UtilityClass;
 
 import java.io.IOException;
@@ -15,22 +16,21 @@ import static de.thm.mni.mote.mode.modelica.interfaces.Changeable.Change;
 
 @UtilityClass
 public class Saver {
-  public void save(MoClass moClass) {
-    if (moClass.getUnsavedChanges().getValue().equals(Change.NONE)) return;
-    //TODO: create imports
+  public void save(MoContainer container) throws ParserException {
+    if (container.getElement().getUnsavedChanges().getValue().equals(Change.NONE)) return;
     
-    ClassInformation ci = moClass.getClassInformation();
+    ClassInformation ci = container.getElement().getClassInformation();
     List<String> fileContent = new ArrayList<>();
     try {
       Files.lines(ci.getFileName()).forEachOrdered(fileContent::add);
-      Integer end = saveVariables(fileContent, moClass);
-      saveConnections(fileContent, moClass, end);
+      Integer end = saveVariables(fileContent, container.getElement());
+      saveConnections(fileContent, container.getElement(), end);
   
       //fileContent.forEach(System.out::println);
       //Files.write(Files.createTempFile("MoDE_", ".mo"), fileContent);
       
       Files.write(ci.getFileName(), fileContent);
-      moClass.getUnsavedChanges().setValue(Change.NONE);
+      container.getElement().getUnsavedChanges().setValue(Change.NONE);
     } catch (IOException e) {
       e.printStackTrace();
     }

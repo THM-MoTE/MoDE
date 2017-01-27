@@ -1,29 +1,16 @@
 package de.thm.mni.mote.mode.parser;
 
-import de.thm.mni.mhpp11.jActor.actors.logging.messages.ErrorMessage;
-import de.thm.mni.mhpp11.jActor.actors.messagebus.MessageBus;
-import de.thm.mni.mote.mode.modelica.MoClass;
-import de.thm.mni.mote.mode.omcactor.OMCompiler;
-import javafx.util.Pair;
-
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * Created by hobbypunk on 14.09.16.
  */
 public class PackageParser {
-  
-  private static ExecutorService es = Executors.newSingleThreadExecutor();
   
   public static Path findBasePackage(Path f) {
     f = f.toAbsolutePath().normalize();
@@ -52,50 +39,5 @@ public class PackageParser {
   
     }
     return f;
-  }
-  
-  public static void collectSystemLibs(OMCompiler omc, MoClass parent) {
-    collect(omc, parent, omc.getSystemLibraries());
-  }
-  
-  public static void collectProjectLibs(OMCompiler omc, MoClass parent, Path file) {
-    Path p = file.getParent();
-    String basename = file.getFileName().toString().replaceAll("\\.mo$", "");
-    p = p.resolve(basename + ".import");
-    if (Files.notExists(p)) return;
-    try {
-      List<Path> list = new ArrayList<>();
-      for (String line : Files.readAllLines(p)) {
-        list.add(Paths.get(line));
-      }
-      omc.addProjectLibraries(list);
-      collect(omc, parent, omc.getProjectLibraries());
-    } catch (IOException | ParserException e) {
-  
-    }
-  }
-  
-  private static void collect(OMCompiler omc, MoClass parent, List<Pair<String, Path>> list) {
-    for (Pair<String, Path> lib : list) {
-      es.execute(() -> {
-        try {
-          MoClass.parse(omc, lib.getKey(), parent, 1);
-        } catch (ParserException e) {
-          MessageBus.getInstance().send(new ErrorMessage(PackageParser.class, e));
-        }
-      });
-    }
-  }
-  
-  public static void collectProject(OMCompiler omc, MoClass parent, Path file) {
-    try {
-      omc.setProject(file);
-      collect(omc, parent, Collections.singletonList(omc.getProject()));
-    } catch (ParserException e) {
-    }
-  }
-  
-  public static void close() {
-    es.shutdownNow();
   }
 }

@@ -1,5 +1,6 @@
 package de.thm.mni.mote.mode.uiactor.handlers;
 
+import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.Focusable;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
@@ -22,7 +23,11 @@ public class FocusHandler implements EventHandler<MouseEvent> {
   public void handle(MouseEvent event) {
     if (event.getSource() instanceof Focusable) {
       if (focused != event.getSource()) {
-        setFocus((Focusable) event.getSource());
+        try {
+          setFocus((Focusable) event.getSource());
+        } catch (ParserException e) {
+          e.printStackTrace(); //TODO send msg
+        }
       }
       event.consume();
     } else {
@@ -30,7 +35,7 @@ public class FocusHandler implements EventHandler<MouseEvent> {
     }
   }
   
-  public void setFocus(Focusable source) {
+  public void setFocus(Focusable source) throws ParserException {
     clearFocus();
     focused = source;
     focused.setFocus();

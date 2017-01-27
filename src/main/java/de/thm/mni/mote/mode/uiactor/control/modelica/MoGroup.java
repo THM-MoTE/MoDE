@@ -1,8 +1,10 @@
 package de.thm.mni.mote.mode.uiactor.control.modelica;
 
 import de.thm.mni.mote.mode.modelica.MoClass;
+import de.thm.mni.mote.mode.modelica.MoContainer;
 import de.thm.mni.mote.mode.modelica.MoVariable;
 import de.thm.mni.mote.mode.modelica.graphics.*;
+import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.shape.*;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.Element;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.HasInitialStroke;
@@ -31,7 +33,7 @@ import java.util.Map;
 public abstract class MoGroup extends Group {
   @Getter private final Group basis = new Group();
   javafx.scene.shape.Rectangle coordianteSystem = null; //TODO: add InitialStroke Interface
-  @Getter private final MoClass moClass;
+  @Getter private final MoContainer container;
   
   private Map<MoVariable, MoIconGroup> data = new HashMap<>();
   
@@ -48,14 +50,14 @@ public abstract class MoGroup extends Group {
   @Getter private Boolean flippedX = false; //X axis is flipped
   @Getter private Boolean flippedY = false; //Y axis is flipped
   
-  MoGroup(@NonNull MoClass moClass) {
-    this.moClass = moClass;
+  MoGroup(@NonNull MoContainer container) {
+    this.container = container;
     this.getChildren().add(basis);
     basis.getTransforms().addAll(scale, flipping, position);
   }
   
-  final void init() {
-    if (moClass.getIcon() != null) {
+  final void init() throws ParserException {
+    if (this.container.getElement().getIcon() != null) {
       initCoordinateSystem();
       initImage();
     }
@@ -74,7 +76,7 @@ public abstract class MoGroup extends Group {
     });
   }
   
-  public MoGroup scaleDelta(Double deltaX, Double deltaY) {
+  public MoGroup scaleDelta(Double deltaX, Double deltaY) throws ParserException {
     Point2D extent0 = this.getMoClass().getIcon().getMoCoordinateSystem().getExtent().get(0).getValue();
     Point2D extent1 = this.getMoClass().getIcon().getMoCoordinateSystem().getExtent().get(1).getValue();
     
@@ -85,7 +87,7 @@ public abstract class MoGroup extends Group {
   }
   
   
-  public MoGroup scaleToSize(Double newWidth, Double newHeight) {
+  public MoGroup scaleToSize(Double newWidth, Double newHeight) throws ParserException {
     Point2D extent0 = this.getMoClass().getIcon().getMoCoordinateSystem().getExtent().get(0).getValue();
     Point2D extent1 = this.getMoClass().getIcon().getMoCoordinateSystem().getExtent().get(1).getValue();
   
@@ -101,7 +103,7 @@ public abstract class MoGroup extends Group {
   }
   
   
-  private void initCoordinateSystem() {
+  private void initCoordinateSystem() throws ParserException {
   
     MoCoordinateSystem mcs;
     if (this instanceof MoIconGroup) mcs = this.getMoClass().getIconCoordinateSystem();
@@ -158,14 +160,14 @@ public abstract class MoGroup extends Group {
     }
   }
   
-  void initVariable(MoVariable mv) {
+  void initVariable(MoVariable mv) throws ParserException {
     if (mv.getPlacement() == null || (mv.getPlacement().getIconTransformation() == null && mv.getPlacement().getDiagramTransformation() == null)) return;
     MoIconGroup mip = new MoIconGroup(mv, false);
     data.put(mv, mip);
     this.add(mip);
   }
   
-  protected abstract void initImage();
+  protected abstract void initImage() throws ParserException;
   
   public void add(Node node) {
     basis.getChildren().add(node);
@@ -214,5 +216,9 @@ public abstract class MoGroup extends Group {
   
   public void setInternalStyle(String style) {
     basis.setStyle(style);
+  }
+  
+  public MoClass getMoClass() throws ParserException {
+    return this.container.getElement();
   }
 }

@@ -1,9 +1,7 @@
 package de.thm.mni.mote.mode.uiactor.control.modelica;
 
-import de.thm.mni.mote.mode.modelica.MoClass;
-import de.thm.mni.mote.mode.modelica.MoConnection;
-import de.thm.mni.mote.mode.modelica.MoConnector;
-import de.thm.mni.mote.mode.modelica.MoVariable;
+import de.thm.mni.mote.mode.modelica.*;
+import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.handlers.FocusHandler;
 import de.thm.mni.mote.mode.uiactor.handlers.StateHandler;
 import javafx.collections.ListChangeListener;
@@ -20,13 +18,13 @@ import java.util.function.Consumer;
  */
 public class MoDiagramGroup extends MoGroup {
   
-  public MoDiagramGroup(MoClass moClass) {
-    super(moClass);
+  public MoDiagramGroup(MoContainer container) throws ParserException {
+    super(container);
     init();
   }
   
   @Override
-  protected void initImage() {
+  protected void initImage() throws ParserException {
     initVariables();
     initConnections();
     initListeners(this);
@@ -38,22 +36,30 @@ public class MoDiagramGroup extends MoGroup {
       StateHandler.getInstance(this);
       this.addEventHandler(EventType.ROOT, StateHandler.getInstance(this));
       group.getBasis().getChildren().forEach(this::addGroupListeners);
-    } else if (group instanceof MoIconGroup) group.getBasis().getChildren().forEach(this::addIconListeners);
+    } else if (group instanceof MoIconGroup) group.getBasis().getChildren().forEach((node) -> {
+      try {
+        addIconListeners(node);
+      } catch (ParserException e) {
+        e.printStackTrace(); //TODO: send msg
+      }
+    });
   
     group.getBasis().getChildren().addListener((ListChangeListener<Node>) c -> {
       while (c.next()) {
         c.getAddedSubList().forEach(n -> {
           if (group.equals(MoDiagramGroup.this)) addGroupListeners(n);
-          else if (group instanceof MoIconGroup) addIconListeners(n);
+          else if (group instanceof MoIconGroup) try {
+            addIconListeners(n);
+          } catch (ParserException e) {
+            e.printStackTrace(); //TODO: send msg
+          }
         });
-        c.getRemoved().forEach(n -> {
-          removeListeners(n);
-        });
+        c.getRemoved().forEach(this::removeListeners);
       }
     });
   }
   
-  private void addIconListeners(Node node) {
+  private void addIconListeners(Node node) throws ParserException {
     if (node instanceof MoIconGroup && ((MoIconGroup) node).getMoClass() instanceof MoConnector) {
       node.addEventHandler(EventType.ROOT, StateHandler.getInstance(this));
     }
@@ -74,12 +80,24 @@ public class MoDiagramGroup extends MoGroup {
   }
   
   
-  private void initVariables() {
-    this.getMoClass().getVariables().forEach(super::initVariable);
+  private void initVariables() throws ParserException {
+    this.getMoClass().getVariables().forEach((mv) -> {
+      try {
+        super.initVariable(mv);
+      } catch (ParserException e) {
+        e.printStackTrace(); //TODO: send msg
+      }
+    });
   
     this.getMoClass().getVariables().addListener((ListChangeListener<MoVariable>) c -> {
       while (c.next()) {
-        c.getAddedSubList().forEach(MoDiagramGroup.this::initVariable);
+        c.getAddedSubList().forEach((mv) -> {
+          try {
+            MoDiagramGroup.this.initVariable(mv);
+          } catch (ParserException e) {
+            e.printStackTrace(); //TODO: send msg
+          }
+        });
         c.getRemoved().forEach(MoDiagramGroup.this::remove);
       }
     });
@@ -90,7 +108,7 @@ public class MoDiagramGroup extends MoGroup {
     });
   }
   
-  private void initConnections() {
+  private void initConnections() throws ParserException {
     this.getMoClass().getConnections().forEach(this::initConnection);
     this.getMoClass().getConnections().addListener((ListChangeListener<MoConnection>) c -> {
       while (c.next()) {

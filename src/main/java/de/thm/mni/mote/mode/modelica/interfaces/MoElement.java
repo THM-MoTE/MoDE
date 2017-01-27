@@ -1,6 +1,7 @@
 package de.thm.mni.mote.mode.modelica.interfaces;
 
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 
 import java.io.Serializable;
@@ -11,15 +12,15 @@ import java.io.Serializable;
 @Getter
 public abstract class MoElement extends MoAnnotatable implements Serializable {
   protected String PREFIX = " ";
-  protected String name = "";
   @Setter private String comment = "";
   
-  
-  public MoElement(String prefix, String name, String comment) {
+  public MoElement(@NonNull String prefix, @NonNull String comment) {
     this.PREFIX = prefix;
-    this.name = name;
     this.comment = comment;
   }
   
-  public String toString() { return PREFIX + " > " + this.getName(); }
+  public abstract String getName();
+  
+  public abstract String getSimpleName();
+  
 }

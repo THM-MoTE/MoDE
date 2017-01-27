@@ -2,21 +2,22 @@ package de.thm.mni.mote.mode.uiactor.controller;
 
 import de.thm.mni.mhpp11.jActor.actors.messagebus.MessageBus;
 import de.thm.mni.mhpp11.jActor.actors.ui.interfaces.ActorController;
+import de.thm.mni.mhpp11.jActor.actors.ui.messages.StartUIMessage;
 import de.thm.mni.mhpp11.jActor.actors.ui.splash.messages.SplashShowMessage;
 import de.thm.mni.mhpp11.jActor.messages.ExitMessage;
 import de.thm.mni.mhpp11.jActor.messages.interfaces.Message;
 import de.thm.mni.mote.mode.config.Settings;
 import de.thm.mni.mote.mode.config.model.MainWindow;
 import de.thm.mni.mote.mode.config.model.Project;
-import de.thm.mni.mote.mode.modelica.MoClass;
-import de.thm.mni.mote.mode.modelica.MoRoot;
-import de.thm.mni.mote.mode.modelica.Saver;
+import de.thm.mni.mote.mode.modelica.*;
 import de.thm.mni.mote.mode.omcactor.messages.GetDataOMCMessage;
 import de.thm.mni.mote.mode.omcactor.messages.UpdateClassOMCMessage;
+import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.control.ContextMenuItem;
 import de.thm.mni.mote.mode.uiactor.control.DragResizer;
 import de.thm.mni.mote.mode.uiactor.control.MainTabControl;
 import de.thm.mni.mote.mode.uiactor.control.TreeViewWithItems;
+import de.thm.mni.mote.mode.uiactor.control.modelica.MoIconGroup;
 import de.thm.mni.mote.mode.uiactor.handlers.LibraryHandler;
 import de.thm.mni.mote.mode.uiactor.messages.OMCDataUIMessage;
 import de.thm.mni.mote.mode.uiactor.statemachine.StateMachine;
@@ -32,9 +33,7 @@ import javax.management.ReflectionException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created by hobbypunk on 15.09.16.
@@ -59,7 +58,7 @@ public class MainController extends NotifyController {
   
   @FXML private TabPane tabPane;
   
-  @Getter(AccessLevel.PROTECTED) @FXML private TreeViewWithItems<MoClass> tvLibrary;
+  @Getter(AccessLevel.PROTECTED) @FXML private TreeViewWithItems<MoContainer> tvLibrary;
   
   @Override
   public void initialize(URL location, ResourceBundle resources) {
@@ -117,20 +116,28 @@ public class MainController extends NotifyController {
     tvLibrary.setContextMenu(createLibraryMenu());
     tvLibrary.setOnContextMenuRequested(event -> tvLibrary.getContextMenu().getItems().forEach(menuItem -> {
       ContextMenuItem cmi = (ContextMenuItem) menuItem;
-      MoClass moClass = tvLibrary.getSelectionModel().getSelectedItem().getValue();
-    
-      if (cmi.getAction().equals("add.to.diagram")) {
-        MainTabControl mtc = (MainTabControl) tabPane.getSelectionModel().getSelectedItem();
-        cmi.setDisable(!moClass.hasIcon() || mtc == null || !mtc.isDiagram());
-      } else {
-        if (cmi.getAction().equals("open.as.diagram")) cmi.setDisable(!moClass.hasDiagram());
-        else if (cmi.getAction().equals("open.as.modelica")) cmi.setDisable(!moClass.hasIcon());
+      MoContainer container = tvLibrary.getSelectionModel().getSelectedItem().getValue();
+  
+      try {
+        if (cmi.getAction().equals("add.to.diagram")) {
+          MainTabControl mtc = (MainTabControl) tabPane.getSelectionModel().getSelectedItem();
+          cmi.setDisable(!container.getElement().hasIcon() || mtc == null || !mtc.isDiagram());
+        } else {
+          if (cmi.getAction().equals("open.as.diagram")) cmi.setDisable(!container.getElement().hasDiagram());
+          else if (cmi.getAction().equals("open.as.modelica")) cmi.setDisable(!container.getElement().hasIcon());
+        }
+      } catch (ParserException e) {
+        e.printStackTrace(); //TODO: send msg;
       }
     }));
     
     tvLibrary.setOnMouseClicked(event -> {
-      TreeItem<MoClass> item = tvLibrary.getSelectionModel().getSelectedItem();
-      if (item == null || !item.getValue().hasDiagram()) return;
+      TreeItem<MoContainer> item = tvLibrary.getSelectionModel().getSelectedItem();
+      try {
+        if (item == null || !item.getValue().getElement().hasDiagram()) return;
+      } catch (ParserException e) {
+        e.printStackTrace(); //TODO: send msg;
+      }
   
       for (Tab t : tabPane.getTabs()) {
         if (t instanceof MainTabControl && ((MainTabControl) t).getData().equals(item.getValue())) {
@@ -140,10 +147,14 @@ public class MainController extends NotifyController {
       }
   
       if (event.getClickCount() == 2) {
-        if (tabPane.getSelectionModel().getSelectedItem() != null && ((MainTabControl) tabPane.getSelectionModel().getSelectedItem()).isDiagram() && item.getValue().hasIcon())
-          LibraryHandler.getInstance().handleMenu(tabPane, item.getValue(), "add.to.diagram");
-        else
-          LibraryHandler.getInstance().handleMenu(tabPane, item.getValue(), "open.as.diagram");
+        try {
+          if (tabPane.getSelectionModel().getSelectedItem() != null && ((MainTabControl) tabPane.getSelectionModel().getSelectedItem()).isDiagram() && item.getValue().getElement().hasIcon())
+            LibraryHandler.getInstance().handleMenu(tabPane, item.getValue(), "add.to.diagram");
+          else
+            LibraryHandler.getInstance().handleMenu(tabPane, item.getValue(), "open.as.diagram");
+        } catch (ParserException e) {
+          e.printStackTrace(); //TODO: send msg;
+        }
       }
     });
     tvLibrary.setTreeItemExpandListener(parent -> getActor().send(new UpdateClassOMCMessage(getGroup(), parent)));
@@ -152,12 +163,12 @@ public class MainController extends NotifyController {
         treeItem.setExpanded(true);
       }
     });
-    tvLibrary.setCellFactory(new Callback<TreeView<MoClass>, TreeCell<MoClass>>() {
+    tvLibrary.setCellFactory(new Callback<TreeView<MoContainer>, TreeCell<MoContainer>>() {
       @Override
-      public TreeCell<MoClass> call(TreeView<MoClass> param) {
-        return new TreeCell<MoClass>() {
+      public TreeCell<MoContainer> call(TreeView<MoContainer> param) {
+        return new TreeCell<MoContainer>() {
           @Override
-          protected void updateItem(MoClass item, boolean empty) {
+          protected void updateItem(MoContainer item, boolean empty) {
             super.updateItem(item, empty);
             setDisable(false);
             setStyle(null);
@@ -166,12 +177,16 @@ public class MainController extends NotifyController {
               setGraphic(null);
             } else {
               setText(item.getSimpleName());
-              if (item.hasConnectors()) setStyle("-fx-font-weight: bold");
-              if (item instanceof MoRoot) {
-                setDisable(true);
-                setStyle("-fx-background-color: gainsboro;-fx-font-weight: bold; -fx-font-size: 90%; -fx-padding: 2 -15;");
-              } else {
-                //setGraphic(new MoIconGroup(item).scaleToSize(25., 25.));
+              try {
+                if (item instanceof MoRoot) {
+                  setDisable(true);
+                  setStyle("-fx-background-color: gainsboro;-fx-font-weight: bold; -fx-font-size: 90%; -fx-padding: 2 -15;");
+                } else {
+                  if (item.getElement().hasConnectors()) setStyle("-fx-font-weight: bold");
+                  setGraphic(new MoIconGroup(item).scaleToSize(25., 25.));
+                }
+              } catch (ParserException e) {
+                e.printStackTrace(); //TODO: send msg
               }
             }
           }
@@ -186,7 +201,13 @@ public class MainController extends NotifyController {
     for (String action : new String[]{"open.as.diagram", "open.as.diagram", "add.to.diagram"}) {
       MenuItem tmp = new ContextMenuItem(i18n.getString("menu.context." + action), action);   //todo multilingual
   
-      tmp.setOnAction(event -> LibraryHandler.getInstance().handleMenu(tabPane, tvLibrary.getSelectionModel().getSelectedItem().getValue(), action));
+      tmp.setOnAction(event -> {
+        try {
+          LibraryHandler.getInstance().handleMenu(tabPane, tvLibrary.getSelectionModel().getSelectedItem().getValue(), action);
+        } catch (ParserException e) {
+          e.printStackTrace();//TODO: send msg
+        }
+      });
       
       cm.getItems().add(tmp);
     }
@@ -206,8 +227,17 @@ public class MainController extends NotifyController {
     tabPane.getTabs().forEach(tab -> handleSave(((MainTabControl) tab).getData()));
   }
   
-  private void handleSave(MoClass moClass) {
-    Saver.save(moClass);
+  private void handleSave(MoContainer container) {
+    try {
+      Saver.save(container);
+    } catch (ParserException e) {
+      e.printStackTrace(); //TODO: send msg
+    }
+  }
+  
+  @FXML
+  private void handleCloseProject() {
+    MessageBus.getInstance().send(new StartUIMessage(WelcomeController.class, getGroup()));
   }
   
   @FXML

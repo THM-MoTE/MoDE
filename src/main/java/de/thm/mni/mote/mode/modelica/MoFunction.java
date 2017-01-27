@@ -16,8 +16,8 @@ public class MoFunction extends MoClass {
   private final List<Object> params = new ArrayList<>();
   
   @Builder
-  public MoFunction(ClassInformation classInformation, String name, MoClass parent) {
-    super(classInformation, name, parent);
+  public MoFunction(ClassInformation classInformation, MoLater that) {
+    super(classInformation, that);
   }
   
   @Override

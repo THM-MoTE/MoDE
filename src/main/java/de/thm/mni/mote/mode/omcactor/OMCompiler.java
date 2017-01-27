@@ -5,14 +5,17 @@ import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.parser.modelica.ComponentsLexer;
 import de.thm.mni.mote.mode.parser.modelica.ComponentsParser;
 import de.thm.mni.mote.mode.util.ImmutableListCollector;
-import javafx.util.Pair;
+import lombok.AccessLevel;
 import lombok.Getter;
+import omc.ImportHandler;
 import omc.corba.OMCClient;
 import omc.corba.OMCInterface;
 import omc.corba.Result;
 import omc.corba.ScriptingHelper;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -50,12 +53,13 @@ public class OMCompiler {
     NULL
   }
   
-  private OMCInterface client;
+  @Getter(AccessLevel.PACKAGE) private OMCInterface client;
   
   private final Set<Path> systemLibraryPaths = new HashSet<>();
   @Getter private final List<Pair<String, Path>> systemLibraries = new ArrayList<>();
   @Getter private List<Pair<String, Path>> projectLibraries = new ArrayList<>();
   @Getter private Pair<String, Path> project = null;
+  @Getter private ImportHandler importHandler = null;
   
   public OMCompiler(Path compiler, Locale locale) throws IOException, IllegalStateException {
     client = new OMCClient(compiler.toString(), locale.toString());
@@ -64,68 +68,68 @@ public class OMCompiler {
   }
   
   private void loadLibraryPath() {
-    Result r = sendExpression("getModelicaPath()");
+    Result r = client.call("getModelicaPath");
     String paths = ScriptingHelper.killTrailingQuotes(r.result);
     for (String path : paths.split(":")) {
       systemLibraryPaths.add(Paths.get(path));
     }
   }
   
-  public void loadSystemLibrary() {
+  void addSystemLibraries(List<String> libs) {
     systemLibraries.clear();
-    Result result = sendExpression("getLoadedLibraries()", true);
+    Result result = client.call("getLoadedLibraries");
     
     List<Pair<String, Path>> list = toLibraryArray(result.result);
     for (Pair<String, Path> entry : list) {
-      String name = entry.getKey().toLowerCase();
-      if (name.contains("obsolete") || name.contains("test")) continue;
-      Boolean isLib = false;
-      for (Path base : systemLibraryPaths) {
-        if (entry.getValue().startsWith(base)) {
-          isLib = true;
-          break;
-        }
-      }
-      if (isLib) systemLibraries.add(entry);
+      if (libs.contains(entry.getKey())) systemLibraries.add(entry);
     }
-    systemLibraries.get(0);
   }
   
-  public void setProject(Path f) throws ParserException {
+  void setProject(Path f) throws ParserException {
     if (this.project != null) throw new ParserException("project already set");
-    Pair<String, Path> lib = addLibrary(f);
+    Pair<String, Path> lib = loadProject(f);
     if (lib == null) throw new ParserException("project not loaded");
     this.project = lib;
   }
   
-  private Pair<String, Path> addLibrary(Path f) throws ParserException {
+  private Pair<String, Path> loadProject(Path f) throws ParserException {
+    //TODO: unload existing project?
+    
     f = f.toAbsolutePath().normalize();
     
-    Result r = sendExpression(String.format("loadFile(\"%s\")", f));
+    Result r = client.call("loadFile", ScriptingHelper.asString(f));
     if (r.result.contains("false")) throw new ParserException("Cannot load file");
     if (r.error.isPresent()) throw new ParserException(r.error.get());
     
-    r = sendExpression("getLoadedLibraries()");
+    r = client.call("getLoadedLibraries");
     
     List<Pair<String, Path>> list = toLibraryArray(r.result);
     
+    f = f.getParent();
     for (Pair<String, Path> entry : list) {
-      if (entry.equals(project)) continue;
-      if (systemLibraries.contains(entry) || projectLibraries.contains(entry)) continue;
-      if (!f.startsWith(entry.getValue())) continue;
-      return new Pair<>(entry.getKey(), f);
+      if (f.equals(entry.getValue()))
+        return new ImmutablePair<>(entry.getKey(), f);
     }
     return null;
   }
   
-  public void addProjectLibraries(List<Path> files) throws ParserException {
-    for (Path f : files) {
-      Pair<String, Path> p = addLibrary(f);
-      if (p != null) this.projectLibraries.add(p);
+  void loadProjectLibraries(Path projectFile) throws ParserException {
+    try {
+      importHandler = new ImportHandler(projectFile);
+      importHandler.loadLibraries(this.client);
+      this.projectLibraries.addAll(importHandler.getImportedLibs());
+    } catch (Exception e) {
+      e.printStackTrace();
     }
   }
   
-  public List<String> getAvailableLibraries() {
+  void addProjectLibrary(Path libFile) throws IOException {
+    if (importHandler != null) {
+      importHandler.addImportLib(this.client, libFile);
+    }
+  }
+  
+  List<String> getAvailableLibraries() {
     Result result = client.sendExpression("getAvailableLibraries()");
     List<String> list = toStringArray(result.result);
     list = list.stream().filter(lib -> !(lib.toLowerCase().contains("obsolete") || lib.toLowerCase().contains("test"))).collect(Collectors.toList());
@@ -134,10 +138,10 @@ public class OMCompiler {
   
   public List<String> getAnnotationStrings(String className) {
     List<String> list = new ArrayList<>();
-    Result r = sendExpression(String.format("getAnnotationCount(%s)", className));
+    Result r = client.call("getAnnotationCount", className);
     Integer count = Integer.parseInt(r.result);
     for (Integer i = 1; i <= count; i++) {
-      r = sendExpression(String.format("getNthAnnotationString(%s, %d)", className, i));
+      r = client.call("getNthAnnotationString", className, i);
       if (!r.error.isPresent()) list.add(toString(r.result));
     }
     
@@ -145,17 +149,17 @@ public class OMCompiler {
   }
   
   public List<String> getChildren(String className) {
-    Result result = sendExpression(String.format("getClassNames(%s)", className));
+    Result result = client.call("getClassNames", className);
     return toStringArray(result.result);
   }
   
   public List<String> getInheritedClasses(String className) {
-    Result result = sendExpression(String.format("getInheritedClasses(%s)", className));
+    Result result = client.call("getInheritedClasses", className);
     return toStringArray(result.result);
   }
   
   public ClassInformation getClassInformation(String className) {
-    Result r = sendExpression(String.format("getClassInformation(%s)", className));
+    Result r = client.call("getClassInformation", className);
     List<String> list = toStringArray(r.result, true, false);
     TYPE t;
     try {
@@ -211,7 +215,7 @@ public class OMCompiler {
   
   public List<Map<String, String>> getComponents(String className) throws IOException {
     List<Map<String, String>> list = new ArrayList<>();
-    Result r = sendExpression(String.format("getComponentsTest(%s)", className));
+    Result r = client.call("getComponentsTest", className);
     ANTLRInputStream is;
     ComponentsParser p;
     is = new ANTLRInputStream(new ByteArrayInputStream(r.result.getBytes()));
@@ -313,24 +317,17 @@ public class OMCompiler {
   }
   
   private List<Pair<String, Path>> toLibraryArray(String s) {
+    //TODO: ScriptingHelper.fromNestedArrayToNestedList(s)
     List<String> tmp = toStringArray(s);
     List<Pair<String, Path>> list = new ArrayList<>();
     for (int i = 0; i < tmp.size(); i += 2) {
-      list.add(new Pair<>(tmp.get(i), Paths.get(tmp.get(i + 1))));
+      list.add(new ImmutablePair<>(tmp.get(i), Paths.get(tmp.get(i + 1))));
     }
     return list;
   }
   
   public Path getPath(String path) {
-    Result r = sendExpression(String.format("uriToFilename(\"%s\")", path));
+    Result r = client.call("uriToFilename", ScriptingHelper.asString(path));
     return Paths.get(toStringArray(r.result).get(0));
-  }
-  
-  public Result sendExpression(String s) {
-    return sendExpression(s, false);
-  }
-  
-  private Result sendExpression(String s, Boolean ignoreLoaded) {
-    return client.sendExpression(s);
   }
 }

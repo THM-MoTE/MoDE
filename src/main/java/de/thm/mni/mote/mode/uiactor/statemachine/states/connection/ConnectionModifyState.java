@@ -1,5 +1,6 @@
 package de.thm.mni.mote.mode.uiactor.statemachine.states.connection;
 
+import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoDiagramGroup;
 import de.thm.mni.mote.mode.uiactor.handlers.FocusHandler;
 import de.thm.mni.mote.mode.uiactor.shape.Line;
@@ -48,7 +49,11 @@ public class ConnectionModifyState extends State<MouseEvent, Line> {
   
   @Override
   public void enter() {
-    FocusHandler.getInstance().setFocus(getSource());
+    try {
+      FocusHandler.getInstance().setFocus(getSource());
+    } catch (ParserException e) {
+      e.printStackTrace(); //TODO send msg
+    }
     getMachine().getScene().setCursor(Cursor.HAND);
   }
   

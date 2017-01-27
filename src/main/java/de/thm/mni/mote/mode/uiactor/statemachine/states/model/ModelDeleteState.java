@@ -1,5 +1,6 @@
 package de.thm.mni.mote.mode.uiactor.statemachine.states.model;
 
+import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoDiagramGroup;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoIconGroup;
 import javafx.scene.input.MouseEvent;
@@ -18,7 +19,11 @@ public class ModelDeleteState extends ModelModifyState {
   
   @Override
   protected void handleClicked(MouseEvent event) {
-    getParent().getMoClass().removeVariable(getSource().getVariable());
+    try {
+      getParent().getMoClass().removeVariable(getSource().getVariable());
+    } catch (ParserException e) {
+      e.printStackTrace(); //TODO send msg
+    }
     getMachine().switchToNoState();
   }
 }

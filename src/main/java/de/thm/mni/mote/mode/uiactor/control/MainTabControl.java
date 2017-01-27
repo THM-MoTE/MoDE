@@ -1,6 +1,7 @@
 package de.thm.mni.mote.mode.uiactor.control;
 
-import de.thm.mni.mote.mode.modelica.MoClass;
+import de.thm.mni.mote.mode.modelica.MoContainer;
+import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoDiagramGroup;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoGroup;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoIconGroup;
@@ -24,13 +25,13 @@ import static de.thm.mni.mote.mode.modelica.interfaces.Changeable.Change;
 @EqualsAndHashCode(callSuper = false, exclude = {"main", "loader"})
 public class MainTabControl extends Tab implements Initializable {
   
-  private final MoClass data;
+  private final MoContainer data;
   private final Boolean diagram;
   
   @FXML private ScrollPane main;
   private FXMLLoader loader;
   
-  public MainTabControl(MoClass data, Boolean diagram) {
+  public MainTabControl(MoContainer data, Boolean diagram) {
     this.data = data;
     this.diagram = diagram;
     loader = new FXMLLoader();
@@ -58,21 +59,28 @@ public class MainTabControl extends Tab implements Initializable {
     this.setClosable(true);
     //data.getUnsavedChanges().setValue(Change.NONE);
     MoGroup mp;
-    this.setGraphic(new MoIconGroup(data).scaleToSize(20., 20.));
-    if (diagram) mp = new MoDiagramGroup(data);
-    else mp = new MoIconGroup(data, false);
+    try {
+      this.setGraphic(new MoIconGroup(data).scaleToSize(20., 20.));
+    
+      if (diagram) mp = new MoDiagramGroup(data);
+      else mp = new MoIconGroup(data, false);
+    
+      updateText(Change.NONE);
+    
+      mp.scaleToSize(600., 600.);
+      mp.setLayoutX(100.);
+      mp.setLayoutY(100.);
+      mp.setInternalStyle("-fx-background-color: white;");
+      main.setContent(mp);
+    } catch (ParserException e) {
+      e.printStackTrace();
+    }
   
-    updateText(Change.NONE);
-  
-    mp.scaleToSize(600., 600.);
-    mp.setLayoutX(100.);
-    mp.setLayoutY(100.);
-    mp.setInternalStyle("-fx-background-color: white;");
-    main.setContent(mp);
-  
-    data.getUnsavedChanges().addListener((observable, oldValue, newValue) -> {
-      updateText(newValue);
-    });
+    try {
+      data.getElement().getUnsavedChanges().addListener((observable, oldValue, newValue) -> updateText(newValue));
+    } catch (ParserException e) {
+      e.printStackTrace(); //TODO: send msg
+    }
   }
   
   private void updateText(Change unsavedChanges) {

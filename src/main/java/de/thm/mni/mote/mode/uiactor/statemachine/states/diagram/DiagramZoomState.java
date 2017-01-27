@@ -1,5 +1,6 @@
 package de.thm.mni.mote.mode.uiactor.statemachine.states.diagram;
 
+import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoDiagramGroup;
 import de.thm.mni.mote.mode.uiactor.statemachine.states.NoState;
 import de.thm.mni.mote.mode.uiactor.statemachine.states.State;
@@ -28,7 +29,11 @@ public class DiagramZoomState extends State<ScrollEvent, MoDiagramGroup> {
   protected void handleScroll(ScrollEvent event) {
     Double delta = Math.max(event.getDeltaX(), event.getDeltaY());
     if (delta == 0) delta = Math.min(event.getDeltaX(), event.getDeltaY());
-    getSource().scaleDelta(delta, delta);
+    try {
+      getSource().scaleDelta(delta, delta);
+    } catch (ParserException e) {
+      e.printStackTrace(); //TODO send msg
+    }
     getMachine().switchToLastState();
   }
 }

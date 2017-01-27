@@ -5,8 +5,8 @@ package de.thm.mni.mote.mode.modelica;
  */
 public class MoModel extends MoClass {
   
-  MoModel(ClassInformation classInformation, String name, MoClass parent) {
-    super(classInformation, name, parent);
+  MoModel(ClassInformation classInformation, MoLater that) {
+    super(classInformation, that);
     PREFIX = "m";
   }
 }

@@ -3,9 +3,12 @@ package de.thm.mni.mote.mode.uiactor.controller;
 import de.thm.mni.mhpp11.jActor.actors.logging.messages.ErrorMessage;
 import de.thm.mni.mhpp11.jActor.actors.ui.interfaces.ActorController;
 import de.thm.mni.mote.mode.config.Settings;
+import de.thm.mni.mote.mode.util.Utilities;
 import javafx.fxml.Initializable;
 import lombok.Getter;
 
+import javax.management.ReflectionException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -29,7 +32,11 @@ public abstract class Controller extends ActorController implements Initializabl
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     i18n = resources;
-    
+  }
+  
+  protected void lateInitialize() throws ReflectionException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+    this.getScene().getStylesheets().add(0, Utilities.getRessources("css/Basis.css").toExternalForm());
+    super.lateInitialize();
   }
   
   @Override

@@ -10,7 +10,7 @@ import de.thm.mni.mhpp11.jActor.messages.interfaces.Message;
 import de.thm.mni.mote.mode.config.Settings;
 import de.thm.mni.mote.mode.config.model.Modelica;
 import de.thm.mni.mote.mode.config.model.Project;
-import de.thm.mni.mote.mode.modelica.MoClass;
+import de.thm.mni.mote.mode.modelica.MoContainer;
 import de.thm.mni.mote.mode.modelica.MoRoot;
 import de.thm.mni.mote.mode.omcactor.messages.*;
 import de.thm.mni.mote.mode.omcactor.messages.StartDataCollectionOMCMessage.TYPE;
@@ -37,12 +37,12 @@ public class OMCActor extends AbstractActor {
   
   private Project project;
   
-  private ObservableList<MoClass> data = FXCollections.observableArrayList();
+  private ObservableList<MoContainer> data = FXCollections.observableArrayList();
   private MoRoot mrSystemLibraries = new MoRoot("System Libraries");
   private MoRoot mrProjectLibraries = new MoRoot("Project Libraries");
   private MoRoot mrProject = new MoRoot("Project");
   
-  private ExecutorService es = Executors.newSingleThreadExecutor();
+  private ExecutorService es = Executors.newCachedThreadPool();
   
   public OMCActor(UUID group) {
     super(group);
@@ -60,7 +60,6 @@ public class OMCActor extends AbstractActor {
     try {
       omc = new OMCompiler(m.getCompiler(), settings.getLang());
       started = true;
-      omc.loadSystemLibrary();
       send(new OMCStartedMessage(getGroup(), Constants.UI));
     } catch (Exception e) {
       started = false;
@@ -71,16 +70,24 @@ public class OMCActor extends AbstractActor {
   public void setProject(Project project) {
     this.project = project;
     try {
+      omc.addSystemLibraries(project.getSystemLibraries());
+      collectDataInBackground(TYPE.SYSTEM);
+  
+      omc.loadProjectLibraries(project.getMoFile());
+      collectDataInBackground(TYPE.PROJECTLIB);
+
       omc.setProject(project.getMoFile());
+      collectDataInBackground(TYPE.PROJECT);
+
       send(new OMCSetProjectUIMessage(getGroup(), this.project));
     } catch (Exception e) {
       send(new ErrorMessage(OMCActor.class, getGroup(), new OMCException(e)));
     }
   }
   
-  private void updateClass(MoClass moClass) {
+  private void updateClass(MoContainer container) {
     try {
-      moClass.update(this.omc);
+      container.update(omc); // magicnumber from settings ;)
     } catch (Exception e) {
       send(new ErrorMessage(OMCActor.class, getGroup(), new OMCException(e)));
     }
@@ -119,10 +126,8 @@ public class OMCActor extends AbstractActor {
         setProject(((SetProjectOMCMessage) msg).getProject());
       } else if (msg instanceof GetDataOMCMessage) {
         send(new OMCDataUIMessage(getGroup(), getData()));
-      } else if (msg instanceof StartDataCollectionOMCMessage) {
-        collectDataInBackground(((StartDataCollectionOMCMessage) msg).getType());
       } else if (msg instanceof UpdateClassOMCMessage) {
-        updateClass(((UpdateClassOMCMessage) msg).getMoClass());
+        updateClass(((UpdateClassOMCMessage) msg).getContainer());
       } else if (msg instanceof GetAvailableLibsOMCMessage) {
         send(new OMCAvailableLibsUIMessage(getGroup(), omc.getAvailableLibraries()));
       }

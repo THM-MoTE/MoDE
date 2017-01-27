@@ -36,9 +36,9 @@
     </dependency>
   
     <dependency>
-      <groupId>commons-lang</groupId>
-      <artifactId>commons-lang</artifactId>
-      <version>2.3</version>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>3.5</version>
     </dependency>
     
     <!-- Extra Controls-->
@@ -92,7 +92,7 @@
     <dependency>
       <groupId>de.thm.mni.mote</groupId>
       <artifactId>omc-java-api</artifactId>
-      <version>0.3-dev</version>
+      <version>0.3.1-dev</version>
     </dependency>
   
     <dependency>

@@ -5,6 +5,7 @@ import de.thm.mni.mote.mode.modelica.annotations.MoPlacement;
 import de.thm.mni.mote.mode.modelica.interfaces.Changeable;
 import de.thm.mni.mote.mode.modelica.interfaces.MoElement;
 import de.thm.mni.mote.mode.omcactor.OMCompiler;
+import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.util.ImmutableListCollector;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -26,8 +27,9 @@ public class MoVariable extends MoElement implements Changeable {
   private static final Pattern PATTERN = Pattern.compile("(^\"|\"$)");
   
   private final MoClass parent;
+  private String name;
   private Specification kind;
-  @Setter private MoClass type = null;
+  @Setter private MoContainer type = null;
   private String line = "";
   
   public enum Specification {
@@ -37,18 +39,14 @@ public class MoVariable extends MoElement implements Changeable {
     FLOW
   }
   
-  public MoVariable(@NonNull MoClass parent, MoClass type, String name) {
-    super("v", name, "");
-    this.parent = parent;
-    this.kind = Specification.NONE;
-    this.type = type;
-  
-    initChangeListener();
+  public MoVariable(@NonNull MoClass parent, MoContainer type, String name) {
+    this(parent, Specification.NONE, type, name, "", null, "");
   }
   
   @Builder
-  private MoVariable(@NonNull MoClass parent, Specification kind, MoClass type, String name, String comment, @Singular List<MoAnnotation> annotations, String line) {
-    super("v", name, comment);
+  private MoVariable(@NonNull MoClass parent, Specification kind, MoContainer type, String name, String comment, @Singular List<MoAnnotation> annotations, String line) {
+    super("v", comment);
+    this.name = name;
     this.parent = parent;
     this.kind = kind;
     if (type != null) this.type = type;
@@ -71,8 +69,8 @@ public class MoVariable extends MoElement implements Changeable {
     return list;
   }
   
-  public List<MoVariable> getVariables() {
-    return getType().getVariables();
+  public List<MoVariable> getVariables() throws ParserException {
+    return getType().getElement().getVariables();
   }
   
   public List<MoConnection> getConnections() {
@@ -96,10 +94,15 @@ public class MoVariable extends MoElement implements Changeable {
     return String.format("%s() \"%s\" annotation(%s);", getIndicator(), getComment(), MoAnnotation.toString(getAnnotations()));
   }
   
+  @Override
+  public String getSimpleName() {
+    return getName();
+  }
+  
   public static List<MoVariable> parse(OMCompiler omc, MoClass parent) {
     List<MoVariable> list = new ArrayList<>();
     try {
-      for (Map<String, String> m : omc.getVariables(parent.getName(), parent.getClassInformation())) {
+      for (Map<String, String> m : omc.getVariables(parent.getContainer().getName(), parent.getClassInformation())) {
         list.add(parse(omc, parent, m));
       }
     } catch (IOException e) {
@@ -120,7 +123,7 @@ public class MoVariable extends MoElement implements Changeable {
       else mb.kind(Specification.OUTPUT);
     } else mb.kind(Specification.NONE);
     mb.parent(parent);
-    mb.type(MoClass.findClass(omc, m.get("type")));
+    mb.type(MoClass.findClass(m.get("type")));
     mb.name(m.get("name"));
     mb.comment(m.get("comment"));
     mb.line(m.get("line"));

@@ -1,6 +1,7 @@
 package de.thm.mni.mote.mode.uiactor.statemachine.states.connection;
 
 import de.thm.mni.mote.mode.modelica.MoConnection;
+import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoDiagramGroup;
 import de.thm.mni.mote.mode.uiactor.shape.Line;
 import javafx.geometry.Point2D;
@@ -33,14 +34,18 @@ public class ConnectionDeleteState extends ConnectionModifyState {
     } else {
       Integer[] poses = findNearLinePos(mousePos, true);
       if (poses != null) {
-        List<MoConnection> connections = getParent().getMoClass().getConnections();
-        MoConnection conn;
-        for (int i = 0, size = connections.size(); i < size; i++) {
-          conn = connections.get(i);
-          if (conn.getMoGraphics().contains(getSource().getData())) {
-            getParent().getMoClass().removeConnection(conn);
-            break;
+        try {
+          List<MoConnection> connections = getParent().getMoClass().getConnections();
+          MoConnection conn;
+          for (int i = 0, size = connections.size(); i < size; i++) {
+            conn = connections.get(i);
+            if (conn.getMoGraphics().contains(getSource().getData())) {
+              getParent().getMoClass().removeConnection(conn);
+              break;
+            }
           }
+        } catch (ParserException e) {
+          e.printStackTrace();
         }
         noState = true;
       }

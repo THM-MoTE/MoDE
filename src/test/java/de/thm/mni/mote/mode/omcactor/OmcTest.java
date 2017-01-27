@@ -1,14 +1,13 @@
-package de.thm.mni.mote.mode;
+package de.thm.mni.mote.mode.omcactor;
 
 import de.thm.mni.mote.mode.config.Settings;
 import de.thm.mni.mote.mode.config.model.Modelica;
+import de.thm.mni.mote.mode.modelica.ClassInformation;
 import de.thm.mni.mote.mode.modelica.MoClass;
 import de.thm.mni.mote.mode.modelica.MoRoot;
-import de.thm.mni.mote.mode.modelica.ClassInformation;
-import de.thm.mni.mote.mode.omcactor.OMCompiler;
 import de.thm.mni.mote.mode.parser.ParserException;
-import javafx.util.Pair;
 import omc.corba.Result;
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,7 +15,10 @@ import org.junit.Test;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -33,8 +35,8 @@ public class OmcTest {
   public void before() throws IOException {
     Modelica m = Settings.load().getModelica();
     omc = new OMCompiler(m.getCompiler(), Locale.GERMANY);
-    System.out.println(omc.sendExpression("getModelicaPath()"));
-    omc.sendExpression("getClassNames()");
+    System.out.println(omc.getClient().call("getModelicaPath"));
+    omc.getClient().call("getClassNames");
   }
   
   @After
@@ -52,11 +54,11 @@ public class OmcTest {
     for (Pair<String, Path> p : omc.getSystemLibraries()) {
       executor.execute(() -> {
         System.out.println(p);
-        try {
-          l.add(MoClass.parse(omc, p.getKey(), mr, 3));
-        } catch (ParserException e) {
-          e.printStackTrace();
-        }
+//        try {
+//          l.add(MoClass.parse(omc, new MoLater(p.getKey(), mr)));
+//        } catch (ParserException e) {
+//          e.printStackTrace();
+//        }
       });
     }
     executor.shutdown();
@@ -70,31 +72,31 @@ public class OmcTest {
   
   @Test
   public void testLibraries() throws ParserException {
-    omc.addProjectLibraries(Arrays.asList(Paths.get("/home/hobbypunk/Dokumente/Entwicklung/THM_Projekte/Projektphase/2014-modelica-kotani/SHM/package.mo"), Paths.get("./test.mo")));
+//    omc.loadProjectLibraries(Arrays.asList(Paths.get("/home/hobbypunk/Dokumente/Entwicklung/THM_Projekte/Projektphase/2014-modelica-kotani/SHM/package.mo"), Paths.get("./test.mo")));
     List<Pair<String, Path>> list = omc.getProjectLibraries();
     System.out.println(list);
   }
   
   @Test
   public void testInherited() throws ParserException {
-    omc.addProjectLibraries(Arrays.asList(Paths.get("/home/hobbypunk/Dokumente/Entwicklung/THM_Projekte/Projektphase/2014-modelica-kotani/SHM/package.mo")));
+//    omc.loadProjectLibraries(Arrays.asList(Paths.get("/home/hobbypunk/Dokumente/Entwicklung/THM_Projekte/Projektphase/2014-modelica-kotani/SHM/package.mo")));
     MoRoot mr = new MoRoot("SystemLibs");
-    MoClass mc = MoClass.parse(omc, "SHM", mr, 1);
-    mc = mc.find(omc, "SHM.SeidelThesis.Components.SympatheticSystem");
-    System.out.println(mc);
-    System.out.println(mc.getInheritedClasses());
+//    MoClass mc = MoClass.parse(omc, "SHM", mr, 1);
+//    mc = mc.find(omc, "SHM.SeidelThesis.Components.SympatheticSystem");
+//    System.out.println(mc);
+//    System.out.println(mc.getInheritedClasses());
   }
   
   @Test
   public void testAnnotations() throws ParserException {
-    omc.addProjectLibraries(Arrays.asList(Paths.get("/home/hobbypunk/Dokumente/Entwicklung/THM_Projekte/Projektphase/2014-modelica-kotani/SHM/package.mo")));
+//    omc.loadProjectLibraries(Arrays.asList(Paths.get("/home/hobbypunk/Dokumente/Entwicklung/THM_Projekte/Projektphase/2014-modelica-kotani/SHM/package.mo")));
     List<String> list = omc.getAnnotationStrings("SHM.SeidelThesis.Components.SympatheticSystem");
     
   }
   
   @Test
   public void testConnections() throws ParserException {
-    omc.addProjectLibraries(Arrays.asList(Paths.get("/home/hobbypunk/Dokumente/Entwicklung/THM_Projekte/Projektphase/2014-modelica-kotani/SHM/package.mo")));
+//    omc.loadProjectLibraries(Arrays.asList(Paths.get("/home/hobbypunk/Dokumente/Entwicklung/THM_Projekte/Projektphase/2014-modelica-kotani/SHM/package.mo")));
     List<Map<String, String>> list = omc.getConnections("SHM.SeidelThesis.Examples.FullModel.SeidelThesisFullExample");
     System.out.println(list);
   }
@@ -109,13 +111,13 @@ public class OmcTest {
   
   @Test
   public void testConnectors() throws ParserException {
-    omc.addProjectLibraries(Arrays.asList(Paths.get("/home/hobbypunk/Dokumente/Entwicklung/THM_Projekte/Projektphase/2014-modelica-kotani/SHM/package.mo")));
-    Result r = omc.sendExpression("getEquationItemsCount(SHM.SeidelThesis.Examples.FullModel.SeidelThesisFullExample)");
+    //omc.loadProjectLibraries(Arrays.asList(Paths.get("/home/hobbypunk/Dokumente/Entwicklung/THM_Projekte/Projektphase/2014-modelica-kotani/SHM/package.mo")));
+    Result r = omc.getClient().call("getEquationItemsCount", "SHM.SeidelThesis.Examples.FullModel.SeidelThesisFullExample");
     ClassInformation ci = omc.getClassInformation("SHM.Shared.Components.Compartments.BloodSystem");
     System.out.println(r.result);
     Integer count = Integer.parseInt(r.result);
     for (int i = 1; i <= count; i++) {
-      r = omc.sendExpression("getNthEquationItem(SHM.SeidelThesis.Examples.FullModel.SeidelThesisFullExample, " + i + ")");
+      r = omc.getClient().call("getNthEquationItem", "SHM.SeidelThesis.Examples.FullModel.SeidelThesisFullExample", i);
       Pattern p = Pattern.compile("^\"connect\\(\\s*([\\w\\.]+)\\s*,\\s*([\\w\\.]+)\\s*\\);\"$");
       Matcher m = p.matcher(r.result);
       System.out.println(r.result);

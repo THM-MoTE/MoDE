@@ -3,6 +3,7 @@ package de.thm.mni.mote.mode.uiactor.statemachine.states.connection;
 import de.thm.mni.mote.mode.modelica.MoConnection;
 import de.thm.mni.mote.mode.modelica.MoVariable;
 import de.thm.mni.mote.mode.modelica.graphics.MoLine;
+import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoDiagramGroup;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoIconGroup;
 import de.thm.mni.mote.mode.uiactor.shape.Line;
@@ -69,7 +70,11 @@ public class ConnectionCreateState extends State<MouseEvent, MoIconGroup> {
           }
         }
       });
-      parent.getMoClass().addConnection(new MoConnection(parent.getMoClass(), startConnector, getVariables(src), Collections.singletonList(new MoLine(startPos, mousePos))));
+      try {
+        parent.getMoClass().addConnection(new MoConnection(parent.getMoClass(), startConnector, getVariables(src), Collections.singletonList(new MoLine(startPos, mousePos))));
+      } catch (ParserException e) {
+        e.printStackTrace(); //TODO send msg
+      }
     }
   }
   

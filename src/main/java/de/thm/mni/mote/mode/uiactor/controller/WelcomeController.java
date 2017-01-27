@@ -37,7 +37,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Observable;
 import java.util.ResourceBundle;
@@ -165,9 +164,14 @@ public class WelcomeController extends NotifyController {
   
   void onOpenProject(Project p) {
     p.updateLastOpened();
-    getSettings().getRecent().remove(p.getProjectPath());
-    getSettings().getRecent().add(p.getProjectPath());
-    getActor().send(new SetProjectOMCMessage(getGroup(), p));
+    try {
+      p.save();
+      getSettings().getRecent().remove(p.getProjectPath());
+      getSettings().getRecent().add(p.getProjectPath());
+      getActor().send(new SetProjectOMCMessage(getGroup(), p));
+    } catch (Exception e) {
+      getActor().send(new ErrorMessage(this.getClass(), p.getName(), e));
+    }
   }
   
   @FXML
@@ -179,6 +183,7 @@ public class WelcomeController extends NotifyController {
     loader.setResources(Utilities.getBundle("Settings"));
     try {
       DialogPane dp = loader.load();
+      dp.getStylesheets().add(0, Utilities.getRessources("css/Basis.css").toExternalForm());
       d.setDialogPane(dp);
       d.show();
       d.setOnCloseRequest(event -> {
@@ -255,7 +260,7 @@ public class WelcomeController extends NotifyController {
       } else if (msg instanceof OMCSetProjectUIMessage) {
         send(new StartDataCollectionOMCMessage(getGroup(), TYPE.PROJECTLIB));
         send(new StartDataCollectionOMCMessage(getGroup(), TYPE.PROJECT));
-        send(new StartUIMessage(MainController.class, Arrays.asList(getGroup(), ((OMCSetProjectUIMessage) msg).getProject())));
+        send(new StartUIMessage(MainController.class, getGroup(), ((OMCSetProjectUIMessage) msg).getProject()));
       } else if (msg instanceof OMCAvailableLibsUIMessage) {
         Platform.runLater(() -> getController().onCreateProject(((OMCAvailableLibsUIMessage) msg).getLibs()));
       }

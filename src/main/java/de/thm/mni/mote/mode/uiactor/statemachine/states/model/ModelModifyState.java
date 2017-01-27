@@ -1,5 +1,6 @@
 package de.thm.mni.mote.mode.uiactor.statemachine.states.model;
 
+import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoDiagramGroup;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoIconGroup;
 import de.thm.mni.mote.mode.uiactor.handlers.FocusHandler;
@@ -47,7 +48,11 @@ public class ModelModifyState extends State<MouseEvent, MoIconGroup> {
   
   @Override
   public void enter() {
-    FocusHandler.getInstance().setFocus(getSource());
+    try {
+      FocusHandler.getInstance().setFocus(getSource());
+    } catch (ParserException e) {
+      e.printStackTrace(); //TODO send msg
+    }
     this.getMachine().getScene().setCursor(Cursor.HAND);
   }
   

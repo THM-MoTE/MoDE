@@ -1,6 +1,7 @@
 package de.thm.mni.mote.mode.uiactor.statemachine.states.model;
 
-import de.thm.mni.mote.mode.modelica.MoClass;
+import de.thm.mni.mote.mode.modelica.MoContainer;
+import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.control.MainTabControl;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoDiagramGroup;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoIconGroup;
@@ -29,10 +30,14 @@ public class ModelOpenState extends State<MouseEvent, MoIconGroup> {
   @Override
   protected void handleClicked(MouseEvent event) {
     if (event.getClickCount() % 2 == 0) {
-      MoClass mc = ((MoIconGroup) event.getSource()).getMoClass();
-      if (mc.hasDiagram()) {
-        TabPane tb = findTabPane(this.getSource());
-        if (tb != null) tb.getTabs().add(new MainTabControl(mc, true));
+      MoContainer container = ((MoIconGroup) event.getSource()).getContainer();
+      try {
+        if (container.getElement().hasDiagram()) {
+          TabPane tb = findTabPane(this.getSource());
+          if (tb != null) tb.getTabs().add(new MainTabControl(container, true));
+        }
+      } catch (ParserException e) {
+        e.printStackTrace(); //TODO send msg
       }
       getMachine().switchToState(new ModelModifyState(getParent(), getSource()));
     }

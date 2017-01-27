@@ -5,6 +5,7 @@ import de.thm.mni.mote.mode.modelica.graphics.MoLine;
 import de.thm.mni.mote.mode.modelica.graphics.MoText;
 import de.thm.mni.mote.mode.modelica.interfaces.Changeable;
 import de.thm.mni.mote.mode.omcactor.OMCompiler;
+import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.parser.modelica.AnnotationLexer;
 import de.thm.mni.mote.mode.parser.modelica.AnnotationParser;
 import de.thm.mni.mote.mode.parser.modelica.AnnotationParser.ConnectAnnotationElementContext;
@@ -108,10 +109,17 @@ public class MoConnection implements Changeable {
   }
   
   public static List<MoConnection> parse(OMCompiler omc, MoClass parent) {
-    return omc.getConnections(parent.getName()).stream().map(map -> parse(parent, map)).collect(ImmutableListCollector.toImmutableList());
+    return omc.getConnections(parent.getName()).stream().map(map -> {
+      try {
+        return parse(parent, map);
+      } catch (ParserException e) {
+        e.printStackTrace(); //TODO: send msg
+        return null;
+      }
+    }).filter(Objects::nonNull).collect(ImmutableListCollector.toImmutableList());
   }
   
-  public static MoConnection parse(MoClass parent, Map<String, String> values) {
+  public static MoConnection parse(MoClass parent, Map<String, String> values) throws ParserException {
     MoConnectionBuilder mb = builder();
     mb.parent(parent);
     mb.from(findVariable(parent, values.get("from")));
@@ -135,14 +143,14 @@ public class MoConnection implements Changeable {
     }
   }
   
-  private static List<MoVariable> findVariable(MoClass parent, String name) {
+  private static List<MoVariable> findVariable(MoClass parent, String name) throws ParserException {
     List<MoVariable> list = new ArrayList<>();
     Optional<MoVariable> moVariable = parent.getVariables().stream().filter(mv -> name.startsWith(mv.getName())).findFirst();
     if (moVariable.isPresent()) {
       MoVariable mv = moVariable.get();
       list.add(mv);
       if (!name.endsWith(mv.getName()))
-        list.addAll(findVariable(mv.getType(), name.replaceFirst(mv.getName() + "\\.", "")));
+        list.addAll(findVariable(mv.getType().getElement(), name.replaceFirst(mv.getName() + "\\.", "")));
     }
     if (list.isEmpty()) throw new NoSuchElementException();
     return list;
