@@ -40,7 +40,8 @@
                             </graphic>
                           </MenuItem>
                           <Menu disable="true" mnemonicParsing="false" text="%menu.file.open_recent"/>
-                          <MenuItem disable="true" mnemonicParsing="false" text="%menu.file.close_project"/>
+                          <MenuItem disable="true" mnemonicParsing="false" onAction="#handleCloseProject"
+                                    text="%menu.file.close_project"/>
                           <SeparatorMenuItem mnemonicParsing="false"/>
                           <MenuItem disable="true" mnemonicParsing="false" text="%menu.file.add_library">
                             <graphic>

@@ -1,17 +1,5 @@
-.button {
-    -fx-text-fill: grey;
-    -fx-focus-color: transparent;
-    -fx-background-color: transparent;
-    -fx-border-width: 0px;
-}
 
 .button:hover, .button:hover:visited {
     -fx-text-fill: firebrick;
     -fx-underline: false;
-}
-
-.scroll-pane:focused, .list-view:focused {
-    -fx-background-color: -fx-outer-border, -fx-inner-border, -fx-body-color;
-    -fx-background-insets: 0, 1, 2;
-    -fx-background-radius: 5, 4, 3;
 }

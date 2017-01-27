@@ -13,7 +13,6 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <GridPane fx:id="root" stylesheets="@../css/Welcome.css" xmlns="http://javafx.com/javafx/8.0.76-ea"
@@ -58,31 +57,35 @@
                         </Label>
                      </HBox>
                      <Button fx:id="btnNewProject" alignment="CENTER_LEFT" disable="true" layoutX="80.0" layoutY="215.0"
-                             onAction="#onCreateProject" prefHeight="24.0" prefWidth="240.0"
+                             onAction="#onCreateProject" prefHeight="24.0" prefWidth="240.0" styleClass="no-border"
                              text="%action.create.new.project">
                         <graphic>
                            <FontIcon iconColor="darkorange" iconLiteral="mdi-creation" iconSize="18"/>
                         </graphic>
                      </Button>
                      <Button fx:id="btnOpenProject" alignment="CENTER_LEFT" layoutX="80.0" layoutY="242.0"
-                             onAction="#onOpenProject" prefHeight="24.0" prefWidth="240.0" text="%action.open.project">
+                             onAction="#onOpenProject" prefHeight="24.0" prefWidth="240.0" styleClass="no-border"
+                             text="%action.open.project">
                         <graphic>
                            <FontIcon iconColor="chocolate" iconLiteral="gmi-folder-open" iconSize="18"/>
                         </graphic>
                      </Button>
                      <HBox alignment="BOTTOM_RIGHT" layoutX="-1.0" layoutY="372.0" prefHeight="28.0" prefWidth="400.0">
                         <children>
-                           <Button alignment="CENTER_LEFT" onAction="#onOpenSettings" text="%action.open.settings">
+                           <Button alignment="CENTER_LEFT" onAction="#onOpenSettings" styleClass="no-border"
+                                   text="%action.open.settings">
                               <graphic>
                                  <FontIcon iconColor="darkgrey" iconLiteral="gmi-settings" iconSize="18"/>
                               </graphic>
                            </Button>
-                           <Button alignment="CENTER_LEFT" onAction="#onOpenHelp" text="%action.open.help">
+                           <Button alignment="CENTER_LEFT" onAction="#onOpenHelp" styleClass="no-border"
+                                   text="%action.open.help">
                               <graphic>
                                  <FontIcon iconColor="deepskyblue" iconLiteral="gmi-help" iconSize="18"/>
                               </graphic>
                            </Button>
-                           <Button alignment="CENTER_LEFT" onAction="#onOpenAbout" text="%action.open.about">
+                           <Button alignment="CENTER_LEFT" onAction="#onOpenAbout" styleClass="no-border"
+                                   text="%action.open.about">
                               <graphic>
                                  <FontIcon iconColor="deepskyblue" iconLiteral="gmi-info" iconSize="18"/>
                               </graphic>
