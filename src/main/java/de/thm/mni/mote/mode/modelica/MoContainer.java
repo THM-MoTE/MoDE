@@ -1,15 +1,21 @@
 package de.thm.mni.mote.mode.modelica;
 
+import de.thm.mni.mhpp11.jActor.actors.logging.messages.ErrorMessage;
+import de.thm.mni.mhpp11.jActor.actors.messagebus.MessageBus;
+import de.thm.mni.mote.mode.config.Settings;
 import de.thm.mni.mote.mode.omcactor.OMCompiler;
 import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.util.HierarchyData;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import lombok.Getter;
 import lombok.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static de.thm.mni.mote.mode.util.Translator.tr;
 
 /**
  * Created by hobbypunk on 27.01.17.
@@ -23,6 +29,7 @@ public class MoContainer implements Comparable<MoContainer>, HierarchyData<MoCon
   
   private final List<MoContainer> inheritedClasses = new ArrayList<>();
   private final ObservableList<MoContainer> children = FXCollections.observableArrayList();
+  private ListChangeListener<MoContainer> childListener;
   
   public MoContainer(OMCompiler omc, MoContainer parent, @NonNull String name) {
     this.omc = omc;
@@ -64,17 +71,39 @@ public class MoContainer implements Comparable<MoContainer>, HierarchyData<MoCon
     if (this.getName().equals(s)) return this;
     
     if (!s.startsWith(this.getName())) return null;
-    
+
     for (MoContainer child : this.getChildren()) {
       MoContainer result = child.find(s);
       if (result != null) return result;
     }
+  
+    List<String> childrenList = omc.getChildren(this.getName());
+    if (childrenList.size() != this.getChildren().size()) {
+      childrenList.stream().anyMatch(child -> {
+        String childName = this.getName() + "." + child;
+        if (!s.startsWith(childName)) return false;
+        this.addChild(new MoContainer(omc, this, child)).setElement(new MoLater());
+        return true;
+      });
+    }
     return null;
   }
   
-  public MoClass getElement() throws ParserException {
+  synchronized MoContainer addChild(MoContainer container) {
+    for (MoContainer c : this.getChildren()) {
+      if (c.similar(container)) return c;
+    }
+    this.getChildren().add(container);
+    return container;
+  }
+  
+  public MoClass getElement() {
     if (this.element instanceof MoLater) {
-      this.element = MoClass.parse(omc, (MoLater) this.element);
+      try {
+        this.element = MoClass.parse(omc, (MoLater) this.element);
+      } catch (ParserException e) {
+        MessageBus.getInstance().send(new ErrorMessage(MoContainer.class, new ParserException(tr("Error", "error.in", getSimpleName()), e)));
+      }
     }
     return this.element;
   }
@@ -89,17 +118,24 @@ public class MoContainer implements Comparable<MoContainer>, HierarchyData<MoCon
   }
   
   
+  private boolean similar(MoContainer that) {
+    return this.equals(that) || this.getName().equals(that.getName());
+  }
+  
   @Override
   public boolean equals(Object obj) {
     if (obj instanceof MoContainer) {
-      if (this == obj) return true;
-      if (this.element == ((MoContainer) obj).element) return true;
-      if (this.element == null || ((MoContainer) obj).element == null) return false;
-      
-      return element.equals(((MoContainer) obj).element);
+      return this.equals((MoContainer) obj);
     }
-    
-    return MoClass.class.isAssignableFrom(obj.getClass()) && element.equals(obj);
+    if (MoClass.class.isAssignableFrom(obj.getClass())) {
+      MoClass that = (MoClass) obj;
+      return (this.element == that);
+    }
+    return false;
+  }
+  
+  private boolean equals(MoContainer that) {
+    return (this == that || this.element == that.element);
   }
   
   @Override
@@ -110,13 +146,14 @@ public class MoContainer implements Comparable<MoContainer>, HierarchyData<MoCon
   private void update(OMCompiler omc, int depth) throws ParserException {
     this.omc = omc;
     this.getElement();
-    if (depth > 0)
-      for (MoContainer child : getChildren()) {
+    if (depth > 0) {
+      for (MoContainer child : this.getChildren()) {
         child.update(omc, depth - 1);
       }
+    }
   }
   
   public void update(OMCompiler omc) throws ParserException {
-    update(omc, 3);
+    update(omc, Settings.load().getModelica().getDepth());// magicnumber from settings ;)
   }
 }

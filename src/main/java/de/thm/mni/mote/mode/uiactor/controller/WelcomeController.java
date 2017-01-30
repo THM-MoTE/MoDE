@@ -12,7 +12,6 @@ import de.thm.mni.mote.mode.omcactor.OMCActor;
 import de.thm.mni.mote.mode.omcactor.OMCException;
 import de.thm.mni.mote.mode.omcactor.messages.GetAvailableLibsOMCMessage;
 import de.thm.mni.mote.mode.omcactor.messages.SetProjectOMCMessage;
-import de.thm.mni.mote.mode.omcactor.messages.StartDataCollectionOMCMessage;
 import de.thm.mni.mote.mode.uiactor.control.NewProjectFirstPageControl;
 import de.thm.mni.mote.mode.uiactor.control.RecentProjectControl;
 import de.thm.mni.mote.mode.uiactor.messages.OMCAvailableLibsUIMessage;
@@ -40,8 +39,6 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Observable;
 import java.util.ResourceBundle;
-
-import static de.thm.mni.mote.mode.omcactor.messages.StartDataCollectionOMCMessage.TYPE;
 
 
 /**
@@ -258,8 +255,6 @@ public class WelcomeController extends NotifyController {
           getController().showIgnoreParams();
         });
       } else if (msg instanceof OMCSetProjectUIMessage) {
-        send(new StartDataCollectionOMCMessage(getGroup(), TYPE.PROJECTLIB));
-        send(new StartDataCollectionOMCMessage(getGroup(), TYPE.PROJECT));
         send(new StartUIMessage(MainController.class, getGroup(), ((OMCSetProjectUIMessage) msg).getProject()));
       } else if (msg instanceof OMCAvailableLibsUIMessage) {
         Platform.runLater(() -> getController().onCreateProject(((OMCAvailableLibsUIMessage) msg).getLibs()));

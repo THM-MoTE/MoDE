@@ -25,6 +25,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import static de.thm.mni.mote.mode.util.Translator.tr;
+
 /**
  * Created by hobbypunk on 07.09.16.
  */
@@ -86,19 +88,15 @@ public class MoClass extends MoElement implements Changeable, Comparable<MoClass
   public MoVariable findVariable(String name) throws NoSuchElementException {
     for (MoVariable mv : getVariables())
       if (mv.getName().equals(name)) return mv;
-    throw new NoSuchElementException(String.format("No Variable named \"%s\" found", name));
+    throw new NoSuchElementException(tr("Error", "error.cant.find.variable", name));
   }
   
   public ObservableList<MoVariable> getVariables() {
   
     this.container.getInheritedClasses().forEach(inheritedClass -> {
-      try {
         inheritedClass.getElement().getVariables().forEach(variable -> {
           if (!this.variables.contains(variable)) this.variables.add(variable);
         });
-      } catch (ParserException e) {
-        e.printStackTrace(); //TODO: send msg
-      }
     });
     
     return this.variables;
@@ -125,13 +123,9 @@ public class MoClass extends MoElement implements Changeable, Comparable<MoClass
   
   public ObservableList<MoConnection> getConnections() {
     this.container.getInheritedClasses().forEach(inheritedClass -> {
-      try {
-        inheritedClass.getElement().getConnections().forEach(connection -> {
-          if (!this.connections.contains(connection)) this.connections.add(connection);
-        });
-      } catch (ParserException e) {
-        e.printStackTrace(); //TODO: send msg
-      }
+      inheritedClass.getElement().getConnections().forEach(connection -> {
+        if (!this.connections.contains(connection)) this.connections.add(connection);
+      });
     });
     return this.connections;
   }
@@ -159,26 +153,13 @@ public class MoClass extends MoElement implements Changeable, Comparable<MoClass
   }
   
   public List<MoVariable> getConnectorVariables() {
-    return getVariables().stream().filter(moVariable -> {
-      try {
-        return moVariable.getType().getElement() instanceof MoConnector;
-      } catch (ParserException e) {
-        e.printStackTrace(); //TODO: send msg
-        return false;
-      }
-    }).collect(ImmutableListCollector.toImmutableList());
+    return getVariables().stream().filter(moVariable -> moVariable.getType().getElement() instanceof MoConnector).collect(ImmutableListCollector.toImmutableList());
   }
   
   public List<MoAnnotation> getAnnotations() {
     List<MoAnnotation> annotations = new ArrayList<>();
     annotations.addAll(super.getAnnotations());
-    this.container.getInheritedClasses().forEach(inheritedClass -> {
-      try {
-        annotations.addAll(0, inheritedClass.getElement().getAnnotations());
-      } catch (ParserException e) {
-        e.printStackTrace(); //TODO: send msg
-      }
-    });
+    this.container.getInheritedClasses().forEach(inheritedClass -> annotations.addAll(0, inheritedClass.getElement().getAnnotations()));
     
     return Collections.unmodifiableList(annotations);
   }
@@ -257,8 +238,9 @@ public class MoClass extends MoElement implements Changeable, Comparable<MoClass
         tmp = new MoConnector(ci, that);
         break;
     }
-    
-    if (tmp == null) throw new ParserException(String.format("Error in %s", that.getSimpleName()), String.format("Can't parse Type %s", ci.getType()));
+  
+    if (tmp == null) throw new ParserException(tr("Error", "error.cant.parse", ci.getType()));
+
     tmp.parseExtra(omc);
     return tmp;
   }
@@ -277,7 +259,7 @@ public class MoClass extends MoElement implements Changeable, Comparable<MoClass
           break;
         }
       }
-      if (!classFound) throw new ParserException(String.format("Error in %s", this.container.getName()), String.format("Can't find package \"%s\"", s));
+      if (!classFound) throw new ParserException(tr("Error", "error.cant.find.package", s));
     }
   
     this.addAllAnnotations(MoAnnotation.parse(omc, this));

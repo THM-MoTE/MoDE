@@ -44,7 +44,9 @@ public class NotificationControl extends VBox implements Initializable {
   public void initialize(URL location, ResourceBundle resources) {
     try {
       Settings s = Settings.load();
-      lHeadline.textProperty().set(this.message.getSimpleCause());
+      if (this.message.getTitle() == null || this.message.getTitle().isEmpty()) lHeadline.textProperty().set(this.message.getSimpleCause());
+      else lHeadline.textProperty().set(this.message.getTitle());
+      
       lMessage.textProperty().set(message.getMessage());
       String icon = ":22:";
       if (this.message instanceof InfoMessage) {

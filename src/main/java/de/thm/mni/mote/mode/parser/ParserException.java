@@ -9,24 +9,12 @@ import lombok.NonNull;
 @Getter
 public class ParserException extends Exception {
   
-  private final String title;
-  
-  public ParserException(String cause) {
-    this("", cause);
+  public ParserException(@NonNull String message) {
+    super(message);
   }
   
-  public ParserException(@NonNull String title, String cause) {
-    super(cause);
-    this.title = title;
-  }
-  
-  public ParserException(Throwable cause) {
-    this("", cause);
-  }
-  
-  public ParserException(@NonNull String title, Throwable cause) {
-    super(cause);
-    this.title = title;
+  public ParserException(@NonNull String message, Throwable cause) {
+    super(message, cause);
   }
   
 }

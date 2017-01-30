@@ -21,7 +21,6 @@ class OMCUtilities {
     libraries.forEach(library -> {
       try {
         MoLater.lightParsing(omc, library.getKey(), parent);
-//        parent.update(omc, 3); //TODO: magicnumber
       } catch (ParserException e) {
         MessageBus.getInstance().send(new ErrorMessage(OMCUtilities.class, e));
       }

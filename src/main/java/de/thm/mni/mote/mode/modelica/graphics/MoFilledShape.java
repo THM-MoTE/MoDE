@@ -46,7 +46,7 @@ public class MoFilledShape extends MoGraphic {
     } else if (ctx.fillPattern() != null) {
       mfsb.fillPattern(Utilities.FillPattern.valueOf(ctx.fillPattern().type.getText().toUpperCase()));
     } else if (ctx.lineThickness() != null) {
-      mfsb.lineThickness(Double.parseDouble(ctx.lineThickness().getText()));
+      mfsb.lineThickness(Double.parseDouble(ctx.lineThickness().val.getText()));
     }
   }
 }

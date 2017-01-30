@@ -5,11 +5,11 @@ package de.thm.mni.mote.mode.omcactor;
  */
 public class OMCException extends Exception {
   
-  public OMCException(String msg) {
-    super(msg);
+  public OMCException(String message) {
+    super(message);
   }
   
-  public OMCException(Throwable throwable) {
-    super(throwable);
+  public OMCException(String message, Throwable throwable) {
+    super(message, throwable);
   }
 }

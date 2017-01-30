@@ -1,5 +1,6 @@
 package de.thm.mni.mote.mode.omcactor;
 
+import ch.qos.logback.classic.Level;
 import de.thm.mni.mote.mode.modelica.ClassInformation;
 import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.parser.modelica.ComponentsLexer;
@@ -30,26 +31,31 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static de.thm.mni.mote.mode.util.Translator.tr;
+
 /**
  * Created by hobbypunk on 27.09.16.
  */
 public class OMCompiler {
   
   private static final Pattern lineEnd = Pattern.compile(";\\s*$");
-  private static final Pattern removeQuotes = Pattern.compile("(^\")|(\"$)");
-  private static final Pattern connect = Pattern.compile("^\\s*connect\\s*\\(.*");
+  
+  private static final Pattern modelTypeAndName = Pattern.compile("^\\s*(?:((partial)?)\\s+)?(?<type>class|model|(?:operator\\s+)?record|block|(?:expandable\\s+)?connector|type|package|(?:pure|impure\\s+)?(?:operator\\s+)?function|operator)\\s+(?<name>[^\\s]+)", Pattern.CASE_INSENSITIVE);
+  private static final Pattern modelEnd = Pattern.compile("^\\s*end\\s+(?<name>[^\\s]+)", Pattern.CASE_INSENSITIVE);
   
   public enum TYPE {
-    TYPE,
-    PACKAGE,
+    BLOCK,
     CLASS,
-    RECORD,
-    FUNCTION,
-    MODEL,
     CONNECTOR,
     ENUM,
+    FUNCTION,
+    MODEL,
     OPERATOR,
     OPERATOR_RECORD,
+    PACKAGE,
+    RECORD,
+    TYPE,
+
     NULL
   }
   
@@ -65,6 +71,11 @@ public class OMCompiler {
     client = new OMCClient(compiler.toString(), locale.toString());
     client.connect();
     this.loadLibraryPath();
+    final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger("omc.corba.OMCInterface");
+    if (logger instanceof ch.qos.logback.classic.Logger) {
+      ch.qos.logback.classic.Logger logbackLogger = (ch.qos.logback.classic.Logger) logger;
+      logbackLogger.setLevel(Level.ERROR);
+    }
   }
   
   private void loadLibraryPath() {
@@ -86,9 +97,9 @@ public class OMCompiler {
   }
   
   void setProject(Path f) throws ParserException {
-    if (this.project != null) throw new ParserException("project already set");
+    if (this.project != null) throw new ParserException(tr("Error", "error.project.already.set"));
     Pair<String, Path> lib = loadProject(f);
-    if (lib == null) throw new ParserException("project not loaded");
+    if (lib == null) throw new ParserException(tr("Error", "error.cant.load.project", f.getFileName()));
     this.project = lib;
   }
   
@@ -98,7 +109,7 @@ public class OMCompiler {
     f = f.toAbsolutePath().normalize();
     
     Result r = client.call("loadFile", ScriptingHelper.asString(f));
-    if (r.result.contains("false")) throw new ParserException("Cannot load file");
+    if (r.result.contains("false")) return null;
     if (r.error.isPresent()) throw new ParserException(r.error.get());
     
     r = client.call("getLoadedLibraries");
@@ -142,7 +153,7 @@ public class OMCompiler {
     Integer count = Integer.parseInt(r.result);
     for (Integer i = 1; i <= count; i++) {
       r = client.call("getNthAnnotationString", className, i);
-      if (!r.error.isPresent()) list.add(toString(r.result));
+      if (!r.error.isPresent()) list.add(ScriptingHelper.killTrailingQuotes(r.result));
     }
     
     return list;
@@ -213,7 +224,7 @@ public class OMCompiler {
     return list;
   }
   
-  public List<Map<String, String>> getComponents(String className) throws IOException {
+  private List<Map<String, String>> getComponents(String className) throws IOException {
     List<Map<String, String>> list = new ArrayList<>();
     Result r = client.call("getComponentsTest", className);
     ANTLRInputStream is;
@@ -224,75 +235,95 @@ public class OMCompiler {
     for (ComponentsParser.ComponentContext c : cs.component()) {
       Map<String, String> m = new HashMap<>();
       list.add(m);
-      m.put("type", toString(c.className().val.getText()));
-      m.put("name", toString(c.name().val.getText()));
-      m.put("comment", toString(c.comment().val.getText()));
-      m.put("isProtected", toString(c.isProtected().val.getText()));
-      m.put("isFinal", toString(c.isFinal().val.getText()));
-      m.put("isFlow", toString(c.isFlow().val.getText()));
-      m.put("isStream", toString(c.isStream().val.getText()));
-      m.put("isReplaceable", toString(c.isReplaceable().val.getText()));
-      m.put("variability", toString(c.variability().val.getText()));
-      m.put("innerOuter", toString(c.innerOuter().val.getText()));
-      m.put("inputOutput", toString(c.inputOutput().val.getText()));
-      m.put("dimensions", toString(c.dimensions().val.getText()));
+      m.put("type", ScriptingHelper.killTrailingQuotes(c.className().val.getText()));
+      m.put("name", ScriptingHelper.killTrailingQuotes(c.name().val.getText()));
+      m.put("comment", ScriptingHelper.killTrailingQuotes(c.comment().val.getText()));
+      m.put("isProtected", ScriptingHelper.killTrailingQuotes(c.isProtected().val.getText()));
+      m.put("isFinal", ScriptingHelper.killTrailingQuotes(c.isFinal().val.getText()));
+      m.put("isFlow", ScriptingHelper.killTrailingQuotes(c.isFlow().val.getText()));
+      m.put("isStream", ScriptingHelper.killTrailingQuotes(c.isStream().val.getText()));
+      m.put("isReplaceable", ScriptingHelper.killTrailingQuotes(c.isReplaceable().val.getText()));
+      m.put("variability", ScriptingHelper.killTrailingQuotes(c.variability().val.getText()));
+      m.put("innerOuter", ScriptingHelper.killTrailingQuotes(c.innerOuter().val.getText()));
+      m.put("inputOutput", ScriptingHelper.killTrailingQuotes(c.inputOutput().val.getText()));
+      m.put("dimensions", ScriptingHelper.killTrailingQuotes(c.dimensions().val.getText()));
     }
     
     return list;
   }
   
-  public List<Map<String, String>> getConnections(String className) {
-    return getConnections(getClassInformation(className));
+  List<Map<String, String>> getConnections(String className) {
+    return getConnections(className, getClassInformation(className));
   }
   
-  public List<Map<String, String>> getConnections(ClassInformation ci) {
+  public List<Map<String, String>> getConnections(String className, ClassInformation ci) {
+    List<String> equations = getEquations(className, ci);
+    
+    return equations.stream().collect(ArrayList::new, new BiConsumer<ArrayList<String>, String>() {
+      String tmp = "";
+      
+      @Override
+      public void accept(ArrayList<String> objects, String s) {
+        if (s.trim().startsWith("connect(")) tmp = "";
+        tmp += s.trim();
+        if (s.trim().endsWith(";")) {
+          if (tmp.startsWith("connect(") && tmp.contains("annotation")) objects.add(tmp);
+        }
+      }
+    }, ArrayList::addAll).stream().map(s -> {
+      Map<String, String> map = new HashMap<>();
+      Pattern p = Pattern.compile("connect\\(\\s*([^,\\)\\s]+)\\s*,\\s*([^,\\)\\s]+)\\s*\\)\\s");
+      Matcher m = p.matcher(s);
+      if (m.find()) {
+        map.put("from", m.group(1));
+        map.put("to", m.group(2));
+        map.put("annotation", m.replaceAll(""));
+      }
+      return Collections.unmodifiableMap(map);
+    }).filter(map -> !map.isEmpty()).collect(ImmutableListCollector.toImmutableList());
+  }
+  
+  private List<String> getClassWithoutContainingClasses(String className, ClassInformation ci) {
     try (Stream<String> lines = Files.lines(ci.getFileName())) {
       return lines.limit(ci.getLineNumberEnd()).skip(ci.getLineNumberStart() - 1).filter(new Predicate<String>() {
-        Boolean equationFound = false;
+        List<String> names = new ArrayList<>();
         
         @Override
         public boolean test(String s) {
-          if (s.trim().startsWith("equation")) {
-            equationFound = true;
-            return false;
+          Matcher m = modelTypeAndName.matcher(s);
+          if (m.matches()) {
+            if (className.endsWith(m.group("name"))) return false;
+            names.add(m.group("name"));
+          } else {
+            m = modelEnd.matcher(s);
+            if (m.matches()) {
+              if (names.size() == 0) return false;
+              names.remove(m.group("name"));
+            }
           }
-          return equationFound;
+          
+          return names.size() == 0;
         }
-      }).collect(ArrayList::new, new BiConsumer<ArrayList<String>, String>() {
-        String tmp = "";
-  
-        @Override
-        public void accept(ArrayList<String> objects, String s) {
-          if (s.trim().startsWith("connect(")) tmp = "";
-          tmp += s.trim();
-          if (s.trim().endsWith(";")) {
-            if (tmp.startsWith("connect(") && tmp.contains("annotation")) objects.add(tmp);
-          }
-        }
-      }, ArrayList::addAll).stream().map(s -> {
-        Map<String, String> map = new HashMap<>();
-        Pattern p = Pattern.compile("connect\\(\\s*([^,\\)\\s]+)\\s*,\\s*([^,\\)\\s]+)\\s*\\)\\s");
-        Matcher m = p.matcher(s);
-        if (m.find()) {
-          map.put("from", m.group(1));
-          map.put("to", m.group(2));
-          map.put("annotation", m.replaceAll(""));
-        }
-        return Collections.unmodifiableMap(map);
-      }).filter(map -> !map.isEmpty()).collect(ImmutableListCollector.toImmutableList());
-  
+      }).collect(Collectors.toList());
     } catch (IOException e) {
       e.printStackTrace();
+      return Collections.EMPTY_LIST;
     }
+  }
+  
+  private List<String> getEquations(String className, ClassInformation ci) {
+    Result r = client.call("getEquationCount", className);
+    Integer blockCount = Integer.parseInt(r.result);
+    r = client.call("getEquationItemsCount", className);
+    Integer itemsCount = Integer.parseInt(r.result);
+    if (blockCount == 0 || itemsCount == 0) return Collections.EMPTY_LIST;
     
-    return Collections.unmodifiableList(new ArrayList<>());
+    List<String> list = getClassWithoutContainingClasses(className, ci);
+    
+    return list.stream().filter(s -> s.trim().startsWith("connect")).collect(Collectors.toList());
   }
   
-  private String toString(String result) {
-    return removeQuotes.matcher(result).replaceAll("");
-  }
-  
-  public void disconnect() {
+  void disconnect() {
     try {
       client.disconnect();
     } catch (IOException e) {
@@ -308,7 +339,7 @@ public class OMCompiler {
   private List<String> toStringArray(String s, Boolean unsorted, Boolean removeEmpty) {
     List<String> l = ScriptingHelper.fromNestedArray(s);
     Stream<String> stream = l.stream();
-    stream = stream.map(OMCompiler.this::toString);
+    stream = stream.map(ScriptingHelper::killTrailingQuotes);
   
     if (removeEmpty) stream = stream.filter(s1 -> !s1.isEmpty());
     if (!unsorted) stream = stream.sorted(String::compareToIgnoreCase);

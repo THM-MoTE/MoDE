@@ -1,5 +1,7 @@
 package de.thm.mni.mote.mode.modelica;
 
+import de.thm.mni.mhpp11.jActor.actors.logging.messages.ErrorMessage;
+import de.thm.mni.mhpp11.jActor.actors.messagebus.MessageBus;
 import de.thm.mni.mote.mode.modelica.graphics.MoGraphic;
 import de.thm.mni.mote.mode.modelica.graphics.MoLine;
 import de.thm.mni.mote.mode.modelica.graphics.MoText;
@@ -25,6 +27,8 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.*;
+
+import static de.thm.mni.mote.mode.util.Translator.tr;
 
 /**
  * Created by hobbypunk on 01.11.16.
@@ -109,23 +113,27 @@ public class MoConnection implements Changeable {
   }
   
   public static List<MoConnection> parse(OMCompiler omc, MoClass parent) {
-    return omc.getConnections(parent.getName()).stream().map(map -> {
+    return omc.getConnections(parent.getName(), parent.getClassInformation()).stream().map(map -> {
       try {
         return parse(parent, map);
       } catch (ParserException e) {
-        e.printStackTrace(); //TODO: send msg
+        MessageBus.getInstance().send(new ErrorMessage(MoConnection.class, e));
         return null;
       }
     }).filter(Objects::nonNull).collect(ImmutableListCollector.toImmutableList());
   }
   
   public static MoConnection parse(MoClass parent, Map<String, String> values) throws ParserException {
-    MoConnectionBuilder mb = builder();
-    mb.parent(parent);
-    mb.from(findVariable(parent, values.get("from")));
-    mb.to(findVariable(parent, values.get("to")));
-    if (values.containsKey("annotation")) MoConnection.parse(mb, values.get("annotation"));
-    return mb.build();
+    try {
+      MoConnectionBuilder mb = builder();
+      mb.parent(parent);
+      mb.from(findVariable(parent, values.get("from")));
+      mb.to(findVariable(parent, values.get("to")));
+      if (values.containsKey("annotation")) MoConnection.parse(mb, values.get("annotation"));
+      return mb.build();
+    } catch (Exception e) {
+      throw new ParserException(tr("Error", "error.in", parent.getSimpleName()), e);
+    }
   }
   
   private static void parse(MoConnectionBuilder mb, String annotation) {
@@ -148,11 +156,12 @@ public class MoConnection implements Changeable {
     Optional<MoVariable> moVariable = parent.getVariables().stream().filter(mv -> name.startsWith(mv.getName())).findFirst();
     if (moVariable.isPresent()) {
       MoVariable mv = moVariable.get();
+      if (mv.getType() == null) throw new NoSuchElementException(tr("Error", "error.variable.has.null.type", name));
       list.add(mv);
       if (!name.endsWith(mv.getName()))
         list.addAll(findVariable(mv.getType().getElement(), name.replaceFirst(mv.getName() + "\\.", "")));
     }
-    if (list.isEmpty()) throw new NoSuchElementException();
+    if (list.isEmpty()) throw new NoSuchElementException(tr("Error", "error.cant.find.variable", name));
     return list;
   }
   

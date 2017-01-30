@@ -27,6 +27,8 @@ import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import static de.thm.mni.mote.mode.util.Translator.tr;
+
 /**
  * Created by hobbypunk on 23.01.17.
  */
@@ -41,6 +43,8 @@ public class OMCActor extends AbstractActor {
   private MoRoot mrSystemLibraries = new MoRoot("System Libraries");
   private MoRoot mrProjectLibraries = new MoRoot("Project Libraries");
   private MoRoot mrProject = new MoRoot("Project");
+  
+  private int loadStatus = 0;
   
   private ExecutorService es = Executors.newCachedThreadPool();
   
@@ -63,12 +67,14 @@ public class OMCActor extends AbstractActor {
       send(new OMCStartedMessage(getGroup(), Constants.UI));
     } catch (Exception e) {
       started = false;
-      send(new ErrorMessage(OMCActor.class, getGroup(), new OMCException(e)));
+      send(new ErrorMessage(OMCActor.class, getGroup(), new OMCException(tr("Error", "error.cant.start.omc"), e)));
     }
   }
   
   public void setProject(Project project) {
     this.project = project;
+    send(new OMCLoadStatusUIMessage(getGroup(), OMCLoadStatusUIMessage.STATUS.START));
+    loadStatus = OMCLoadStatusUIMessage.STATUS.START.ordinal();
     try {
       omc.addSystemLibraries(project.getSystemLibraries());
       collectDataInBackground(TYPE.SYSTEM);
@@ -81,15 +87,15 @@ public class OMCActor extends AbstractActor {
 
       send(new OMCSetProjectUIMessage(getGroup(), this.project));
     } catch (Exception e) {
-      send(new ErrorMessage(OMCActor.class, getGroup(), new OMCException(e)));
+      send(new ErrorMessage(OMCActor.class, getGroup(), new OMCException(tr("Error", "error.cant.load.project", project.getName()), e)));
     }
   }
   
   private void updateClass(MoContainer container) {
     try {
-      container.update(omc); // magicnumber from settings ;)
+      container.update(omc);
     } catch (Exception e) {
-      send(new ErrorMessage(OMCActor.class, getGroup(), new OMCException(e)));
+      send(new ErrorMessage(OMCActor.class, getGroup(), e));
     }
   }
   
@@ -98,13 +104,22 @@ public class OMCActor extends AbstractActor {
       switch (type) {
         case SYSTEM:
           OMCUtilities.lightCollect(this.omc, data.get(0), this.omc.getSystemLibraries());
+          send(new OMCLoadStatusUIMessage(getGroup(), OMCLoadStatusUIMessage.STATUS.SYSTEMLIB_READY));
+          loadStatus += OMCLoadStatusUIMessage.STATUS.SYSTEMLIB_READY.ordinal();
           break;
         case PROJECTLIB:
           OMCUtilities.lightCollect(this.omc, data.get(1), this.omc.getProjectLibraries());
+          send(new OMCLoadStatusUIMessage(getGroup(), OMCLoadStatusUIMessage.STATUS.PROJECTLIB_READY));
+          loadStatus += OMCLoadStatusUIMessage.STATUS.PROJECTLIB_READY.ordinal();
           break;
         case PROJECT:
           OMCUtilities.lightCollect(this.omc, data.get(2), this.omc.getProject());
+          send(new OMCLoadStatusUIMessage(getGroup(), OMCLoadStatusUIMessage.STATUS.PROJECT_READY));
+          loadStatus += OMCLoadStatusUIMessage.STATUS.PROJECT_READY.ordinal();
           break;
+      }
+      if (OMCLoadStatusUIMessage.STATUS.isComplete(loadStatus)) {
+        send(new OMCLoadStatusUIMessage(getGroup(), OMCLoadStatusUIMessage.STATUS.COMPLETE));
       }
     });
   }
@@ -120,7 +135,7 @@ public class OMCActor extends AbstractActor {
       if (omc != null) omc.disconnect();
     }
     if (OMCMessage.class.isAssignableFrom(msg.getClass())) {
-      if (!started) send(new ErrorMessage(OMCActor.class, getGroup(), new OMCException("Not started")));
+      if (!started) send(new ErrorMessage(OMCActor.class, getGroup(), new OMCException(tr("Error", "error.omc.not.running"))));
     
       if (msg instanceof SetProjectOMCMessage) {
         setProject(((SetProjectOMCMessage) msg).getProject());

@@ -9,8 +9,11 @@ import de.thm.mni.mhpp11.jActor.messages.interfaces.Message;
 import de.thm.mni.mote.mode.config.Settings;
 import de.thm.mni.mote.mode.config.model.MainWindow;
 import de.thm.mni.mote.mode.config.model.Project;
-import de.thm.mni.mote.mode.modelica.*;
+import de.thm.mni.mote.mode.modelica.MoContainer;
+import de.thm.mni.mote.mode.modelica.MoRoot;
+import de.thm.mni.mote.mode.modelica.Saver;
 import de.thm.mni.mote.mode.omcactor.messages.GetDataOMCMessage;
+import de.thm.mni.mote.mode.omcactor.messages.OMCLoadStatusUIMessage;
 import de.thm.mni.mote.mode.omcactor.messages.UpdateClassOMCMessage;
 import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.control.ContextMenuItem;
@@ -33,7 +36,9 @@ import javax.management.ReflectionException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-import java.util.*;
+import java.util.List;
+import java.util.ResourceBundle;
+import java.util.UUID;
 
 /**
  * Created by hobbypunk on 15.09.16.
@@ -72,7 +77,6 @@ public class MainController extends NotifyController {
   public void lateInitialize() throws InvocationTargetException, NoSuchMethodException, ReflectionException, InstantiationException, IllegalAccessException {
     super.lateInitialize();
     this.project = (Project) getParams().get(1);
-    getActor().send(new GetDataOMCMessage(getGroup()));
     StateMachine.getInstance(this.getScene());
     initTreeView();
   }
@@ -90,6 +94,7 @@ public class MainController extends NotifyController {
   
   @Override
   public void show() {
+    getActor().send(new GetDataOMCMessage(getGroup()));
     MainWindow mw = getSettings().getMainwindow();
   
     getStage().setX(mw.getPos().getX());
@@ -107,7 +112,7 @@ public class MainController extends NotifyController {
   
   @Override
   public void start() {
-    show();
+    getActor().send(new SplashShowMessage(true));
   }
   
   private void initTreeView() {
@@ -118,26 +123,18 @@ public class MainController extends NotifyController {
       ContextMenuItem cmi = (ContextMenuItem) menuItem;
       MoContainer container = tvLibrary.getSelectionModel().getSelectedItem().getValue();
   
-      try {
-        if (cmi.getAction().equals("add.to.diagram")) {
-          MainTabControl mtc = (MainTabControl) tabPane.getSelectionModel().getSelectedItem();
-          cmi.setDisable(!container.getElement().hasIcon() || mtc == null || !mtc.isDiagram());
-        } else {
-          if (cmi.getAction().equals("open.as.diagram")) cmi.setDisable(!container.getElement().hasDiagram());
-          else if (cmi.getAction().equals("open.as.modelica")) cmi.setDisable(!container.getElement().hasIcon());
-        }
-      } catch (ParserException e) {
-        e.printStackTrace(); //TODO: send msg;
+      if (cmi.getAction().equals("add.to.diagram")) {
+        MainTabControl mtc = (MainTabControl) tabPane.getSelectionModel().getSelectedItem();
+        cmi.setDisable(!container.getElement().hasIcon() || mtc == null || !mtc.isDiagram());
+      } else {
+        if (cmi.getAction().equals("open.as.diagram")) cmi.setDisable(!container.getElement().hasDiagram());
+        else if (cmi.getAction().equals("open.as.modelica")) cmi.setDisable(!container.getElement().hasIcon());
       }
     }));
     
     tvLibrary.setOnMouseClicked(event -> {
       TreeItem<MoContainer> item = tvLibrary.getSelectionModel().getSelectedItem();
-      try {
-        if (item == null || !item.getValue().getElement().hasDiagram()) return;
-      } catch (ParserException e) {
-        e.printStackTrace(); //TODO: send msg;
-      }
+      if (item == null || !item.getValue().getElement().hasDiagram()) return;
   
       for (Tab t : tabPane.getTabs()) {
         if (t instanceof MainTabControl && ((MainTabControl) t).getData().equals(item.getValue())) {
@@ -256,6 +253,10 @@ public class MainController extends NotifyController {
       super.executeUI(msg);
       if (msg instanceof OMCDataUIMessage) {
         getController().getTvLibrary().setItems(((OMCDataUIMessage) msg).getData());
+      } else if (msg instanceof OMCLoadStatusUIMessage) {
+        if (((OMCLoadStatusUIMessage) msg).getStatus() == OMCLoadStatusUIMessage.STATUS.COMPLETE) {
+          getController().show();
+        }
       }
     }
   }

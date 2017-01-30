@@ -76,11 +76,7 @@ public class MainTabControl extends Tab implements Initializable {
       e.printStackTrace();
     }
   
-    try {
-      data.getElement().getUnsavedChanges().addListener((observable, oldValue, newValue) -> updateText(newValue));
-    } catch (ParserException e) {
-      e.printStackTrace(); //TODO: send msg
-    }
+    data.getElement().getUnsavedChanges().addListener((observable, oldValue, newValue) -> updateText(newValue));
   }
   
   private void updateText(Change unsavedChanges) {
