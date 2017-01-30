@@ -20,6 +20,8 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import static de.thm.mni.mote.mode.util.Translator.tr;
+
 /**
  * Created by hobbypunk on 26.01.17.
  */
@@ -44,8 +46,8 @@ public class NewProjectFirstPageControl extends DialogStackControl implements Ne
     super.initialize(location, resources);
     
     ObservableList<Option> options = FXCollections.observableArrayList();
-    options.add(new Option(i18n.getString("project.empty_project"), "mdi-creation", Color.DARKORANGE, Option.TYPE.EMPTY_PROJECT));
-    options.add(new Option(i18n.getString("project.project_from_source"), "gmi-folder-open", Color.CHOCOLATE, Option.TYPE.PROJECT_FROM_SOURCE));
+    options.add(new Option(tr(i18n, "project.empty.project"), "mdi-creation", Color.DARKORANGE, Option.TYPE.EMPTY_PROJECT));
+    options.add(new Option(tr(i18n, "project.project.from.source"), "gmi-folder-open", Color.CHOCOLATE, Option.TYPE.PROJECT_FROM_SOURCE));
     lvOptionList.setItems(options);
     lvOptionList.setCellFactory(param -> new ListCell<Option>() {
       private FontIcon icon = new FontIcon();

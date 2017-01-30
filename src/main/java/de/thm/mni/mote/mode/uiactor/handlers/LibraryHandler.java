@@ -25,15 +25,15 @@ public class LibraryHandler {
   }
   
   public void handleMenu(TabPane tabPane, MoContainer container, String action) throws ParserException {
-    if (action.startsWith("open.as")) {
+    if (action.startsWith("open_as")) {
       Tab tab;
-      if (action.equals("open.as.diagram"))
+      if (action.equals("open_as_diagram"))
         tab = new MainTabControl(container, true);
       else
         tab = new MainTabControl(container, false);
       tabPane.getTabs().add(tab);
       tabPane.getSelectionModel().select(tab);
-    } else if (action.equals("add.to.diagram")) {
+    } else if (action.equals("add_to_diagram")) {
       MainTabControl tab = (MainTabControl) tabPane.getSelectionModel().getSelectedItem();
     
       Integer counter = 0;

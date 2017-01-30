@@ -26,6 +26,8 @@ import java.nio.file.Paths;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import static de.thm.mni.mote.mode.util.Translator.tr;
+
 /**
  * Created by hobbypunk on 26.01.17.
  */
@@ -104,10 +106,10 @@ public class ProjectFromSourceControl extends GridPane implements NewProject, In
   @FXML
   private void onChoosePathClick() {
     FileChooser fc = new FileChooser();
-    fc.setTitle(i18n.getString("project.choose_mo_file"));
+    fc.setTitle(tr(i18n, "project.choose.mo.file"));
     fc.setInitialDirectory(Settings.load().getRecent().getLastPath().toFile());
     fc.setInitialFileName("package.mo");
-    fc.getExtensionFilters().add(new FileChooser.ExtensionFilter(i18n.getString("project.modelica_file"), "*.mo"));
+    fc.getExtensionFilters().add(new FileChooser.ExtensionFilter(tr(i18n, "project.modelica.file"), "*.mo"));
     File f = fc.showOpenDialog(this.getScene().getWindow());
     if (f == null) return;
     Path path = PackageParser.findBasePackage(f.toPath());

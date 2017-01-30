@@ -97,9 +97,9 @@ public class OMCompiler {
   }
   
   void setProject(Path f) throws ParserException {
-    if (this.project != null) throw new ParserException(tr("Error", "error.project.already.set"));
+    if (this.project != null) throw new ParserException(tr("Error", "error.omcactor.project_already_set"));
     Pair<String, Path> lib = loadProject(f);
-    if (lib == null) throw new ParserException(tr("Error", "error.cant.load.project", f.getFileName()));
+    if (lib == null) throw new ParserException(tr("Error", "error.omcactor.cant_load_project", f.getFileName()));
     this.project = lib;
   }
   

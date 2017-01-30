@@ -40,6 +40,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.UUID;
 
+import static de.thm.mni.mote.mode.util.Translator.tr;
+
 /**
  * Created by hobbypunk on 15.09.16.
  */
@@ -195,8 +197,8 @@ public class MainController extends NotifyController {
   private ContextMenu createLibraryMenu() {
     ContextMenu cm = new ContextMenu();
   
-    for (String action : new String[]{"open.as.diagram", "open.as.diagram", "add.to.diagram"}) {
-      MenuItem tmp = new ContextMenuItem(i18n.getString("menu.context." + action), action);   //todo multilingual
+    for (String action : new String[]{"open_as_diagram", "add_to_diagram"}) {
+      MenuItem tmp = new ContextMenuItem(tr(i18n, "menu.context." + action), action);
   
       tmp.setOnAction(event -> {
         try {

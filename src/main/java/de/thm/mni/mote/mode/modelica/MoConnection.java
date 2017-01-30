@@ -132,7 +132,7 @@ public class MoConnection implements Changeable {
       if (values.containsKey("annotation")) MoConnection.parse(mb, values.get("annotation"));
       return mb.build();
     } catch (Exception e) {
-      throw new ParserException(tr("Error", "error.in", parent.getSimpleName()), e);
+      throw new ParserException(tr("Error", "error.modelica.error_in", parent.getSimpleName()), e);
     }
   }
   
@@ -156,12 +156,12 @@ public class MoConnection implements Changeable {
     Optional<MoVariable> moVariable = parent.getVariables().stream().filter(mv -> name.startsWith(mv.getName())).findFirst();
     if (moVariable.isPresent()) {
       MoVariable mv = moVariable.get();
-      if (mv.getType() == null) throw new NoSuchElementException(tr("Error", "error.variable.has.null.type", name));
+      if (mv.getType() == null) throw new NoSuchElementException(tr("Error", "error.modelica.variable_has_null_type", name));
       list.add(mv);
       if (!name.endsWith(mv.getName()))
         list.addAll(findVariable(mv.getType().getElement(), name.replaceFirst(mv.getName() + "\\.", "")));
     }
-    if (list.isEmpty()) throw new NoSuchElementException(tr("Error", "error.cant.find.variable", name));
+    if (list.isEmpty()) throw new NoSuchElementException(tr("Error", "error.modelica.cant_find_variable", name));
     return list;
   }
   

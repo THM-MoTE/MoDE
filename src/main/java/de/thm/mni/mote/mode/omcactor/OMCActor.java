@@ -67,7 +67,7 @@ public class OMCActor extends AbstractActor {
       send(new OMCStartedMessage(getGroup(), Constants.UI));
     } catch (Exception e) {
       started = false;
-      send(new ErrorMessage(OMCActor.class, getGroup(), new OMCException(tr("Error", "error.cant.start.omc"), e)));
+      send(new ErrorMessage(OMCActor.class, getGroup(), new OMCException(tr("Error", "error.omcactor.cant_start_omc"), e)));
     }
   }
   
@@ -87,7 +87,7 @@ public class OMCActor extends AbstractActor {
 
       send(new OMCSetProjectUIMessage(getGroup(), this.project));
     } catch (Exception e) {
-      send(new ErrorMessage(OMCActor.class, getGroup(), new OMCException(tr("Error", "error.cant.load.project", project.getName()), e)));
+      send(new ErrorMessage(OMCActor.class, getGroup(), new OMCException(tr("Error", "error.omcactor.cant_load_project", project.getName()), e)));
     }
   }
   
@@ -135,7 +135,7 @@ public class OMCActor extends AbstractActor {
       if (omc != null) omc.disconnect();
     }
     if (OMCMessage.class.isAssignableFrom(msg.getClass())) {
-      if (!started) send(new ErrorMessage(OMCActor.class, getGroup(), new OMCException(tr("Error", "error.omc.not.running"))));
+      if (!started) send(new ErrorMessage(OMCActor.class, getGroup(), new OMCException(tr("Error", "error.omcactor.omc_not_running"))));
     
       if (msg instanceof SetProjectOMCMessage) {
         setProject(((SetProjectOMCMessage) msg).getProject());

@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import static de.thm.mni.mote.mode.util.Translator.tr;
+
 /**
  * Created by hobbypunk on 14.09.16.
  */
@@ -115,7 +117,7 @@ public class SettingsController extends Controller {
   private void onModelicaCompilerClick() {
     Path f = fileDialog(
         getSettings().getModelica().getCompiler(),
-        i18n.getString("settings.select.modelica.compiler"),
+        tr(i18n, "settings.select.modelica.compiler"),
         true);
     
     if (f == null) return;

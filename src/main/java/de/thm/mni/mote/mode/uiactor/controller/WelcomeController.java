@@ -40,6 +40,8 @@ import java.util.List;
 import java.util.Observable;
 import java.util.ResourceBundle;
 
+import static de.thm.mni.mote.mode.util.Translator.tr;
+
 
 /**
  * Created by hobbypunk on 10.09.16.
@@ -96,7 +98,7 @@ public class WelcomeController extends NotifyController {
   
   
   private void showIgnoreParams() {
-    this.getStage().setTitle(i18n.getString("title.title") + " " + Settings.TITLE + " " + Settings.VERSION);
+    this.getStage().setTitle(tr(i18n, "title.title") + " " + Settings.TITLE + " " + Settings.VERSION);
     this.getStage().setResizable(false);
     this.getStage().centerOnScreen();
     super.show();

@@ -88,7 +88,7 @@ public class MoClass extends MoElement implements Changeable, Comparable<MoClass
   public MoVariable findVariable(String name) throws NoSuchElementException {
     for (MoVariable mv : getVariables())
       if (mv.getName().equals(name)) return mv;
-    throw new NoSuchElementException(tr("Error", "error.cant.find.variable", name));
+    throw new NoSuchElementException(tr("Error", "error.modelica.cant_find_variable", name));
   }
   
   public ObservableList<MoVariable> getVariables() {
@@ -239,7 +239,7 @@ public class MoClass extends MoElement implements Changeable, Comparable<MoClass
         break;
     }
   
-    if (tmp == null) throw new ParserException(tr("Error", "error.cant.parse", ci.getType()));
+    if (tmp == null) throw new ParserException(tr("Error", "error.modelica.cant_parse", ci.getType()));
 
     tmp.parseExtra(omc);
     return tmp;
