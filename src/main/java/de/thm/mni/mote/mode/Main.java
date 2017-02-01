@@ -8,14 +8,18 @@ import de.thm.mni.mhpp11.jActor.actors.utilities.Constants;
 import de.thm.mni.mote.mode.config.Settings;
 import de.thm.mni.mote.mode.uiactor.controller.WelcomeController;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
-/**
- * Hello world!
- *
- */
 public class Main {
+  
+  public static List<Locale> SUPPORTED_LANGUAGES = new ArrayList<>();
+  static {
+    SUPPORTED_LANGUAGES.add(Locale.ENGLISH);
+    SUPPORTED_LANGUAGES.add(Locale.GERMAN);
+  }
   
   public static void main(String[] args) {
   

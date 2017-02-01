@@ -1,8 +1,7 @@
 package de.thm.mni.mote.mode.uiactor.controller;
 
-import de.thm.mni.mote.mode.uiactor.utilities.UTF8ResourceBundleControl;
+import de.thm.mni.mote.mode.Main;
 import de.thm.mni.mote.mode.config.model.Logger;
-import de.thm.mni.mote.mode.util.Utilities;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -11,7 +10,6 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
-import javafx.util.Pair;
 import javafx.util.StringConverter;
 
 import java.io.File;
@@ -19,8 +17,6 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -31,7 +27,7 @@ import static de.thm.mni.mote.mode.util.Translator.tr;
  */
 public class SettingsController extends Controller {
   
-  @FXML private ChoiceBox<Pair<String, String>> cbLanguage;
+  @FXML private ChoiceBox<Locale> cbLanguage;
   
   @FXML private TextField tfRecentCount;
   @FXML private Slider sRecentCount;
@@ -50,32 +46,25 @@ public class SettingsController extends Controller {
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     super.initialize(location, resources);
-  
-    ResourceBundle languages = ResourceBundle.getBundle(Utilities.BASEPATH + "i18n/Languages", getSettings().getLang(), new UTF8ResourceBundleControl());
-    Pair<String, String> lang = new Pair<>(getSettings().getLang().toString(), languages.getString(getSettings().getLang().toString()));
     
-    List<Pair<String, String>> langs = new ArrayList<>();
-    for(String l: languages.keySet())
-      langs.add(new Pair<>(l, languages.getString(l)));
-  
-    cbLanguage.setItems(FXCollections.observableArrayList(langs));
-    cbLanguage.setValue(lang);
-    cbLanguage.setConverter(new StringConverter<Pair<String, String>>() {
+    cbLanguage.setItems(FXCollections.observableArrayList(Main.SUPPORTED_LANGUAGES));
+    cbLanguage.setValue(getSettings().getLang());
+    cbLanguage.setConverter(new StringConverter<Locale>() {
       @Override
-      public String toString(Pair<String, String> object) {
-        return object.getValue();
+      public String toString(Locale locale) {
+        return tr(i18n, "settings.supported_languages." + locale.toString());
       }
   
       @Override
-      public Pair<String, String> fromString(String string) {
-        for(Pair<String, String> p: langs) {
-          if(p.getValue().equals(string))
-            return p;
+      public Locale fromString(String string) {
+        for(Locale locale: Main.SUPPORTED_LANGUAGES) {
+          if(tr(i18n, "settings.supported_languages." + locale.toString()).equals(string))
+            return locale;
         }
         return null;
       }
     });
-    cbLanguage.valueProperty().addListener((observable, oldValue, newValue) -> getSettings().setLang(new Locale(newValue.getKey())));
+    cbLanguage.valueProperty().addListener((observable, oldValue, newValue) -> getSettings().setLang(newValue));
   
     cbLoggerLevel.setItems(FXCollections.observableArrayList(Logger.LEVEL.values()));
     cbLoggerLevel.setValue(getSettings().getLogger().getLevel());
