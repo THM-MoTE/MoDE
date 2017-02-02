@@ -9,13 +9,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by hobbypunk on 14.09.16.
  */
 public class PackageParser {
   
-  public static Path findBasePackage(Path f) {
+  public static Path findBasePackage(UUID group, Path f) {
     f = f.toAbsolutePath().normalize();
     Path f2 = f;
     try {
@@ -39,7 +40,7 @@ public class PackageParser {
       Iterator<Path> iterator = ds.iterator();
       if (iterator.hasNext()) return iterator.next();
     } catch (IOException e) {
-      MessageBus.getInstance().send(new WarnMessage(PackageParser.class, "Cannot read lines"));
+      MessageBus.getInstance().send(new WarnMessage(PackageParser.class, group, "Cannot read lines"));
     }
     return f;
   }

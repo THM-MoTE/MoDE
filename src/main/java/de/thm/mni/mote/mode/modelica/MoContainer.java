@@ -103,7 +103,7 @@ public class MoContainer implements Comparable<MoContainer>, HierarchyData<MoCon
       try {
         this.element = MoClass.parse(omc, (MoLater) this.element);
       } catch (ParserException e) {
-        MessageBus.getInstance().send(new ErrorMessage(MoContainer.class, new ParserException(tr("Error", "error.modelica.error_in", getSimpleName()), e)));
+        MessageBus.getInstance().send(new ErrorMessage(MoContainer.class, omc.getGroup(), new ParserException(tr("Error", "error.modelica.error_in", getSimpleName()), e)));
       }
     }
     return this.element;

@@ -62,7 +62,7 @@ public class MoLater extends MoClass {
       try {
         if (!childName.isEmpty()) MoLater.lightParsing(omc, childName, tmp, n);
       } catch (ParserException e) {
-        MessageBus.getInstance().send(new ErrorMessage(MoLater.class, e));
+        MessageBus.getInstance().send(new ErrorMessage(MoLater.class, omc.getGroup(), e));
       }
     }
   }

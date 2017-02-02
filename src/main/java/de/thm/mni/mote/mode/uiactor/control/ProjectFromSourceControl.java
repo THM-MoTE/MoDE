@@ -27,6 +27,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import java.util.UUID;
 
 import static de.thm.mni.mote.mode.util.Translator.tr;
 
@@ -45,10 +46,12 @@ public class ProjectFromSourceControl extends GridPane implements NewProject, In
   @FXML private TextField tfName;
   @FXML private TextField tfPath;
   @FXML private Button btnPath;
+  private UUID group;
   
   
-  ProjectFromSourceControl() {
+  ProjectFromSourceControl(UUID group) {
     super();
+    this.group = group;
     FXMLLoader loader = new FXMLLoader();
     loader.setLocation(Utilities.getControlView("ProjectFromSource"));
     try {
@@ -115,7 +118,7 @@ public class ProjectFromSourceControl extends GridPane implements NewProject, In
     fc.getExtensionFilters().add(new FileChooser.ExtensionFilter(tr(i18n, "project.modelica.file"), "*.mo"));
     File f = fc.showOpenDialog(this.getScene().getWindow());
     if (f == null) return;
-    Path path = PackageParser.findBasePackage(f.toPath());
+    Path path = PackageParser.findBasePackage(group, f.toPath());
     tfPath.setText(path.toString());
     tfPath.positionCaret(tfPath.getText().length() + 1);
   }

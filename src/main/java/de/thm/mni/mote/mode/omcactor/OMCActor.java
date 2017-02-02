@@ -62,7 +62,7 @@ public class OMCActor extends AbstractActor {
     Settings settings = Settings.load();
     Modelica m = settings.getModelica();
     try {
-      omc = new OMCompiler(m.getCompiler(), settings.getLang());
+      omc = new OMCompiler(getGroup(), m.getCompiler(), settings.getLang());
       started = true;
       send(new OMCStartedMessage(getGroup(), Constants.UI));
     } catch (Exception e) {

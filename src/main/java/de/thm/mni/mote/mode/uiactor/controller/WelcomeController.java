@@ -139,7 +139,7 @@ public class WelcomeController extends NotifyController {
   }
   
   private void onCreateProject(List<String> libs) {
-    NewProjectFirstPageControl tmp = new NewProjectFirstPageControl(dialogStack, libs);
+    NewProjectFirstPageControl tmp = new NewProjectFirstPageControl(getGroup(), dialogStack, libs);
     tmp.setOnFinishListener(this::onOpenProject);
   }
   

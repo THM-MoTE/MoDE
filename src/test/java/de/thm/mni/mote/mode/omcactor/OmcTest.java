@@ -15,10 +15,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -34,7 +31,7 @@ public class OmcTest {
   @Before
   public void before() throws IOException {
     Modelica m = Settings.load().getModelica();
-    omc = new OMCompiler(m.getCompiler(), Locale.GERMANY);
+    omc = new OMCompiler(UUID.randomUUID(), m.getCompiler(), Locale.GERMANY);
     System.out.println(omc.getClient().call("getModelicaPath"));
     omc.getClient().call("getClassNames");
   }

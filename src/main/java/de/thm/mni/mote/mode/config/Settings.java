@@ -4,6 +4,7 @@ import de.thm.mni.mhpp11.jActor.actors.logging.messages.ErrorMessage;
 import de.thm.mni.mhpp11.jActor.actors.messagebus.MessageBus;
 import de.thm.mni.mote.mode.config.model.Configuration;
 import de.thm.mni.mote.mode.config.xml.MyMatcher;
+import de.thm.mni.mote.mode.util.Constants;
 import de.thm.mni.mote.mode.util.Utilities;
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
@@ -92,7 +93,7 @@ public class Settings extends Configuration implements Observer {
       try {
         serializer.write(this, this.file.toFile());
       } catch (Exception e) {
-        MessageBus.getInstance().send(new ErrorMessage(this.getClass(), e));
+        MessageBus.getInstance().send(new ErrorMessage(this.getClass(), Constants.ALLGROUPS, e));
       }
     });
     t.start();

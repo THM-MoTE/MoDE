@@ -110,7 +110,7 @@ public class MoConnection implements Changeable {
       try {
         return parse(parent, map);
       } catch (ParserException e) {
-        MessageBus.getInstance().send(new ErrorMessage(MoConnection.class, e));
+        MessageBus.getInstance().send(new ErrorMessage(MoConnection.class, omc.getGroup(), e));
         return null;
       }
     }).filter(Objects::nonNull).collect(ImmutableListCollector.toImmutableList());

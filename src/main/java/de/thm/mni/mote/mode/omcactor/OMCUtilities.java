@@ -22,7 +22,7 @@ class OMCUtilities {
       try {
         MoLater.lightParsing(omc, library.getKey(), parent);
       } catch (ParserException e) {
-        MessageBus.getInstance().send(new ErrorMessage(OMCUtilities.class, e));
+        MessageBus.getInstance().send(new ErrorMessage(OMCUtilities.class, omc.getGroup(), e));
       }
     });
   }
@@ -31,10 +31,7 @@ class OMCUtilities {
     try {
       MoLater.lightParsing(omc, project.getKey(), parent);
     } catch (ParserException e) {
-      MessageBus.getInstance().send(new ErrorMessage(OMCUtilities.class, e));
+      MessageBus.getInstance().send(new ErrorMessage(OMCUtilities.class, omc.getGroup(), e));
     }
-    
   }
-  
-  
 }

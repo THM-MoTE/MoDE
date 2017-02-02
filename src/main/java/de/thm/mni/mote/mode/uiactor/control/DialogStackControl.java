@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import java.util.UUID;
 
 /**
  * Created by hobbypunk on 26.01.17.
@@ -31,18 +32,20 @@ public abstract class DialogStackControl extends VBox implements Initializable {
   protected final ResourceBundle i18n;
   
   private FXMLLoader loader;
+  @Getter private UUID group;
   @Getter private final StackPane stackPane;
   @Getter @Setter private EventHandler<Project> onFinishListener;
   
   @FXML private FontIcon fiNext;
   @FXML protected Button btnNext;
   
-  public DialogStackControl(StackPane stackPane, String view, Boolean isLastPage) {
-    this(stackPane, view, view, isLastPage);
+  public DialogStackControl(UUID group, StackPane stackPane, String view, Boolean isLastPage) {
+    this(group, stackPane, view, view, isLastPage);
   }
   
-  public DialogStackControl(StackPane stackPane, String view, String resource, Boolean isLastPage) {
+  public DialogStackControl(UUID group, StackPane stackPane, String view, String resource, Boolean isLastPage) {
     super();
+    this.group = group;
     this.stackPane = stackPane;
     this.isLastPage = isLastPage;
     loader = new FXMLLoader();

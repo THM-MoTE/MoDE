@@ -15,10 +15,7 @@ import lombok.Setter;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 
 /**
  * Created by hobbypunk on 26.01.17.
@@ -32,8 +29,8 @@ public class NewProjectSecondPageControl extends DialogStackControl implements N
   @FXML private ListView<String> lvAvailableLibs;
   @FXML private ListView<String> lvUsedLibs;
   
-  public NewProjectSecondPageControl(StackPane parent, List<String> libs) {
-    super(parent, "NewProjectSecondPage", "NewProject", true);
+  public NewProjectSecondPageControl(UUID group, StackPane parent, List<String> libs) {
+    super(group, parent, "NewProjectSecondPage", "NewProject", true);
     this.libs = libs;
     load();
   }

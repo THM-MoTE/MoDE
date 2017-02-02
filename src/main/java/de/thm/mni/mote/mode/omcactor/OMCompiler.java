@@ -43,6 +43,7 @@ public class OMCompiler {
   
   private static final Pattern modelTypeAndName = Pattern.compile("^\\s*(?:((partial)?)\\s+)?(?<type>class|model|(?:operator\\s+)?record|block|(?:expandable\\s+)?connector|type|package|(?:pure|impure\\s+)?(?:operator\\s+)?function|operator)\\s+(?<name>[^\\s]+)", Pattern.CASE_INSENSITIVE);
   private static final Pattern modelEnd = Pattern.compile("^\\s*end\\s+(?<name>[^\\s]+)", Pattern.CASE_INSENSITIVE);
+  @Getter private final UUID group;
   
   public enum TYPE {
     BLOCK,
@@ -68,7 +69,8 @@ public class OMCompiler {
   @Getter private Pair<String, Path> project = null;
   @Getter private ImportHandler importHandler = null;
   
-  public OMCompiler(Path compiler, Locale locale) throws IOException, IllegalStateException {
+  public OMCompiler(UUID group, Path compiler, Locale locale) throws IOException, IllegalStateException {
+    this.group = group;
     client = new OMCClient(compiler.toString(), locale.toString());
     client.connect();
     this.loadLibraryPath();

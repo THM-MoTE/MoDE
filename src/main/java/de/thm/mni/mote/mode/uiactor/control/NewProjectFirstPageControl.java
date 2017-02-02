@@ -19,6 +19,7 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.UUID;
 
 import static de.thm.mni.mote.mode.util.Translator.tr;
 
@@ -35,8 +36,8 @@ public class NewProjectFirstPageControl extends DialogStackControl implements Ne
   @FXML private AnchorPane apRoot;
   
   
-  public NewProjectFirstPageControl(StackPane stackPane, List<String> libs) {
-    super(stackPane, "NewProjectFirstPage", "NewProject", false);
+  public NewProjectFirstPageControl(UUID group, StackPane stackPane, List<String> libs) {
+    super(group, stackPane, "NewProjectFirstPage", "NewProject", false);
     this.libs = libs;
     load();
   }
@@ -84,7 +85,7 @@ public class NewProjectFirstPageControl extends DialogStackControl implements Ne
   }
   
   private void onProjectFromSource() {
-    ProjectFromSourceControl tmp = new ProjectFromSourceControl();
+    ProjectFromSourceControl tmp = new ProjectFromSourceControl(getGroup());
     tmp.setProjectBuilder(this.getProjectBuilder());
     tmp.getIsValidProperty().addListener((observable, oldValue, newValue) -> getIsValidProperty().set(newValue));
     
@@ -95,7 +96,7 @@ public class NewProjectFirstPageControl extends DialogStackControl implements Ne
   @Override
   protected void onBtnNext() {
     if (this.getIsValidProperty().get()) {
-      NewProjectSecondPageControl page = new NewProjectSecondPageControl(this.getStackPane(), this.getLibs());
+      NewProjectSecondPageControl page = new NewProjectSecondPageControl(getGroup(), this.getStackPane(), this.getLibs());
       page.setProjectBuilder(this.getProjectBuilder());
       page.setOnFinishListener(data -> {
         this.getOnFinishListener().handle(data);
