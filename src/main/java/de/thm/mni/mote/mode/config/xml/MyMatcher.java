@@ -4,6 +4,7 @@ import org.simpleframework.xml.transform.Matcher;
 import org.simpleframework.xml.transform.Transform;
 
 import java.nio.file.Path;
+import java.util.Date;
 
 /**
  * Created by hobbypunk on 08.10.16.
@@ -11,6 +12,11 @@ import java.nio.file.Path;
 public class MyMatcher implements Matcher {
   @Override
   public Transform match(Class type) throws Exception {
-    return (Path.class.isAssignableFrom(type)) ? new PathTransform() : null;
+    if (Path.class.isAssignableFrom(type))
+      return new PathTransform();
+    if (Date.class.isAssignableFrom(type))
+      return new ISODateTransform();
+  
+    return null;
   }
 }

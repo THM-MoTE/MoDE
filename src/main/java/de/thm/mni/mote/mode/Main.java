@@ -4,9 +4,9 @@ import de.thm.mni.mhpp11.jActor.actors.messagebus.MessageBus;
 import de.thm.mni.mhpp11.jActor.actors.ui.messages.StartUIMessage;
 import de.thm.mni.mhpp11.jActor.actors.ui.splash.messages.SplashInitMessage;
 import de.thm.mni.mhpp11.jActor.actors.ui.splash.messages.SplashShowMessage;
-import de.thm.mni.mhpp11.jActor.actors.utilities.Constants;
 import de.thm.mni.mote.mode.config.Settings;
 import de.thm.mni.mote.mode.uiactor.controller.WelcomeController;
+import de.thm.mni.mote.mode.util.Constants;
 
 import java.util.ArrayList;
 import java.util.Arrays;
