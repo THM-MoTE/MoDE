@@ -2,12 +2,10 @@ package de.thm.mni.mote.mode.modelica;
 
 import de.thm.mni.mhpp11.jActor.actors.logging.messages.ErrorMessage;
 import de.thm.mni.mhpp11.jActor.actors.messagebus.MessageBus;
-import de.thm.mni.mote.mode.config.Settings;
 import de.thm.mni.mote.mode.omcactor.OMCompiler;
 import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.util.HierarchyData;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import lombok.Getter;
 import lombok.NonNull;
@@ -22,6 +20,8 @@ import static de.thm.mni.mote.mode.util.Translator.tr;
  */
 @Getter
 public class MoContainer implements Comparable<MoContainer>, HierarchyData<MoContainer> {
+  private static final int MAX_LOADING_DEPTH = 3;
+  
   private OMCompiler omc = null;
   private MoContainer parent = null;
   protected String name = null;
@@ -29,7 +29,6 @@ public class MoContainer implements Comparable<MoContainer>, HierarchyData<MoCon
   
   private final List<MoContainer> inheritedClasses = new ArrayList<>();
   private final ObservableList<MoContainer> children = FXCollections.observableArrayList();
-  private ListChangeListener<MoContainer> childListener;
   
   public MoContainer(OMCompiler omc, MoContainer parent, @NonNull String name) {
     this.omc = omc;
@@ -155,6 +154,6 @@ public class MoContainer implements Comparable<MoContainer>, HierarchyData<MoCon
   }
   
   public void update(OMCompiler omc) throws ParserException {
-    update(omc, Settings.load().getModelica().getDepth());// magicnumber from settings ;)
+    update(omc, MAX_LOADING_DEPTH);// magicnumber from settings ;)
   }
 }

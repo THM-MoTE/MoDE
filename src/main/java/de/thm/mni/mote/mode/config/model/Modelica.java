@@ -13,20 +13,14 @@ import java.nio.file.Paths;
 @Getter
 public class Modelica extends MyObservable {
   @Element(required = false) Path compiler = Paths.get(Utilities.isWin() ? "C:/omc.exe" : "/usr/bin/omc");
-  @Element(required = false) Integer depth = 2;
   
   public void setCompiler(Path compiler) {
     this.compiler = compiler;
     this.notifyObservers("compiler");
   }
   
-  public void setDepth(Integer depth) {
-    this.depth = depth;
-    this.notifyObservers("depth");
-  }
-  
   @Override
   public String toString() {
-    return String.format("{ compiler: %s, depth: %d }", compiler, depth);
+    return String.format("{ compiler: %s }", compiler);
   }
 }
