@@ -1,6 +1,5 @@
 package de.thm.mni.mote.mode.uiactor.controller;
 
-import de.thm.mni.mhpp11.jActor.actors.logging.messages.DebugMessage;
 import de.thm.mni.mhpp11.jActor.actors.logging.messages.ErrorMessage;
 import de.thm.mni.mhpp11.jActor.actors.messagebus.messages.StartMessage;
 import de.thm.mni.mhpp11.jActor.actors.ui.interfaces.ActorController;
@@ -28,6 +27,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import org.controlsfx.control.PopOver;
 
 import javax.management.ReflectionException;
 import java.io.File;
@@ -54,6 +54,7 @@ public class WelcomeController extends NotifyController {
     controller.start();
   }
   
+  private Boolean omcStarted = true;
   
   @FXML private Label lName;
   @FXML private Label lVersion;
@@ -61,8 +62,11 @@ public class WelcomeController extends NotifyController {
   
   @FXML private Button btnNewProject;
   @FXML private Button btnOpenProject;
+  @FXML private Button btnSettings;
   
   @FXML private StackPane dialogStack;
+  
+  private PopOver po = new PopOver();
   
   @FXML
   @Override
@@ -72,6 +76,20 @@ public class WelcomeController extends NotifyController {
     lName.setText(Settings.TITLE);
     lVersion.setText(Settings.VERSION);
     updateRecentList();
+  }
+  
+  @Override
+  protected void lateInitialize() throws ReflectionException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+    super.lateInitialize();
+    po.setContentNode(new Label(tr(i18n, "click.to.configure.omc")));
+    po.setArrowLocation(PopOver.ArrowLocation.LEFT_BOTTOM);
+    po.setDetachable(false);
+    po.setAutoHide(false);
+    po.setHideOnEscape(false);
+
+//    getScene().setOnMouseMoved(event -> {
+//      if(!omcStarted && !po.isShowing()) po.show(btnSettings);
+//    });
   }
   
   @Override
@@ -106,7 +124,6 @@ public class WelcomeController extends NotifyController {
   
   @Override
   public void start() {
-    updateUI(false);
     hide();
     getActor().send(new StartMessage(OMCActor.class, this.getGroup()));
   }
@@ -149,8 +166,6 @@ public class WelcomeController extends NotifyController {
   private void onOpenProject(Path f) throws Exception {
     Project p = null;
     
-    getActor().send(new DebugMessage(this.getClass(), getGroup(), "Load File", f.toString()));
-    
     if (getSettings().getRecent().getAll().contains(f)) p = Project.load(f);
     
     if (p == null) {
@@ -161,7 +176,7 @@ public class WelcomeController extends NotifyController {
     onOpenProject(p);
   }
   
-  void onOpenProject(Project p) {
+  private void onOpenProject(Project p) {
     p.updateLastOpened();
     try {
       p.save();
@@ -184,9 +199,12 @@ public class WelcomeController extends NotifyController {
       DialogPane dp = loader.load();
       dp.getStylesheets().add(0, Utilities.getRessources("css/Basis.css").toExternalForm());
       d.setDialogPane(dp);
+      po.hide();
+      ((SettingsController) loader.getController()).updateUI(this.omcStarted);
       d.show();
       d.setOnCloseRequest(event -> {
         if (!omc.equals(getSettings().getModelica().getCompiler())) start();
+        if (!omcStarted) po.show(btnSettings);
       });
     } catch (IOException e) {
       getActor().send(new ErrorMessage(this.getClass(), getGroup(), e));
@@ -227,13 +245,24 @@ public class WelcomeController extends NotifyController {
   }
   
   private void updateUI(Boolean omcStarted) {
-    if (omcStarted) {
-      btnNewProject.setDisable(false);
-      btnOpenProject.setDisable(false);
-    } else {
-      btnNewProject.setDisable(true);
-      btnOpenProject.setDisable(true);
-    }
+    this.omcStarted = omcStarted;
+    vbRecent.setDisable(!omcStarted);
+    btnNewProject.setDisable(!omcStarted);
+    btnOpenProject.setDisable(!omcStarted);
+  
+    if (!omcStarted) {
+      btnSettings.getStyleClass().add("red-text");
+    
+      this.getStage().setOnShown(event -> {
+        try {
+          Thread.sleep(100);
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
+        Platform.runLater(() -> po.show(btnSettings));
+      });
+  
+    } else btnSettings.getStyleClass().remove("red-text");
   }
   
   
@@ -246,7 +275,6 @@ public class WelcomeController extends NotifyController {
     @Override
     public void executeUI(Message msg) {
       if (msg instanceof OMCStartedMessage) {
-        //send(new StartDataCollectionOMCMessage(getGroup(), TYPE.SYSTEM));
         Platform.runLater(() -> {
           getController().updateUI(true);
           getController().show();
@@ -262,7 +290,8 @@ public class WelcomeController extends NotifyController {
         Platform.runLater(() -> getController().onCreateProject(((OMCAvailableLibsUIMessage) msg).getLibs()));
       }
   
-      super.executeUI(msg);
+      if (!(msg instanceof ErrorMessage && ((ErrorMessage) msg).getThrowable() instanceof OMCException))
+        super.executeUI(msg);
     }
   }
 }

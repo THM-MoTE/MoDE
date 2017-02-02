@@ -7,6 +7,7 @@ import de.thm.mni.mote.mode.config.model.Logger;
 import de.thm.mni.mote.mode.uiactor.control.NotificationControl;
 import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -90,7 +91,7 @@ public abstract class NotifyController extends Controller implements Observer {
     @Override
     public void executeUI(T msg) {
       if (LogMessage.class.isAssignableFrom(msg.getClass())) {
-        getController().sendNotification((LogMessage) msg);
+        Platform.runLater(() -> getController().sendNotification((LogMessage) msg));
       }
     }
   }

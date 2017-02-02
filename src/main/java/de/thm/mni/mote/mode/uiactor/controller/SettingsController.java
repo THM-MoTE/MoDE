@@ -2,15 +2,15 @@ package de.thm.mni.mote.mode.uiactor.controller;
 
 import de.thm.mni.mote.mode.Main;
 import de.thm.mni.mote.mode.config.model.Logger;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Slider;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.util.StringConverter;
+import org.controlsfx.control.PopOver;
 
 import java.io.File;
 import java.net.URL;
@@ -42,11 +42,20 @@ public class SettingsController extends Controller {
   @FXML private TextField tfModelicaDepth;
   @FXML private Slider sModelicaDepth;
   
+  @FXML private Label lModelicaCompiler;
+  @FXML private Button btnModelicaCompiler;
+  
+  private PopOver po = new PopOver();
   
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     super.initialize(location, resources);
-    
+    po.setContentNode(new Label(tr(i18n, "settings.no_omc_popover")));
+    po.setArrowLocation(PopOver.ArrowLocation.LEFT_CENTER);
+    po.setDetachable(false);
+    po.setAutoHide(false);
+    po.setHideOnEscape(false);
+  
     cbLanguage.setItems(FXCollections.observableArrayList(Main.SUPPORTED_LANGUAGES));
     cbLanguage.setValue(getSettings().getLang());
     cbLanguage.setConverter(new StringConverter<Locale>() {
@@ -92,7 +101,6 @@ public class SettingsController extends Controller {
     initSlider(sModelicaDepth, tfModelicaDepth, getSettings().getModelica().getDepth(), (observable, oldValue, newValue) -> {
       if (oldValue.intValue() != newValue.intValue()) getSettings().getModelica().setDepth(newValue.intValue());
     });
-  
   }
   
   private void initSlider(Slider s, TextField tf, Integer i, ChangeListener<Number> cl) {
@@ -106,7 +114,7 @@ public class SettingsController extends Controller {
   private void onModelicaCompilerClick() {
     Path f = fileDialog(
         getSettings().getModelica().getCompiler(),
-        tr(i18n, "settings.select.modelica.compiler"),
+        tr(i18n, "global.select_modelica_compiler"),
         true);
     
     if (f == null) return;
@@ -124,6 +132,7 @@ public class SettingsController extends Controller {
         fc.setInitialDirectory(init.getParent().toFile());
         fc.setInitialFileName(init.getFileName().toString());
       }
+      po.hide();
       f = fc.showOpenDialog(this.getStage());
     } else {
       DirectoryChooser dc = new DirectoryChooser();
@@ -140,4 +149,20 @@ public class SettingsController extends Controller {
   
   @Override
   public void start() {}
+  
+  void updateUI(Boolean omcStarted) {
+    if (!omcStarted) {
+      lModelicaCompiler.getStyleClass().add("red-text");
+      new Thread(() -> {
+        try {
+          Thread.sleep(250);
+        } catch (InterruptedException e) {
+          e.printStackTrace();
+        }
+        Platform.runLater(() -> {
+          po.show(btnModelicaCompiler);
+        });
+      }).start();
+    } else lModelicaCompiler.getStyleClass().remove("red-text");
+  }
 }

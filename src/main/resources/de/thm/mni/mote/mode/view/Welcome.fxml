@@ -72,7 +72,8 @@
                      </Button>
                      <HBox alignment="BOTTOM_RIGHT" layoutX="-1.0" layoutY="372.0" prefHeight="28.0" prefWidth="400.0">
                         <children>
-                           <Button alignment="CENTER_LEFT" onAction="#onOpenSettings" styleClass="no-border"
+                           <Button fx:id="btnSettings" alignment="CENTER_LEFT" onAction="#onOpenSettings"
+                                   styleClass="no-border"
                                    text="%action.open.settings">
                               <graphic>
                                  <FontIcon iconColor="darkgrey" iconLiteral="gmi-settings" iconSize="18"/>
