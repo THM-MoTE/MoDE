@@ -36,6 +36,11 @@
     -fx-border-width: 0px;
 }
 
+.button.no-border:hover, .button.no-border:hover:visited {
+    -fx-text-fill: firebrick;
+    -fx-underline: false;
+}
+
 /*noinspection CssUnusedSymbol,CssUnusedSymbol*/
 .scroll-pane:focused, .list-view:focused {
     -fx-background-color: -fx-outer-border, -fx-inner-border, -fx-body-color;
@@ -68,4 +73,40 @@
 /*noinspection CssUnusedSymbol*/
 .red-text {
     -fx-text-fill: red;
+}
+
+.notification {
+    -fx-font-family: monospace;
+    -fx-font-weight: normal;
+}
+
+.warn-notification, .error-notification {
+    -fx-text-fill: whitesmoke;
+}
+
+.notification > .ikonli-font-icon {
+    -fx-icon-size: 22px;
+}
+
+.no-notification > .ikonli-font-icon {
+    -fx-icon-code: gmi-notifications-none;
+    -fx-icon-color: darkgray;
+}
+
+.log-notification > .ikonli-font-icon, .info-notification > .ikonli-font-icon, .warn-notification > .ikonli-font-icon {
+    -fx-icon-code: gmi-notifications;
+    -fx-icon-color: darkgray;
+}
+
+.info-notification > .ikonli-font-icon {
+    -fx-icon-color: derive(greenyellow, -15%);
+}
+
+.warn-notification > .ikonli-font-icon {
+    -fx-icon-color: darkorange;
+}
+
+.error-notification > .ikonli-font-icon {
+    -fx-icon-code: gmi-notifications-active;
+    -fx-icon-color: firebrick;
 }

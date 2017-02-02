@@ -149,7 +149,7 @@ public class WelcomeController extends NotifyController {
     FileChooser fc = new FileChooser();
     if (p != null) fc.setInitialDirectory(p.toFile());
     fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("MoDE Project Files", "*.mp"));
-    File f = fc.showOpenDialog(root.getScene().getWindow());
+    File f = fc.showOpenDialog(getStage());
     if (f == null) return;
   
     try {

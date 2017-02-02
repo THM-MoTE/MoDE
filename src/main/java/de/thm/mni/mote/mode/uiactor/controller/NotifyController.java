@@ -5,13 +5,9 @@ import de.thm.mni.mhpp11.jActor.actors.ui.interfaces.AbstractUIActor;
 import de.thm.mni.mhpp11.jActor.messages.interfaces.Message;
 import de.thm.mni.mote.mode.config.model.Logger;
 import de.thm.mni.mote.mode.uiactor.control.NotificationControl;
-import javafx.animation.FadeTransition;
-import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
-import javafx.util.Duration;
+import javafx.scene.control.Button;
 
 import java.net.URL;
 import java.util.Observable;
@@ -23,8 +19,7 @@ import java.util.ResourceBundle;
  */
 public abstract class NotifyController extends Controller implements Observer {
   
-  @FXML protected GridPane root;
-  @FXML private VBox notifications;
+  @FXML private Button btnNotifications;
   
   @Override
   public void initialize(URL location, ResourceBundle resources) {
@@ -37,25 +32,29 @@ public abstract class NotifyController extends Controller implements Observer {
     super.deinitialize();
   }
   
+  @FXML
+  private void onShowNotifications() {
+    
+  }
   
   private void addNotification(final NotificationControl notification) {
-    notifications.getChildren().add(notification);
-    notification.setOpacity(0.0);
-    FadeTransition fadeIn = new FadeTransition(Duration.millis(250), notification);
-    fadeIn.setFromValue(0.0);
-    fadeIn.setToValue(1.0);
-    fadeIn.setOnFinished(e1 -> {
-      PauseTransition delay = new PauseTransition(Duration.seconds(getSettings().getNotification().getSeconds()));
-      delay.setOnFinished(e2 -> {
-        FadeTransition fadeOut = new FadeTransition(Duration.millis(250), notification);
-        fadeOut.setFromValue(notification.getOpacity());
-        fadeOut.setToValue(0.0);
-        fadeOut.setOnFinished(e3 -> notifications.getChildren().remove(notification));
-        fadeOut.play();
-      });
-      delay.play();
-    });
-    fadeIn.play();
+//    notifications.getChildren().add(notification);
+//    notification.setOpacity(0.0);
+//    FadeTransition fadeIn = new FadeTransition(Duration.millis(250), notification);
+//    fadeIn.setFromValue(0.0);
+//    fadeIn.setToValue(1.0);
+//    fadeIn.setOnFinished(e1 -> {
+//      PauseTransition delay = new PauseTransition(Duration.seconds(getSettings().getNotification().getSeconds()));
+//      delay.setOnFinished(e2 -> {
+//        FadeTransition fadeOut = new FadeTransition(Duration.millis(250), notification);
+//        fadeOut.setFromValue(notification.getOpacity());
+//        fadeOut.setToValue(0.0);
+//        fadeOut.setOnFinished(e3 -> notifications.getChildren().remove(notification));
+//        fadeOut.play();
+//      });
+//      delay.play();
+//    });
+//    fadeIn.play();
   }
   
   @Override
