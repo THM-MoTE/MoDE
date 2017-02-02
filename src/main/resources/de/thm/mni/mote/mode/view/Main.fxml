@@ -114,7 +114,6 @@
               <Font name="System Bold" size="10.0"/>
             </font>
             <styleClass>
-              <String fx:value="no-border"/>
               <String fx:value="notification"/>
               <String fx:value="no-notification"/>
             </styleClass>

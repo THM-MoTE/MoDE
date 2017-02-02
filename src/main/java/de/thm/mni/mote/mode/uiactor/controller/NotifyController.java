@@ -25,7 +25,7 @@ public abstract class NotifyController extends Controller implements Observer {
   
   @FXML private Button btnNotifications;
   
-  private VBox notifications = new VBox(5.);
+  private VBox notifications = new VBox(1);
   private PopOver poNotifications = new PopOver(notifications);
   
   @Override
@@ -33,6 +33,8 @@ public abstract class NotifyController extends Controller implements Observer {
     super.initialize(location, resources);
     getSettings().addObserver(this);
     poNotifications.setArrowLocation(PopOver.ArrowLocation.BOTTOM_RIGHT);
+    poNotifications.setAutoHide(false);
+    poNotifications.setDetachable(false);
     notifications.getChildren().addListener((ListChangeListener<Node>) c -> Platform.runLater(() -> {
       if (notifications.getChildren().isEmpty()) {
         btnNotifications.setText("");
@@ -64,8 +66,10 @@ public abstract class NotifyController extends Controller implements Observer {
   @FXML
   private void onShowNotifications() {
     Platform.runLater(() -> {
-      if (poNotifications.isShowing()) poNotifications.hide();
-      else {
+      if (poNotifications.isShowing()) {
+        poNotifications.hide();
+        notifications.getChildren().clear();
+      } else {
         if (notifications.getChildren().isEmpty()) return;
         poNotifications.show(btnNotifications);
       }

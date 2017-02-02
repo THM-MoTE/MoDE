@@ -86,7 +86,6 @@
           <Insets bottom="1.0" right="1.0"/>
         </HBox.margin>
         <styleClass>
-          <String fx:value="no-border"/>
           <String fx:value="notification"/>
           <String fx:value="no-notification"/>
         </styleClass>

@@ -20,7 +20,7 @@
     </Label>
     <Label fx:id="lMessage" text="uz fgzuoig ozigbiboiz ubo ibzub oubzou bouzbzzu b obuzbou bougobo zg ozugog iug iugiug uip ipui uihpi pgiuipug izuof zft zifuo g  ugou ououzofuzfuzo ff ozuzou zufu zzuf  zuo ff z" textAlignment="JUSTIFY" wrapText="true">
         <VBox.margin>
-            <Insets bottom="10.0" left="23.0" right="10.0" top="10.0" />
+            <Insets bottom="8.0" left="23.0" right="10.0" top="10.0"/>
         </VBox.margin>
         <font>
             <Font size="12.0" />

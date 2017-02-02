@@ -76,8 +76,10 @@
 }
 
 .notification {
+    -fx-border-width: 0px;
     -fx-font-family: monospace;
     -fx-font-weight: normal;
+    -fx-font-size: 10px;
 }
 
 .warn-notification, .error-notification {
