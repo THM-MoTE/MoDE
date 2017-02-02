@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.simpleframework.xml.Element;
+import org.slf4j.event.Level;
 
 /**
  * Created by hobbypunk on 13.09.16.
@@ -13,23 +14,15 @@ import org.simpleframework.xml.Element;
 @AllArgsConstructor
 public class Logger extends MyObservable {
   
-  public enum LEVEL {
-    ERROR,
-    WARNING,
-    INFO,
-    DEBUG,
-    TRACE
-  }
+  @Element Level level = Level.ERROR;
+  @Element Level notifyLevel = Level.ERROR;
   
-  @Element LEVEL level = LEVEL.ERROR;
-  @Element LEVEL notifyLevel = LEVEL.ERROR;
-  
-  public void setLevel(LEVEL level) {
+  public void setLevel(Level level) {
     this.level = level;
     this.notifyObservers("Level");
   }
   
-  public void setNotifyLevel(LEVEL level) {
+  public void setNotifyLevel(Level level) {
     this.notifyLevel = level;
     this.notifyObservers("NotifyLevel");
   }

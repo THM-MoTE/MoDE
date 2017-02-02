@@ -25,6 +25,7 @@ public class Main {
   public static void main(String[] args) {
   
     MessageBus bus = MessageBus.getInstance();
+  
     bus.onStart();
   
     SplashInitMessage.SplashInitMessageBuilder builder = SplashInitMessage.builder();

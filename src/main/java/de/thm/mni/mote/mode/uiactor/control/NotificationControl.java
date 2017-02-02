@@ -11,6 +11,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
+import lombok.Getter;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.io.IOException;
@@ -26,7 +27,7 @@ public class NotificationControl extends VBox implements Initializable {
   @FXML private Label lMessage;
   @FXML private FontIcon fIcon;
   
-  private final LogMessage message;
+  @Getter private final LogMessage message;
   
   public NotificationControl(LogMessage message) {
     this.message = message;

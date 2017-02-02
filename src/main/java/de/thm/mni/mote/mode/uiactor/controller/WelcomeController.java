@@ -251,7 +251,7 @@ public class WelcomeController extends NotifyController {
     
       this.getStage().setOnShown(event -> {
         try {
-          Thread.sleep(250);
+          Thread.sleep(500);
         } catch (InterruptedException e) {
           e.printStackTrace();
         }
@@ -286,7 +286,7 @@ public class WelcomeController extends NotifyController {
         Platform.runLater(() -> getController().onCreateProject(((OMCAvailableLibsUIMessage) msg).getLibs()));
       }
   
-      if (!(msg instanceof ErrorMessage && ((ErrorMessage) msg).getThrowable() instanceof OMCException))
+      //if (!(msg instanceof ErrorMessage && ((ErrorMessage) msg).getThrowable() instanceof OMCException))
         super.executeUI(msg);
     }
   }
