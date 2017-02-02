@@ -39,8 +39,6 @@ public class SettingsController extends Controller {
   @FXML private ChoiceBox<Logger.LEVEL> cbLoggerNotifyLevel;
   
   @FXML private TextField tfModelicaCompiler;
-  @FXML private TextField tfModelicaDepth;
-  @FXML private Slider sModelicaDepth;
   
   @FXML private Label lModelicaCompiler;
   @FXML private Button btnModelicaCompiler;
@@ -50,7 +48,7 @@ public class SettingsController extends Controller {
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     super.initialize(location, resources);
-    po.setContentNode(new Label(tr(i18n, "settings.no_omc_popover")));
+    po.setContentNode(new Label(tr(i18n, "global.select_modelica_compiler.popover")));
     po.setArrowLocation(PopOver.ArrowLocation.LEFT_CENTER);
     po.setDetachable(false);
     po.setAutoHide(false);
@@ -61,13 +59,13 @@ public class SettingsController extends Controller {
     cbLanguage.setConverter(new StringConverter<Locale>() {
       @Override
       public String toString(Locale locale) {
-        return tr(i18n, "settings.supported_languages." + locale.toString());
+        return tr(i18n, "global.supported_languages." + locale.toString().toLowerCase());
       }
   
       @Override
       public Locale fromString(String string) {
         for(Locale locale: Main.SUPPORTED_LANGUAGES) {
-          if(tr(i18n, "settings.supported_languages." + locale.toString()).equals(string))
+          if (toString(locale).equals(string))
             return locale;
         }
         return null;
@@ -96,10 +94,6 @@ public class SettingsController extends Controller {
   
     initSlider(sNotifySeconds, tfNotifySeconds, getSettings().getNotification().getSeconds(), (observable, oldValue, newValue) -> {
       if (oldValue.intValue() != newValue.intValue()) getSettings().getNotification().setSeconds(newValue.intValue());
-    });
-  
-    initSlider(sModelicaDepth, tfModelicaDepth, getSettings().getModelica().getDepth(), (observable, oldValue, newValue) -> {
-      if (oldValue.intValue() != newValue.intValue()) getSettings().getModelica().setDepth(newValue.intValue());
     });
   }
   

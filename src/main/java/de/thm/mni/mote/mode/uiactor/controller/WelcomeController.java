@@ -81,15 +81,11 @@ public class WelcomeController extends NotifyController {
   @Override
   protected void lateInitialize() throws ReflectionException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
     super.lateInitialize();
-    po.setContentNode(new Label(tr(i18n, "click.to.configure.omc")));
+    po.setContentNode(new Label(tr(i18n, "popover.click_to_configure_omc")));
     po.setArrowLocation(PopOver.ArrowLocation.LEFT_BOTTOM);
     po.setDetachable(false);
     po.setAutoHide(false);
     po.setHideOnEscape(false);
-
-//    getScene().setOnMouseMoved(event -> {
-//      if(!omcStarted && !po.isShowing()) po.show(btnSettings);
-//    });
   }
   
   @Override
@@ -255,7 +251,7 @@ public class WelcomeController extends NotifyController {
     
       this.getStage().setOnShown(event -> {
         try {
-          Thread.sleep(100);
+          Thread.sleep(250);
         } catch (InterruptedException e) {
           e.printStackTrace();
         }
