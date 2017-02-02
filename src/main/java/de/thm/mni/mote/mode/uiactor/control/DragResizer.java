@@ -25,7 +25,6 @@ public class DragResizer {
   public static final int LTR = 0;
   public static final int RTL = 1;
   
-  private final Region region;
   private final Region parent;
   private final int direction;
   
@@ -33,14 +32,13 @@ public class DragResizer {
   
   private boolean dragging;
   
-  private DragResizer(Region region, Region parent, int direction) {
-    this.region = region;
+  private DragResizer(Region parent, int direction) {
     this.parent = parent;
     this.direction = direction;
   }
   
   public static void makeResizable(Region region, Region parent, int direction) {
-    final DragResizer resizer = new DragResizer(region, parent, direction);
+    final DragResizer resizer = new DragResizer(parent, direction);
     
     region.setOnMousePressed(resizer::mousePressed);
     region.setOnMouseDragged(resizer::mouseDragged);
@@ -53,14 +51,14 @@ public class DragResizer {
   
   private void mouseDragged(MouseEvent event) {
     if (!dragging) return;
-
+  
     double pos = 0.0;
     if (this.direction == LTR) {
       pos = event.getSceneX() - prevEvent.getSceneX();
     } else if (this.direction == RTL) {
       pos = prevEvent.getSceneX() - event.getSceneX();
     }
-    if(this.direction == LTR || this.direction == RTL)
+    if (this.direction == LTR || this.direction == RTL)
       parent.setPrefWidth(parent.getPrefWidth() + pos);
     prevEvent = event;
   }

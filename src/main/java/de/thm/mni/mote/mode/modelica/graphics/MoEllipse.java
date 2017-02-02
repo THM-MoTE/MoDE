@@ -29,8 +29,8 @@ public class MoEllipse extends MoFilledShape implements MoExtent {
     super(mfs);
     extent.get(0).setValue(first);
     extent.get(1).setValue(second);
-    if(startAngle != null) this.startAngle = startAngle;
-    if(endAngle != null) this.endAngle = endAngle;
+    if (startAngle != null) this.startAngle = startAngle;
+    if (endAngle != null) this.endAngle = endAngle;
   }
   
   public static MoEllipse parse(EllipseContext elem) {

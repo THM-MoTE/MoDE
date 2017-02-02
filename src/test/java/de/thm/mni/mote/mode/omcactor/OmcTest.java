@@ -118,7 +118,7 @@ public class OmcTest {
     Integer count = Integer.parseInt(r.result);
     for (int i = 1; i <= count; i++) {
       r = omc.getClient().call("getNthEquationItem", "SHM.SeidelThesis.Examples.FullModel.SeidelThesisFullExample", i);
-      Pattern p = Pattern.compile("^\"connect\\(\\s*([\\w\\.]+)\\s*,\\s*([\\w\\.]+)\\s*\\);\"$");
+      Pattern p = Pattern.compile("^\"connect\\(\\s*([\\w.]+)\\s*,\\s*([\\w.]+)\\s*\\);\"$");
       Matcher m = p.matcher(r.result);
       System.out.println(r.result);
       if (m.matches()) {

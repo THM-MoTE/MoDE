@@ -13,6 +13,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by hobbypunk on 16.09.16.
@@ -28,7 +29,7 @@ public abstract class MoAnnotation {
     for (String annotation : annotations) {
       list.addAll(MoAnnotation.parse(omc, annotation));
     }
-    return list.stream().filter(annotation -> annotation != null).collect(ImmutableListCollector.toImmutableList());
+    return list.stream().filter(Objects::nonNull).collect(ImmutableListCollector.toImmutableList());
   }
   
   public static List<MoAnnotation> parse(OMCompiler omc, String annotation) {

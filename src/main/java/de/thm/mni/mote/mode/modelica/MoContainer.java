@@ -71,7 +71,7 @@ public class MoContainer implements Comparable<MoContainer>, HierarchyData<MoCon
     if (this.getName().equals(s)) return this;
     
     if (!s.startsWith(this.getName())) return null;
-
+  
     for (MoContainer child : this.getChildren()) {
       MoContainer result = child.find(s);
       if (result != null) return result;
@@ -79,6 +79,7 @@ public class MoContainer implements Comparable<MoContainer>, HierarchyData<MoCon
   
     List<String> childrenList = omc.getChildren(this.getName());
     if (childrenList.size() != this.getChildren().size()) {
+      //noinspection ResultOfMethodCallIgnored
       childrenList.stream().anyMatch(child -> {
         String childName = this.getName() + "." + child;
         if (!s.startsWith(childName)) return false;

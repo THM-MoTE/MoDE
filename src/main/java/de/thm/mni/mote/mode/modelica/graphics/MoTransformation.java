@@ -43,6 +43,7 @@ public class MoTransformation implements MoExtent, Changeable {
     initListeners();
   }
   
+  @SuppressWarnings("unchecked")
   @Override
   public List<Changeable> getChangeChildren() {
     return Collections.EMPTY_LIST;

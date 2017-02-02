@@ -24,6 +24,7 @@ import java.util.Arrays;
 /**
  * Created by hobbypunk on 16.11.16.
  */
+@SuppressWarnings("ArraysAsListWithZeroOrOneArgument")
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @ToString

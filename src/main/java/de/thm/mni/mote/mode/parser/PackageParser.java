@@ -1,5 +1,8 @@
 package de.thm.mni.mote.mode.parser;
 
+import de.thm.mni.mhpp11.jActor.actors.logging.messages.WarnMessage;
+import de.thm.mni.mhpp11.jActor.actors.messagebus.MessageBus;
+
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -36,7 +39,7 @@ public class PackageParser {
       Iterator<Path> iterator = ds.iterator();
       if (iterator.hasNext()) return iterator.next();
     } catch (IOException e) {
-  
+      MessageBus.getInstance().send(new WarnMessage(PackageParser.class, "Cannot read lines"));
     }
     return f;
   }

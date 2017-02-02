@@ -32,8 +32,7 @@ public interface CalculatePathElements {
     if (isBezier() && points.size() > 2) {
       getElements().addAll(calcBezierElements(points));
     } else {
-      for (int i = 0; i < points.size(); i++) {
-        Point2D p = points.get(i);
+      for (Point2D p : points) {
         if (getElements().size() == 0) getElements().add(new MoveTo(p.getX(), p.getY()));
         else getElements().add(new LineTo(p.getX(), p.getY()));
       }

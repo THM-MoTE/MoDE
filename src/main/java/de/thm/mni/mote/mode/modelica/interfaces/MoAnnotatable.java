@@ -10,6 +10,7 @@ import java.util.List;
  * Created by hobbypunk on 01.11.16.
  */
 
+@SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
 @Getter
 public abstract class MoAnnotatable {
   private final List<MoAnnotation> annotations = new ArrayList<>();

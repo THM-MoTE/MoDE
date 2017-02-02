@@ -36,9 +36,7 @@ public class ConnectionDeleteState extends ConnectionModifyState {
       if (poses != null) {
         try {
           List<MoConnection> connections = getParent().getMoClass().getConnections();
-          MoConnection conn;
-          for (int i = 0, size = connections.size(); i < size; i++) {
-            conn = connections.get(i);
+          for (MoConnection conn : connections) {
             if (conn.getMoGraphics().contains(getSource().getData())) {
               getParent().getMoClass().removeConnection(conn);
               break;

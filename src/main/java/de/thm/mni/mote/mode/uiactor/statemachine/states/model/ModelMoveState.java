@@ -9,6 +9,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.transform.Translate;
+import lombok.EqualsAndHashCode;
 import lombok.Value;
 import lombok.experimental.NonFinal;
 
@@ -18,6 +19,8 @@ import java.util.*;
  * Created by hobbypunk on 16.11.16.
  */
 
+@EqualsAndHashCode(callSuper = true)
+@SuppressWarnings("ArraysAsListWithZeroOrOneArgument")
 @Value
 public class ModelMoveState extends ModelModifyState {
   @NonFinal Point2D startMousePos = null;

@@ -81,10 +81,10 @@ public class OMCActor extends AbstractActor {
   
       omc.loadProjectLibraries(project.getMoFile());
       collectDataInBackground(TYPE.PROJECTLIB);
-
+  
       omc.setProject(project.getMoFile());
       collectDataInBackground(TYPE.PROJECT);
-
+  
       send(new OMCSetProjectUIMessage(getGroup(), this.project));
     } catch (Exception e) {
       send(new ErrorMessage(OMCActor.class, getGroup(), new OMCException(tr("Error", "error.omcactor.cant_load_project", project.getName()), e)));
@@ -136,7 +136,7 @@ public class OMCActor extends AbstractActor {
     }
     if (OMCMessage.class.isAssignableFrom(msg.getClass())) {
       if (!started) send(new ErrorMessage(OMCActor.class, getGroup(), new OMCException(tr("Error", "error.omcactor.omc_not_running"))));
-    
+  
       if (msg instanceof SetProjectOMCMessage) {
         setProject(((SetProjectOMCMessage) msg).getProject());
       } else if (msg instanceof GetDataOMCMessage) {

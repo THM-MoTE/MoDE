@@ -66,7 +66,7 @@ public class MoDefaults {
       points.add(new Point2D(-21., -70.));
       points.add(new Point2D(-39., -70.));
       points.add(new Point2D(-40., -70.));
-    
+  
       moPackage = newAnything(Color.DARKRED, points, Utilities.Smooth.BEZIER);
     }
     return moPackage;

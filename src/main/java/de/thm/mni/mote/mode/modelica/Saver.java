@@ -102,7 +102,7 @@ public class Saver {
         break;
       }
     }
-    String leading = "";
+    String leading;
     if (pos == -1) {
       pos = end - 1;
       leading = fileContent.get(ci.getColumnNumberStart() - 1).replaceAll("^(\\s*).+", "$1") + "  ";

@@ -18,6 +18,7 @@ import java.util.List;
 /**
  * Created by hobbypunk on 11.09.16.
  */
+@SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
 @Getter
 @Accessors(chain = true)
 @NoArgsConstructor

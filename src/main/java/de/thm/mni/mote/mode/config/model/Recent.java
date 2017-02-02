@@ -63,7 +63,7 @@ public class Recent extends MyObservable {
   }
   
   private void checkLength() {
-    while(projects.size() > this.count)
+    while (projects.size() > this.count)
       projects.get(0);
   }
   

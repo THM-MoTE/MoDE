@@ -36,6 +36,6 @@ public class Logger extends MyObservable {
   
   @Override
   public String toString() {
-    return String.format("{ level: %s, this.notifyLevel }", this.level.name(), this.notifyLevel.name());
+    return String.format("{ level: %s, this.notifyLevel %s}", this.level.name(), this.notifyLevel.name());
   }
 }

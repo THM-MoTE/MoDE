@@ -87,23 +87,16 @@ public class MoConnection implements Changeable {
     return fromContains(var) || toContains(var);
   }
   
-  public String getIndicator() {
-    StringBuilder sb = new StringBuilder("connect(");
-    Boolean first = true;
-    for (MoVariable mv : from) {
-      if (first) first = false;
-      else sb.append('.');
+  String getIndicator() {
+    return "connect(" + getVariablePath(from) + ',' + getVariablePath(to) + ")";
+  }
+  
+  private String getVariablePath(List<MoVariable> list) {
+    StringBuilder sb = new StringBuilder();
+    list.forEach(mv -> {
+      if (!sb.toString().isEmpty()) sb.append('.');
       sb.append(mv.getName());
-    }
-    sb.append(',');
-    first = true;
-    for (MoVariable mv : to) {
-      if (first) first = false;
-      else sb.append('.');
-      sb.append(mv.getName());
-    }
-    sb.append(")");
-    
+    });
     return sb.toString();
   }
   

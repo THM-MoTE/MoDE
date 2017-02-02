@@ -49,6 +49,7 @@ public abstract class State<E extends Event, P extends Node> {
   
   public void exit() {}
   
+  @SuppressWarnings("unchecked")
   public void handle(Event event) {
     if (event.getEventType().equals(MouseEvent.MOUSE_PRESSED)) handlePressed((E) event);
     else if (event.getEventType().equals(MouseEvent.MOUSE_DRAGGED)) handleDragged((E) event);

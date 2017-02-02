@@ -22,7 +22,7 @@ import java.util.List;
 public class MoBitmap extends MoGraphic implements MoExtent {
   
   private final List<ObjectProperty<Point2D>> extent = Collections.unmodifiableList(Arrays.asList(new SimpleObjectProperty<>(), new SimpleObjectProperty<>()));
-
+  
   Path fileName = null;
   String imageSource = "";
   

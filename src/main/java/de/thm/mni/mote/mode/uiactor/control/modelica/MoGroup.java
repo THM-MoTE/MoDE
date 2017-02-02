@@ -28,6 +28,7 @@ import java.util.Map;
  * Created by hobbypunk on 26.10.16.
  */
 
+@SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
 @Getter(AccessLevel.PROTECTED)
 @Setter(AccessLevel.PROTECTED)
 public abstract class MoGroup extends Group {

@@ -61,12 +61,12 @@ public class MainTabControl extends Tab implements Initializable {
     MoGroup mp;
     try {
       this.setGraphic(new MoIconGroup(data).scaleToSize(20., 20.));
-    
+  
       if (diagram) mp = new MoDiagramGroup(data);
       else mp = new MoIconGroup(data, false);
-    
+  
       updateText(Change.NONE);
-    
+  
       mp.scaleToSize(600., 600.);
       mp.setLayoutX(100.);
       mp.setLayoutY(100.);

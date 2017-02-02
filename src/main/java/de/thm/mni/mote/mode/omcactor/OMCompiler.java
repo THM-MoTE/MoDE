@@ -36,6 +36,7 @@ import static de.thm.mni.mote.mode.util.Translator.tr;
 /**
  * Created by hobbypunk on 27.09.16.
  */
+@SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
 public class OMCompiler {
   
   private static final Pattern lineEnd = Pattern.compile(";\\s*$");
@@ -55,7 +56,7 @@ public class OMCompiler {
     PACKAGE,
     RECORD,
     TYPE,
-
+  
     NULL
   }
   
@@ -178,7 +179,7 @@ public class OMCompiler {
     } catch (Exception e) {
       t = TYPE.NULL;
     }
-
+  
     return new ClassInformation(
                                    t,
                                    list.get(1),
@@ -272,7 +273,7 @@ public class OMCompiler {
       }
     }, ArrayList::addAll).stream().map(s -> {
       Map<String, String> map = new HashMap<>();
-      Pattern p = Pattern.compile("connect\\(\\s*([^,\\)\\s]+)\\s*,\\s*([^,\\)\\s]+)\\s*\\)\\s");
+      Pattern p = Pattern.compile("connect\\(\\s*([^,)\\s]+)\\s*,\\s*([^,)\\s]+)\\s*\\)\\s");
       Matcher m = p.matcher(s);
       if (m.find()) {
         map.put("from", m.group(1));
@@ -283,6 +284,7 @@ public class OMCompiler {
     }).filter(map -> !map.isEmpty()).collect(ImmutableListCollector.toImmutableList());
   }
   
+  @SuppressWarnings("unchecked")
   private List<String> getClassWithoutContainingClasses(String className, ClassInformation ci) {
     try (Stream<String> lines = Files.lines(ci.getFileName())) {
       return lines.limit(ci.getLineNumberEnd()).skip(ci.getLineNumberStart() - 1).filter(new Predicate<String>() {
@@ -311,6 +313,7 @@ public class OMCompiler {
     }
   }
   
+  @SuppressWarnings("unchecked")
   private List<String> getEquations(String className, ClassInformation ci) {
     Result r = client.call("getEquationCount", className);
     Integer blockCount = Integer.parseInt(r.result);

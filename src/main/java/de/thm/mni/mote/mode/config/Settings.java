@@ -32,7 +32,7 @@ public class Settings extends Configuration implements Observer {
     is = Settings.class.getResourceAsStream("/META-INF/maven/de.thm.mni.mhpp11/MoDE/pom.properties");
     
     try {
-      if(is != null) {
+      if (is != null) {
         props.load(is);
         TITLE = props.getProperty("artifactId");
         VERSION = props.getProperty("version");
@@ -42,11 +42,11 @@ public class Settings extends Configuration implements Observer {
           fileName = Paths.get("MoDE/pom.xml");
         BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(fileName.toFile())));
         String line;
-        while((line = br.readLine()) != null) {
-          if(line.contains("artifactId")) {
-            TITLE = line.replaceAll("\\s*\\<\\/?artifactId>", "");
-          } else if(line.contains("version")) {
-            VERSION = line.replaceAll("\\s*\\<\\/?version>", "") + " src";
+        while ((line = br.readLine()) != null) {
+          if (line.contains("artifactId")) {
+            TITLE = line.replaceAll("\\s*</?artifactId>", "");
+          } else if (line.contains("version")) {
+            VERSION = line.replaceAll("\\s*</?version>", "") + " src";
             break;
           }
         }

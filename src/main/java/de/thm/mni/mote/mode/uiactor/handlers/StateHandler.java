@@ -54,26 +54,27 @@ public class StateHandler implements EventHandler<Event> {
     this.parent = parent;
   }
   
+  @SuppressWarnings("ConstantConditions")
   public void handle(Event event) {
     if (this.parent == null || event.isConsumed()) return;
     
     EventType type = event.getEventType();
-  
+    
     if (type.equals(MouseEvent.MOUSE_CLICKED) && ((MouseEvent) event).isAltDown()) type = MyEvents.MOUSE_ALT_CLICKED;
     else if (type.equals(MouseEvent.MOUSE_CLICKED) && ((MouseEvent) event).isShiftDown()) type = MyEvents.MOUSE_SHIFT_CLICKED;
     else if (type.equals(MouseEvent.MOUSE_CLICKED) && ((MouseEvent) event).isControlDown()) type = MyEvents.MOUSE_CTRL_CLICKED;
     else if (type.equals(MouseEvent.MOUSE_CLICKED) && ((MouseEvent) event).getClickCount() % 2 == 0) type = MyEvents.MOUSE_DOUBLE_CLICKED;
     else if (type.equals(ScrollEvent.SCROLL) && ((ScrollEvent) event).isShiftDown()) type = MyEvents.SCROLL_SHIFT;
-  
+    
     Node src = (Node) event.getSource();
-    if (event.getEventType().equals(MouseEvent.MOUSE_CLICKED)) {
-      String clazz = src.getClass().getSimpleName();
-      if (src instanceof MoIconGroup) try {
-        clazz = ((MoIconGroup) src).getMoClass().getClass().getSimpleName();
-      } catch (ParserException e) {
-        e.printStackTrace(); //TODO send msg
-      }
-    }
+//    if (event.getEventType().equals(MouseEvent.MOUSE_CLICKED)) {
+//      String clazz = src.getClass().getSimpleName();
+//      if (src instanceof MoIconGroup) try {
+//        clazz = ((MoIconGroup) src).getMoClass().getClass().getSimpleName();
+//      } catch (ParserException e) {
+//        e.printStackTrace(); //TODO send msg
+//      }
+//    }
     
     Boolean handle = handleConnector(src, type, event);
     if (!handle) handle = handleLine(src, type, event);
@@ -86,6 +87,7 @@ public class StateHandler implements EventHandler<Event> {
     }
   }
   
+  @SuppressWarnings("unchecked")
   private Boolean handleLine(Node src, EventType type, Event event) {
     if (src instanceof Line) {
       Line line = (Line) src;
@@ -107,6 +109,7 @@ public class StateHandler implements EventHandler<Event> {
     return false;
   }
   
+  @SuppressWarnings("unchecked")
   private Boolean handleConnector(Node src, EventType type, Event event) {
     try {
       if (src instanceof MoIconGroup && ((MoIconGroup) src).getMoClass() instanceof MoConnector) {
@@ -121,6 +124,7 @@ public class StateHandler implements EventHandler<Event> {
     return false;
   }
   
+  @SuppressWarnings("unchecked")
   private Boolean handleModel(Node src, EventType type, Event event) {
     if (src instanceof MoIconGroup && src.getParent().getParent() instanceof MoDiagramGroup) {
       MoIconGroup mig = (MoIconGroup) src;
@@ -140,6 +144,7 @@ public class StateHandler implements EventHandler<Event> {
     return false;
   }
   
+  @SuppressWarnings("unchecked")
   private Boolean handleDiagram(Node src, EventType type, Event event) {
     if (src instanceof MoDiagramGroup) {
       MoDiagramGroup mdg = (MoDiagramGroup) src;

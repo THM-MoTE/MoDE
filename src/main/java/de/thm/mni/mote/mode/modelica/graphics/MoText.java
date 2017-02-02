@@ -23,9 +23,9 @@ import java.util.regex.Pattern;
 @Getter
 public class MoText extends MoFilledShape implements MoExtent {
   
-  private static final Pattern COMPILE = Pattern.compile("(^[\\\\\\\"]+)|([\\\\\\\"]+$)");
+  private static final Pattern COMPILE = Pattern.compile("(^[\\\\\"]+)|([\\\\\"]+$)");
   private final List<ObjectProperty<Point2D>> extent = Collections.unmodifiableList(Arrays.asList(new SimpleObjectProperty<>(), new SimpleObjectProperty<>()));
-
+  
   public enum TextAlignment {
     LEFT,
     CENTER,
@@ -33,18 +33,20 @@ public class MoText extends MoFilledShape implements MoExtent {
   }
   
   @AllArgsConstructor
-  public static enum TextStyle {
-    BOLD(1<<0),
-    ITALIC(1<<1),
-    UNTERLINE(1<<2);
+  public enum TextStyle {
+    BOLD(1),
+    ITALIC(1 << 1),
+    UNTERLINE(1 << 2);
     final int val;
     
     public static Boolean isBold(Integer val) {
       return (val & BOLD.val) == BOLD.val;
     }
+  
     public static Boolean isItalic(Integer val) {
       return (val & ITALIC.val) == ITALIC.val;
     }
+  
     public static Boolean isUnterline(Integer val) {
       return (val & UNTERLINE.val) == UNTERLINE.val;
     }
@@ -64,11 +66,11 @@ public class MoText extends MoFilledShape implements MoExtent {
     extent.get(0).setValue(first);
     extent.get(1).setValue(second);
     if (string != null) this.string = string;
-    if(fontSize != null) this.fontSize = fontSize;
-    if(fontName != null) this.fontName = fontName;
-    if(textStyle != null) this.textStyle = textStyle;
-    if(horizontalAlignment != null) this.horizontalAlignment = horizontalAlignment;
-    this.textColor = (textColor != null)?textColor:this.lineColor;
+    if (fontSize != null) this.fontSize = fontSize;
+    if (fontName != null) this.fontName = fontName;
+    if (textStyle != null) this.textStyle = textStyle;
+    if (horizontalAlignment != null) this.horizontalAlignment = horizontalAlignment;
+    this.textColor = (textColor != null) ? textColor : this.lineColor;
     if (index != null) this.index = index;
   }
   

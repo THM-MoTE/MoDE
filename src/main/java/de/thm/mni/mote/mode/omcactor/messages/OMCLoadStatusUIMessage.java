@@ -11,7 +11,7 @@ import java.util.UUID;
  */
 @Getter
 public class OMCLoadStatusUIMessage extends UIMessage {
-  public static enum STATUS {
+  public enum STATUS {
     START,
     SYSTEMLIB_READY,
     PROJECTLIB_READY,

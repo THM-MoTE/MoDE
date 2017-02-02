@@ -27,7 +27,7 @@ import java.util.List;
  * Created by hobbypunk on 15.11.16.
  */
 @Value
-@EqualsAndHashCode(exclude = {"parent", "startPos"})
+@EqualsAndHashCode(exclude = {"parent", "startPos"}, callSuper = false)
 public class ConnectionCreateState extends State<MouseEvent, MoIconGroup> {
   
   MoDiagramGroup parent;

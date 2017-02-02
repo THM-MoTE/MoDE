@@ -20,7 +20,7 @@ import java.util.List;
 public class MoRectangle extends MoFilledShape implements MoExtent {
   
   private final List<ObjectProperty<Point2D>> extent = Collections.unmodifiableList(Arrays.asList(new SimpleObjectProperty<>(), new SimpleObjectProperty<>()));
-
+  
   private BorderPattern borderPattern = BorderPattern.NONE;
   private Double radius = 0.0;
   

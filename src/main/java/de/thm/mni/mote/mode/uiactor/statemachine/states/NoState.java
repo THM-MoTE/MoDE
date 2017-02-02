@@ -18,6 +18,7 @@ import java.util.Arrays;
 /**
  * Created by hobbypunk on 15.11.16.
  */
+@SuppressWarnings("ArraysAsListWithZeroOrOneArgument")
 public class NoState extends State<Event, Node> {
   
   public NoState(StateMachine machine) {

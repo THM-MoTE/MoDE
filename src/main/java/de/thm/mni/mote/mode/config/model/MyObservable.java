@@ -16,7 +16,7 @@ public abstract class MyObservable extends Observable {
   @Override
   public void notifyObservers(Object arg) {
     this.setChanged();
-    if(arg instanceof String) super.notifyObservers(getClass().getSimpleName() + "_" + arg);
+    if (arg instanceof String) super.notifyObservers(getClass().getSimpleName() + "_" + arg);
     else super.notifyObservers(arg);
     this.clearChanged();
   }

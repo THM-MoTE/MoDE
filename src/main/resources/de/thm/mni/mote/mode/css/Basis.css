@@ -1,27 +1,33 @@
+/*noinspection CssUnusedSymbol,CssUnusedSymbol*/
 .label, .button, .choice-box, .text-field {
     -fx-text-fill: derive(darkgray, -50%);
 }
 
+/*noinspection CssUnusedSymbol*/
 .button, .choice-box {
     -fx-focus-color: darkgray;
     -fx-background-color: whitesmoke;
 }
 
+/*noinspection CssUnusedSymbol,CssUnusedSymbol*/
 .choice-box, .text-field {
     -fx-background-color: white;
     -fx-border-insets: 0.5%;
 }
 
+/*noinspection CssUnusedSymbol*/
 .choice-box > .context-menu {
     -fx-start-margin: 15px;
 }
 
+/*noinspection CssUnusedSymbol,CssUnusedSymbol*/
 .text-field, .button, .choice-box {
     -fx-border-color: lightgray;
     -fx-border-width: 1px;
     -fx-border-radius: 4px;
 }
 
+/*noinspection CssUnusedSymbol,CssUnusedSymbol*/
 .text-field:hover, .button:hover, .choice-box:hover {
     -fx-border-color: darkgray;
 }
@@ -30,12 +36,14 @@
     -fx-border-width: 0px;
 }
 
+/*noinspection CssUnusedSymbol,CssUnusedSymbol*/
 .scroll-pane:focused, .list-view:focused {
     -fx-background-color: -fx-outer-border, -fx-inner-border, -fx-body-color;
     -fx-background-insets: 0, 1, 2;
     -fx-background-radius: 5, 4, 3;
 }
 
+/*noinspection CssUnusedSymbol*/
 .menu-bar {
     -fx-background-color: whitesmoke;
     -fx-border-color: lightgray;
@@ -43,10 +51,12 @@
     -fx-padding: 0px;
 }
 
+/*noinspection CssUnusedSymbol*/
 .menu-bar .menu-button {
     -fx-padding: 2px 10px;
 }
 
+/*noinspection CssUnusedSymbol*/
 .context-menu {
     -fx-border-color: lightgray;
     -fx-border-radius: 4px;
@@ -55,6 +65,7 @@
     -fx-effect: dropshadow(three-pass-box, rgba(30, 30, 30, 0.3), 3, 0.1, 1, 1);
 }
 
+/*noinspection CssUnusedSymbol*/
 .red-text {
     -fx-text-fill: red;
 }

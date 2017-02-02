@@ -33,8 +33,7 @@ public class MoLater extends MoClass {
   }
   
   private static void walk(Queue<MoContainer> queue) {
-    MoContainer parent = null;
-    
+    MoContainer parent;
     while ((parent = queue.poll()) != null) {
       addChildren(queue, parent);
     }

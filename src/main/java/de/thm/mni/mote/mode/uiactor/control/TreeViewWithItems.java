@@ -3,8 +3,6 @@ package de.thm.mni.mote.mode.uiactor.control;
 import de.thm.mni.mote.mode.util.HierarchyData;
 import de.thm.mni.mote.mode.util.TreeItemConfigurer;
 import de.thm.mni.mote.mode.util.UpdateListener;
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -31,6 +29,7 @@ import java.util.Map;
  * @author Christian Schudt
  */
 
+@SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
 public class TreeViewWithItems<T extends HierarchyData<T>> extends TreeView<T> {
   
   /**
@@ -72,16 +71,13 @@ public class TreeViewWithItems<T extends HierarchyData<T>> extends TreeView<T> {
       clear(oldRoot);
       updateItems();
     });
-    
-    setItems(FXCollections.<T>observableArrayList());
   
+    setItems(FXCollections.observableArrayList());
+    
     // Do not use ChangeListener, because it won'actors trigger if old list equals new list (but in fact different references).
-    items.addListener(new InvalidationListener() {
-      @Override
-      public void invalidated(Observable observable) {
-        clear(getRoot());
-        updateItems();
-      }
+    items.addListener(observable -> {
+      clear(getRoot());
+      updateItems();
     });
   }
   
@@ -112,7 +108,7 @@ public class TreeViewWithItems<T extends HierarchyData<T>> extends TreeView<T> {
       }
       
       ListChangeListener<T> rootListener = getListChangeListener(getRoot().getChildren());
-      WeakListChangeListener<T> weakListChangeListener = new WeakListChangeListener<T>(rootListener);
+      WeakListChangeListener<T> weakListChangeListener = new WeakListChangeListener<>(rootListener);
       hardReferences.put(getRoot(), rootListener);
       weakListeners.put(getRoot(), weakListChangeListener);
       getItems().addListener(weakListChangeListener);
@@ -201,7 +197,7 @@ public class TreeViewWithItems<T extends HierarchyData<T>> extends TreeView<T> {
     
     if (value != null && value.getChildren() != null) {
       ListChangeListener<T> listChangeListener = getListChangeListener(treeItem.getChildren());
-      WeakListChangeListener<T> weakListener = new WeakListChangeListener<T>(listChangeListener);
+      WeakListChangeListener<T> weakListener = new WeakListChangeListener<>(listChangeListener);
       value.getChildren().addListener(weakListener);
       
       hardReferences.put(treeItem, listChangeListener);

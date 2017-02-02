@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 /**
@@ -108,8 +109,8 @@ public class MoVariable extends MoElement implements Changeable {
     } catch (IOException e) {
       e.printStackTrace();
     }
-    
-    return list.stream().filter(moVariable -> moVariable != null).collect(ImmutableListCollector.toImmutableList());
+  
+    return list.stream().filter(Objects::nonNull).collect(ImmutableListCollector.toImmutableList());
   }
   
   private static MoVariable parse(OMCompiler omc, MoClass parent, Map<String, String> m) {

@@ -40,12 +40,10 @@ public class RecentProjectControl extends GridPane implements Initializable {
     bClose.setOnAction(value);
   }
   
-  private FXMLLoader loader;
-  
   public RecentProjectControl(Project project, Locale lang) {
     ResourceBundle i18n = Utilities.getControlBundle("RecentProject", lang);
     this.project = project;
-    loader = new FXMLLoader();
+    FXMLLoader loader = new FXMLLoader();
     loader.setResources(i18n);
     loader.setLocation(Utilities.getControlView("RecentProject"));
     loader.setRoot(this);

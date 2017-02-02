@@ -16,6 +16,7 @@ import java.util.Locale;
 public class Main {
   
   public static List<Locale> SUPPORTED_LANGUAGES = new ArrayList<>();
+  
   static {
     SUPPORTED_LANGUAGES.add(Locale.ENGLISH);
     SUPPORTED_LANGUAGES.add(Locale.GERMAN);

@@ -169,7 +169,7 @@ public class Utilities {
   }
   
   private Double calculateFontHeight(FontLoader fl, Font font) {
-    return (double) (calculateFontHeightWithoutDescent(fl, font) + fl.getFontMetrics(font).getMaxDescent());
+    return calculateFontHeightWithoutDescent(fl, font) + fl.getFontMetrics(font).getMaxDescent();
   }
   
   private Double calculateStringWidth(FontLoader fl, Font font, String string) {

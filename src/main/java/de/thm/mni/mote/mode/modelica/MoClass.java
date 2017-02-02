@@ -30,6 +30,7 @@ import static de.thm.mni.mote.mode.util.Translator.tr;
 /**
  * Created by hobbypunk on 07.09.16.
  */
+@SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
 @Getter
 public class MoClass extends MoElement implements Changeable, Comparable<MoClass> {
   
@@ -93,11 +94,9 @@ public class MoClass extends MoElement implements Changeable, Comparable<MoClass
   
   public ObservableList<MoVariable> getVariables() {
   
-    this.container.getInheritedClasses().forEach(inheritedClass -> {
-        inheritedClass.getElement().getVariables().forEach(variable -> {
-          if (!this.variables.contains(variable)) this.variables.add(variable);
-        });
-    });
+    this.container.getInheritedClasses().forEach(inheritedClass -> inheritedClass.getElement().getVariables().forEach(variable -> {
+      if (!this.variables.contains(variable)) this.variables.add(variable);
+    }));
     
     return this.variables;
   }
@@ -122,11 +121,9 @@ public class MoClass extends MoElement implements Changeable, Comparable<MoClass
   
   
   public ObservableList<MoConnection> getConnections() {
-    this.container.getInheritedClasses().forEach(inheritedClass -> {
-      inheritedClass.getElement().getConnections().forEach(connection -> {
-        if (!this.connections.contains(connection)) this.connections.add(connection);
-      });
-    });
+    this.container.getInheritedClasses().forEach(inheritedClass -> inheritedClass.getElement().getConnections().forEach(connection -> {
+      if (!this.connections.contains(connection)) this.connections.add(connection);
+    }));
     return this.connections;
   }
   
@@ -240,7 +237,7 @@ public class MoClass extends MoElement implements Changeable, Comparable<MoClass
     }
   
     if (tmp == null) throw new ParserException(tr("Error", "error.modelica.cant_parse", ci.getType()));
-
+  
     tmp.parseExtra(omc);
     return tmp;
   }

@@ -21,6 +21,7 @@ import java.util.List;
 public class MoCoordinateSystem {
   
   private final List<ObjectProperty<Point2D>> extent = Collections.unmodifiableList(Arrays.asList(new SimpleObjectProperty<>(), new SimpleObjectProperty<>()));
+  
   {
     extent.get(0).setValue(new Point2D(-100., -100.));
     extent.get(1).setValue(new Point2D(100., 100.));

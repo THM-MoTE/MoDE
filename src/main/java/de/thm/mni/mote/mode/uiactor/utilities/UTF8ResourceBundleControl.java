@@ -15,7 +15,6 @@ import java.util.ResourceBundle.Control;
  * ResourceBundle control which loads UTF-8 encoded properties files.
  * Usage: {@code ResourceBundle bundle = ResourceBundle.getBundle("com.example.i18n.text", new UTF8Control());}.
  * Adapted from <a href="http://stackoverflow.com/questions/4659929/how-to-use-utf-8-in-resource-properties-with-resourcebundle">this Stack Overflow article</a>.
- *
  */
 public class UTF8ResourceBundleControl extends Control {
   @Override
@@ -44,7 +43,7 @@ public class UTF8ResourceBundleControl extends Control {
         // Only this line is changed to make it to read properties files
         // as UTF-8.
         bundle = new PropertyResourceBundle(new InputStreamReader(
-            stream, "UTF-8"));
+                                                                     stream, "UTF-8"));
       } finally {
         stream.close();
       }

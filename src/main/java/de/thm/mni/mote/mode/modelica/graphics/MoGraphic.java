@@ -50,6 +50,7 @@ public class MoGraphic implements Changeable {
   }
   
   
+  @SuppressWarnings("unchecked")
   @Override
   public List<Changeable> getChangeChildren() {
     return Collections.EMPTY_LIST;

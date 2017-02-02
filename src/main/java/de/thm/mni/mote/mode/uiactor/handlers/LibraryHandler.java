@@ -35,7 +35,7 @@ public class LibraryHandler {
       tabPane.getSelectionModel().select(tab);
     } else if (action.equals("add_to_diagram")) {
       MainTabControl tab = (MainTabControl) tabPane.getSelectionModel().getSelectedItem();
-    
+  
       Integer counter = 0;
       for (MoVariable mv : tab.getData().getElement().getVariables()) {
         if (mv.getName().equals(container.getSimpleName().toLowerCase() + "_" + counter)) counter++;
@@ -45,7 +45,7 @@ public class LibraryHandler {
       MoCoordinateSystem mcs = mv.getType().getElement().getDiagramCoordinateSystem();
       Point2D first = mcs.getExtent().get(0).get().multiply(0.1);
       Point2D second = mcs.getExtent().get(1).get().multiply(0.1);
-    
+  
       MoTransformation trans = new MoTransformation(first, second, new Point2D(0, 0), 0.);
       mv.add(new MoPlacement(true, null, trans));
       tab.getData().getElement().addVariable(mv);

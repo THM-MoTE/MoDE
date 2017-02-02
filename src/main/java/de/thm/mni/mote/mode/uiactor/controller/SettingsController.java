@@ -64,7 +64,7 @@ public class SettingsController extends Controller {
   
       @Override
       public Locale fromString(String string) {
-        for(Locale locale: Main.SUPPORTED_LANGUAGES) {
+        for (Locale locale : Main.SUPPORTED_LANGUAGES) {
           if (toString(locale).equals(string))
             return locale;
         }
@@ -153,9 +153,7 @@ public class SettingsController extends Controller {
         } catch (InterruptedException e) {
           e.printStackTrace();
         }
-        Platform.runLater(() -> {
-          po.show(btnModelicaCompiler);
-        });
+        Platform.runLater(() -> po.show(btnModelicaCompiler));
       }).start();
     } else lModelicaCompiler.getStyleClass().remove("red-text");
   }

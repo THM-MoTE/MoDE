@@ -28,7 +28,7 @@ public class GeneratorTest {
   public void testLexer2() throws Exception {
     ANTLRInputStream is = new ANTLRInputStream(new ByteArrayInputStream("textString".getBytes()));
     AnnotationLexer iel = new AnnotationLexer(is);
-    Token t = null;
+    Token t;
     while (!iel._hitEOF) {
       t = iel.nextToken();
       System.out.println(AnnotationLexer.VOCABULARY.getDisplayName(t.getType()) + ": " + t.getText());

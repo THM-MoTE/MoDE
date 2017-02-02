@@ -1,6 +1,9 @@
 package de.thm.mni.mote.mode.uiactor.control.modelica;
 
-import de.thm.mni.mote.mode.modelica.*;
+import de.thm.mni.mote.mode.modelica.MoConnection;
+import de.thm.mni.mote.mode.modelica.MoConnector;
+import de.thm.mni.mote.mode.modelica.MoContainer;
+import de.thm.mni.mote.mode.modelica.MoVariable;
 import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.handlers.FocusHandler;
 import de.thm.mni.mote.mode.uiactor.handlers.StateHandler;
@@ -113,9 +116,7 @@ public class MoDiagramGroup extends MoGroup {
     this.getMoClass().getConnections().addListener((ListChangeListener<MoConnection>) c -> {
       while (c.next()) {
         c.getAddedSubList().forEach(MoDiagramGroup.this::initConnection);
-        c.getRemoved().forEach((Consumer<MoConnection>) connection -> {
-          connection.getMoGraphics().forEach(MoDiagramGroup.this::remove);
-        });
+        c.getRemoved().forEach((Consumer<MoConnection>) connection -> connection.getMoGraphics().forEach(MoDiagramGroup.this::remove));
       }
     });
   }

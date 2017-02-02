@@ -15,93 +15,86 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
+<!--suppress ALL -->
 <GridPane fx:id="root" stylesheets="@../css/Welcome.css" xmlns="http://javafx.com/javafx/8.0.76-ea"
           xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.thm.mni.mote.mode.uiactor.controller.WelcomeController">
    <columnConstraints>
-      <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
-      <ColumnConstraints hgrow="SOMETIMES" minWidth="5.0" />
+      <ColumnConstraints hgrow="ALWAYS" minWidth="10.0"/>
+      <ColumnConstraints hgrow="SOMETIMES" minWidth="5.0"/>
    </columnConstraints>
    <rowConstraints>
-      <RowConstraints minHeight="10.0" vgrow="ALWAYS" />
-      <RowConstraints minHeight="5.0" vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" vgrow="ALWAYS"/>
+      <RowConstraints minHeight="5.0" vgrow="SOMETIMES"/>
    </rowConstraints>
-   <children>
-      <StackPane fx:id="dialogStack" GridPane.columnSpan="2" GridPane.rowSpan="2">
-         <children>
-            <Pane>
-               <children>
-                  <ScrollPane hbarPolicy="NEVER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="400.0"
-                              prefWidth="300.0" styleClass="scrollpane">
-                     <VBox fx:id="vbRecent" minWidth="0.0" prefHeight="398.0" prefWidth="300.0" spacing="2.0"
-                           style="-fx-background-color: white;"/>
-                  </ScrollPane>
-                  <AnchorPane layoutX="300.0">
-                     <Label fx:id="lName" alignment="CENTER" layoutX="90.0" layoutY="126.0" prefHeight="46.0"
-                            prefWidth="220.0" text="myApp" textAlignment="CENTER" textFill="#616161">
-                        <font>
-                           <Font size="38.0"/>
-                        </font>
-                     </Label>
-                     <HBox alignment="CENTER" fillHeight="false" layoutX="50.0" layoutY="181.0" prefWidth="300.0"
-                           spacing="5.0">
-                        <Label alignment="CENTER_RIGHT" prefHeight="19.0" text="%title.version" textAlignment="CENTER"
-                               textFill="#888888">
-                           <font>
-                              <Font size="15.0"/>
-                           </font>
-                        </Label>
-                        <Label fx:id="lVersion" text="0.0" textFill="#888888">
-                           <font>
-                              <Font size="15.0"/>
-                           </font>
-                        </Label>
-                     </HBox>
-                     <Button fx:id="btnNewProject" alignment="CENTER_LEFT" disable="true" layoutX="80.0" layoutY="215.0"
-                             onAction="#onCreateProject" prefHeight="24.0" prefWidth="240.0" styleClass="no-border"
-                             text="%action.create.new.project">
-                        <graphic>
-                           <FontIcon iconColor="darkorange" iconLiteral="mdi-creation" iconSize="18"/>
-                        </graphic>
-                     </Button>
-                     <Button fx:id="btnOpenProject" alignment="CENTER_LEFT" layoutX="80.0" layoutY="242.0"
-                             onAction="#onOpenProject" prefHeight="24.0" prefWidth="240.0" styleClass="no-border"
-                             text="%action.open.project">
-                        <graphic>
-                           <FontIcon iconColor="chocolate" iconLiteral="gmi-folder-open" iconSize="18"/>
-                        </graphic>
-                     </Button>
-                     <HBox alignment="BOTTOM_RIGHT" layoutX="-1.0" layoutY="372.0" prefHeight="28.0" prefWidth="400.0">
-                        <children>
-                           <Button fx:id="btnSettings" alignment="CENTER_LEFT" onAction="#onOpenSettings"
-                                   styleClass="no-border"
-                                   text="%action.open.settings">
-                              <graphic>
-                                 <FontIcon iconColor="darkgrey" iconLiteral="gmi-settings" iconSize="18"/>
-                              </graphic>
-                           </Button>
-                           <Button alignment="CENTER_LEFT" onAction="#onOpenHelp" styleClass="no-border"
-                                   text="%action.open.help">
-                              <graphic>
-                                 <FontIcon iconColor="deepskyblue" iconLiteral="gmi-help" iconSize="18"/>
-                              </graphic>
-                           </Button>
-                           <Button alignment="CENTER_LEFT" onAction="#onOpenAbout" styleClass="no-border"
-                                   text="%action.open.about">
-                              <graphic>
-                                 <FontIcon iconColor="deepskyblue" iconLiteral="gmi-info" iconSize="18"/>
-                              </graphic>
-                           </Button>
-                        </children>
-                     </HBox>
-                  </AnchorPane>
-               </children>
-            </Pane>
-         </children>
-      </StackPane>
-      <VBox fx:id="notifications" alignment="BOTTOM_RIGHT" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
-         <padding>
-            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-         </padding>
-      </VBox>
-   </children>
+   <StackPane fx:id="dialogStack" GridPane.columnSpan="2" GridPane.rowSpan="2">
+      <Pane>
+         <ScrollPane hbarPolicy="NEVER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="400.0"
+                     prefWidth="300.0" styleClass="scrollpane">
+            <VBox fx:id="vbRecent" minWidth="0.0" prefHeight="398.0" prefWidth="300.0" spacing="2.0"
+                  style="-fx-background-color: white;"/>
+         </ScrollPane>
+         <AnchorPane layoutX="300.0">
+            <Label fx:id="lName" alignment="CENTER" layoutX="90.0" layoutY="126.0" prefHeight="46.0"
+                   prefWidth="220.0" text="myApp" textAlignment="CENTER" textFill="#616161">
+               <font>
+                  <Font size="38.0"/>
+               </font>
+            </Label>
+            <HBox alignment="CENTER" fillHeight="false" layoutX="50.0" layoutY="181.0" prefWidth="300.0"
+                  spacing="5.0">
+               <Label alignment="CENTER_RIGHT" prefHeight="19.0" text="%title.version" textAlignment="CENTER"
+                      textFill="#888888">
+                  <font>
+                     <Font size="15.0"/>
+                  </font>
+               </Label>
+               <Label fx:id="lVersion" text="0.0" textFill="#888888">
+                  <font>
+                     <Font size="15.0"/>
+                  </font>
+               </Label>
+            </HBox>
+            <Button fx:id="btnNewProject" alignment="CENTER_LEFT" disable="true" layoutX="80.0" layoutY="215.0"
+                    onAction="#onCreateProject" prefHeight="24.0" prefWidth="240.0" styleClass="no-border"
+                    text="%action.create.new.project">
+               <graphic>
+                  <FontIcon iconColor="darkorange" iconLiteral="mdi-creation" iconSize="18"/>
+               </graphic>
+            </Button>
+            <Button fx:id="btnOpenProject" alignment="CENTER_LEFT" layoutX="80.0" layoutY="242.0"
+                    onAction="#onOpenProject" prefHeight="24.0" prefWidth="240.0" styleClass="no-border"
+                    text="%action.open.project">
+               <graphic>
+                  <FontIcon iconColor="chocolate" iconLiteral="gmi-folder-open" iconSize="18"/>
+               </graphic>
+            </Button>
+            <HBox alignment="BOTTOM_RIGHT" layoutX="-1.0" layoutY="372.0" prefHeight="28.0" prefWidth="400.0">
+               <Button fx:id="btnSettings" alignment="CENTER_LEFT" onAction="#onOpenSettings"
+                       styleClass="no-border"
+                       text="%action.open.settings">
+                  <graphic>
+                     <FontIcon iconColor="darkgrey" iconLiteral="gmi-settings" iconSize="18"/>
+                  </graphic>
+               </Button>
+               <Button alignment="CENTER_LEFT" onAction="#onOpenHelp" styleClass="no-border"
+                       text="%action.open.help">
+                  <graphic>
+                     <FontIcon iconColor="deepskyblue" iconLiteral="gmi-help" iconSize="18"/>
+                  </graphic>
+               </Button>
+               <Button alignment="CENTER_LEFT" onAction="#onOpenAbout" styleClass="no-border"
+                       text="%action.open.about">
+                  <graphic>
+                     <FontIcon iconColor="deepskyblue" iconLiteral="gmi-info" iconSize="18"/>
+                  </graphic>
+               </Button>
+            </HBox>
+         </AnchorPane>
+      </Pane>
+   </StackPane>
+   <VBox fx:id="notifications" alignment="BOTTOM_RIGHT" spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+      <padding>
+         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+      </padding>
+   </VBox>
 </GridPane>

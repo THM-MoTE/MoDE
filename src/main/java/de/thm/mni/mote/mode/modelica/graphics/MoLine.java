@@ -71,9 +71,7 @@ public class MoLine extends MoGraphic implements HasSmoothOption {
     if (this.points == null) return;
     
     super.initChangeListeners();
-    this.points.addListener((ListChangeListener<? super Point2D>) c -> {
-      changed();
-    });
+    this.points.addListener((ListChangeListener<? super Point2D>) c -> changed());
   }
   
   @Override

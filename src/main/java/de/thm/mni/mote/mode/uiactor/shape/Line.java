@@ -41,12 +41,9 @@ public class Line extends Path implements Element, HasInitialStroke, CalculatePa
   public Line(@NonNull MoGroup parent, @NonNull MoLine data) {
     this.moParent = parent;
     this.data = data;
-    data.getPoints().addListener(new ListChangeListener<Point2D>() {
-      @Override
-      public void onChanged(Change<? extends Point2D> c) {
-        calcElements(getData().getPoints());
-        if (hasFocus) calcFocus();
-      }
+    data.getPoints().addListener((ListChangeListener<Point2D>) c -> {
+      calcElements(getData().getPoints());
+      if (hasFocus) calcFocus();
     });
     init();
   }

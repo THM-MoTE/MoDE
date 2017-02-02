@@ -16,6 +16,7 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+
 /**
  * Created by hobbypunk on 13.09.16.
  */
