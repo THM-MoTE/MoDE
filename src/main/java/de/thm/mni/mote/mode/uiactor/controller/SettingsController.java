@@ -1,7 +1,6 @@
 package de.thm.mni.mote.mode.uiactor.controller;
 
 import de.thm.mni.mote.mode.Main;
-import de.thm.mni.mote.mode.config.model.Logger;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
@@ -11,6 +10,7 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.util.StringConverter;
 import org.controlsfx.control.PopOver;
+import org.slf4j.event.Level;
 
 import java.io.File;
 import java.net.URL;
@@ -35,8 +35,8 @@ public class SettingsController extends Controller {
   @FXML private TextField tfNotifySeconds;
   @FXML private Slider sNotifySeconds;
   
-  @FXML private ChoiceBox<Logger.LEVEL> cbLoggerLevel;
-  @FXML private ChoiceBox<Logger.LEVEL> cbLoggerNotifyLevel;
+  @FXML private ChoiceBox<Level> cbLoggerLevel;
+  @FXML private ChoiceBox<Level> cbLoggerNotifyLevel;
   
   @FXML private TextField tfModelicaCompiler;
   
@@ -73,11 +73,11 @@ public class SettingsController extends Controller {
     });
     cbLanguage.valueProperty().addListener((observable, oldValue, newValue) -> getSettings().setLang(newValue));
   
-    cbLoggerLevel.setItems(FXCollections.observableArrayList(Logger.LEVEL.values()));
+    cbLoggerLevel.setItems(FXCollections.observableArrayList(Level.values()));
     cbLoggerLevel.setValue(getSettings().getLogger().getLevel());
     cbLoggerLevel.valueProperty().addListener((observable, oldValue, newValue) -> getSettings().getLogger().setLevel(newValue));
-    
-    cbLoggerNotifyLevel.setItems(FXCollections.observableArrayList(Logger.LEVEL.values()));
+  
+    cbLoggerNotifyLevel.setItems(FXCollections.observableArrayList(Level.values()));
     cbLoggerNotifyLevel.setValue(getSettings().getLogger().getNotifyLevel());
     cbLoggerNotifyLevel.valueProperty().addListener((observable, oldValue, newValue) -> getSettings().getLogger().setNotifyLevel(newValue));
   

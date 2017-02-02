@@ -71,10 +71,10 @@
           <FontIcon iconColor="deepskyblue" iconLiteral="gmi-info" iconSize="18"/>
         </graphic>
       </Button>
-      <Button fx:id="btnNotifications" contentDisplay="CENTER" graphicTextGap="0.0" mnemonicParsing="false"
-              textAlignment="CENTER" textOverrun="CLIP">
+      <Button fx:id="btnNotifications" onAction="#onShowNotifications" contentDisplay="CENTER" graphicTextGap="0.0"
+              mnemonicParsing="false" textAlignment="CENTER" textOverrun="CLIP">
         <graphic>
-          <FontIcon iconColor="#ababab" iconLiteral="gmi-notifications-none" iconSize="24"/>
+          <FontIcon/>
         </graphic>
         <font>
           <Font name="System Bold" size="10.0"/>

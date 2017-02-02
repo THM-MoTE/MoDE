@@ -148,7 +148,7 @@ public class WelcomeController extends NotifyController {
     Path p = getSettings().getRecent().getLastPath();
     FileChooser fc = new FileChooser();
     if (p != null) fc.setInitialDirectory(p.toFile());
-    fc.getExtensionFilters().add(new FileChooser.ExtensionFilter("MoDE Project Files", "*.mp"));
+    fc.getExtensionFilters().add(new FileChooser.ExtensionFilter(tr(i18n, "file.mode_project"), "*.mp"));
     File f = fc.showOpenDialog(getStage());
     if (f == null) return;
   
