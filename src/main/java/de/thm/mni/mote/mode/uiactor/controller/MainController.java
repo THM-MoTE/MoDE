@@ -19,11 +19,11 @@ import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.control.DragResizer;
 import de.thm.mni.mote.mode.uiactor.control.MainTabControl;
 import de.thm.mni.mote.mode.uiactor.control.MoTreeCell;
-import de.thm.mni.mote.mode.uiactor.handlers.LibraryHandler;
 import de.thm.mni.mote.mode.uiactor.messages.OMCDataUIMessage;
 import de.thm.mni.mote.mode.uiactor.statemachine.StateMachine;
 import de.thm.mni.mote.mode.uiactor.utilities.TreeViewWithItemsWrapper;
 import de.thm.mni.mote.mode.util.Utilities;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
@@ -116,35 +116,24 @@ public class MainController extends NotifyController {
     tvLibrary.setRoot(new TreeItem<>());
     tvLibrary.setShowRoot(false);
     
-    tvLibrary.setOnMouseClicked(event -> {
-      TreeItem<MoContainer> item = tvLibrary.getSelectionModel().getSelectedItem();
-      if (item == null || !item.getValue().getElement().hasDiagram()) return;//TODO
-      
-      for (Tab t : tabPane.getTabs()) {
-        if (t instanceof MainTabControl && ((MainTabControl) t).getData().equals(item.getValue())) {
-          tabPane.getSelectionModel().select(t);
-          return;
-        }
-      }
-  
-      if (event.getClickCount() == 2) {
-        try {
-          if (tabPane.getSelectionModel().getSelectedItem() != null && ((MainTabControl) tabPane.getSelectionModel().getSelectedItem()).isDiagram() && item.getValue().getElement().hasIcon())
-            LibraryHandler.getInstance().handleMenu(tabPane, item.getValue(), "add_to_diagram");
-          else
-            LibraryHandler.getInstance().handleMenu(tabPane, item.getValue(), "open_as_diagram");
-        } catch (ParserException e) {
-          e.printStackTrace(); //TODO: send msg;
-        }
-      }
-    });
     tvwiwLibrary.setTreeItemExpandListener(parent -> getActor().send(new UpdateClassOMCMessage(getGroup(), parent)));
     tvwiwLibrary.setTreeItemConfigurer((treeItem, value) -> {
       if (value instanceof MoRoot) {
         treeItem.setExpanded(true);
+        treeItem.expandedProperty().addListener((observable, oldValue, newValue) -> {
+          if (!newValue) treeItem.setExpanded(true);
+        });
       }
     });
-    tvLibrary.setCellFactory(param -> new MoTreeCell(tabPane));
+    tvLibrary.setCellFactory(param -> {
+      MoTreeCell tmp = new MoTreeCell(tabPane);
+      tmp.setOnEditAction(this::handleLibraryEdit);
+      return tmp;
+    });
+  }
+  
+  private void handleLibraryEdit(ActionEvent event) {
+    System.out.println(event.getSource());
   }
   
   @FXML
