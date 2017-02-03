@@ -16,21 +16,17 @@ import de.thm.mni.mote.mode.omcactor.messages.GetDataOMCMessage;
 import de.thm.mni.mote.mode.omcactor.messages.OMCLoadStatusUIMessage;
 import de.thm.mni.mote.mode.omcactor.messages.UpdateClassOMCMessage;
 import de.thm.mni.mote.mode.parser.ParserException;
-import de.thm.mni.mote.mode.uiactor.control.ContextMenuItem;
 import de.thm.mni.mote.mode.uiactor.control.DragResizer;
 import de.thm.mni.mote.mode.uiactor.control.MainTabControl;
-import de.thm.mni.mote.mode.uiactor.control.TreeViewWithItems;
-import de.thm.mni.mote.mode.uiactor.control.modelica.MoIconGroup;
+import de.thm.mni.mote.mode.uiactor.control.MoTreeCell;
 import de.thm.mni.mote.mode.uiactor.handlers.LibraryHandler;
 import de.thm.mni.mote.mode.uiactor.messages.OMCDataUIMessage;
 import de.thm.mni.mote.mode.uiactor.statemachine.StateMachine;
+import de.thm.mni.mote.mode.uiactor.utilities.TreeViewWithItemsWrapper;
 import de.thm.mni.mote.mode.util.Utilities;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
-import javafx.util.Callback;
-import lombok.AccessLevel;
-import lombok.Getter;
 
 import javax.management.ReflectionException;
 import java.io.IOException;
@@ -39,8 +35,6 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.UUID;
-
-import static de.thm.mni.mote.mode.util.Translator.tr;
 
 /**
  * Created by hobbypunk on 15.09.16.
@@ -65,12 +59,13 @@ public class MainController extends NotifyController {
   
   @FXML private TabPane tabPane;
   
-  @Getter(AccessLevel.PROTECTED) @FXML private TreeViewWithItems<MoContainer> tvLibrary;
+  @FXML private TreeView<MoContainer> tvLibrary;
+  @FXML private TreeViewWithItemsWrapper<MoContainer> tvwiwLibrary;
   
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     super.initialize(location, resources);
-    
+    tvwiwLibrary = new TreeViewWithItemsWrapper<>(tvLibrary);
     DragResizer.makeResizable(sLeft, hbLeft, DragResizer.LTR);
     DragResizer.makeResizable(sRight, hbRight, DragResizer.RTL);
   }
@@ -120,24 +115,11 @@ public class MainController extends NotifyController {
   private void initTreeView() {
     tvLibrary.setRoot(new TreeItem<>());
     tvLibrary.setShowRoot(false);
-    tvLibrary.setContextMenu(createLibraryMenu());
-    tvLibrary.setOnContextMenuRequested(event -> tvLibrary.getContextMenu().getItems().forEach(menuItem -> {
-      ContextMenuItem cmi = (ContextMenuItem) menuItem;
-      MoContainer container = tvLibrary.getSelectionModel().getSelectedItem().getValue();
-  
-      if (cmi.getAction().equals("add.to.diagram")) {
-        MainTabControl mtc = (MainTabControl) tabPane.getSelectionModel().getSelectedItem();
-        cmi.setDisable(!container.getElement().hasIcon() || mtc == null || !mtc.isDiagram());
-      } else {
-        if (cmi.getAction().equals("open.as.diagram")) cmi.setDisable(!container.getElement().hasDiagram());
-        else if (cmi.getAction().equals("open.as.modelica")) cmi.setDisable(!container.getElement().hasIcon());
-      }
-    }));
     
     tvLibrary.setOnMouseClicked(event -> {
       TreeItem<MoContainer> item = tvLibrary.getSelectionModel().getSelectedItem();
-      if (item == null || !item.getValue().getElement().hasDiagram()) return;
-  
+      if (item == null || !item.getValue().getElement().hasDiagram()) return;//TODO
+      
       for (Tab t : tabPane.getTabs()) {
         if (t instanceof MainTabControl && ((MainTabControl) t).getData().equals(item.getValue())) {
           tabPane.getSelectionModel().select(t);
@@ -148,69 +130,21 @@ public class MainController extends NotifyController {
       if (event.getClickCount() == 2) {
         try {
           if (tabPane.getSelectionModel().getSelectedItem() != null && ((MainTabControl) tabPane.getSelectionModel().getSelectedItem()).isDiagram() && item.getValue().getElement().hasIcon())
-            LibraryHandler.getInstance().handleMenu(tabPane, item.getValue(), "add.to.diagram");
+            LibraryHandler.getInstance().handleMenu(tabPane, item.getValue(), "add_to_diagram");
           else
-            LibraryHandler.getInstance().handleMenu(tabPane, item.getValue(), "open.as.diagram");
+            LibraryHandler.getInstance().handleMenu(tabPane, item.getValue(), "open_as_diagram");
         } catch (ParserException e) {
           e.printStackTrace(); //TODO: send msg;
         }
       }
     });
-    tvLibrary.setTreeItemExpandListener(parent -> getActor().send(new UpdateClassOMCMessage(getGroup(), parent)));
-    tvLibrary.setTreeItemConfigurer((treeItem, value) -> {
+    tvwiwLibrary.setTreeItemExpandListener(parent -> getActor().send(new UpdateClassOMCMessage(getGroup(), parent)));
+    tvwiwLibrary.setTreeItemConfigurer((treeItem, value) -> {
       if (value instanceof MoRoot) {
         treeItem.setExpanded(true);
       }
     });
-    tvLibrary.setCellFactory(new Callback<TreeView<MoContainer>, TreeCell<MoContainer>>() {
-      @Override
-      public TreeCell<MoContainer> call(TreeView<MoContainer> param) {
-        return new TreeCell<MoContainer>() {
-          @Override
-          protected void updateItem(MoContainer item, boolean empty) {
-            super.updateItem(item, empty);
-            setDisable(false);
-            setStyle(null);
-            if (empty) {
-              setText(null);
-              setGraphic(null);
-            } else {
-              setText(item.getSimpleName());
-              try {
-                if (item instanceof MoRoot) {
-                  setDisable(true);
-                  setStyle("-fx-background-color: gainsboro;-fx-font-weight: bold; -fx-font-size: 90%; -fx-padding: 2 -15;");
-                } else {
-                  if (item.getElement().hasConnectors()) setStyle("-fx-font-weight: bold");
-                  setGraphic(new MoIconGroup(item).scaleToSize(25., 25.));
-                }
-              } catch (ParserException e) {
-                e.printStackTrace(); //TODO: send msg
-              }
-            }
-          }
-        };
-      }
-    });
-  }
-  
-  private ContextMenu createLibraryMenu() {
-    ContextMenu cm = new ContextMenu();
-  
-    for (String action : new String[]{"open_as_diagram", "add_to_diagram"}) {
-      MenuItem tmp = new ContextMenuItem(tr(i18n, "menu.context." + action), action);
-  
-      tmp.setOnAction(event -> {
-        try {
-          LibraryHandler.getInstance().handleMenu(tabPane, tvLibrary.getSelectionModel().getSelectedItem().getValue(), action);
-        } catch (ParserException e) {
-          e.printStackTrace();//TODO: send msg
-        }
-      });
-      
-      cm.getItems().add(tmp);
-    }
-    return cm;
+    tvLibrary.setCellFactory(param -> new MoTreeCell(tabPane));
   }
   
   @FXML
@@ -254,7 +188,7 @@ public class MainController extends NotifyController {
     public void executeUI(Message msg) {
       super.executeUI(msg);
       if (msg instanceof OMCDataUIMessage) {
-        getController().getTvLibrary().setItems(((OMCDataUIMessage) msg).getData());
+        getController().tvwiwLibrary.setItems(((OMCDataUIMessage) msg).getData());
       } else if (msg instanceof OMCLoadStatusUIMessage) {
         if (((OMCLoadStatusUIMessage) msg).getStatus() == OMCLoadStatusUIMessage.STATUS.COMPLETE) {
           getController().show();

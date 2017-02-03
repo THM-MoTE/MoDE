@@ -40,9 +40,9 @@ public class OMCActor extends AbstractActor {
   private Project project;
   
   private ObservableList<MoContainer> data = FXCollections.observableArrayList();
-  private MoRoot mrSystemLibraries = new MoRoot("System Libraries");
-  private MoRoot mrProjectLibraries = new MoRoot("Project Libraries");
-  private MoRoot mrProject = new MoRoot("Project");
+  private MoRoot mrSystemLibraries = new MoRoot("system_libraries");
+  private MoRoot mrProjectLibraries = new MoRoot("project_libraries");
+  private MoRoot mrProject = new MoRoot("project");
   
   private int loadStatus = 0;
   

@@ -1,4 +1,4 @@
-package de.thm.mni.mote.mode.uiactor.control;
+package de.thm.mni.mote.mode.uiactor.utilities;
 
 import de.thm.mni.mote.mode.util.HierarchyData;
 import de.thm.mni.mote.mode.util.TreeItemConfigurer;
@@ -9,6 +9,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.WeakListChangeListener;
+import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import lombok.Getter;
@@ -30,7 +31,7 @@ import java.util.Map;
  */
 
 @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
-public class TreeViewWithItems<T extends HierarchyData<T>> extends TreeView<T> {
+public class TreeViewWithItemsWrapper<T extends HierarchyData<T>> {
   
   /**
    * Keep hard references for each listener, so that they don'actors get garbage collected too soon.
@@ -47,9 +48,10 @@ public class TreeViewWithItems<T extends HierarchyData<T>> extends TreeView<T> {
   @Getter @Setter private UpdateListener<T> treeItemExpandListener = null;
   @Getter @Setter private TreeItemConfigurer<T> treeItemConfigurer = null;
   
-  public TreeViewWithItems() {
-    super();
-    init();
+  private final TreeView<T> element;
+  
+  public TreeViewWithItemsWrapper() {
+    this((TreeItem<T>) null);
   }
   
   /**
@@ -58,10 +60,15 @@ public class TreeViewWithItems<T extends HierarchyData<T>> extends TreeView<T> {
    * @param root The root tree item.
    * @see TreeView#TreeView(javafx.scene.control.TreeItem)
    */
-  public TreeViewWithItems(TreeItem<T> root) {
-    super(root);
+  public TreeViewWithItemsWrapper(TreeItem<T> root) {
+    this(new TreeView<T>(root));
+  }
+  
+  public TreeViewWithItemsWrapper(TreeView<T> element) {
+    this.element = element;
     init();
   }
+  
   
   /**
    * Initializes the tree view.
@@ -222,4 +229,16 @@ public class TreeViewWithItems<T extends HierarchyData<T>> extends TreeView<T> {
     this.items.set(items);
   }
   
+  
+  private ObjectProperty<TreeItem<T>> rootProperty() {
+    return this.element.rootProperty();
+  }
+  
+  public TreeItem<T> getRoot() {
+    return this.element.getRoot();
+  }
+  
+  public MultipleSelectionModel<TreeItem<T>> getSelectionModel() {
+    return this.element.getSelectionModel();
+  }
 }
