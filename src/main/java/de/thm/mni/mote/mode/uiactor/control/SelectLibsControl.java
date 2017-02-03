@@ -37,6 +37,15 @@ public class SelectLibsControl<T extends Comparable<T>> extends VBox implements 
     lvSelected.setItems(FXCollections.observableArrayList());
   }
   
+  public void setList(List<T> available, List<T> selected) {
+    available.sort(Comparable::compareTo);
+    selected.sort(Comparable::compareTo);
+    available.removeAll(selected);
+    
+    lvAvailable.setItems(FXCollections.observableArrayList(available));
+    lvSelected.setItems(FXCollections.observableArrayList(selected));
+  }
+  
   @FXML
   private void onPushAll(Event e) {
     ListView<T> src;

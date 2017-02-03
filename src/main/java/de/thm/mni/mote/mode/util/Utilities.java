@@ -48,17 +48,26 @@ public class Utilities {
   }
   
   public ResourceBundle getBundle(String bundle) throws MissingResourceException {
+    return getBundle("", bundle);
+  }
+  
+  public ResourceBundle getBundle(String prefix, String bundle) throws MissingResourceException {
     Settings settings = Settings.load();
-    return getBundle(bundle, settings.getLang());
+    return getBundle(prefix, bundle, settings.getLang());
   }
   
   public ResourceBundle getBundle(String bundle, Locale lang) throws MissingResourceException {
     return getBundle("", bundle, lang);
   }
   
+  public ResourceBundle getControlBundle(String bundle) {
+    return getBundle("control", bundle);
+  }
+  
   public ResourceBundle getControlBundle(String bundle, Locale lang) {
     return getBundle("control", bundle, lang);
   }
+  
   
   private ResourceBundle getBundle(String prefix, String bundle, Locale lang) throws MissingResourceException {
     String path = BASEPATH;

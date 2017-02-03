@@ -1,5 +1,6 @@
 package de.thm.mni.mote.mode.uiactor.controller;
 
+import de.thm.mni.mhpp11.jActor.actors.logging.messages.ErrorMessage;
 import de.thm.mni.mhpp11.jActor.actors.messagebus.MessageBus;
 import de.thm.mni.mhpp11.jActor.actors.ui.interfaces.ActorController;
 import de.thm.mni.mhpp11.jActor.actors.ui.messages.StartUIMessage;
@@ -12,6 +13,7 @@ import de.thm.mni.mote.mode.config.model.Project;
 import de.thm.mni.mote.mode.modelica.MoContainer;
 import de.thm.mni.mote.mode.modelica.MoRoot;
 import de.thm.mni.mote.mode.modelica.Saver;
+import de.thm.mni.mote.mode.omcactor.messages.GetAvailableLibsOMCMessage;
 import de.thm.mni.mote.mode.omcactor.messages.GetDataOMCMessage;
 import de.thm.mni.mote.mode.omcactor.messages.OMCLoadStatusUIMessage;
 import de.thm.mni.mote.mode.omcactor.messages.UpdateClassOMCMessage;
@@ -19,12 +21,16 @@ import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.control.DragResizer;
 import de.thm.mni.mote.mode.uiactor.control.MainTabControl;
 import de.thm.mni.mote.mode.uiactor.control.MoTreeCell;
+import de.thm.mni.mote.mode.uiactor.messages.OMCAvailableLibsUIMessage;
 import de.thm.mni.mote.mode.uiactor.messages.OMCDataUIMessage;
 import de.thm.mni.mote.mode.uiactor.statemachine.StateMachine;
 import de.thm.mni.mote.mode.uiactor.utilities.TreeViewWithItemsWrapper;
 import de.thm.mni.mote.mode.util.Utilities;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 
@@ -35,6 +41,8 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.UUID;
+
+import static de.thm.mni.mote.mode.util.Translator.tr;
 
 /**
  * Created by hobbypunk on 15.09.16.
@@ -133,15 +141,49 @@ public class MainController extends NotifyController {
   }
   
   private void handleLibraryEdit(ActionEvent event) {
-    System.out.println(event.getSource());
+    if (((Node) event.getSource()).getParent() instanceof MoTreeCell) {
+      String text = ((MoTreeCell) ((Node) event.getSource()).getParent()).getText();
+      if (text.equals(tr("Main", "tree.entries.system_libraries"))) {
+        handleSystemLibraryEdit();
+      } else if (text.equals(tr("Main", "tree.entries.project_libraries"))) {
+        handleProjectLibraryEdit();
+      }
+    }
   }
+  
+  private void handleSystemLibraryEdit() {
+    getActor().send(new GetAvailableLibsOMCMessage(getGroup()));
+  }
+  
+  private void handleSystemLibraryEdit(List<String> libs) {
+    Dialog d = new Dialog();
+    FXMLLoader loader = new FXMLLoader();
+    loader.setLocation(Utilities.getView("dialogs/ChangeSystemLibraries"));
+    loader.setResources(Utilities.getControlBundle("NewProject"));
+    
+    try {
+      DialogPane dp = loader.load();
+      
+      d.setDialogPane(dp);
+      d.show();
+      d.setOnCloseRequest(event -> {
+        System.out.println(d.getResult());
+      });
+    } catch (IOException e) {
+      getActor().send(new ErrorMessage(this.getClass(), getGroup(), e));
+    }
+  }
+  
+  private void handleProjectLibraryEdit() {
+    //TODO: Mo & Di
+  }
+  
   
   @FXML
   private void handleSave() {
     if (!tabPane.getSelectionModel().isEmpty()) {
       handleSave(((MainTabControl) tabPane.getSelectionModel().getSelectedItem()).getData());
     }
-    
   }
   
   @FXML
@@ -182,6 +224,8 @@ public class MainController extends NotifyController {
         if (((OMCLoadStatusUIMessage) msg).getStatus() == OMCLoadStatusUIMessage.STATUS.COMPLETE) {
           getController().show();
         }
+      } else if (msg instanceof OMCAvailableLibsUIMessage) {
+        Platform.runLater(() -> getController().handleSystemLibraryEdit(((OMCAvailableLibsUIMessage) msg).getLibs()));
       }
     }
   }

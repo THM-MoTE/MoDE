@@ -13,6 +13,7 @@ import de.thm.mni.mote.mode.omcactor.messages.GetAvailableLibsOMCMessage;
 import de.thm.mni.mote.mode.omcactor.messages.SetProjectOMCMessage;
 import de.thm.mni.mote.mode.uiactor.control.NewProjectFirstPageControl;
 import de.thm.mni.mote.mode.uiactor.control.RecentProjectControl;
+import de.thm.mni.mote.mode.uiactor.controller.dialogs.SettingsController;
 import de.thm.mni.mote.mode.uiactor.messages.OMCAvailableLibsUIMessage;
 import de.thm.mni.mote.mode.uiactor.messages.OMCSetProjectUIMessage;
 import de.thm.mni.mote.mode.uiactor.messages.OMCStartedMessage;
@@ -189,11 +190,10 @@ public class WelcomeController extends NotifyController {
     Path omc = getSettings().getModelica().getCompiler();
     Dialog d = new Dialog();
     FXMLLoader loader = new FXMLLoader();
-    loader.setLocation(Utilities.getView("Settings"));
-    loader.setResources(Utilities.getBundle("Settings"));
+    loader.setLocation(Utilities.getView("dialogs/Settings"));
+    loader.setResources(Utilities.getBundle("MoDE"));
     try {
       DialogPane dp = loader.load();
-      dp.getStylesheets().add(0, Utilities.getRessources("css/Basis.css").toExternalForm());
       d.setDialogPane(dp);
       po.hide();
       ((SettingsController) loader.getController()).updateUI(this.omcStarted);

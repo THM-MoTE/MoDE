@@ -13,6 +13,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Locale;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Properties;
@@ -76,6 +77,7 @@ public class Settings extends Configuration implements Observer {
       INSTANCE.file = f;
       INSTANCE.serializer = serializer;
       INSTANCE.init();
+      Locale.setDefault(INSTANCE.getLang());
     } catch (Exception e) {
       if (!firstTime) throw new RuntimeException(e);
       try {

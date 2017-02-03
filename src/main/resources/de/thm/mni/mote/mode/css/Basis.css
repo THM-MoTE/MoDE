@@ -70,6 +70,9 @@
     -fx-text-fill: white;
 }
 
+.dialog-pane {
+    -fx-background-color: whitesmoke;
+}
 /*noinspection CssUnusedSymbol*/
 .context-menu {
     -fx-border-color: lightgray;

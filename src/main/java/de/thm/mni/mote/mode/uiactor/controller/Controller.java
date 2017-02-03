@@ -21,7 +21,7 @@ public abstract class Controller extends ActorController implements Initializabl
   
   ResourceBundle i18n;
   
-  Controller() {
+  public Controller() {
     try {
       settings = Settings.load();
     } catch (Exception e) {

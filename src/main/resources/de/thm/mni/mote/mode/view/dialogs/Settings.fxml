@@ -14,8 +14,8 @@
 <?import javafx.scene.layout.RowConstraints?>
 
 <DialogPane prefHeight="350.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/8.0.76-ea"
-            xmlns:fx="http://javafx.com/fxml/1" stylesheets="@../css/Basis.css"
-            fx:controller="de.thm.mni.mote.mode.uiactor.controller.SettingsController">
+            xmlns:fx="http://javafx.com/fxml/1" stylesheets="@../../css/Basis.css"
+            fx:controller="de.thm.mni.mote.mode.uiactor.controller.dialogs.SettingsController">
   <content>
     <GridPane hgap="10.0">
       <columnConstraints>
@@ -41,8 +41,8 @@
           <Insets/>
         </GridPane.margin>
       </ChoiceBox>
-      <Label alignment="CENTER_RIGHT" text="%global.select_language"/>
-      <Label alignment="CENTER_RIGHT" text="%global.select_recent_count" textAlignment="RIGHT" wrapText="true"
+      <Label alignment="CENTER_RIGHT" text="%settings.global.select_language"/>
+      <Label alignment="CENTER_RIGHT" text="%settings.global.select_recent_count" textAlignment="RIGHT" wrapText="true"
              GridPane.hgrow="SOMETIMES" GridPane.rowIndex="2" GridPane.vgrow="ALWAYS"/>
       <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.columnIndex="1"
             GridPane.rowIndex="2">
@@ -55,7 +55,7 @@
         <TextField fx:id="tfRecentCount" editable="false" prefWidth="35.0"/>
         <Slider fx:id="sRecentCount" max="20.0" min="3.0" showTickMarks="true" value="5.0" HBox.hgrow="ALWAYS"/>
       </HBox>
-      <Label alignment="CENTER_RIGHT" text="%notify.select_seconds" GridPane.rowIndex="6"/>
+      <Label alignment="CENTER_RIGHT" text="%settings.notify.select_seconds" GridPane.rowIndex="6"/>
       <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.columnIndex="1"
             GridPane.rowIndex="6">
         <padding>
@@ -64,10 +64,10 @@
         <TextField fx:id="tfNotifySeconds" editable="false" prefWidth="35.0"/>
         <Slider fx:id="sNotifySeconds" max="15.0" showTickMarks="true" value="5.0" HBox.hgrow="ALWAYS"/>
       </HBox>
-      <Label alignment="CENTER_RIGHT" text="%notify.select_level" GridPane.rowIndex="8"/>
+      <Label alignment="CENTER_RIGHT" text="%settings.notify.select_level" GridPane.rowIndex="8"/>
       <ChoiceBox fx:id="cbLoggerLevel" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="10"/>
       <ChoiceBox fx:id="cbLoggerNotifyLevel" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="8"/>
-      <Label fx:id="lModelicaCompiler" alignment="CENTER_RIGHT" text="%global.select_modelica_compiler"
+      <Label fx:id="lModelicaCompiler" alignment="CENTER_RIGHT" text="%settings.global.select_modelica_compiler"
              wrapText="true" GridPane.rowIndex="4"/>
       <HBox alignment="CENTER_LEFT" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
         <padding>
@@ -75,9 +75,9 @@
         </padding>
         <TextField fx:id="tfModelicaCompiler" editable="false" HBox.hgrow="ALWAYS"/>
         <Button fx:id="btnModelicaCompiler" minWidth="80.0" mnemonicParsing="false"
-                onAction="#onModelicaCompilerClick" text="%global.file"/>
+                onAction="#onModelicaCompilerClick" text="%settings.global.file"/>
       </HBox>
-      <Label alignment="CENTER_RIGHT" text="%logger.select_level" GridPane.rowIndex="10"/>
+      <Label alignment="CENTER_RIGHT" text="%settings.logger.select_level" GridPane.rowIndex="10"/>
     </GridPane>
   </content>
   <ButtonType fx:constant="CLOSE"/>

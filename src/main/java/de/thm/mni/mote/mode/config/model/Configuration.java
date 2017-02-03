@@ -36,6 +36,7 @@ public class Configuration extends MyObservable implements Observer {
   
   public void setLang(Locale lang) {
     this.lang = lang;
+    Locale.setDefault(lang);
     this.notifyObservers("Lang");
   }
   

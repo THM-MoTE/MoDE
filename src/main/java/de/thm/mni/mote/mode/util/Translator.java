@@ -1,5 +1,7 @@
 package de.thm.mni.mote.mode.util;
 
+import lombok.NonNull;
+
 import java.text.MessageFormat;
 import java.util.*;
 
@@ -20,7 +22,12 @@ public final class Translator {
     return tr(getBundle(bundle), key);
   }
   
-  public static String tr(ResourceBundle bundle, String key) {
+  public static String tr(String bundle, String group, String key) {
+    if (bundle == null) bundle = "MoDE";
+    return tr(getBundle(bundle), group.toLowerCase() + "." + key);
+  }
+  
+  public static String tr(@NonNull ResourceBundle bundle, String key) {
     try {
       return bundle.getString(key);
     } catch (MissingResourceException e) {

@@ -1,6 +1,7 @@
-package de.thm.mni.mote.mode.uiactor.controller;
+package de.thm.mni.mote.mode.uiactor.controller.dialogs;
 
 import de.thm.mni.mote.mode.Main;
+import de.thm.mni.mote.mode.uiactor.controller.Controller;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
@@ -48,7 +49,7 @@ public class SettingsController extends Controller {
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     super.initialize(location, resources);
-    po.setContentNode(new Label(tr(i18n, "global.select_modelica_compiler.popover")));
+    po.setContentNode(new Label(tr(null, "settings", "global.select_modelica_compiler.popover")));
     po.setArrowLocation(PopOver.ArrowLocation.LEFT_CENTER);
     po.setDetachable(false);
     po.setAutoHide(false);
@@ -59,7 +60,7 @@ public class SettingsController extends Controller {
     cbLanguage.setConverter(new StringConverter<Locale>() {
       @Override
       public String toString(Locale locale) {
-        return tr(i18n, "global.supported_languages." + locale.toString().toLowerCase());
+        return tr(null, "settings", "global.supported_languages." + locale.toString().toLowerCase());
       }
   
       @Override
@@ -78,6 +79,7 @@ public class SettingsController extends Controller {
     cbLoggerLevel.valueProperty().addListener((observable, oldValue, newValue) -> getSettings().getLogger().setLevel(newValue));
   
     cbLoggerNotifyLevel.setItems(FXCollections.observableArrayList(Level.values()));
+    cbLoggerNotifyLevel.getItems().removeAll(Level.TRACE);
     cbLoggerNotifyLevel.setValue(getSettings().getLogger().getNotifyLevel());
     cbLoggerNotifyLevel.valueProperty().addListener((observable, oldValue, newValue) -> getSettings().getLogger().setNotifyLevel(newValue));
   
@@ -108,7 +110,7 @@ public class SettingsController extends Controller {
   private void onModelicaCompilerClick() {
     Path f = fileDialog(
         getSettings().getModelica().getCompiler(),
-        tr(i18n, "global.select_modelica_compiler"),
+        tr(null, "settings", "global.select_modelica_compiler"),
         true);
     
     if (f == null) return;
@@ -144,7 +146,7 @@ public class SettingsController extends Controller {
   @Override
   public void start() {}
   
-  void updateUI(Boolean omcStarted) {
+  public void updateUI(Boolean omcStarted) {
     if (!omcStarted) {
       lModelicaCompiler.getStyleClass().add("red-text");
       new Thread(() -> {
