@@ -7,7 +7,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.*?>
 <?import java.lang.String?>
-<?import de.thm.mni.mote.mode.uiactor.control.TreeViewWithItems?>
+
 <BorderPane prefHeight="700.0" prefWidth="1000.0" stylesheets="@../css/Basis.css"
             xmlns="http://javafx.com/javafx/8.0.76-ea" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="de.thm.mni.mote.mode.uiactor.controller.MainController">
@@ -151,11 +151,7 @@
             <HBox.margin>
               <Insets/>
             </HBox.margin>
-            <TreeViewWithItems fx:id="tvLibrary" prefHeight="200.0" prefWidth="200.0">
-              <padding>
-                <Insets bottom="-1.0" left="-1.0" right="-1.0" top="-1.0"/>
-              </padding>
-            </TreeViewWithItems>
+            <TreeView fx:id="tvLibrary" prefHeight="200.0" prefWidth="200.0"/>
           </ScrollPane>
         </HBox>
       </VBox>

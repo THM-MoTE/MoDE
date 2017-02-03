@@ -33,6 +33,7 @@
 }
 
 .button.no-border {
+    -fx-background-color: transparent;
     -fx-border-width: 0px;
 }
 
@@ -113,6 +114,27 @@
     -fx-border-color: whitesmoke derive(darkgray, -10%);
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
+}
+
+/* TreeView */
+.tree-view {
+    -fx-padding: -1px;
+}
+
+.tree-cell {
+    -fx-background-color: whitesmoke;
+}
+
+.tree-cell.root-element {
+    -fx-background-color: lightgray;
+    -fx-font-weight: bold;
+    -fx-font-size: 90%;
+    -fx-padding: 2 -15;
+}
+
+.tree-cell.root-element .ikonli-font-icon {
+    -fx-icon-size: 16px;
+    -fx-icon-color: black;
 }
 
 /* Notifications */
