@@ -20,7 +20,7 @@ import static de.thm.mni.mote.mode.util.Translator.tr;
  */
 @Getter
 public class MoContainer implements Comparable<MoContainer>, HierarchyData<MoContainer> {
-  private static final int MAX_LOADING_DEPTH = 3;
+  private static final int MAX_LOADING_DEPTH = 2;
   
   private OMCompiler omc = null;
   private MoContainer parent = null;

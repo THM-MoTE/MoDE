@@ -13,16 +13,15 @@ import de.thm.mni.mote.mode.config.model.Project;
 import de.thm.mni.mote.mode.modelica.MoContainer;
 import de.thm.mni.mote.mode.modelica.MoRoot;
 import de.thm.mni.mote.mode.modelica.Saver;
-import de.thm.mni.mote.mode.omcactor.messages.GetAvailableLibsOMCMessage;
-import de.thm.mni.mote.mode.omcactor.messages.GetDataOMCMessage;
-import de.thm.mni.mote.mode.omcactor.messages.OMCLoadStatusUIMessage;
-import de.thm.mni.mote.mode.omcactor.messages.UpdateClassOMCMessage;
+import de.thm.mni.mote.mode.omcactor.messages.*;
 import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.control.DragResizer;
 import de.thm.mni.mote.mode.uiactor.control.MainTabControl;
 import de.thm.mni.mote.mode.uiactor.control.MoTreeCell;
+import de.thm.mni.mote.mode.uiactor.controller.dialogs.ChangeSystemLibrariesController;
 import de.thm.mni.mote.mode.uiactor.messages.OMCAvailableLibsUIMessage;
 import de.thm.mni.mote.mode.uiactor.messages.OMCDataUIMessage;
+import de.thm.mni.mote.mode.uiactor.messages.OMCSetProjectUIMessage;
 import de.thm.mni.mote.mode.uiactor.statemachine.StateMachine;
 import de.thm.mni.mote.mode.uiactor.utilities.TreeViewWithItemsWrapper;
 import de.thm.mni.mote.mode.util.Utilities;
@@ -163,11 +162,25 @@ public class MainController extends NotifyController {
     
     try {
       DialogPane dp = loader.load();
-      
+      ChangeSystemLibrariesController<String> controller = loader.getController();
+      controller.setLists(libs, project.getSystemLibraries());
       d.setDialogPane(dp);
       d.show();
+      d.setResultConverter(param -> ((ButtonType) param).getButtonData().getTypeCode().equals("A"));
       d.setOnCloseRequest(event -> {
-        System.out.println(d.getResult());
+        if (d.getResult() instanceof Boolean && (Boolean) d.getResult()) {
+          System.out.println(controller.getSelected());
+          project.getSystemLibraries().clear();
+          project.getSystemLibraries().addAll(controller.getSelected());
+          try {
+            project.save();
+            this.hide();
+            getActor().send(new SplashShowMessage(true));
+            getActor().send(new SetProjectOMCMessage(getGroup(), project));
+          } catch (Exception e) {
+            e.printStackTrace();
+          }
+        }
       });
     } catch (IOException e) {
       getActor().send(new ErrorMessage(this.getClass(), getGroup(), e));
@@ -226,6 +239,8 @@ public class MainController extends NotifyController {
         }
       } else if (msg instanceof OMCAvailableLibsUIMessage) {
         Platform.runLater(() -> getController().handleSystemLibraryEdit(((OMCAvailableLibsUIMessage) msg).getLibs()));
+      } else if (msg instanceof OMCSetProjectUIMessage) {
+        send(new StartUIMessage(MainController.class, getGroup(), ((OMCSetProjectUIMessage) msg).getProject()));
       }
     }
   }

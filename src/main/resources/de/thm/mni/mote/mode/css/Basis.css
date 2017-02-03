@@ -43,10 +43,16 @@
 }
 
 /*noinspection CssUnusedSymbol,CssUnusedSymbol*/
-.scroll-pane:focused, .list-view:focused {
-    -fx-background-color: -fx-outer-border, -fx-inner-border, -fx-body-color;
-    -fx-background-insets: 0, 1, 2;
-    -fx-background-radius: 5, 4, 3;
+.scroll-pane:focused, .list-view, .list-view:focused {
+    -fx-background-color: white;
+    -fx-background-insets: 0px;
+    -fx-background-radius: 0px;
+    -fx-border-color: lightgray;
+    -fx-border-width: 1px;
+}
+
+.list-view .list-cell:selected .text {
+    -fx-text-fill: white;
 }
 
 /*noinspection CssUnusedSymbol*/
@@ -62,11 +68,11 @@
     -fx-padding: 2px 10px;
 }
 
-.menu-button:hover, .menu-button:showing, .menu-button:showing, .menu-item:hover, .menu-item:focused {
+.menu-button:hover, .menu-button:showing, .menu-button:showing, .menu-item:hover, .menu-item:focused, .list-cell:selected {
     -fx-background-color: cornflowerblue;
 }
 
-.menu-button:hover > .label, .menu-button:showing > .label, .menu-button:showing > .label, .menu-item:hover > .label, .menu-item:showing > .label {
+.menu-button:hover > .label, .menu-button:showing > .label, .menu-button:showing > .label, .menu-item:hover > .label, .menu-item:showing > .label, .list-cell:selected > .text {
     -fx-text-fill: white;
 }
 

@@ -37,7 +37,7 @@ public class SelectLibsControl<T extends Comparable<T>> extends VBox implements 
     lvSelected.setItems(FXCollections.observableArrayList());
   }
   
-  public void setList(List<T> available, List<T> selected) {
+  public void setLists(List<T> available, List<T> selected) {
     available.sort(Comparable::compareTo);
     selected.sort(Comparable::compareTo);
     available.removeAll(selected);

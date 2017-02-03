@@ -76,6 +76,8 @@ public class OMCActor extends AbstractActor {
     send(new OMCLoadStatusUIMessage(getGroup(), OMCLoadStatusUIMessage.STATUS.START));
     loadStatus = OMCLoadStatusUIMessage.STATUS.START.ordinal();
     try {
+      omc.clearProject();
+      
       omc.addSystemLibraries(project.getSystemLibraries());
       collectDataInBackground(TYPE.SYSTEM);
   
@@ -103,16 +105,19 @@ public class OMCActor extends AbstractActor {
     es.execute(() -> {
       switch (type) {
         case SYSTEM:
+          data.get(0).getChildren().clear();
           OMCUtilities.lightCollect(this.omc, data.get(0), this.omc.getSystemLibraries());
           send(new OMCLoadStatusUIMessage(getGroup(), OMCLoadStatusUIMessage.STATUS.SYSTEMLIB_READY));
           loadStatus += OMCLoadStatusUIMessage.STATUS.SYSTEMLIB_READY.ordinal();
           break;
         case PROJECTLIB:
+          data.get(1).getChildren().clear();
           OMCUtilities.lightCollect(this.omc, data.get(1), this.omc.getProjectLibraries());
           send(new OMCLoadStatusUIMessage(getGroup(), OMCLoadStatusUIMessage.STATUS.PROJECTLIB_READY));
           loadStatus += OMCLoadStatusUIMessage.STATUS.PROJECTLIB_READY.ordinal();
           break;
         case PROJECT:
+          data.get(2).getChildren().clear();
           OMCUtilities.lightCollect(this.omc, data.get(2), this.omc.getProject());
           send(new OMCLoadStatusUIMessage(getGroup(), OMCLoadStatusUIMessage.STATUS.PROJECT_READY));
           loadStatus += OMCLoadStatusUIMessage.STATUS.PROJECT_READY.ordinal();

@@ -91,6 +91,8 @@ public class OMCompiler {
   
   void addSystemLibraries(List<String> libs) {
     systemLibraries.clear();
+    libs.forEach(s -> client.call("loadModel", s));
+    
     Result result = client.call("getLoadedLibraries");
     
     List<Pair<String, Path>> list = toLibraryArray(result.result);
@@ -99,16 +101,21 @@ public class OMCompiler {
     }
   }
   
+  public void clearProject() throws ParserException {
+    Result r = client.call("clear");
+    if (!Boolean.parseBoolean(r.result)) throw new ParserException(tr("Error", "error.omcactor.cant_unload_project"));
+    project = null;
+  }
+  
+  
   void setProject(Path f) throws ParserException {
-    if (this.project != null) throw new ParserException(tr("Error", "error.omcactor.project_already_set"));
+    if (project != null) throw new ParserException(tr("Error", "error.omcactor.project_already_set"));
     Pair<String, Path> lib = loadProject(f);
     if (lib == null) throw new ParserException(tr("Error", "error.omcactor.cant_load_project", f.getFileName()));
     this.project = lib;
   }
   
   private Pair<String, Path> loadProject(Path f) throws ParserException {
-    //TODO: unload existing project?
-    
     f = f.toAbsolutePath().normalize();
     
     Result r = client.call("loadFile", ScriptingHelper.asString(f));
