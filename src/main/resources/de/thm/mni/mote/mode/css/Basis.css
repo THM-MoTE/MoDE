@@ -32,9 +32,17 @@
     -fx-border-color: darkgray;
 }
 
+.no-border {
+    -fx-border-width: 0px;
+}
+
+/*TODO: anders lösen*/
+.tree-view.no-border {
+    -fx-padding: -1px;
+}
+
 .button.no-border {
     -fx-background-color: transparent;
-    -fx-border-width: 0px;
 }
 
 .button.no-border:hover, .button.no-border:hover:visited {
@@ -135,10 +143,6 @@
 }
 
 /* TreeView */
-.tree-view {
-    -fx-padding: -1px;
-}
-
 .tree-cell {
     -fx-background-color: white;
 }

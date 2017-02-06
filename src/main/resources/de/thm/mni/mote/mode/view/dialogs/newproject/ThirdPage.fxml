@@ -14,7 +14,7 @@
 <fx:root prefWidth="700.0" styleClass="vbox-base" stylesheets="@../../../control/css/DialogStack.css" type="VBox"
          xmlns="http://javafx.com/javafx/8.0.76-ea" xmlns:fx="http://javafx.com/fxml/1">
   <children>
-    <fx:include fx:id="selectLibs" source="../../fragments/SelectSystemLibs.fxml"/>
+    <fx:include fx:id="selectProjectLibs" source="../../fragments/SelectProjectLibs.fxml"/>
     <fx:include fx:id="dialogStackButtons" source="../../fragments/DialogStackButtons.fxml"/>
   </children>
   <padding>

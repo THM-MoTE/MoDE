@@ -38,7 +38,6 @@ public class ThirdPageController extends DialogStackController implements NewPro
   
   @Override
   protected void onBtnNext(ActionEvent event) {
-    
     if (getOnFinishListener() != null) getOnFinishListener().handle(getProjectBuilder().build());
     getStackPane().getChildren().remove(this);
   }
