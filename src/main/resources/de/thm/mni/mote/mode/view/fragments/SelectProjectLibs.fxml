@@ -30,7 +30,7 @@
       <children>
         <TextField fx:id="tfLibrary" editable="false"/>
         <Button fx:id="btnSelect" mnemonicParsing="false" text="%dialog.new_project.select"/>
-        <Button fx:id="add" mnemonicParsing="false" text="%dialog.new_project.add"/>
+        <Button fx:id="btnAdd" mnemonicParsing="false" text="%dialog.new_project.add"/>
       </children>
     </HBox>
     <TreeView fx:id="tvLibraries" prefWidth="200.0">

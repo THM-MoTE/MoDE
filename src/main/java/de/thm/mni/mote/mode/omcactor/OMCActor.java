@@ -129,7 +129,6 @@ public class OMCActor extends AbstractActor {
     });
   }
   
-  
   @Override
   public void execute(Message msg) {
     if (msg instanceof StartMessage) {

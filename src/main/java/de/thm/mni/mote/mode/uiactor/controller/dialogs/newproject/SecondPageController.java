@@ -2,14 +2,10 @@ package de.thm.mni.mote.mode.uiactor.controller.dialogs.newproject;
 
 import de.thm.mni.mote.mode.config.model.Project;
 import de.thm.mni.mote.mode.uiactor.controller.fragments.DialogStackController;
-import de.thm.mni.mote.mode.uiactor.control.NewProject;
 import de.thm.mni.mote.mode.uiactor.controller.fragments.SelectSystemLibsController;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.layout.StackPane;
-import lombok.Getter;
 import lombok.Setter;
 
 import java.net.URL;
@@ -20,11 +16,11 @@ import java.util.UUID;
 /**
  * Created by hobbypunk on 26.01.17.
  */
-public class SecondPageController extends DialogStackController implements NewProject {
+public class SecondPageController extends DialogStackController {
   
   private final List<String> libs;
-  @Getter private final BooleanProperty isValidProperty = new SimpleBooleanProperty(true);
-  @Setter private Project.ProjectBuilder projectBuilder = Project.builder();
+  @Setter
+  private Project.ProjectBuilder projectBuilder = null;
   
   @FXML private SelectSystemLibsController<String> selectSystemLibsController;
   
@@ -42,19 +38,14 @@ public class SecondPageController extends DialogStackController implements NewPr
   
   @Override
   protected void onBtnNext(ActionEvent event) {
-    getProjectBuilder().systemLibraries(selectSystemLibsController.getSelected());
+    this.projectBuilder.systemLibraries(selectSystemLibsController.getSelected());
   
     ThirdPageController page = new ThirdPageController(getGroup(), this.getStackPane());
-    page.setProjectBuilder(this.getProjectBuilder());
+    page.setProjectBuilder(this.projectBuilder);
     page.setOnFinishListener(data -> {
       this.getOnFinishListener().handle(data);
       getStackPane().getChildren().remove(this);
     });
   
-  }
-  
-  @Override
-  public Project.ProjectBuilder getProjectBuilder() {
-    return this.projectBuilder;
   }
 }

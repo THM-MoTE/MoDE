@@ -9,10 +9,15 @@ import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -23,6 +28,9 @@ import java.util.List;
 @Accessors(chain = true)
 @NoArgsConstructor
 public class Project extends MyObservable {
+  private static final String importFileName = "package.imports";
+  
+  
   @Setter private Path projectPath;
   @Element
   @NonNull private String name;
@@ -32,15 +40,18 @@ public class Project extends MyObservable {
   @NonNull private Date lastOpened;
   @ElementList(required = false)
   @NonNull private List<String> systemLibraries = new ArrayList<>();
+  @NonNull private List<Path> projectLibraries = new ArrayList<>();
   
   @Builder
-  public Project(String name, Path moFile, Path projectPath, @Singular List<String> systemLibraries) {
+  public Project(String name, Path moFile, Path projectPath, @Singular List<String> systemLibraries, @Singular List<Path> projectLibraries) {
     this.name = name;
     this.moFile = moFile;
     this.projectPath = projectPath;
     this.lastOpened = new Date();
     this.systemLibraries.clear();
     this.systemLibraries.addAll(systemLibraries);
+    this.projectLibraries.clear();
+    this.projectLibraries.addAll(projectLibraries);
   }
   
   public void updateLastOpened() {
@@ -48,12 +59,29 @@ public class Project extends MyObservable {
   }
   
   public void save() throws Exception {
-    
     Serializer serializer = new Persister(new MyMatcher());
     serializer.write(this, this.projectPath.toFile());
+    this.saveProjectLibraries();
     Settings.load().getRecent().remove(this.getProjectPath());
     Settings.load().getRecent().add(this.getProjectPath());
     Settings.load().save();
+  }
+  
+  private void saveProjectLibraries() throws IOException {
+    Path importsFile = moFile.resolveSibling(importFileName);
+    if (projectLibraries.isEmpty()) {
+      if (Files.exists(importsFile)) Files.delete(importsFile);
+      return;
+    }
+    
+    Files.write(importsFile, projectLibraries.stream().map(Path::toString).collect(Collectors.toList()), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+  }
+  
+  private void loadProjectLibraries() throws IOException {
+    Path importsFile = moFile.resolveSibling(importFileName);
+    if (projectLibraries.isEmpty()) return;
+    
+    projectLibraries.addAll(Files.lines(importsFile).map(Paths::get).collect(Collectors.toList()));
   }
   
   @Override
@@ -63,6 +91,8 @@ public class Project extends MyObservable {
   
   public static Project load(Path projectFile) throws Exception {
     Serializer serializer = new Persister(new MyMatcher());
-    return serializer.read(Project.class, projectFile.toFile()).setProjectPath(projectFile);
+    Project p = serializer.read(Project.class, projectFile.toFile()).setProjectPath(projectFile);
+    p.loadProjectLibraries();
+    return p;
   }
 }
