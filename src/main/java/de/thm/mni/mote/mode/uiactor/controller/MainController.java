@@ -18,7 +18,7 @@ import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.control.DragResizer;
 import de.thm.mni.mote.mode.uiactor.control.MainTabControl;
 import de.thm.mni.mote.mode.uiactor.control.MoTreeCell;
-import de.thm.mni.mote.mode.uiactor.controller.dialogs.ChangeSystemLibrariesController;
+import de.thm.mni.mote.mode.uiactor.controller.dialogs.ChangeSystemLibrariesDialogController;
 import de.thm.mni.mote.mode.uiactor.messages.OMCAvailableLibsUIMessage;
 import de.thm.mni.mote.mode.uiactor.messages.OMCDataUIMessage;
 import de.thm.mni.mote.mode.uiactor.messages.OMCSetProjectUIMessage;
@@ -162,7 +162,7 @@ public class MainController extends NotifyController {
     
     try {
       DialogPane dp = loader.load();
-      ChangeSystemLibrariesController<String> controller = loader.getController();
+      ChangeSystemLibrariesDialogController<String> controller = loader.getController();
       controller.setLists(libs, project.getSystemLibraries());
       d.setDialogPane(dp);
       d.show();

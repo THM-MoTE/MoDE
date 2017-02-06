@@ -26,7 +26,7 @@ import static de.thm.mni.mote.mode.util.Translator.tr;
 /**
  * Created by hobbypunk on 14.09.16.
  */
-public class SettingsController extends Controller {
+public class SettingsDialogController extends Controller {
   
   @FXML private ChoiceBox<Locale> cbLanguage;
   

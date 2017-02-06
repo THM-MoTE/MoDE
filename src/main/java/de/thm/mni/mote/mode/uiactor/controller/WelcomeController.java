@@ -11,9 +11,9 @@ import de.thm.mni.mote.mode.omcactor.OMCActor;
 import de.thm.mni.mote.mode.omcactor.OMCException;
 import de.thm.mni.mote.mode.omcactor.messages.GetAvailableLibsOMCMessage;
 import de.thm.mni.mote.mode.omcactor.messages.SetProjectOMCMessage;
-import de.thm.mni.mote.mode.uiactor.control.NewProjectFirstPageControl;
+import de.thm.mni.mote.mode.uiactor.controller.dialogs.newproject.FirstPageController;
 import de.thm.mni.mote.mode.uiactor.control.RecentProjectControl;
-import de.thm.mni.mote.mode.uiactor.controller.dialogs.SettingsController;
+import de.thm.mni.mote.mode.uiactor.controller.dialogs.SettingsDialogController;
 import de.thm.mni.mote.mode.uiactor.messages.OMCAvailableLibsUIMessage;
 import de.thm.mni.mote.mode.uiactor.messages.OMCSetProjectUIMessage;
 import de.thm.mni.mote.mode.uiactor.messages.OMCStartedMessage;
@@ -140,7 +140,7 @@ public class WelcomeController extends NotifyController {
   }
   
   private void onCreateProject(List<String> libs) {
-    NewProjectFirstPageControl tmp = new NewProjectFirstPageControl(getGroup(), dialogStack, libs);
+    FirstPageController tmp = new FirstPageController(getGroup(), dialogStack, libs);
     tmp.setOnFinishListener(this::onOpenProject);
   }
   
@@ -196,7 +196,7 @@ public class WelcomeController extends NotifyController {
       DialogPane dp = loader.load();
       d.setDialogPane(dp);
       po.hide();
-      ((SettingsController) loader.getController()).updateUI(this.omcStarted);
+      ((SettingsDialogController) loader.getController()).updateUI(this.omcStarted);
       d.show();
       d.setOnCloseRequest(event -> {
         if (!omc.equals(getSettings().getModelica().getCompiler())) start();

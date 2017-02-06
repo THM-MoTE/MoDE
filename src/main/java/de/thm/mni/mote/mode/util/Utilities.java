@@ -41,11 +41,16 @@ public class Utilities {
     return getView("control", view);
   }
   
+  public URL getDialogView(String view) { return getView("dialogs/" + view);}
+  
+  public URL getFragmentView(String view) { return getView("fragments/" + view);}
+  
   private URL getView(String prefix, String view) {
     if (!prefix.isEmpty())
       prefix += "/";
     return Utilities.getRessources(prefix + "view/" + view + ".fxml");
   }
+  
   
   public ResourceBundle getBundle(String bundle) throws MissingResourceException {
     return getBundle("", bundle);
@@ -136,5 +141,4 @@ public class Utilities {
   public NumberFormat getFormatter() {
     return numberFormat;
   }
-  
 }

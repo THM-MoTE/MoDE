@@ -1,10 +1,11 @@
-package de.thm.mni.mote.mode.uiactor.control;
+package de.thm.mni.mote.mode.uiactor.controller.fragments;
 
 import de.thm.mni.mhpp11.jActor.actors.logging.messages.WarnMessage;
 import de.thm.mni.mhpp11.jActor.actors.messagebus.MessageBus;
 import de.thm.mni.mote.mode.config.Settings;
 import de.thm.mni.mote.mode.config.model.Project;
 import de.thm.mni.mote.mode.parser.PackageParser;
+import de.thm.mni.mote.mode.uiactor.control.NewProject;
 import de.thm.mni.mote.mode.util.Utilities;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -35,7 +36,7 @@ import static de.thm.mni.mote.mode.util.Translator.tr;
  * Created by hobbypunk on 26.01.17.
  */
 
-public class ProjectFromSourceControl extends GridPane implements NewProject, Initializable {
+public class ProjectFromSourceController extends GridPane implements NewProject, Initializable {
   private ResourceBundle i18n = null;
   
   private final BooleanProperty isNameValidProperty = new SimpleBooleanProperty(false);
@@ -49,13 +50,13 @@ public class ProjectFromSourceControl extends GridPane implements NewProject, In
   private UUID group;
   
   
-  ProjectFromSourceControl(UUID group) {
+  public ProjectFromSourceController(UUID group) {
     super();
     this.group = group;
     FXMLLoader loader = new FXMLLoader();
-    loader.setLocation(Utilities.getControlView("ProjectFromSource"));
+    loader.setLocation(Utilities.getFragmentView("ProjectFromSource"));
     try {
-      i18n = Utilities.getControlBundle("NewProject", Settings.load().getLang());
+      i18n = Utilities.getBundle("MoDE");
       loader.setResources(i18n);
     } catch (MissingResourceException e) {
       MessageBus.getInstance().send(new WarnMessage(this.getClass(), "Cant load ResourceBundle"));
@@ -80,17 +81,17 @@ public class ProjectFromSourceControl extends GridPane implements NewProject, In
     tfName.textProperty().addListener((observable, oldValue, newValue) -> {
       //todo check if already exists!
       if (newValue.isEmpty()) {
-        getProjectBuilder().name(null);
+        this.projectBuilder.name(null);
         isNameValidProperty.set(false);
       } else {
-        getProjectBuilder().name(newValue);
+        this.projectBuilder.name(newValue);
         isNameValidProperty.set(true);
       }
     });
     
     tfPath.textProperty().addListener((observable, oldValue, newValue) -> {
       isPathValidProperty.set(false);
-      getProjectBuilder().moFile(null);
+      this.projectBuilder.moFile(null);
       Path oldPath = Paths.get(oldValue);
       Path newPath = Paths.get(newValue);
       if (oldPath.endsWith("package.mo")) oldPath = oldPath.getParent();
@@ -98,7 +99,7 @@ public class ProjectFromSourceControl extends GridPane implements NewProject, In
       
       if (Files.exists(newPath)) {
         isPathValidProperty.set(true);
-        getProjectBuilder().moFile(newPath);
+        this.projectBuilder.moFile(newPath);
         
         String oldName = oldPath.getFileName().toString().replaceAll("\\.mo$", "");
         if (tfName.getText().isEmpty() || tfName.getText().equals(oldName)) {

@@ -15,7 +15,7 @@
 
 <DialogPane prefHeight="350.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/8.0.76-ea"
             xmlns:fx="http://javafx.com/fxml/1" stylesheets="@../../css/Basis.css"
-            fx:controller="de.thm.mni.mote.mode.uiactor.controller.dialogs.SettingsController">
+            fx:controller="de.thm.mni.mote.mode.uiactor.controller.dialogs.SettingsDialogController">
   <content>
     <GridPane hgap="10.0">
       <columnConstraints>

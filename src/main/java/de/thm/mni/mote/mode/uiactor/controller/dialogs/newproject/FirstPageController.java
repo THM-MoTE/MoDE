@@ -1,10 +1,14 @@
-package de.thm.mni.mote.mode.uiactor.control;
+package de.thm.mni.mote.mode.uiactor.controller.dialogs.newproject;
 
 import de.thm.mni.mote.mode.config.model.Project;
+import de.thm.mni.mote.mode.uiactor.controller.fragments.DialogStackController;
+import de.thm.mni.mote.mode.uiactor.control.NewProject;
+import de.thm.mni.mote.mode.uiactor.controller.fragments.ProjectFromSourceController;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -26,7 +30,7 @@ import static de.thm.mni.mote.mode.util.Translator.tr;
 /**
  * Created by hobbypunk on 26.01.17.
  */
-public class NewProjectFirstPageControl extends DialogStackControl implements NewProject {
+public class FirstPageController extends DialogStackController implements NewProject {
   
   @Getter private final List<String> libs;
   @Getter private final BooleanProperty isValidProperty = new SimpleBooleanProperty(false);
@@ -35,9 +39,8 @@ public class NewProjectFirstPageControl extends DialogStackControl implements Ne
   @FXML private ListView<Option> lvOptionList;
   @FXML private AnchorPane apRoot;
   
-  
-  public NewProjectFirstPageControl(UUID group, StackPane stackPane, List<String> libs) {
-    super(group, stackPane, "NewProjectFirstPage", "NewProject", false);
+  public FirstPageController(UUID group, StackPane stackPane, List<String> libs) {
+    super(group, stackPane, "newproject/FirstPage", false);
     this.libs = libs;
     load();
   }
@@ -47,8 +50,8 @@ public class NewProjectFirstPageControl extends DialogStackControl implements Ne
     super.initialize(location, resources);
     
     ObservableList<Option> options = FXCollections.observableArrayList();
-    options.add(new Option(tr(i18n, "project.empty.project"), "mdi-creation", Color.DARKORANGE, Option.TYPE.EMPTY_PROJECT));
-    options.add(new Option(tr(i18n, "project.project.from.source"), "gmi-folder-open", Color.CHOCOLATE, Option.TYPE.PROJECT_FROM_SOURCE));
+    options.add(new Option(tr(i18n, "dialog.new_project.empty_project"), "mdi-creation", Color.DARKORANGE, Option.TYPE.EMPTY_PROJECT));
+    options.add(new Option(tr(i18n, "dialog.new_project.project_from_source"), "gmi-folder-open", Color.CHOCOLATE, Option.TYPE.PROJECT_FROM_SOURCE));
     lvOptionList.setItems(options);
     lvOptionList.setCellFactory(param -> new ListCell<Option>() {
       private FontIcon icon = new FontIcon();
@@ -77,15 +80,15 @@ public class NewProjectFirstPageControl extends DialogStackControl implements Ne
           onProjectFromSource();
       }
     });
-    this.btnNext.setDisable(true);
+    this.dialogStackButtonsController.getBtnNext().setDisable(true);
     
     //TODO: change to 0 when empty project works
     lvOptionList.getSelectionModel().select(1);
-    getIsValidProperty().addListener((observable, oldValue, newValue) -> btnNext.setDisable(!newValue));
+    getIsValidProperty().addListener((observable, oldValue, newValue) -> dialogStackButtonsController.getBtnNext().setDisable(!newValue));
   }
   
   private void onProjectFromSource() {
-    ProjectFromSourceControl tmp = new ProjectFromSourceControl(getGroup());
+    ProjectFromSourceController tmp = new ProjectFromSourceController(getGroup());
     tmp.setProjectBuilder(this.getProjectBuilder());
     tmp.getIsValidProperty().addListener((observable, oldValue, newValue) -> getIsValidProperty().set(newValue));
     
@@ -94,9 +97,9 @@ public class NewProjectFirstPageControl extends DialogStackControl implements Ne
   }
   
   @Override
-  protected void onBtnNext() {
+  protected void onBtnNext(ActionEvent event) {
     if (this.getIsValidProperty().get()) {
-      NewProjectSecondPageControl page = new NewProjectSecondPageControl(getGroup(), this.getStackPane(), this.getLibs());
+      SecondPageController page = new SecondPageController(getGroup(), this.getStackPane(), this.getLibs());
       page.setProjectBuilder(this.getProjectBuilder());
       page.setOnFinishListener(data -> {
         this.getOnFinishListener().handle(data);

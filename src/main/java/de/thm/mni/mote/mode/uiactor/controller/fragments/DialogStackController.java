@@ -1,4 +1,4 @@
-package de.thm.mni.mote.mode.uiactor.control;
+package de.thm.mni.mote.mode.uiactor.controller.fragments;
 
 import de.thm.mni.mote.mode.config.Settings;
 import de.thm.mni.mote.mode.config.model.Project;
@@ -6,16 +6,15 @@ import de.thm.mni.mote.mode.uiactor.handlers.EventHandler;
 import de.thm.mni.mote.mode.util.Utilities;
 import javafx.animation.Animation;
 import javafx.animation.Transition;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
-import javafx.scene.control.Button;
 import javafx.scene.layout.*;
 import javafx.util.Duration;
 import lombok.Getter;
 import lombok.Setter;
-import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.io.IOException;
 import java.net.URL;
@@ -26,7 +25,7 @@ import java.util.UUID;
 /**
  * Created by hobbypunk on 26.01.17.
  */
-public abstract class DialogStackControl extends VBox implements Initializable {
+public abstract class DialogStackController extends VBox implements Initializable {
   
   private final Boolean isLastPage;
   protected final ResourceBundle i18n;
@@ -36,23 +35,19 @@ public abstract class DialogStackControl extends VBox implements Initializable {
   @Getter private final StackPane stackPane;
   @Getter @Setter private EventHandler<Project> onFinishListener;
   
-  @FXML private FontIcon fiNext;
-  @FXML protected Button btnNext;
+  @FXML protected DialogStackButtonsController dialogStackButtonsController;
   
-  public DialogStackControl(UUID group, StackPane stackPane, String view, Boolean isLastPage) {
-    this(group, stackPane, view, view, isLastPage);
-  }
   
-  public DialogStackControl(UUID group, StackPane stackPane, String view, String resource, Boolean isLastPage) {
+  public DialogStackController(UUID group, StackPane stackPane, String view, Boolean isLastPage) {
     super();
     this.group = group;
     this.stackPane = stackPane;
     this.isLastPage = isLastPage;
     loader = new FXMLLoader();
-    loader.setLocation(Utilities.getControlView(view));
+    loader.setLocation(Utilities.getDialogView(view));
     ResourceBundle i18n;
     try {
-      i18n = Utilities.getControlBundle(resource, Settings.load().getLang());
+      i18n = Utilities.getBundle("MoDE", Settings.load().getLang());
       loader.setResources(i18n);
     } catch (MissingResourceException e) {
       i18n = null;
@@ -76,8 +71,7 @@ public abstract class DialogStackControl extends VBox implements Initializable {
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     if (isLastPage) {
-      fiNext.setIconLiteral("gmi-done");
-      fiNext.setIconSize(24);
+      dialogStackButtonsController.isLastPage();
     }
     stackPane.getChildren().add(this);
     final double startWidth = getPrefWidth() + 150;
@@ -94,13 +88,15 @@ public abstract class DialogStackControl extends VBox implements Initializable {
       }
     };
     showAni.play();
+  
+    dialogStackButtonsController.getBtnNext().setOnAction(this::onBtnNext);
+    dialogStackButtonsController.getBtnPrev().setOnAction(this::onBtnPrev);
   }
   
-  @FXML
-  protected abstract void onBtnNext();
+  protected abstract void onBtnNext(ActionEvent event);
   
   @FXML
-  private void onBtnBack() {
+  private void onBtnPrev(ActionEvent event) {
     final double startWidth = getWidth();
     final Animation hideAni = new Transition() {
       {
@@ -112,7 +108,7 @@ public abstract class DialogStackControl extends VBox implements Initializable {
         setTranslateX(curWidth);
       }
     };
-    hideAni.onFinishedProperty().set(event -> stackPane.getChildren().remove(this));
+    hideAni.onFinishedProperty().set(e -> stackPane.getChildren().remove(this));
     hideAni.play();
   }
 }

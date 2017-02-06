@@ -27,20 +27,21 @@
     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
   </rowConstraints>
   <children>
-    <Label alignment="CENTER" contentDisplay="TOP" text="%project.project_from_source" textAlignment="CENTER"
+    <Label alignment="CENTER" contentDisplay="TOP" text="%dialog.new_project.project_from_source" textAlignment="CENTER"
            GridPane.columnSpan="2147483647" GridPane.halignment="CENTER">
       <font>
         <Font size="18.0"/>
       </font>
     </Label>
-    <Label text="%project.project_name" GridPane.halignment="RIGHT" GridPane.rowIndex="2"/>
-    <Label text="%project.project_path" GridPane.halignment="RIGHT" GridPane.rowIndex="4"/>
+    <Label text="%dialog.new_project.project_name" GridPane.halignment="RIGHT" GridPane.rowIndex="2"/>
+    <Label text="%dialog.new_project.project_path" GridPane.halignment="RIGHT" GridPane.rowIndex="4"/>
     <TextField fx:id="tfName" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
     <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="4"
           GridPane.valignment="BOTTOM">
       <children>
         <TextField fx:id="tfPath" editable="false" HBox.hgrow="ALWAYS"/>
-        <Button fx:id="btnPath" mnemonicParsing="false" onAction="#onChoosePathClick" text="%project.choose_path"/>
+        <Button fx:id="btnPath" mnemonicParsing="false" onAction="#onChoosePathClick"
+                text="%dialog.new_project.choose_path"/>
       </children>
     </HBox>
   </children>

@@ -4,12 +4,12 @@
 <?import javafx.scene.control.DialogPane?>
 <?import javafx.scene.layout.VBox?>
 
-<DialogPane fx:controller="de.thm.mni.mote.mode.uiactor.controller.dialogs.ChangeSystemLibrariesController"
+<DialogPane fx:controller="de.thm.mni.mote.mode.uiactor.controller.dialogs.ChangeSystemLibrariesDialogController"
             stylesheets="@../../css/Basis.css" xmlns="http://javafx.com/javafx/8.0.76-ea"
             xmlns:fx="http://javafx.com/fxml/1">
   <content>
     <VBox>
-      <fx:include fx:id="selectLibs" source="../../control/view/SelectLibs.fxml"/>
+      <fx:include fx:id="selectLibs" source="../fragments/SelectSystemLibs.fxml"/>
     </VBox>
   </content>
   <buttonTypes>

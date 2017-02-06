@@ -1,4 +1,4 @@
-package de.thm.mni.mote.mode.uiactor.control;
+package de.thm.mni.mote.mode.uiactor.controller.fragments;
 
 import javafx.collections.FXCollections;
 import javafx.event.Event;
@@ -19,7 +19,7 @@ import java.util.ResourceBundle;
 /**
  * Created by hobbypunk on 26.01.17.
  */
-public class SelectLibsControl<T extends Comparable<T>> extends VBox implements Initializable {
+public class SelectSystemLibsController<T extends Comparable<T>> extends VBox implements Initializable {
   
   @FXML private ListView<T> lvAvailable;
   @FXML private ListView<T> lvSelected;
