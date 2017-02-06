@@ -144,12 +144,6 @@ public class OMCompiler {
     }
   }
   
-  void addProjectLibrary(Path libFile) throws IOException {
-    if (importHandler != null) {
-      importHandler.addImportLib(this.client, libFile);
-    }
-  }
-  
   List<String> getAvailableLibraries() {
     Result result = client.sendExpression("getAvailableLibraries()");
     List<String> list = toStringArray(result.result);
