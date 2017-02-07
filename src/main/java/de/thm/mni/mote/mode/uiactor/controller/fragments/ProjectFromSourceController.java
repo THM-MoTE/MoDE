@@ -77,6 +77,15 @@ public class ProjectFromSourceController extends GridPane implements NewProject,
     
     isNameValidProperty.addListener(listener);
     isPathValidProperty.addListener(listener);
+    isValidProperty.addListener((observable, oldValue, newValue) -> {
+      if (!newValue) return;
+      Path path = Paths.get(tfPath.getText());
+      String name = tfName.getText();
+      Path projectPath = path.getParent().resolve(name + ".mp");
+    
+      this.projectBuilder.name(name).moFile(path).projectPath(projectPath);
+    });
+    
     
     tfName.textProperty().addListener((observable, oldValue, newValue) -> {
       //todo check if already exists!
@@ -94,13 +103,14 @@ public class ProjectFromSourceController extends GridPane implements NewProject,
       this.projectBuilder.moFile(null);
       Path oldPath = Paths.get(oldValue);
       Path newPath = Paths.get(newValue);
-      if (oldPath.endsWith("package.mo")) oldPath = oldPath.getParent();
-      if (newPath.endsWith("package.mo")) newPath = newPath.getParent();
       
       if (Files.exists(newPath)) {
         isPathValidProperty.set(true);
         this.projectBuilder.moFile(newPath);
-        
+  
+        if (oldPath.toString().endsWith("package.mo")) oldPath = oldPath.getParent();
+        if (newPath.toString().endsWith("package.mo")) newPath = newPath.getParent();
+
         String oldName = oldPath.getFileName().toString().replaceAll("\\.mo$", "");
         if (tfName.getText().isEmpty() || tfName.getText().equals(oldName)) {
           tfName.setText(newPath.getFileName().toString().replaceAll("\\.mo$", ""));
@@ -116,21 +126,11 @@ public class ProjectFromSourceController extends GridPane implements NewProject,
     fc.setTitle(tr(i18n, "project.choose.mo.file"));
     fc.setInitialDirectory(Settings.load().getRecent().getLastPath().toFile());
     fc.setInitialFileName("package.mo");
-    fc.getExtensionFilters().add(new FileChooser.ExtensionFilter(tr(i18n, "project.modelica.file"), "*.mo"));
+    fc.getExtensionFilters().add(new FileChooser.ExtensionFilter(tr(i18n, "file.modelica"), "*.mo"));
     File f = fc.showOpenDialog(this.getScene().getWindow());
-    if (f == null) return;
-    Path path = PackageParser.findBasePackage(group, f.toPath());
+    if (f == null || !f.exists()) return;
+    Path path = PackageParser.findBasePackage(group, f.toPath().toAbsolutePath().normalize());
     tfPath.setText(path.toString());
     tfPath.positionCaret(tfPath.getText().length() + 1);
-  }
-  
-  @Override
-  public Project.ProjectBuilder getProjectBuilder() {
-    Path path = Paths.get(tfPath.getText());
-    String name = tfName.getText();
-    Path projectPath = path.getParent().resolve(name + ".mp");
-    
-    this.projectBuilder.name(name).moFile(path).projectPath(projectPath);
-    return projectBuilder;
   }
 }

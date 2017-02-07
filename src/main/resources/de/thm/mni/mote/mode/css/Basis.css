@@ -38,6 +38,9 @@
 
 /*TODO: anders lösen*/
 .tree-view.no-border {
+    -fx-border-width: 0px;
+    -fx-border-insets: 0px;
+    -fx-background-insets: 0;
     -fx-padding: -1px;
 }
 
@@ -51,12 +54,21 @@
 }
 
 /*noinspection CssUnusedSymbol,CssUnusedSymbol*/
-.scroll-pane:focused, .list-view, .list-view:focused {
+.scroll-pane, .scroll-pane:focused,
+.split-pane, .split-pane:focused,
+.tree-view, .tree-view:focused,
+.table-view, .table-view:focused,
+.tree-table-view, .tree-table-view:focused,
+.list-view, .list-view:focused {
     -fx-background-color: white;
     -fx-background-insets: 0px;
     -fx-background-radius: 0px;
     -fx-border-color: lightgray;
     -fx-border-width: 1px;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
 }
 
 .list-view .list-cell:selected .text {

@@ -101,9 +101,11 @@ public class OMCompiler {
     }
   }
   
-  public void clearProject() throws ParserException {
+  void clearProject() throws ParserException {
     Result r = client.call("clear");
     if (!Boolean.parseBoolean(r.result)) throw new ParserException(tr("Error", "error.omcactor.cant_unload_project"));
+    this.getSystemLibraries().clear();
+    this.getProjectLibraries().clear();
     project = null;
   }
   
@@ -135,13 +137,13 @@ public class OMCompiler {
   }
   
   void loadProjectLibraries(Path projectFile) throws ParserException {
+    importHandler = new ImportHandler(projectFile);
     try {
-      importHandler = new ImportHandler(projectFile);
       importHandler.loadLibraries(this.client);
-      this.projectLibraries.addAll(importHandler.getImportedLibs());
     } catch (Exception e) {
       e.printStackTrace();
     }
+    this.projectLibraries.addAll(importHandler.getImportedLibs());
   }
   
   List<String> getAvailableLibraries() {

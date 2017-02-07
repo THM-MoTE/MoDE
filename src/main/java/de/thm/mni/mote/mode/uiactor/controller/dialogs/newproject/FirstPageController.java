@@ -101,6 +101,7 @@ public class FirstPageController extends DialogStackController implements NewPro
     if (this.getIsValidProperty().get()) {
       SecondPageController page = new SecondPageController(getGroup(), this.getStackPane(), this.getLibs());
       page.setProjectBuilder(this.getProjectBuilder());
+      System.out.println(this.getProjectBuilder());
       page.setOnFinishListener(data -> {
         this.getOnFinishListener().handle(data);
         getStackPane().getChildren().remove(this);

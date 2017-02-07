@@ -18,6 +18,7 @@ import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.control.DragResizer;
 import de.thm.mni.mote.mode.uiactor.control.MainTabControl;
 import de.thm.mni.mote.mode.uiactor.control.MoTreeCell;
+import de.thm.mni.mote.mode.uiactor.controller.dialogs.ChangeProjectLibrariesDialogController;
 import de.thm.mni.mote.mode.uiactor.controller.dialogs.ChangeSystemLibrariesDialogController;
 import de.thm.mni.mote.mode.uiactor.messages.OMCAvailableLibsUIMessage;
 import de.thm.mni.mote.mode.uiactor.messages.OMCDataUIMessage;
@@ -155,10 +156,10 @@ public class MainController extends NotifyController {
   }
   
   private void handleSystemLibraryEdit(List<String> libs) {
-    Dialog d = new Dialog();
+    Dialog<Boolean> d = new Dialog<>();
     FXMLLoader loader = new FXMLLoader();
     loader.setLocation(Utilities.getView("dialogs/ChangeSystemLibraries"));
-    loader.setResources(Utilities.getControlBundle("NewProject"));
+    loader.setResources(Utilities.getBundle("MoDE"));
     
     try {
       DialogPane dp = loader.load();
@@ -166,20 +167,13 @@ public class MainController extends NotifyController {
       controller.setLists(libs, project.getSystemLibraries());
       d.setDialogPane(dp);
       d.show();
-      d.setResultConverter(param -> ((ButtonType) param).getButtonData().getTypeCode().equals("A"));
+      d.setResultConverter(param -> param.getButtonData().getTypeCode().equals("A"));
       d.setOnCloseRequest(event -> {
-        if (d.getResult() instanceof Boolean && (Boolean) d.getResult()) {
+        if (d.getResult()) {
           System.out.println(controller.getSelected());
           project.getSystemLibraries().clear();
           project.getSystemLibraries().addAll(controller.getSelected());
-          try {
-            project.save();
-            this.hide();
-            getActor().send(new SplashShowMessage(true));
-            getActor().send(new SetProjectOMCMessage(getGroup(), project));
-          } catch (Exception e) {
-            e.printStackTrace();
-          }
+          reloadProject();
         }
       });
     } catch (IOException e) {
@@ -188,9 +182,41 @@ public class MainController extends NotifyController {
   }
   
   private void handleProjectLibraryEdit() {
-    //TODO: Mo & Di
+    Dialog<Boolean> d = new Dialog<>();
+    FXMLLoader loader = new FXMLLoader();
+    loader.setLocation(Utilities.getView("dialogs/ChangeProjectLibraries"));
+    loader.setResources(Utilities.getBundle("MoDE"));
+    
+    try {
+      DialogPane dp = loader.load();
+      ChangeProjectLibrariesDialogController controller = loader.getController();
+      controller.setLibraries(project.getProjectLibraries());
+      d.setDialogPane(dp);
+      d.show();
+      d.setResultConverter(param -> param.getButtonData().getTypeCode().equals("A"));
+      d.setOnCloseRequest(event -> {
+        if (d.getResult()) {
+          System.out.println(controller.getLibraries());
+          project.getProjectLibraries().clear();
+          project.getProjectLibraries().addAll(controller.getLibraries());
+          reloadProject();
+        }
+      });
+    } catch (IOException e) {
+      getActor().send(new ErrorMessage(this.getClass(), getGroup(), e));
+    }
   }
   
+  private void reloadProject() {
+    try {
+      project.save();
+      this.hide();
+      getActor().send(new SplashShowMessage(true));
+      getActor().send(new SetProjectOMCMessage(getGroup(), project));
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
   
   @FXML
   private void handleSave() {

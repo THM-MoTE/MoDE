@@ -29,8 +29,11 @@
       </VBox.margin>
       <children>
         <TextField fx:id="tfLibrary" editable="false"/>
-        <Button fx:id="btnSelect" mnemonicParsing="false" text="%dialog.new_project.select"/>
-        <Button fx:id="btnAdd" mnemonicParsing="false" text="%dialog.new_project.add"/>
+        <Button fx:id="btnSelect" onAction="#onSelectLibrary" mnemonicParsing="false"
+                text="%dialog.new_project.select"/>
+        <Button fx:id="btnAdd" onAction="#onAddLibrary" mnemonicParsing="false" text="%dialog.new_project.add"/>
+        <Button fx:id="btnRemove" onAction="#onRemoveLibraries" mnemonicParsing="false"
+                text="%dialog.new_project.remove_selected"/>
       </children>
     </HBox>
     <TreeView fx:id="tvLibraries" prefWidth="200.0">

@@ -79,8 +79,8 @@ public class Project extends MyObservable {
   
   private void loadProjectLibraries() throws IOException {
     Path importsFile = moFile.resolveSibling(importFileName);
-    if (projectLibraries.isEmpty()) return;
-    
+    if (!Files.exists(importsFile)) return;
+    projectLibraries.clear();
     projectLibraries.addAll(Files.lines(importsFile).map(Paths::get).collect(Collectors.toList()));
   }
   

@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>de.thm.mni.mote.mode</groupId>
   <artifactId>MoDE</artifactId>
-  <version>0.5.1</version>
+  <version>0.6</version>
   
   <packaging>jar</packaging>
   
@@ -98,7 +98,7 @@
     <dependency>
       <groupId>de.thm.mni.mhpp11</groupId>
       <artifactId>jActor</artifactId>
-      <version>0.1</version>
+      <version>0.2</version>
     </dependency>
   
     <dependency>

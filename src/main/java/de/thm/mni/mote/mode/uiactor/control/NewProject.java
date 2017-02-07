@@ -11,6 +11,4 @@ public interface NewProject {
   BooleanProperty getIsValidProperty();
   
   void setProjectBuilder(Project.ProjectBuilder builder);
-  
-  Project.ProjectBuilder getProjectBuilder();
 }
