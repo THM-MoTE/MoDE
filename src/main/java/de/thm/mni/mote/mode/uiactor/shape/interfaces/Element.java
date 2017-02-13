@@ -20,6 +20,7 @@ public interface Element {
   ObservableList<Transform> getTransforms();
   
   default void init() {
+    getTransforms().clear();
     getData().getOrigin().addListener((observable, oldValue, newValue) -> updateOrigin(newValue));
     getData().getRotation().addListener((observable, oldValue, newValue) -> updateRotation(newValue));
     updateOrigin(getData().getOrigin().get());

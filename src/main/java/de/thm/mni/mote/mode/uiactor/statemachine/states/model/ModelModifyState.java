@@ -1,9 +1,7 @@
 package de.thm.mni.mote.mode.uiactor.statemachine.states.model;
 
-import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoDiagramGroup;
-import de.thm.mni.mote.mode.uiactor.control.modelica.MoIconGroup;
-import de.thm.mni.mote.mode.uiactor.handlers.FocusHandler;
+import de.thm.mni.mote.mode.uiactor.elementmanager.elements.ManagedMoIconGroup;
 import de.thm.mni.mote.mode.uiactor.statemachine.states.NoState;
 import de.thm.mni.mote.mode.uiactor.statemachine.states.State;
 import de.thm.mni.mote.mode.uiactor.statemachine.states.connection.ConnectionCreateState;
@@ -29,11 +27,11 @@ import java.util.Arrays;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @ToString
 @EqualsAndHashCode(callSuper = true)
-public class ModelModifyState extends State<MouseEvent, MoIconGroup> {
+public class ModelModifyState extends State<MouseEvent, ManagedMoIconGroup> {
   
   private final MoDiagramGroup parent;
   
-  public ModelModifyState(MoDiagramGroup parent, MoIconGroup source) {
+  public ModelModifyState(MoDiagramGroup parent, ManagedMoIconGroup source) {
     super(source);
     this.parent = parent;
   }
@@ -49,18 +47,13 @@ public class ModelModifyState extends State<MouseEvent, MoIconGroup> {
   
   @Override
   public void enter() {
-    try {
-      FocusHandler.getInstance().setFocus(getSource());
-    } catch (ParserException e) {
-      e.printStackTrace(); //TODO send msg
-    }
+
     this.getMachine().getScene().setCursor(Cursor.HAND);
   }
   
   @Override
   public void exit() {
-    MoIconGroup source = getSource();
-    FocusHandler.getInstance().clearFocus();
+    ManagedMoIconGroup source = getSource();
     if (source != null) source.setOpacity(1.0);
   }
 }

@@ -5,7 +5,9 @@ import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoDiagramGroup;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoGroup;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoIconGroup;
+import de.thm.mni.mote.mode.uiactor.elementmanager.ElementManager;
 import de.thm.mni.mote.mode.uiactor.handlers.StateHandler;
+import de.thm.mni.mote.mode.uiactor.statemachine2.StateMachine2;
 import de.thm.mni.mote.mode.util.Utilities;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -44,13 +46,24 @@ public class MainTabControl extends Tab implements Initializable {
       e.printStackTrace();
     }
   
+    ElementManager.getInstance(data);
+  
     setOnSelectionChanged(event -> {
       if (MainTabControl.this.isSelected()) {
-        if (main.getContent() instanceof MoDiagramGroup)
+        StateMachine2.getInstance(data).enter();
+        if (main.getContent() instanceof MoDiagramGroup) {
           StateHandler.getInstance((MoDiagramGroup) main.getContent());
-        else
+        } else {
           StateHandler.getInstance().setParent(null);
+        }
+      } else {
+        StateMachine2.getInstance(data).leave();
       }
+    });
+  
+    this.setOnClosed(event -> {
+      ElementManager.removeInstance(data);
+      StateMachine2.removeInstance(data);
     });
   }
   
@@ -72,6 +85,8 @@ public class MainTabControl extends Tab implements Initializable {
       mp.setLayoutY(100.);
       mp.setInternalStyle("-fx-background-color: white;");
       main.setContent(mp);
+  
+      if (mp instanceof MoDiagramGroup) ((MoDiagramGroup) mp).addHandler(StateMachine2.getInstance(this, data));
     } catch (ParserException e) {
       e.printStackTrace();
     }
@@ -80,7 +95,7 @@ public class MainTabControl extends Tab implements Initializable {
   }
   
   private void updateText(Change unsavedChanges) {
-    this.setText(data.getSimpleName() + ((diagram) ? "" : "(modelica)"));
+    this.setText(data.getSimpleName() + ((diagram) ? "" : "(icon)"));
     if (!unsavedChanges.equals(Change.NONE)) this.setText(this.getText() + "*");
     //TODO: text color
   }

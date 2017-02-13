@@ -5,12 +5,14 @@ import de.thm.mni.mote.mode.modelica.MoConnector;
 import de.thm.mni.mote.mode.modelica.MoContainer;
 import de.thm.mni.mote.mode.modelica.MoVariable;
 import de.thm.mni.mote.mode.parser.ParserException;
-import de.thm.mni.mote.mode.uiactor.handlers.FocusHandler;
+import de.thm.mni.mote.mode.uiactor.elementmanager.elements.ManagedMoIconGroup;
 import de.thm.mni.mote.mode.uiactor.handlers.StateHandler;
 import javafx.collections.ListChangeListener;
-import javafx.event.EventType;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.NonInvertibleTransformException;
 
@@ -30,87 +32,79 @@ public class MoDiagramGroup extends MoGroup {
   protected void initImage() throws ParserException {
     initVariables();
     initConnections();
-    initListeners(this);
+    addHandler(StateHandler.getInstance(this)); //TODO: remove
     coordianteSystem.setFill(Color.WHITE);
   }
   
-  private void initListeners(MoGroup group) {
+  private void addListener(MoGroup group, EventHandler<Event> eventHandler) {
     if (group.equals(this)) {
-      StateHandler.getInstance(this);
-      this.addEventHandler(EventType.ROOT, StateHandler.getInstance(this));
-      group.getBasis().getChildren().forEach(this::addGroupListeners);
-    } else if (group instanceof MoIconGroup) group.getBasis().getChildren().forEach((node) -> {
-      try {
-        addIconListeners(node);
-      } catch (ParserException e) {
-        e.printStackTrace(); //TODO: send msg
-      }
-    });
+      group.addEventHandler(MouseEvent.ANY, eventHandler);
+      group.getBasis().getChildren().forEach(node -> this.addGroupListener(node, eventHandler));
+  
+    } else if (group instanceof MoIconGroup) group.getBasis().getChildren().forEach(node -> this.addIconListener(node, eventHandler));
   
     group.getBasis().getChildren().addListener((ListChangeListener<Node>) c -> {
       while (c.next()) {
         c.getAddedSubList().forEach(n -> {
-          if (group.equals(MoDiagramGroup.this)) addGroupListeners(n);
-          else if (group instanceof MoIconGroup) try {
-            addIconListeners(n);
-          } catch (ParserException e) {
-            e.printStackTrace(); //TODO: send msg
-          }
+          if (group.equals(MoDiagramGroup.this)) addGroupListener(n, eventHandler);
+          else if (group instanceof MoIconGroup) addIconListener(n, eventHandler);
         });
-        c.getRemoved().forEach(this::removeListeners);
+        c.getRemoved().forEach(n -> this.removeListeners(n, eventHandler));
       }
     });
   }
   
-  private void addIconListeners(Node node) throws ParserException {
-    if (node instanceof MoIconGroup && ((MoIconGroup) node).getMoClass() instanceof MoConnector) {
-      node.addEventHandler(EventType.ROOT, StateHandler.getInstance(this));
+  private void addIconListener(Node node, EventHandler<Event> eventHandler) {
+    try {
+      if (node instanceof MoIconGroup && ((MoIconGroup) node).getMoClass() instanceof MoConnector) {
+        node.addEventHandler(MouseEvent.ANY, eventHandler);
+      }
+    } catch (ParserException e) {
+      e.printStackTrace();
     }
   }
   
-  private void addGroupListeners(Node node) {
+  private void addGroupListener(Node node, EventHandler<Event> eventHandler) {
     if ((node instanceof MoIconGroup) && ((MoIconGroup) node).getVariable() == null) return;
-  
-    node.addEventHandler(EventType.ROOT, StateHandler.getInstance(this));
+    
+    node.addEventHandler(MouseEvent.ANY, eventHandler);
+
     if ((node instanceof MoIconGroup)) {
-      initListeners((MoIconGroup) node);
+      addListener((MoIconGroup) node, eventHandler);
     }
   }
   
-  private void removeListeners(Node node) {
-    node.removeEventHandler(EventType.ROOT, StateHandler.getInstance(this));
-    if (node instanceof MoGroup) ((MoGroup) node).getBasis().getChildren().forEach(this::removeListeners);
+  private void removeListeners(Node node, EventHandler<Event> eventHandler) {
+    node.removeEventHandler(MouseEvent.ANY, eventHandler);
+    
+    if (node instanceof MoGroup) ((MoGroup) node).getBasis().getChildren().forEach(n -> this.removeListeners(n, eventHandler));
   }
   
+  public void addHandler(final EventHandler<Event> eventHandler) {
+    addListener(this, eventHandler);
+  }
+  
+  public void removeHandler(final EventHandler<Event> eventHandler) {
+    this.removeListeners(this, eventHandler);
+  }
   
   private void initVariables() throws ParserException {
-    this.getMoClass().getVariables().forEach((mv) -> {
-      try {
-        super.initVariable(mv);
-      } catch (ParserException e) {
-        e.printStackTrace(); //TODO: send msg
-      }
-    });
+    this.getMoClass().getVariables().forEach(this::initVariable);
   
     this.getMoClass().getVariables().addListener((ListChangeListener<MoVariable>) c -> {
       while (c.next()) {
-        c.getAddedSubList().forEach((mv) -> {
-          try {
-            MoDiagramGroup.this.initVariable(mv);
-          } catch (ParserException e) {
-            e.printStackTrace(); //TODO: send msg
-          }
-        });
+        c.getAddedSubList().forEach(this::initVariable);
         c.getRemoved().forEach(MoDiagramGroup.this::remove);
       }
     });
-  
-    this.parentProperty().addListener((observable, oldValue, newValue) -> {
-      if (oldValue != null) oldValue.setOnMouseClicked(null);
-      if (newValue != null) newValue.setOnMouseClicked(FocusHandler.getInstance());
-    });
   }
   
+  private void initVariable(MoVariable mv) {
+    if (mv.getPlacement() == null || (mv.getPlacement().getIconTransformation() == null && mv.getPlacement().getDiagramTransformation() == null)) return;
+    MoIconGroup mip = new ManagedMoIconGroup(mv, false);
+    getData().put(mv, mip);
+    this.add(mip);
+  }
   private void initConnections() throws ParserException {
     this.getMoClass().getConnections().forEach(this::initConnection);
     this.getMoClass().getConnections().addListener((ListChangeListener<MoConnection>) c -> {

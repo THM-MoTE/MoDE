@@ -3,7 +3,7 @@ package de.thm.mni.mote.mode.uiactor.statemachine.states.connection;
 import de.thm.mni.mote.mode.modelica.MoConnection;
 import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoDiagramGroup;
-import de.thm.mni.mote.mode.uiactor.shape.Line;
+import de.thm.mni.mote.mode.uiactor.elementmanager.elements.ManagedLine;
 import javafx.geometry.Point2D;
 import javafx.scene.input.MouseEvent;
 import lombok.EqualsAndHashCode;
@@ -16,7 +16,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 public class ConnectionDeleteState extends ConnectionModifyState {
   
-  public ConnectionDeleteState(MoDiagramGroup parent, Line source) {
+  public ConnectionDeleteState(MoDiagramGroup parent, ManagedLine source) {
     super(parent, source);
   }
   

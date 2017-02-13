@@ -1,9 +1,7 @@
 package de.thm.mni.mote.mode.uiactor.statemachine.states.connection;
 
-import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoDiagramGroup;
-import de.thm.mni.mote.mode.uiactor.handlers.FocusHandler;
-import de.thm.mni.mote.mode.uiactor.shape.Line;
+import de.thm.mni.mote.mode.uiactor.elementmanager.elements.ManagedLine;
 import de.thm.mni.mote.mode.uiactor.statemachine.states.NoState;
 import de.thm.mni.mote.mode.uiactor.statemachine.states.State;
 import de.thm.mni.mote.mode.uiactor.statemachine.states.diagram.DiagramZoomState;
@@ -29,11 +27,11 @@ import java.util.Arrays;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @ToString
 @EqualsAndHashCode(callSuper = true)
-public class ConnectionModifyState extends State<MouseEvent, Line> {
+public class ConnectionModifyState extends State<MouseEvent, ManagedLine> {
   
   final MoDiagramGroup parent;
   
-  public ConnectionModifyState(MoDiagramGroup parent, Line source) {
+  public ConnectionModifyState(MoDiagramGroup parent, ManagedLine source) {
     super(source);
     this.parent = parent;
   }
@@ -50,17 +48,12 @@ public class ConnectionModifyState extends State<MouseEvent, Line> {
   
   @Override
   public void enter() {
-    try {
-      FocusHandler.getInstance().setFocus(getSource());
-    } catch (ParserException e) {
-      e.printStackTrace(); //TODO send msg
-    }
     getMachine().getScene().setCursor(Cursor.HAND);
   }
   
   @Override
   public void exit() {
-    FocusHandler.getInstance().clearFocus();
+  
   }
   
   protected Integer findNearPointPos(Point2D point) {

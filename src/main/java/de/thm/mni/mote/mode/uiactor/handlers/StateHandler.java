@@ -4,7 +4,8 @@ import de.thm.mni.mote.mode.modelica.MoConnector;
 import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoDiagramGroup;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoIconGroup;
-import de.thm.mni.mote.mode.uiactor.shape.Line;
+import de.thm.mni.mote.mode.uiactor.elementmanager.elements.ManagedLine;
+import de.thm.mni.mote.mode.uiactor.elementmanager.elements.ManagedMoIconGroup;
 import de.thm.mni.mote.mode.uiactor.statemachine.StateMachine;
 import de.thm.mni.mote.mode.uiactor.statemachine.states.State;
 import de.thm.mni.mote.mode.uiactor.statemachine.states.connection.*;
@@ -89,8 +90,8 @@ public class StateHandler implements EventHandler<Event> {
   
   @SuppressWarnings("unchecked")
   private Boolean handleLine(Node src, EventType type, Event event) {
-    if (src instanceof Line) {
-      Line line = (Line) src;
+    if (src instanceof ManagedLine) {
+      ManagedLine line = (ManagedLine) src;
       
       if (this.sm.isSwitchAllowed(type, ConnectionModifyState.class)) {        //click
         this.sm.switchToState(new ConnectionModifyState(getParent(), line));
@@ -126,8 +127,8 @@ public class StateHandler implements EventHandler<Event> {
   
   @SuppressWarnings("unchecked")
   private Boolean handleModel(Node src, EventType type, Event event) {
-    if (src instanceof MoIconGroup && src.getParent().getParent() instanceof MoDiagramGroup) {
-      MoIconGroup mig = (MoIconGroup) src;
+    if (src instanceof ManagedMoIconGroup && src.getParent().getParent() instanceof MoDiagramGroup) {
+      ManagedMoIconGroup mig = (ManagedMoIconGroup) src;
       if (this.sm.isSwitchAllowed(type, ModelOpenState.class)) {           //double click
         this.sm.switchToState(new ModelOpenState(getParent(), mig));
         return true;

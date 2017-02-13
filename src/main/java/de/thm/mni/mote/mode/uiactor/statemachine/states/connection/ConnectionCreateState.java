@@ -6,7 +6,7 @@ import de.thm.mni.mote.mode.modelica.graphics.MoLine;
 import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoDiagramGroup;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoIconGroup;
-import de.thm.mni.mote.mode.uiactor.shape.Line;
+import de.thm.mni.mote.mode.uiactor.elementmanager.elements.ManagedLine;
 import de.thm.mni.mote.mode.uiactor.statemachine.states.NoState;
 import de.thm.mni.mote.mode.uiactor.statemachine.states.State;
 import javafx.collections.ListChangeListener;
@@ -62,8 +62,8 @@ public class ConnectionCreateState extends State<MouseEvent, MoIconGroup> {
         public void onChanged(Change<? extends Node> c) {
           while (c.next()) {
             for (Node n : c.getAddedSubList()) {
-              if (n instanceof Line) {
-                ConnectionCreateState.this.getMachine().switchToState(new ConnectionModifyState(parent, (Line) n));
+              if (n instanceof ManagedLine) {
+                ConnectionCreateState.this.getMachine().switchToState(new ConnectionModifyState(parent, (ManagedLine) n));
               }
             }
             parent.getBasis().getChildren().removeListener(this);

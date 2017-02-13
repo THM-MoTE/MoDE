@@ -2,7 +2,7 @@ package de.thm.mni.mote.mode.uiactor.statemachine.states.model;
 
 import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoDiagramGroup;
-import de.thm.mni.mote.mode.uiactor.control.modelica.MoIconGroup;
+import de.thm.mni.mote.mode.uiactor.elementmanager.elements.ManagedMoIconGroup;
 import javafx.scene.input.MouseEvent;
 import lombok.EqualsAndHashCode;
 
@@ -13,7 +13,7 @@ import lombok.EqualsAndHashCode;
 public class ModelDeleteState extends ModelModifyState {
   
   
-  public ModelDeleteState(MoDiagramGroup parent, MoIconGroup source) {
+  public ModelDeleteState(MoDiagramGroup parent, ManagedMoIconGroup source) {
     super(parent, source);
   }
   

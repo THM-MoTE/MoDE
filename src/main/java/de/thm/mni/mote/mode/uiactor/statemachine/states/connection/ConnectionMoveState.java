@@ -1,7 +1,7 @@
 package de.thm.mni.mote.mode.uiactor.statemachine.states.connection;
 
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoDiagramGroup;
-import de.thm.mni.mote.mode.uiactor.shape.Line;
+import de.thm.mni.mote.mode.uiactor.elementmanager.elements.ManagedLine;
 import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
 import javafx.scene.input.MouseEvent;
@@ -37,7 +37,7 @@ public class ConnectionMoveState extends ConnectionModifyState {
   Point2D firstPoint = null;
   Point2D secondPoint = null;
   
-  public ConnectionMoveState(MoDiagramGroup parent, Line source) {
+  public ConnectionMoveState(MoDiagramGroup parent, ManagedLine source) {
     super(parent, source);
     this.parent = parent;
   }

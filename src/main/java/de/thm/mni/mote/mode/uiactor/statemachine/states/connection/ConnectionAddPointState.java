@@ -1,7 +1,7 @@
 package de.thm.mni.mote.mode.uiactor.statemachine.states.connection;
 
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoDiagramGroup;
-import de.thm.mni.mote.mode.uiactor.shape.Line;
+import de.thm.mni.mote.mode.uiactor.elementmanager.elements.ManagedLine;
 import javafx.geometry.Point2D;
 import javafx.scene.input.MouseEvent;
 import lombok.EqualsAndHashCode;
@@ -13,7 +13,7 @@ import lombok.EqualsAndHashCode;
 public class ConnectionAddPointState extends ConnectionModifyState {
   
   
-  public ConnectionAddPointState(MoDiagramGroup parent, Line source) {
+  public ConnectionAddPointState(MoDiagramGroup parent, ManagedLine source) {
     super(parent, source);
   }
   

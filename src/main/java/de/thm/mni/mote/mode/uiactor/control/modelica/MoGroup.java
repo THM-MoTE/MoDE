@@ -5,6 +5,7 @@ import de.thm.mni.mote.mode.modelica.MoContainer;
 import de.thm.mni.mote.mode.modelica.MoVariable;
 import de.thm.mni.mote.mode.modelica.graphics.*;
 import de.thm.mni.mote.mode.parser.ParserException;
+import de.thm.mni.mote.mode.uiactor.elementmanager.elements.ManagedLine;
 import de.thm.mni.mote.mode.uiactor.shape.*;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.Element;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.HasInitialStroke;
@@ -55,6 +56,7 @@ public abstract class MoGroup extends Group {
     this.container = container;
     this.getChildren().add(basis);
     basis.getTransforms().addAll(scale, flipping, position);
+    this.setFocusTraversable(true);
   }
   
   final void init() throws ParserException {
@@ -161,17 +163,11 @@ public abstract class MoGroup extends Group {
     }
   }
   
-  void initVariable(MoVariable mv) throws ParserException {
-    if (mv.getPlacement() == null || (mv.getPlacement().getIconTransformation() == null && mv.getPlacement().getDiagramTransformation() == null)) return;
-    MoIconGroup mip = new MoIconGroup(mv, false);
-    data.put(mv, mip);
-    this.add(mip);
-  }
-  
   protected abstract void initImage() throws ParserException;
   
   public void add(Node node) {
-    basis.getChildren().add(node);
+    if (node instanceof ManagedLine) basis.getChildren().add(1, node);
+    else basis.getChildren().add(node);
   }
   
   public void remove(MoGraphic mg) {
@@ -207,7 +203,8 @@ public abstract class MoGroup extends Group {
       if (me.getEndAngle() + me.getStartAngle() == 360) this.add(new Ellipse(this, me));
       else this.add(new Arc(this, me));
     } else if (mg instanceof MoLine) {
-      this.add(new Line(this, (MoLine) mg));
+      if (this instanceof MoDiagramGroup) this.add(new ManagedLine(this, (MoLine) mg));
+      else this.add(new Line(this, (MoLine) mg));
     } else if (mg instanceof MoPolygon) {
       this.add(new Polygon(this, (MoPolygon) mg));
     }

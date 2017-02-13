@@ -1,10 +1,9 @@
 package de.thm.mni.mote.mode.uiactor.statemachine.states.model;
 
 import de.thm.mni.mote.mode.modelica.MoConnection;
-import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoDiagramGroup;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoIconGroup;
-import de.thm.mni.mote.mode.uiactor.handlers.FocusHandler;
+import de.thm.mni.mote.mode.uiactor.elementmanager.elements.ManagedMoIconGroup;
 import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
 import javafx.scene.input.MouseEvent;
@@ -30,7 +29,7 @@ public class ModelMoveState extends ModelModifyState {
   
   Translate o;
   
-  public ModelMoveState(MoDiagramGroup parent, MoIconGroup source) {
+  public ModelMoveState(MoDiagramGroup parent, ManagedMoIconGroup source) {
     super(parent, source);
     this.o = source.getOrigin();
   }
@@ -50,7 +49,6 @@ public class ModelMoveState extends ModelModifyState {
   @Override
   public void exit() {
     MoIconGroup source = getSource();
-    FocusHandler.getInstance().clearFocus();
     if (source != null) source.setOpacity(1.0);
   }
   
@@ -68,14 +66,10 @@ public class ModelMoveState extends ModelModifyState {
   
   @Override
   protected void handlePressed(MouseEvent event) {
-    MoIconGroup source = getSource();
+    ManagedMoIconGroup source = getSource();
     source.toFront();
     source.setOpacity(0.8);
-    try {
-      FocusHandler.getInstance().setFocus(source);
-    } catch (ParserException e) {
-      e.printStackTrace(); //TODO send msg
-    }
+  
     startMousePos = getParent().convertScenePointToDiagramPoint(event.getSceneX(), event.getSceneY());
     startOrigin = new Point2D(o.getX(), o.getY());
     source.getVariable().getConnections().forEach(moConn -> {

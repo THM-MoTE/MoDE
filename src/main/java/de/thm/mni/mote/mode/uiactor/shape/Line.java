@@ -5,13 +5,9 @@ import de.thm.mni.mote.mode.modelica.graphics.Utilities;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoGroup;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.CalculatePathElements;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.Element;
-import de.thm.mni.mote.mode.uiactor.shape.interfaces.Focusable;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.HasInitialStroke;
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Point2D;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.LineTo;
-import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Transform;
@@ -20,18 +16,15 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 
-import java.util.List;
-
 /**
  * Created by hobbypunk on 02.11.16.
  */
 
 @Getter
 @Setter
-public class Line extends Path implements Element, HasInitialStroke, CalculatePathElements, Focusable {
+public class Line extends Path implements Element, HasInitialStroke, CalculatePathElements {
   private final MoGroup moParent;
   private final MoLine data;
-  @Getter private Boolean hasFocus = false;
   
   private final Translate origin = Transform.translate(0., 0.);
   private final Rotate rotation = Transform.rotate(0., 0., 0.);
@@ -41,10 +34,7 @@ public class Line extends Path implements Element, HasInitialStroke, CalculatePa
   public Line(@NonNull MoGroup parent, @NonNull MoLine data) {
     this.moParent = parent;
     this.data = data;
-    data.getPoints().addListener((ListChangeListener<Point2D>) c -> {
-      calcElements(getData().getPoints());
-      if (hasFocus) calcFocus();
-    });
+    data.getPoints().addListener((ListChangeListener<Point2D>) c -> calcElements(getData().getPoints()));
     init();
   }
   
@@ -61,31 +51,5 @@ public class Line extends Path implements Element, HasInitialStroke, CalculatePa
     this.getStrokeDashArray().addAll(Utilities.getLinePattern(getData().getLinePattern().get()));
     this.setInitialStrokeWidth(getData().getThickness());
     this.setStroke(getData().getColor().get());
-  }
-  
-  @Override
-  public void setFocus() {
-    hasFocus = true;
-    this.setStroke(Color.RED);
-    calcFocus();
-  }
-  
-  private void calcFocus() {
-    List<Point2D> points = getData().getPoints();
-    for (int i = 1, pointsSize = points.size() - 1; i < pointsSize; i++) {
-      Point2D p = points.get(i);
-      this.getElements().add(new MoveTo(p.getX() - 1, p.getY() - 1));
-      this.getElements().add(new LineTo(p.getX() + 1, p.getY() + 1));
-      this.getElements().add(new MoveTo(p.getX() - 1, p.getY() + 1));
-      this.getElements().add(new LineTo(p.getX() + 1, p.getY() - 1));
-    }
-  }
-  
-  
-  @Override
-  public void clearFocus() {
-    calcElements(getData().getPoints());
-    this.setStroke(Color.BLACK);
-    hasFocus = false;
   }
 }

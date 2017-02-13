@@ -1,15 +1,13 @@
 package de.thm.mni.mote.mode.uiactor.control.modelica;
 
-import de.thm.mni.mote.mode.modelica.MoConnector;
 import de.thm.mni.mote.mode.modelica.MoContainer;
 import de.thm.mni.mote.mode.modelica.MoVariable;
 import de.thm.mni.mote.mode.modelica.graphics.MoText;
 import de.thm.mni.mote.mode.modelica.graphics.MoTransformation;
 import de.thm.mni.mote.mode.parser.ParserException;
-import de.thm.mni.mote.mode.uiactor.shape.interfaces.Focusable;
+import de.thm.mni.mote.mode.uiactor.elementmanager.elements.ManagedMoIconConnectorGroup;
 import javafx.beans.property.ObjectProperty;
 import javafx.geometry.Point2D;
-import javafx.scene.paint.Color;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Transform;
@@ -23,7 +21,7 @@ import lombok.experimental.FieldDefaults;
  */
 @Getter
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
-public class MoIconGroup extends MoGroup implements Focusable {
+public class MoIconGroup extends MoGroup {
   Translate origin = new Translate();
   Rotate rotation = new Rotate();
   Affine transformation = new Affine();
@@ -39,11 +37,11 @@ public class MoIconGroup extends MoGroup implements Focusable {
     this(parent, null, iconOnly);
   }
   
-  MoIconGroup(MoVariable variable, Boolean iconOnly) throws ParserException {
+  protected MoIconGroup(MoVariable variable, Boolean iconOnly) throws ParserException {
     this(variable.getType(), variable, iconOnly);
   }
   
-  private MoIconGroup(MoContainer parent, MoVariable variable, Boolean iconOnly) {
+  protected MoIconGroup(MoContainer parent, MoVariable variable, Boolean iconOnly) {
     super(parent);
     this.variable = variable;
     this.iconOnly = iconOnly;
@@ -62,13 +60,14 @@ public class MoIconGroup extends MoGroup implements Focusable {
   }
   
   private void initConnectors() throws ParserException {
-    getMoClass().getConnectorVariables().forEach((mv) -> {
-      try {
-        super.initVariable(mv);
-      } catch (ParserException e) {
-        e.printStackTrace(); //TODO: send msg
-      }
-    });
+    getMoClass().getConnectorVariables().forEach(this::initConnector);
+  }
+  
+  private void initConnector(MoVariable mv) {
+    if (mv.getPlacement() == null || (mv.getPlacement().getIconTransformation() == null && mv.getPlacement().getDiagramTransformation() == null)) return;
+    MoIconGroup mip = new ManagedMoIconConnectorGroup(mv, false);
+    getData().put(mv, mip);
+    this.add(mip);
   }
   
   private void initTransformation() throws ParserException {
@@ -114,19 +113,5 @@ public class MoIconGroup extends MoGroup implements Focusable {
   
     this.transformation.append(Transform.translate(0, newVariableHeight));
     this.transformation.append(Transform.scale(1, -1));
-  }
-  
-  @Override
-  public void setFocus() throws ParserException {
-    Color color = (getMoClass() instanceof MoConnector) ? Color.RED : Color.CORNFLOWERBLUE;
-    //this.setEffect(new DropShadow(5., color));
-    this.getCoordianteSystem().setStroke(color);
-    this.getCoordianteSystem().setOpacity(1);
-  }
-  
-  @Override
-  public void clearFocus() {
-    this.setEffect(null);
-    this.getCoordianteSystem().setStroke(null);
   }
 }
