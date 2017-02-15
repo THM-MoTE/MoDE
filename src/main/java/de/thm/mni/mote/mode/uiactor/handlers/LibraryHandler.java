@@ -33,6 +33,7 @@ public class LibraryHandler {
       else
         tab = new MainTabControl(container, false);
       tabPane.getTabs().add(tab);
+      tab.lateInitialize(tabPane.getScene());
       ElementManager.getInstance(container);
       StateMachine2.getInstance(tab, container);
       tabPane.getSelectionModel().select(tab);

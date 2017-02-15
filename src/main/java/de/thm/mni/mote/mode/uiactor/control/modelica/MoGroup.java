@@ -33,6 +33,7 @@ import java.util.Map;
 @Getter(AccessLevel.PROTECTED)
 @Setter(AccessLevel.PROTECTED)
 public abstract class MoGroup extends Group {
+  protected static final double ZOOMFACTOR = 1.2;
   @Getter private final Group basis = new Group();
   javafx.scene.shape.Rectangle coordianteSystem = null; //TODO: add InitialStroke Interface
   @Getter private final MoContainer container;
@@ -79,14 +80,12 @@ public abstract class MoGroup extends Group {
     });
   }
   
-  public MoGroup scaleDelta(Double deltaX, Double deltaY) throws ParserException {
-    Point2D extent0 = this.getMoClass().getIcon().getMoCoordinateSystem().getExtent().get(0).getValue();
-    Point2D extent1 = this.getMoClass().getIcon().getMoCoordinateSystem().getExtent().get(1).getValue();
-    
-    Double oldWidth = Math.max(extent0.getX(), extent1.getX()) - Math.min(extent0.getX(), extent1.getX());
-    Double oldHeight = Math.max(extent0.getY(), extent1.getY()) - Math.min(extent0.getY(), extent1.getY());
-    
-    return scaleToSize(oldWidth + deltaX, oldHeight + deltaY);
+  protected Double getScaleFactor(Boolean scaleUp) {
+    return (scaleUp) ? ZOOMFACTOR : (1 / ZOOMFACTOR);
+  }
+  
+  protected MoGroup scaleDelta(Boolean scaleUp) throws ParserException {
+    return scaleToFactor(scale.getX() * getScaleFactor(scaleUp), scale.getY() * getScaleFactor(scaleUp), false);
   }
   
   
@@ -97,11 +96,16 @@ public abstract class MoGroup extends Group {
   
     Double oldWidth = Math.max(extent0.getX(), extent1.getX()) - Math.min(extent0.getX(), extent1.getX());
     Double oldHeight = Math.max(extent0.getY(), extent1.getY()) - Math.min(extent0.getY(), extent1.getY());
-    
-    
-    scale.setX(scale.getX() * newWidth / oldWidth);
-    scale.setY(scale.getY() * newHeight / oldHeight);
-    preventScaling(1., 1.);
+  
+    return scaleToFactor(scale.getX() * newWidth / oldWidth, scale.getY() * newHeight / oldHeight, true);
+  }
+  
+  private MoGroup scaleToFactor(Double factorX, Double factorY, Boolean force) {
+    if (force || factorX > 0.25) {
+      scale.setX(factorX);
+      scale.setY(factorY);
+      preventScaling(1., 1.);
+    }
     return this;
   }
   

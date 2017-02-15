@@ -51,7 +51,7 @@ public class ConnectionMoveState extends ConnectionModifyState {
   @Override
   protected void handlePressed(MouseEvent event) {
     parent.getScene().setCursor(Cursor.MOVE);
-    startMousePos = parent.convertScenePointToDiagramPoint(event.getSceneX(), event.getSceneY());
+    startMousePos = parent.convertScenePointToDiagramPoint(new Point2D(event.getSceneX(), event.getSceneY()));
     Integer pos = findNearPointPos(startMousePos);
     if (pos != null) {
       firstPointPos = pos;
@@ -72,7 +72,7 @@ public class ConnectionMoveState extends ConnectionModifyState {
   
   @Override
   protected void handleDragged(MouseEvent event) {
-    Point2D mousePos = parent.convertScenePointToDiagramPoint(event.getSceneX(), event.getSceneY());
+    Point2D mousePos = parent.convertScenePointToDiagramPoint(new Point2D(event.getSceneX(), event.getSceneY()));
     Point2D delta = mousePos.subtract(startMousePos);
     if (status == STATUS.POINT || status == STATUS.LINE) {
       getSource().getData().getPoints().set(firstPointPos, firstPoint.add(delta));

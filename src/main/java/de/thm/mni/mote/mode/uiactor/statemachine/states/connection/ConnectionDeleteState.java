@@ -25,7 +25,7 @@ public class ConnectionDeleteState extends ConnectionModifyState {
   
   @Override
   protected void handleClicked(MouseEvent event) {
-    Point2D mousePos = getParent().convertScenePointToDiagramPoint(event.getSceneX(), event.getSceneY());
+    Point2D mousePos = getParent().convertScenePointToDiagramPoint(new Point2D(event.getSceneX(), event.getSceneY()));
     Boolean noState = false;
     
     Integer pos = findNearPointPos(mousePos);

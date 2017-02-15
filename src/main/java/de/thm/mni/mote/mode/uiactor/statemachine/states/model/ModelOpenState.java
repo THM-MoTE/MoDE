@@ -1,10 +1,11 @@
 package de.thm.mni.mote.mode.uiactor.statemachine.states.model;
 
 import de.thm.mni.mote.mode.modelica.MoContainer;
-import de.thm.mni.mote.mode.uiactor.control.MainTabControl;
+import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoDiagramGroup;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoIconGroup;
 import de.thm.mni.mote.mode.uiactor.elementmanager.elements.ManagedMoIconGroup;
+import de.thm.mni.mote.mode.uiactor.handlers.LibraryHandler;
 import de.thm.mni.mote.mode.uiactor.statemachine.states.State;
 import javafx.scene.Parent;
 import javafx.scene.control.TabPane;
@@ -33,7 +34,13 @@ public class ModelOpenState extends State<MouseEvent, ManagedMoIconGroup> {
       MoContainer container = ((MoIconGroup) event.getSource()).getContainer();
       if (container.getElement().hasDiagram()) {
         TabPane tb = findTabPane(this.getSource());
-        if (tb != null) tb.getTabs().add(new MainTabControl(container, true));
+        if (tb != null) {
+          try {
+            LibraryHandler.getInstance().handleMenu(tb, container, "open_as_diagram");
+          } catch (ParserException e) {
+            e.printStackTrace();
+          }
+        }
       }
       getMachine().switchToState(new ModelModifyState(getParent(), getSource()));
     }

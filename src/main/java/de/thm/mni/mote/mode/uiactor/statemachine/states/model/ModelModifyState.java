@@ -6,7 +6,6 @@ import de.thm.mni.mote.mode.uiactor.statemachine.states.NoState;
 import de.thm.mni.mote.mode.uiactor.statemachine.states.State;
 import de.thm.mni.mote.mode.uiactor.statemachine.states.connection.ConnectionCreateState;
 import de.thm.mni.mote.mode.uiactor.statemachine.states.connection.ConnectionMoveState;
-import de.thm.mni.mote.mode.uiactor.statemachine.states.diagram.DiagramZoomState;
 import de.thm.mni.mote.mode.uiactor.utilities.MyEvents;
 import javafx.scene.Cursor;
 import javafx.scene.input.MouseEvent;
@@ -42,7 +41,6 @@ public class ModelModifyState extends State<MouseEvent, ManagedMoIconGroup> {
     getTransitions().put(MyEvents.MOUSE_CTRL_CLICKED, Arrays.asList(ModelDeleteState.class));
     getTransitions().put(MouseEvent.MOUSE_CLICKED, Arrays.asList(NoState.class, this.getClass(), ConnectionCreateState.class));
     getTransitions().put(MouseEvent.MOUSE_PRESSED, Arrays.asList(ModelMoveState.class, ConnectionMoveState.class));
-    getTransitions().put(MyEvents.SCROLL_SHIFT, Arrays.asList(DiagramZoomState.class));
   }
   
   @Override

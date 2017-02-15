@@ -55,7 +55,7 @@ public class ModelMoveState extends ModelModifyState {
   @Override
   protected void handleDragged(MouseEvent event) {
     if (o != null) {
-      Point2D mousePos = getParent().convertScenePointToDiagramPoint(event.getSceneX(), event.getSceneY());
+      Point2D mousePos = getParent().convertScenePointToDiagramPoint(new Point2D(event.getSceneX(), event.getSceneY()));
       Point2D delta = mousePos.subtract(startMousePos);
       updateConnections(delta);
       Point2D origin = startOrigin.add(delta);
@@ -70,7 +70,7 @@ public class ModelMoveState extends ModelModifyState {
     source.toFront();
     source.setOpacity(0.8);
   
-    startMousePos = getParent().convertScenePointToDiagramPoint(event.getSceneX(), event.getSceneY());
+    startMousePos = getParent().convertScenePointToDiagramPoint(new Point2D(event.getSceneX(), event.getSceneY()));
     startOrigin = new Point2D(o.getX(), o.getY());
     source.getVariable().getConnections().forEach(moConn -> {
       Boolean to = moConn.toContains(source.getVariable());

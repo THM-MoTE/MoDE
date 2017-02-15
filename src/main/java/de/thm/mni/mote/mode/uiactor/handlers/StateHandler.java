@@ -9,7 +9,6 @@ import de.thm.mni.mote.mode.uiactor.elementmanager.elements.ManagedMoIconGroup;
 import de.thm.mni.mote.mode.uiactor.statemachine.StateMachine;
 import de.thm.mni.mote.mode.uiactor.statemachine.states.State;
 import de.thm.mni.mote.mode.uiactor.statemachine.states.connection.*;
-import de.thm.mni.mote.mode.uiactor.statemachine.states.diagram.DiagramZoomState;
 import de.thm.mni.mote.mode.uiactor.statemachine.states.model.ModelDeleteState;
 import de.thm.mni.mote.mode.uiactor.statemachine.states.model.ModelModifyState;
 import de.thm.mni.mote.mode.uiactor.statemachine.states.model.ModelMoveState;
@@ -19,6 +18,7 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.scene.Node;
+import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import lombok.AccessLevel;
@@ -33,7 +33,7 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @Setter(AccessLevel.PROTECTED)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class StateHandler implements EventHandler<Event> {
+public class StateHandler implements EventHandler<InputEvent> {
   final StateMachine sm = StateMachine.getInstance();
   private MoDiagramGroup parent = null;
   State<? extends Event, ? extends Node> state;
@@ -56,7 +56,7 @@ public class StateHandler implements EventHandler<Event> {
   }
   
   @SuppressWarnings("ConstantConditions")
-  public void handle(Event event) {
+  public void handle(InputEvent event) {
     if (this.parent == null || event.isConsumed()) return;
     
     EventType type = event.getEventType();
@@ -148,12 +148,7 @@ public class StateHandler implements EventHandler<Event> {
   @SuppressWarnings("unchecked")
   private Boolean handleDiagram(Node src, EventType type, Event event) {
     if (src instanceof MoDiagramGroup) {
-      MoDiagramGroup mdg = (MoDiagramGroup) src;
-      
-      if (this.sm.isSwitchAllowed(type, DiagramZoomState.class)) {      //shift + scroll
-        this.sm.switchToState(new DiagramZoomState(mdg));
-        return true;
-      } else if (this.sm.isSwitchToNoStateAllowed(type)) {
+      if (this.sm.isSwitchToNoStateAllowed(type)) {
         this.sm.switchToNoState();
         return true;
       }

@@ -4,7 +4,6 @@ import de.thm.mni.mote.mode.uiactor.control.modelica.MoDiagramGroup;
 import de.thm.mni.mote.mode.uiactor.elementmanager.elements.ManagedLine;
 import de.thm.mni.mote.mode.uiactor.statemachine.states.NoState;
 import de.thm.mni.mote.mode.uiactor.statemachine.states.State;
-import de.thm.mni.mote.mode.uiactor.statemachine.states.diagram.DiagramZoomState;
 import de.thm.mni.mote.mode.uiactor.statemachine.states.model.ModelMoveState;
 import de.thm.mni.mote.mode.uiactor.utilities.MyEvents;
 import javafx.collections.ObservableList;
@@ -43,7 +42,6 @@ public class ConnectionModifyState extends State<MouseEvent, ManagedLine> {
     getTransitions().put(MyEvents.MOUSE_DOUBLE_CLICKED, Arrays.asList(ConnectionAddPointState.class));
     getTransitions().put(MouseEvent.MOUSE_CLICKED, Arrays.asList(NoState.class, this.getClass(), ConnectionCreateState.class));
     getTransitions().put(MouseEvent.MOUSE_PRESSED, Arrays.asList(ConnectionMoveState.class, ModelMoveState.class));
-    getTransitions().put(MyEvents.SCROLL_SHIFT, Arrays.asList(DiagramZoomState.class));
   }
   
   @Override

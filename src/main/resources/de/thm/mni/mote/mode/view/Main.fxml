@@ -163,7 +163,7 @@
           <VBox.margin>
             <Insets bottom="-1.0" left="-1.0" right="-1.0" top="-1.0"/>
           </VBox.margin>
-          <ScrollPane fitToHeight="true" fitToWidth="true" HBox.hgrow="ALWAYS">
+          <ScrollPane fx:id="spLeft" fitToHeight="true" fitToWidth="true" HBox.hgrow="ALWAYS">
             <HBox.margin>
               <Insets/>
             </HBox.margin>

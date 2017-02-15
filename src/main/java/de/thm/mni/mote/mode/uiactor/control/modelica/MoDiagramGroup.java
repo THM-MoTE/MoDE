@@ -8,10 +8,10 @@ import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.elementmanager.elements.ManagedMoIconGroup;
 import de.thm.mni.mote.mode.uiactor.handlers.StateHandler;
 import javafx.collections.ListChangeListener;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
+import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.NonInvertibleTransformException;
@@ -36,7 +36,7 @@ public class MoDiagramGroup extends MoGroup {
     coordianteSystem.setFill(Color.WHITE);
   }
   
-  private void addListener(MoGroup group, EventHandler<Event> eventHandler) {
+  private void addListener(MoGroup group, EventHandler<InputEvent> eventHandler) {
     if (group.equals(this)) {
       group.addEventHandler(MouseEvent.ANY, eventHandler);
       group.getBasis().getChildren().forEach(node -> this.addGroupListener(node, eventHandler));
@@ -54,7 +54,7 @@ public class MoDiagramGroup extends MoGroup {
     });
   }
   
-  private void addIconListener(Node node, EventHandler<Event> eventHandler) {
+  private void addIconListener(Node node, EventHandler<InputEvent> eventHandler) {
     try {
       if (node instanceof MoIconGroup && ((MoIconGroup) node).getMoClass() instanceof MoConnector) {
         node.addEventHandler(MouseEvent.ANY, eventHandler);
@@ -64,7 +64,7 @@ public class MoDiagramGroup extends MoGroup {
     }
   }
   
-  private void addGroupListener(Node node, EventHandler<Event> eventHandler) {
+  private void addGroupListener(Node node, EventHandler<InputEvent> eventHandler) {
     if ((node instanceof MoIconGroup) && ((MoIconGroup) node).getVariable() == null) return;
     
     node.addEventHandler(MouseEvent.ANY, eventHandler);
@@ -74,17 +74,17 @@ public class MoDiagramGroup extends MoGroup {
     }
   }
   
-  private void removeListeners(Node node, EventHandler<Event> eventHandler) {
-    node.removeEventHandler(MouseEvent.ANY, eventHandler);
+  private void removeListeners(Node node, EventHandler<InputEvent> eventHandler) {
+    node.removeEventHandler(InputEvent.ANY, eventHandler);
     
     if (node instanceof MoGroup) ((MoGroup) node).getBasis().getChildren().forEach(n -> this.removeListeners(n, eventHandler));
   }
   
-  public void addHandler(final EventHandler<Event> eventHandler) {
+  public void addHandler(final EventHandler<InputEvent> eventHandler) {
     addListener(this, eventHandler);
   }
   
-  public void removeHandler(final EventHandler<Event> eventHandler) {
+  public void removeHandler(final EventHandler<InputEvent> eventHandler) {
     this.removeListeners(this, eventHandler);
   }
   
@@ -120,12 +120,8 @@ public class MoDiagramGroup extends MoGroup {
   }
   
   public Point2D convertScenePointToDiagramPoint(Point2D scenePoint) {
-    return convertScenePointToDiagramPoint(scenePoint.getX(), scenePoint.getY());
-  }
-  
-  public Point2D convertScenePointToDiagramPoint(double sceneX, double sceneY) {
-    Point2D p = this.sceneToLocal(sceneX, sceneY);
     try {
+      Point2D p = this.sceneToLocal(scenePoint);
       p = getScale().inverseDeltaTransform(p.getX(), p.getY());
       p = getFlipping().deltaTransform(p);
       
@@ -134,12 +130,31 @@ public class MoDiagramGroup extends MoGroup {
       else x = -getPosition().getX() + p.getX();
       if (getFlippedY()) y = getPosition().getY() - p.getY();
       else y = getPosition().getY() + p.getY();
-      
-      p = new Point2D(x, y);
+  
+      return new Point2D(x, y);
     } catch (NonInvertibleTransformException e) {
       System.out.println("Should never called...");
     }
-    return new Point2D(p.getX(), p.getY());
+    return null;
   }
   
+  public Point2D convertDiagramPointToScenePoint(Point2D p) {
+    
+    try {
+      Double x, y;
+      if (getFlippedX()) x = getPosition().getX() - p.getX();
+      else x = getPosition().getX() + p.getX();
+      if (getFlippedY()) y = -getPosition().getY() - p.getY();
+      else y = -getPosition().getY() + p.getY();
+      
+      p = getScale().deltaTransform(new Point2D(x, y));
+      p = getFlipping().inverseDeltaTransform(p);
+      
+      return this.localToScene(p);
+      
+    } catch (NonInvertibleTransformException e) {
+      System.out.println("Should never called...");
+    }
+    return null;
+  }
 }

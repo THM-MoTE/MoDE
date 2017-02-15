@@ -53,7 +53,7 @@ public class ConnectionCreateState extends State<MouseEvent, MoIconGroup> {
   @Override
   protected void handleClicked(MouseEvent event) {
     MoIconGroup src = (MoIconGroup) event.getSource();
-    Point2D mousePos = parent.convertScenePointToDiagramPoint(event.getSceneX(), event.getSceneY());
+    Point2D mousePos = parent.convertScenePointToDiagramPoint(new Point2D(event.getSceneX(), event.getSceneY()));
     if (startPos == null) {
       startPos = mousePos;
     } else {

@@ -25,9 +25,7 @@ public class ManagedLine extends Line implements Hoverable, Selectable {
     super(parent, data);
     realLine = new ManagedLine(this, data);
     realLine.strokeWidthProperty().addListener((observable, oldValue, newValue) -> {
-      System.out.println(newValue);
-      if (!oldValue.equals(newValue))
-        ManagedLine.this.setStrokeWidth(ManagedLine.this.getStrokeWidth() + ((newValue.doubleValue() < 3) ? 2 : 0));
+      if (!oldValue.equals(newValue)) ManagedLine.this.setStrokeWidth(ManagedLine.this.getStrokeWidth() + ((newValue.doubleValue() < 3) ? 2 : 0));
     });
     
     realLine.init();

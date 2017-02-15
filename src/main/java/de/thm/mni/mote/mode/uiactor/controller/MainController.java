@@ -24,6 +24,7 @@ import de.thm.mni.mote.mode.uiactor.messages.OMCAvailableLibsUIMessage;
 import de.thm.mni.mote.mode.uiactor.messages.OMCDataUIMessage;
 import de.thm.mni.mote.mode.uiactor.messages.OMCSetProjectUIMessage;
 import de.thm.mni.mote.mode.uiactor.statemachine.StateMachine;
+import de.thm.mni.mote.mode.uiactor.utilities.ScrollPaneHorizontalScroll;
 import de.thm.mni.mote.mode.uiactor.utilities.TreeViewWithItemsWrapper;
 import de.thm.mni.mote.mode.util.Utilities;
 import javafx.application.Platform;
@@ -57,6 +58,8 @@ public class MainController extends NotifyController {
     controller.start();
   }
   
+  @FXML private ScrollPane spLeft;
+  
   @FXML private TextField tfLibFilter;
   
   @FXML private HBox hbLeft;
@@ -73,6 +76,8 @@ public class MainController extends NotifyController {
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     super.initialize(location, resources);
+    ScrollPaneHorizontalScroll.modify(spLeft);
+  
     tvwiwLibrary = new TreeViewWithItemsWrapper<>(tvLibrary);
     DragResizer.makeResizable(sLeft, hbLeft, DragResizer.LTR);
     DragResizer.makeResizable(sRight, hbRight, DragResizer.RTL);
@@ -170,7 +175,6 @@ public class MainController extends NotifyController {
       d.setResultConverter(param -> param.getButtonData().getTypeCode().equals("A"));
       d.setOnCloseRequest(event -> {
         if (d.getResult()) {
-          System.out.println(controller.getSelected());
           project.getSystemLibraries().clear();
           project.getSystemLibraries().addAll(controller.getSelected());
           reloadProject();
@@ -196,7 +200,6 @@ public class MainController extends NotifyController {
       d.setResultConverter(param -> param.getButtonData().getTypeCode().equals("A"));
       d.setOnCloseRequest(event -> {
         if (d.getResult()) {
-          System.out.println(controller.getLibraries());
           project.getProjectLibraries().clear();
           project.getProjectLibraries().addAll(controller.getLibraries());
           reloadProject();
