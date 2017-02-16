@@ -5,6 +5,7 @@ import de.thm.mni.mote.mode.uiactor.control.modelica.MoGroup;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.Element;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.FilledElement;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.StrokedElement;
+import javafx.beans.property.DoubleProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Transform;
@@ -35,7 +36,7 @@ public class Rectangle extends javafx.scene.shape.Rectangle implements Element, 
   
   public void setInitialStrokeWidth(Double value) {
     initialStrokeWidth = value;
-    setStrokeWidth(value);
+    setOwnStrokeWidth(value);
   }
   
   public void init() {

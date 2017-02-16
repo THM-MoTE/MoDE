@@ -1,11 +1,11 @@
-package de.thm.mni.mote.mode.uiactor.statemachine2.elements;
+package de.thm.mni.mote.mode.uiactor.statemachine.elements;
 
 import de.thm.mni.mhpp11.jActor.actors.logging.messages.ErrorMessage;
 import de.thm.mni.mhpp11.jActor.actors.messagebus.MessageBus;
 import de.thm.mni.mote.mode.modelica.MoContainer;
 import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoDiagramGroup;
-import de.thm.mni.mote.mode.uiactor.statemachine2.interfaces.Zoomable;
+import de.thm.mni.mote.mode.uiactor.statemachine.interfaces.Zoomable;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;

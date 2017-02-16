@@ -6,15 +6,15 @@ import de.thm.mni.mote.mode.uiactor.control.modelica.MoDiagramGroup;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoGroup;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoIconGroup;
 import de.thm.mni.mote.mode.uiactor.elementmanager.ElementManager;
-import de.thm.mni.mote.mode.uiactor.handlers.StateHandler;
-import de.thm.mni.mote.mode.uiactor.statemachine2.StateMachine2;
-import de.thm.mni.mote.mode.uiactor.statemachine2.elements.ZoomableMoDiagramGroup;
+import de.thm.mni.mote.mode.uiactor.statemachine.StateMachine;
+import de.thm.mni.mote.mode.uiactor.statemachine.elements.ZoomableMoDiagramGroup;
 import de.thm.mni.mote.mode.uiactor.utilities.ScrollPaneHorizontalScroll;
 import de.thm.mni.mote.mode.util.Utilities;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
@@ -54,13 +54,6 @@ public class MainTabControl extends Tab implements Initializable {
     } catch (IOException e) {
       e.printStackTrace();
     }
-  
-    ElementManager.getInstance(data);
-  
-    this.setOnClosed(event -> {
-      ElementManager.removeInstance(data);
-      StateMachine2.removeInstance(data);
-    });
   }
   
   @Override
@@ -82,10 +75,7 @@ public class MainTabControl extends Tab implements Initializable {
       mp.setLayoutX(100.);
       mp.setLayoutY(100.);
       mp.setInternalStyle("-fx-background-color: white;");
-      if (mp instanceof MoDiagramGroup)
-        ((MoDiagramGroup) mp).addHandler(StateMachine2.getInstance(this, data));
       main.getChildren().add(mp);
-      main.addEventHandler(InputEvent.ANY, StateMachine2.getInstance(this, data));
       
     } catch (ParserException e) {
       e.printStackTrace();
@@ -105,21 +95,30 @@ public class MainTabControl extends Tab implements Initializable {
   }
   
   public void lateInitialize(Scene scene) {
-    main.addEventFilter(ScrollEvent.ANY, StateMachine2.getInstance(MainTabControl.this, data));
+    ElementManager.getInstance(data);
+    Node child = main.getChildren().get(0);
+  
+    if (child instanceof MoDiagramGroup) ((MoDiagramGroup) child).addHandler(StateMachine.getInstance(scene, this, data));
+  
+    main.addEventHandler(InputEvent.ANY, StateMachine.getInstance(data));
+    main.addEventFilter(ScrollEvent.ANY, StateMachine.getInstance(data));
     
     main.minWidthProperty().bind(Bindings.createDoubleBinding(() -> scroll.getViewportBounds().getWidth(), scroll.viewportBoundsProperty()));
-    
+  
     this.setOnSelectionChanged(event -> {
       if (MainTabControl.this.isSelected()) {
-        StateMachine2.getInstance(data).enter(scene);
-        if (main.getChildren().get(0) instanceof MoDiagramGroup) {
-          StateHandler.getInstance((MoDiagramGroup) main.getChildren().get(0));
-        } else {
-          StateHandler.getInstance().setParent(null);
-        }
+        StateMachine.getInstance(data).enter();
       } else {
-        StateMachine2.getInstance(data).leave(scene);
+        StateMachine.getInstance(data).leave();
       }
+    });
+  
+    if (this.isSelected()) StateMachine.getInstance(data).enter();
+  
+    this.setOnClosed(event -> {
+      StateMachine.getInstance(data).leave();
+      ElementManager.removeInstance(data);
+      StateMachine.removeInstance(data);
     });
   }
 }

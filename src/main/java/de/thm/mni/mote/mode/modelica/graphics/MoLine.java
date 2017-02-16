@@ -45,9 +45,9 @@ public class MoLine extends MoGraphic implements HasSmoothOption {
   Double arrowSize = 3.0;
   Smooth smooth = Smooth.NONE;
   
-  public MoLine(Point2D start, Point2D end) {
+  public MoLine(Point2D start) {
     super();
-    this.points.addAll(start, end);
+    this.points.add(start);
     initChangeListeners();
   }
   

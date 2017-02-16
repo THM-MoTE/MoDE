@@ -6,6 +6,7 @@ import de.thm.mni.mote.mode.uiactor.control.modelica.MoGroup;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.Element;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.FilledElement;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.StrokedElement;
+import javafx.beans.property.DoubleProperty;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.layout.Pane;
@@ -42,12 +43,17 @@ public class Text extends Pane implements Element, FilledElement, StrokedElement
   
   public void setInitialStrokeWidth(Double value) {
     initialStrokeWidth = value;
-    setStrokeWidth(value);
+    setOwnStrokeWidth(value);
   }
   
   @Override
   public void setStrokeWidth(double value) {
     this.text.setStrokeWidth(value);
+  }
+  
+  @Override
+  public DoubleProperty strokeWidthProperty() {
+    return this.text.strokeWidthProperty();
   }
   
   @Override

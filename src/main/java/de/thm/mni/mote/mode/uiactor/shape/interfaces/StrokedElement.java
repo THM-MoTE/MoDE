@@ -7,7 +7,7 @@ import javafx.collections.ObservableList;
 /**
  * Created by hobbypunk on 03.11.16.
  */
-public interface StrokedElement extends HasInitialStroke {
+public interface StrokedElement extends HasStrokeWidth {
   MoFilledShape getData();
   
   ObservableList<Double> getStrokeDashArray();

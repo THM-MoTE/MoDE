@@ -1,0 +1,162 @@
+package de.thm.mni.mote.mode.uiactor.statemachine.elements;
+
+import de.thm.mni.mote.mode.modelica.MoConnection;
+import de.thm.mni.mote.mode.modelica.graphics.MoLine;
+import de.thm.mni.mote.mode.parser.ParserException;
+import de.thm.mni.mote.mode.uiactor.control.modelica.MoDiagramGroup;
+import de.thm.mni.mote.mode.uiactor.control.modelica.MoGroup;
+import de.thm.mni.mote.mode.uiactor.shape.InvisibleLine;
+import de.thm.mni.mote.mode.uiactor.statemachine.StateMachine;
+import de.thm.mni.mote.mode.uiactor.statemachine.interfaces.Actionable;
+import de.thm.mni.mote.mode.uiactor.statemachine.interfaces.Deletable;
+import de.thm.mni.mote.mode.uiactor.statemachine.interfaces.Moveable;
+import javafx.collections.ObservableList;
+import javafx.geometry.Point2D;
+import javafx.scene.Cursor;
+import javafx.scene.input.InputEvent;
+import javafx.scene.input.MouseEvent;
+import lombok.NonNull;
+
+import java.util.List;
+
+/**
+ * Created by hobbypunk on 16.02.17.
+ */
+public class ModifyableLine extends InvisibleLine implements Actionable, Deletable, Moveable {
+  
+  private enum STATUS {
+    NOTHING,
+    POINT,
+    LINE
+  }
+  
+  private Boolean isMoving = false;
+  
+  private STATUS status = STATUS.NOTHING;
+  private Point2D startMousePos = null;
+  private Integer firstPointPos = null;
+  private Integer secondPointPos = null;
+  private Point2D firstPoint = null;
+  private Point2D secondPoint = null;
+  
+  public ModifyableLine(@NonNull MoGroup parent, @NonNull MoLine data) {
+    super(parent, data);
+  }
+  
+  
+  @Override
+  public Boolean action(StateMachine sm, InputEvent inputEvent) {
+    MouseEvent event = (MouseEvent) inputEvent;
+    
+    Point2D mousePos = ((MoDiagramGroup) getMoParent()).convertScenePointToDiagramPoint(new Point2D(event.getSceneX(), event.getSceneY()));
+    
+    Integer[] poses = findNearLinePos(mousePos, true);
+    if (poses != null) {
+      this.getData().getPoints().add(poses[1], mousePos);
+    }
+    
+    return true;
+  }
+  
+  @Override
+  public Boolean delete(InputEvent event) {
+    MouseEvent mouseEvent = (MouseEvent) event;
+    Point2D mousePos = ((MoDiagramGroup) getMoParent()).convertScenePointToDiagramPoint(new Point2D(mouseEvent.getSceneX(), mouseEvent.getSceneY()));
+    
+    Integer pos = findNearPointPos(mousePos);
+    if (pos != null) {
+      this.getData().getPoints().remove(pos.intValue());
+      return true;
+    } else {
+      Integer[] poses = findNearLinePos(mousePos, true);
+      if (poses != null) {
+        try {
+          List<MoConnection> connections = getMoParent().getMoClass().getConnections();
+          for (MoConnection conn : connections) {
+            if (conn.getMoGraphics().contains(this.getData())) {
+              getMoParent().getMoClass().removeConnection(conn);
+              break;
+            }
+          }
+          return true;
+        } catch (ParserException e) {
+          e.printStackTrace();
+        }
+      }
+    }
+    
+    return false;
+  }
+  
+  @Override
+  public Boolean moveDrag(InputEvent inputEvent) {
+    MouseEvent event = (MouseEvent) inputEvent;
+    
+    if (isMoving) {
+      Point2D mousePos = ((MoDiagramGroup) getMoParent()).convertScenePointToDiagramPoint(new Point2D(event.getSceneX(), event.getSceneY()));
+      Point2D delta = mousePos.subtract(startMousePos);
+      if (status == STATUS.POINT || status == STATUS.LINE) {
+        this.getData().getPoints().set(firstPointPos, firstPoint.add(delta));
+      }
+      if (status == STATUS.LINE) {
+        this.getData().getPoints().set(secondPointPos, secondPoint.add(delta));
+      }
+      
+    } else {
+      isMoving = true;
+      
+      getMoParent().getScene().setCursor(Cursor.MOVE);
+      startMousePos = ((MoDiagramGroup) getMoParent()).convertScenePointToDiagramPoint(new Point2D(event.getSceneX(), event.getSceneY()));
+      Integer pos = findNearPointPos(startMousePos);
+      if (pos != null) {
+        firstPointPos = pos;
+        firstPoint = this.getData().getPoints().get(firstPointPos);
+        status = STATUS.POINT;
+        return true;
+      }
+      
+      Integer[] poses = findNearLinePos(startMousePos);
+      if (poses != null) {
+        firstPointPos = poses[0];
+        secondPointPos = poses[1];
+        firstPoint = this.getData().getPoints().get(firstPointPos);
+        secondPoint = this.getData().getPoints().get(secondPointPos);
+        status = STATUS.LINE;
+      }
+    }
+    
+    return true;
+  }
+  
+  @Override
+  public Boolean moveDrop(InputEvent event) {
+    isMoving = false;
+    return true;
+  }
+  
+  
+  private Integer findNearPointPos(Point2D point) {
+    ObservableList<Point2D> points = this.getData().getPoints();
+    for (int i = 1, size = points.size() - 1; i < size; i++) {       //first and last point is not moveable, it's bound to the connector!
+      Point2D p = points.get(i);
+      if (p.distance(point) < 5) {
+        return i;
+      }
+    }
+    return null;
+  }
+  
+  private Integer[] findNearLinePos(Point2D point) {
+    return findNearLinePos(point, false);
+  }
+  
+  private Integer[] findNearLinePos(Point2D point, Boolean withBeginAndEnd) {
+    ObservableList<Point2D> points = this.getData().getPoints();
+    for (int i = (withBeginAndEnd) ? 0 : 1, j = (withBeginAndEnd) ? 1 : 2, size = points.size() - ((withBeginAndEnd) ? 0 : 1); j < size; i++, j++) {       //first and last source is not moveable, it's bound to the connector!
+      Point2D p1 = points.get(i);
+      Point2D p2 = points.get(j);
+      if (Math.abs((p1.distance(point) + p2.distance(point)) - p1.distance(p2)) < 5) return new Integer[]{i, j};
+    }
+    return null;
+  }
+}

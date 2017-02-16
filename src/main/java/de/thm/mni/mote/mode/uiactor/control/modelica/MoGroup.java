@@ -8,7 +8,8 @@ import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.elementmanager.elements.ManagedLine;
 import de.thm.mni.mote.mode.uiactor.shape.*;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.Element;
-import de.thm.mni.mote.mode.uiactor.shape.interfaces.HasInitialStroke;
+import de.thm.mni.mote.mode.uiactor.shape.interfaces.HasStrokeWidth;
+import de.thm.mni.mote.mode.uiactor.statemachine.interfaces.Deletable;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -71,11 +72,11 @@ public abstract class MoGroup extends Group {
   private void preventScaling(Double scaleX, Double scaleY) {
     getBasis().getChildren().forEach(node -> {
       if (node instanceof MoGroup) ((MoGroup) node).preventScaling(scaleX * scale.getX(), scaleY * scale.getY());
-      else if (node instanceof HasInitialStroke) {
-        HasInitialStroke s = (HasInitialStroke) node;
+      else if (node instanceof HasStrokeWidth) {
+        HasStrokeWidth s = (HasStrokeWidth) node;
         Double factor = Math.max(scaleX * scale.getX(), scaleY * scale.getY());
         factor = (factor < 1.) ? 1. : factor; //dirty hack
-        s.setStrokeWidth(s.getInitialStrokeWidth() * (1 / factor));
+        s.setOwnStrokeWidth(s.getInitialStrokeWidth() * (1 / factor));
       }
     });
   }
@@ -125,7 +126,7 @@ public abstract class MoGroup extends Group {
     Double height = Math.max(extent0.getY(), extent1.getY()) - Math.min(extent0.getY(), extent1.getY());
   
     coordianteSystem = new javafx.scene.shape.Rectangle(minX, minY, width, height);
-//    coordianteSystem.setStrokeWidth(1.);
+//    coordianteSystem.setOwnStrokeWidth(1.);
 //    coordianteSystem.setStroke(Color.BLACK);
     coordianteSystem.setFill(Color.TRANSPARENT);
 //    coordianteSystem.setOpacity(.1);
@@ -170,16 +171,21 @@ public abstract class MoGroup extends Group {
   protected abstract void initImage() throws ParserException;
   
   public void add(Node node) {
-    if (node instanceof ManagedLine) basis.getChildren().add(1, node);
+    if (node instanceof ManagedLine || node instanceof Line) basis.getChildren().add(1, node);
     else basis.getChildren().add(node);
+  }
+  
+  public void remove(Node node) {
+    basis.getChildren().remove(node);
   }
   
   public void remove(MoGraphic mg) {
     for (int i = 0, size = basis.getChildren().size(); i < size; i++) {
       if (basis.getChildren().get(i) instanceof Element) {
         Element child = (Element) basis.getChildren().get(i);
-        if (child.getData().equals(mg)) {
-          basis.getChildren().remove(i);
+        if (child.getData().equals(mg) && child instanceof Deletable) {
+          if (child instanceof ManagedLine) basis.getChildren().remove(((ManagedLine) child).getChild()); //TODO: parentProperty in ManagedLine not working correctly?
+          basis.getChildren().remove(child);
           return;
         }
       }

@@ -1,4 +1,4 @@
-package de.thm.mni.mote.mode.uiactor.statemachine2.interfaces;
+package de.thm.mni.mote.mode.uiactor.statemachine.interfaces;
 
 import javafx.scene.input.ScrollEvent;
 

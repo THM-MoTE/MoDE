@@ -1,7 +1,8 @@
-package de.thm.mni.mote.mode.uiactor.statemachine2.states.implementations;
+package de.thm.mni.mote.mode.uiactor.statemachine.states.impl;
 
-import de.thm.mni.mote.mode.uiactor.statemachine2.interfaces.Zoomable;
-import de.thm.mni.mote.mode.uiactor.statemachine2.states.State;
+import de.thm.mni.mote.mode.uiactor.statemachine.StateMachine;
+import de.thm.mni.mote.mode.uiactor.statemachine.interfaces.Zoomable;
+import de.thm.mni.mote.mode.uiactor.statemachine.states.State;
 import javafx.application.Platform;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
@@ -22,7 +23,7 @@ public class ZoomState extends State {
   }
   
   @Override
-  public boolean handle(InputEvent event) {
+  public boolean handle(StateMachine sm, Node target, InputEvent event) {
     if (event instanceof ScrollEvent) {
       Parent parent = null;
       if (event.getSource() instanceof ScrollPane)

@@ -47,7 +47,7 @@ public class ElementManager {
     
     if (this.selectedElement != null) this.selectedElement.leaveSelection();
     this.selectedElement = element;
-    if (element != null && element == this.hoveredElement) this.hoveredElement.leaveHover();
+    if (element != null && element == this.hoveredElement) clearHoveredElement();
     if (this.selectedElement != null) this.selectedElement.enterSelection();
   }
   

@@ -5,7 +5,7 @@ import de.thm.mni.mote.mode.modelica.graphics.Utilities;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoGroup;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.CalculatePathElements;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.Element;
-import de.thm.mni.mote.mode.uiactor.shape.interfaces.HasInitialStroke;
+import de.thm.mni.mote.mode.uiactor.shape.interfaces.HasStrokeWidth;
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.Path;
@@ -22,7 +22,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class Line extends Path implements Element, HasInitialStroke, CalculatePathElements {
+public class Line extends Path implements Element, HasStrokeWidth, CalculatePathElements {
   private final MoGroup moParent;
   private final MoLine data;
   
@@ -40,7 +40,7 @@ public class Line extends Path implements Element, HasInitialStroke, CalculatePa
   
   public void setInitialStrokeWidth(Double value) {
     initialStrokeWidth = value;
-    setStrokeWidth(value);
+    setOwnStrokeWidth(value);
   }
   
   public void init() {

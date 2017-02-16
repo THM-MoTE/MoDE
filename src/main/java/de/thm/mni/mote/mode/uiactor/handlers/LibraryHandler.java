@@ -7,8 +7,6 @@ import de.thm.mni.mote.mode.modelica.graphics.MoCoordinateSystem;
 import de.thm.mni.mote.mode.modelica.graphics.MoTransformation;
 import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.control.MainTabControl;
-import de.thm.mni.mote.mode.uiactor.elementmanager.ElementManager;
-import de.thm.mni.mote.mode.uiactor.statemachine2.StateMachine2;
 import javafx.geometry.Point2D;
 import javafx.scene.control.TabPane;
 
@@ -34,9 +32,10 @@ public class LibraryHandler {
         tab = new MainTabControl(container, false);
       tabPane.getTabs().add(tab);
       tab.lateInitialize(tabPane.getScene());
-      ElementManager.getInstance(container);
-      StateMachine2.getInstance(tab, container);
+  
+      tabPane.getSelectionModel().clearSelection();
       tabPane.getSelectionModel().select(tab);
+  
     } else if (action.equals("add_to_diagram")) {
       MainTabControl tab = (MainTabControl) tabPane.getSelectionModel().getSelectedItem();
   

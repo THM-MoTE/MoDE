@@ -6,7 +6,6 @@ import de.thm.mni.mote.mode.modelica.MoContainer;
 import de.thm.mni.mote.mode.modelica.MoVariable;
 import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.elementmanager.elements.ManagedMoIconGroup;
-import de.thm.mni.mote.mode.uiactor.handlers.StateHandler;
 import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
@@ -32,7 +31,6 @@ public class MoDiagramGroup extends MoGroup {
   protected void initImage() throws ParserException {
     initVariables();
     initConnections();
-    addHandler(StateHandler.getInstance(this)); //TODO: remove
     coordianteSystem.setFill(Color.WHITE);
   }
   
@@ -101,7 +99,7 @@ public class MoDiagramGroup extends MoGroup {
   
   private void initVariable(MoVariable mv) {
     if (mv.getPlacement() == null || (mv.getPlacement().getIconTransformation() == null && mv.getPlacement().getDiagramTransformation() == null)) return;
-    MoIconGroup mip = new ManagedMoIconGroup(mv, false);
+    MoIconGroup mip = new ManagedMoIconGroup(this, mv, false);
     getData().put(mv, mip);
     this.add(mip);
   }

@@ -5,11 +5,15 @@ import de.thm.mni.mote.mode.uiactor.control.modelica.MoGroup;
 import de.thm.mni.mote.mode.uiactor.elementmanager.interfaces.Hoverable;
 import de.thm.mni.mote.mode.uiactor.elementmanager.interfaces.Selectable;
 import de.thm.mni.mote.mode.uiactor.shape.Line;
+import de.thm.mni.mote.mode.uiactor.statemachine.elements.ModifyableLine;
+import javafx.beans.property.DoubleProperty;
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Point2D;
+import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
+import lombok.Getter;
 import lombok.NonNull;
 
 import java.util.List;
@@ -17,67 +21,83 @@ import java.util.List;
 /**
  * Created by hobbypunk on 13.02.17.
  */
-public class ManagedLine extends Line implements Hoverable, Selectable {
+@Getter
+public class ManagedLine extends ModifyableLine implements Hoverable, Selectable {
   
-  private ManagedLine realLine = null;
+  private Line child = null;
+  private Boolean isSelected = false;
   
   public ManagedLine(@NonNull MoGroup parent, @NonNull MoLine data) {
     super(parent, data);
-    realLine = new ManagedLine(this, data);
-    realLine.strokeWidthProperty().addListener((observable, oldValue, newValue) -> {
-      if (!oldValue.equals(newValue)) ManagedLine.this.setStrokeWidth(ManagedLine.this.getStrokeWidth() + ((newValue.doubleValue() < 3) ? 2 : 0));
+    this.child = new Line(parent, data);
+    initParentListener();
+  
+    strokeWidthProperty().bind(child.strokeWidthProperty().add(getExtraWidth()));
+  
+    child.setStrokeWidth(child.getStrokeWidth());
+  
+    getData().getPoints().addListener((ListChangeListener<Point2D>) c -> {
+      if (getIsSelected()) calcCrosses();
     });
-    
-    realLine.init();
-    parent.getBasis().getChildren().add(1, realLine);
-    this.setStroke(Color.TRANSPARENT);
-  }
-  
-  
-  private ManagedLine(@NonNull ManagedLine parent, @NonNull MoLine data) {
-    super(parent.getMoParent(), data);
-    getData().getPoints().addListener((ListChangeListener<? super Point2D>) c -> calcCrosses());
   }
   
   
   @Override
+  public void init() {
+    super.init();
+  }
+  
+  private void initParentListener() {
+    this.parentProperty().addListener((observable, oldValue, newValue) -> {
+      if (oldValue instanceof Group && ((Group) oldValue).getChildren().contains(child))
+        ((Group) oldValue).getChildren().remove(child);
+      if (newValue instanceof Group && !((Group) newValue).getChildren().contains(child))
+        ((Group) newValue).getChildren().add(2, child);
+    });
+  }
+  
+  @Override
   public void enterHover() {
-    if (realLine != null) realLine.enterHover();
-    else this.setStroke(Color.LIGHTCORAL);
+    this.child.setStroke(Color.LIGHTCORAL);
   }
   
   @Override
   public void leaveHover() {
-    if (realLine != null) realLine.leaveHover();
-    else this.setStroke(getData().getColor().get());
+    this.child.setStroke(getData().getColor().get());
   }
   
   @Override
   public void enterSelection() {
-    if (realLine != null) realLine.enterSelection();
-    else {
-      this.setStroke(Color.RED);
-      calcCrosses();
-    }
+    this.child.setStroke(Color.RED);
+    isSelected = true;
+    calcCrosses();
   }
   
   @Override
   public void leaveSelection() {
-    if (realLine != null) realLine.leaveSelection();
-    else {
-      calcElements(getData().getPoints());
-      this.setStroke(getData().getColor().get());
-    }
+    isSelected = false;
+    this.child.calcElements(getData().getPoints());
+    this.child.setStroke(getData().getColor().get());
   }
   
   private void calcCrosses() {
     List<Point2D> points = getData().getPoints();
     for (int i = 1, pointsSize = points.size() - 1; i < pointsSize; i++) {
       Point2D p = points.get(i);
-      this.getElements().add(new MoveTo(p.getX() - 1, p.getY() - 1));
-      this.getElements().add(new LineTo(p.getX() + 1, p.getY() + 1));
-      this.getElements().add(new MoveTo(p.getX() - 1, p.getY() + 1));
-      this.getElements().add(new LineTo(p.getX() + 1, p.getY() - 1));
+      this.child.getElements().add(new MoveTo(p.getX() - 1, p.getY() - 1));
+      this.child.getElements().add(new LineTo(p.getX() + 1, p.getY() + 1));
+      this.child.getElements().add(new MoveTo(p.getX() - 1, p.getY() + 1));
+      this.child.getElements().add(new LineTo(p.getX() + 1, p.getY() - 1));
     }
+  }
+  
+  @Override
+  public DoubleProperty ownStrokeWidthProperty() {
+    return child.strokeWidthProperty();
+  }
+  
+  @Override
+  public void setOwnStrokeWidth(double value) {
+    if (child != null) child.setStrokeWidth(value);
   }
 }

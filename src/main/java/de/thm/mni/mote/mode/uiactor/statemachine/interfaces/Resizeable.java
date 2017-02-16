@@ -1,4 +1,4 @@
-package de.thm.mni.mote.mode.uiactor.statemachine2.interfaces;
+package de.thm.mni.mote.mode.uiactor.statemachine.interfaces;
 
 /**
  * Created by hobbypunk on 15.02.17.

@@ -8,6 +8,7 @@ import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.elementmanager.elements.ManagedMoIconConnectorGroup;
 import javafx.beans.property.ObjectProperty;
 import javafx.geometry.Point2D;
+import javafx.scene.Node;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Transform;
@@ -15,6 +16,9 @@ import javafx.scene.transform.Translate;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by hobbypunk on 19.09.16.
@@ -26,23 +30,25 @@ public class MoIconGroup extends MoGroup {
   Rotate rotation = new Rotate();
   Affine transformation = new Affine();
   
+  private final MoDiagramGroup moParent;
   Boolean iconOnly;
   MoVariable variable;
   
   public MoIconGroup(MoContainer parent) {
-    this(parent, null, true);
+    this(null, parent, null, true);
   }
   
   public MoIconGroup(MoContainer parent, Boolean iconOnly) {
-    this(parent, null, iconOnly);
+    this(null, parent, null, iconOnly);
   }
   
-  protected MoIconGroup(MoVariable variable, Boolean iconOnly) throws ParserException {
-    this(variable.getType(), variable, iconOnly);
+  protected MoIconGroup(MoDiagramGroup diagramParent, MoVariable variable, Boolean iconOnly) throws ParserException {
+    this(diagramParent, variable.getType(), variable, iconOnly);
   }
   
-  protected MoIconGroup(MoContainer parent, MoVariable variable, Boolean iconOnly) {
+  protected MoIconGroup(MoDiagramGroup diagramParent, MoContainer parent, MoVariable variable, Boolean iconOnly) {
     super(parent);
+    this.moParent = diagramParent;
     this.variable = variable;
     this.iconOnly = iconOnly;
     try {
@@ -50,6 +56,18 @@ public class MoIconGroup extends MoGroup {
     } catch (ParserException e) {
       e.printStackTrace(); //TODO send msg
     }
+  }
+  
+  protected List<MoVariable> getVariables() {
+    return getVariables(this, new ArrayList<>());
+  }
+  
+  private List<MoVariable> getVariables(Node parent, List<MoVariable> list) {
+    if (parent instanceof MoDiagramGroup) return list;
+    if (parent instanceof MoIconGroup) {
+      list.add(0, ((MoIconGroup) parent).getVariable());
+    }
+    return getVariables(parent.getParent(), list);
   }
   
   protected void initImage() throws ParserException {
@@ -65,7 +83,7 @@ public class MoIconGroup extends MoGroup {
   
   private void initConnector(MoVariable mv) {
     if (mv.getPlacement() == null || (mv.getPlacement().getIconTransformation() == null && mv.getPlacement().getDiagramTransformation() == null)) return;
-    MoIconGroup mip = new ManagedMoIconConnectorGroup(mv, false);
+    MoIconGroup mip = new ManagedMoIconConnectorGroup(getMoParent(), mv, false);
     getData().put(mv, mip);
     this.add(mip);
   }

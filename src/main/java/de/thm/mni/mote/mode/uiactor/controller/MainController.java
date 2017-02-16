@@ -23,7 +23,6 @@ import de.thm.mni.mote.mode.uiactor.controller.dialogs.ChangeSystemLibrariesDial
 import de.thm.mni.mote.mode.uiactor.messages.OMCAvailableLibsUIMessage;
 import de.thm.mni.mote.mode.uiactor.messages.OMCDataUIMessage;
 import de.thm.mni.mote.mode.uiactor.messages.OMCSetProjectUIMessage;
-import de.thm.mni.mote.mode.uiactor.statemachine.StateMachine;
 import de.thm.mni.mote.mode.uiactor.utilities.ScrollPaneHorizontalScroll;
 import de.thm.mni.mote.mode.uiactor.utilities.TreeViewWithItemsWrapper;
 import de.thm.mni.mote.mode.util.Utilities;
@@ -87,7 +86,6 @@ public class MainController extends NotifyController {
   public void lateInitialize() throws InvocationTargetException, NoSuchMethodException, ReflectionException, InstantiationException, IllegalAccessException {
     super.lateInitialize();
     this.project = (Project) getParams().get(1);
-    StateMachine.getInstance(this.getScene());
     initTreeView();
   }
   
