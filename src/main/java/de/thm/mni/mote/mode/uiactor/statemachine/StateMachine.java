@@ -124,7 +124,7 @@ public class StateMachine implements EventHandler<InputEvent> {
     }
     if (state == States.NONE) {
       if (keyState.get().equals(KeyState.CTRL) && hasMatchingParent(target, Deletable.class)) state = States.DELETE;
-      else if (keyState.get().equals(KeyState.NONE) && hasMatchingParent(target, Moveable.class)) state = States.MOVE;
+      else if ((keyState.get().equals(KeyState.NONE) || keyState.get().equals(KeyState.SHIFT)) && hasMatchingParent(target, Moveable.class)) state = States.MOVE;
       else if (keyState.get().equals(KeyState.NONE) && hasMatchingParent(target, Resizeable.class)) state = States.RESIZE;
       else if (keyState.get().equals(KeyState.SHIFT) && hasMatchingParent(target, Rotateable.class)) state = States.ROTATE;
       else if ((Utilities.isMac() && keyState.get().equals(KeyState.META)) || (!Utilities.isMac() && keyState.get().equals(KeyState.CTRL))) state = States.ZOOM; //TODO

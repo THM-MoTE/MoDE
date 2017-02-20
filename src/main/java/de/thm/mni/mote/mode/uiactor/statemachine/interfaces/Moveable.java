@@ -1,13 +1,11 @@
 package de.thm.mni.mote.mode.uiactor.statemachine.interfaces;
 
+import de.thm.mni.mote.mode.uiactor.statemachine.StateMachine;
 import javafx.scene.input.InputEvent;
 
 /**
  * Created by hobbypunk on 15.02.17.
  */
 public interface Moveable {
-  
-  Boolean moveDrag(InputEvent event);
-  
-  Boolean moveDrop(InputEvent event);
+  Boolean move(StateMachine sm, InputEvent event);
 }

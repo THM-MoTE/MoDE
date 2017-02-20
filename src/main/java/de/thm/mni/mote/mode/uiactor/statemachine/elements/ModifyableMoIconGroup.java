@@ -63,7 +63,21 @@ public class ModifyableMoIconGroup extends MoIconGroup implements Actionable, De
   }
   
   @Override
-  public Boolean moveDrag(InputEvent inputEvent) { //TODO: line not matching...
+  public Boolean move(StateMachine sm, InputEvent inputEvent) {
+    MouseEvent event = (MouseEvent) inputEvent;
+    if (event.getEventType().equals(MouseEvent.MOUSE_PRESSED) || event.getEventType().equals(MouseEvent.MOUSE_DRAGGED)) {
+      this.moveDrag(inputEvent);
+      sm.freeze();
+      return true;
+    } else if (event.getEventType().equals(MouseEvent.MOUSE_RELEASED)) {
+      isMoving = false;
+      sm.unfreeze();
+      return true;
+    }
+    return false;
+  }
+  
+  private void moveDrag(InputEvent inputEvent) { //TODO: line not matching...
     MouseEvent event = (MouseEvent) inputEvent;
     
     if (isMoving) {
@@ -102,15 +116,7 @@ public class ModifyableMoIconGroup extends MoIconGroup implements Actionable, De
           startConnectionPoints.get(moConn).add(moConn.getLine().getPoints().get(pos));
       });
     }
-    return true;
   }
-  
-  @Override
-  public Boolean moveDrop(InputEvent event) {
-    isMoving = false;
-    return true;
-  }
-  
   
   private void updateConnections(Point2D delta) {
     startConnectionPointPoses.keySet().forEach(moConn -> {

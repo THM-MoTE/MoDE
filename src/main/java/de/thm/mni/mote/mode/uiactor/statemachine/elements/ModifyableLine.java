@@ -88,52 +88,66 @@ public class ModifyableLine extends InvisibleLine implements Actionable, Deletab
     return false;
   }
   
-  @Override
-  public Boolean moveDrag(InputEvent inputEvent) {
+  public Boolean move(StateMachine sm, InputEvent inputEvent) {
     MouseEvent event = (MouseEvent) inputEvent;
-    
-    if (isMoving) {
-      Point2D mousePos = ((MoDiagramGroup) getMoParent()).convertScenePointToDiagramPoint(new Point2D(event.getSceneX(), event.getSceneY()));
-      Point2D delta = mousePos.subtract(startMousePos);
-      if (status == STATUS.POINT || status == STATUS.LINE) {
-        this.getData().getPoints().set(firstPointPos, firstPoint.add(delta));
+    if (event.getEventType().equals(MouseEvent.MOUSE_PRESSED) || event.getEventType().equals(MouseEvent.MOUSE_DRAGGED)) {
+      if (!isMoving) {
+        isMoving = true;
+        sm.freeze();
+        this.moveStart(event);
+      } else {
+        if (event.isShiftDown()) this.moveSnap(event);
+        else this.move(event);
+        System.out.println();
       }
-      if (status == STATUS.LINE) {
-        this.getData().getPoints().set(secondPointPos, secondPoint.add(delta));
-      }
-      
-    } else {
-      isMoving = true;
-      
-      getMoParent().getScene().setCursor(Cursor.MOVE);
-      startMousePos = ((MoDiagramGroup) getMoParent()).convertScenePointToDiagramPoint(new Point2D(event.getSceneX(), event.getSceneY()));
-      Integer pos = findNearPointPos(startMousePos);
-      if (pos != null) {
-        firstPointPos = pos;
-        firstPoint = this.getData().getPoints().get(firstPointPos);
-        status = STATUS.POINT;
-        return true;
-      }
-      
-      Integer[] poses = findNearLinePos(startMousePos);
-      if (poses != null) {
-        firstPointPos = poses[0];
-        secondPointPos = poses[1];
-        firstPoint = this.getData().getPoints().get(firstPointPos);
-        secondPoint = this.getData().getPoints().get(secondPointPos);
-        status = STATUS.LINE;
-      }
+      return true;
+    } else if (event.getEventType().equals(MouseEvent.MOUSE_RELEASED)) {
+      isMoving = false;
+      sm.unfreeze();
+      return true;
+    }
+    return false;
+  }
+  
+  private void moveStart(MouseEvent event) {
+    getMoParent().getScene().setCursor(Cursor.MOVE);
+    startMousePos = ((MoDiagramGroup) getMoParent()).convertScenePointToDiagramPoint(new Point2D(event.getSceneX(), event.getSceneY()));
+    Integer pos = findNearPointPos(startMousePos);
+    if (pos != null) {
+      firstPointPos = pos;
+      firstPoint = this.getData().getPoints().get(firstPointPos);
+      status = STATUS.POINT;
+      return;
     }
     
-    return true;
+    Integer[] poses = findNearLinePos(startMousePos);
+    if (poses != null) {
+      firstPointPos = poses[0];
+      secondPointPos = poses[1];
+      firstPoint = this.getData().getPoints().get(firstPointPos);
+      secondPoint = this.getData().getPoints().get(secondPointPos);
+      status = STATUS.LINE;
+    }
   }
   
-  @Override
-  public Boolean moveDrop(InputEvent event) {
-    isMoving = false;
-    return true;
+  private void moveSnap(MouseEvent event) {
+    Point2D mousePos = ((MoDiagramGroup) getMoParent()).convertScenePointToDiagramPoint(new Point2D(event.getSceneX(), event.getSceneY()));
+    Point2D delta = mousePos.subtract(startMousePos);
+    if (status == STATUS.POINT) {
+      this.getData().getPoints().set(firstPointPos, calc90Degree(firstPointPos, firstPoint, delta));
+    }
   }
   
+  private void move(MouseEvent event) {
+    Point2D mousePos = ((MoDiagramGroup) getMoParent()).convertScenePointToDiagramPoint(new Point2D(event.getSceneX(), event.getSceneY()));
+    Point2D delta = mousePos.subtract(startMousePos);
+    if (status != STATUS.NOTHING) {
+      this.getData().getPoints().set(firstPointPos, firstPoint.add(delta));
+    }
+    if (status == STATUS.LINE) {
+      this.getData().getPoints().set(secondPointPos, secondPoint.add(delta));
+    }
+  }
   
   private Integer findNearPointPos(Point2D point) {
     ObservableList<Point2D> points = this.getData().getPoints();
@@ -159,4 +173,19 @@ public class ModifyableLine extends InvisibleLine implements Actionable, Deletab
     }
     return null;
   }
+  
+  private Point2D calc90Degree(Integer basisPointPos, Point2D basisPoint, Point2D delta) {
+    Point2D newPoint = basisPoint.add(delta);
+    Point2D prev = getData().getPoints().get(basisPointPos - 1);
+    Point2D next = getData().getPoints().get(basisPointPos + 1);
+    
+    if (Math.abs(newPoint.getX() - prev.getX()) < 2.5) newPoint = new Point2D(prev.getX(), newPoint.getY());
+    else if (Math.abs(newPoint.getX() - next.getX()) < 2.5) newPoint = new Point2D(next.getX(), newPoint.getY());
+    
+    if (Math.abs(newPoint.getY() - prev.getY()) < 2.5) newPoint = new Point2D(newPoint.getX(), prev.getY());
+    else if (Math.abs(newPoint.getY() - next.getY()) < 2.5) newPoint = new Point2D(newPoint.getX(), next.getY());
+    
+    return newPoint;
+  }
+  
 }
