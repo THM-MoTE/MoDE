@@ -184,7 +184,6 @@ public abstract class MoGroup extends Group {
       if (basis.getChildren().get(i) instanceof Element) {
         Element child = (Element) basis.getChildren().get(i);
         if (child.getData().equals(mg) && child instanceof Deletable) {
-          if (child instanceof ManagedLine) basis.getChildren().remove(((ManagedLine) child).getChild()); //TODO: parentProperty in ManagedLine not working correctly?
           basis.getChildren().remove(child);
           return;
         }

@@ -1,11 +1,13 @@
 package de.thm.mni.mote.mode.uiactor.elementmanager.elements;
 
+import de.thm.mni.mote.mode.config.Settings;
 import de.thm.mni.mote.mode.modelica.graphics.MoLine;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoGroup;
 import de.thm.mni.mote.mode.uiactor.elementmanager.interfaces.Hoverable;
 import de.thm.mni.mote.mode.uiactor.elementmanager.interfaces.Selectable;
 import de.thm.mni.mote.mode.uiactor.shape.Line;
 import de.thm.mni.mote.mode.uiactor.statemachine.elements.ModifyableLine;
+import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Point2D;
@@ -32,7 +34,7 @@ public class ManagedLine extends ModifyableLine implements Hoverable, Selectable
     this.child = new Line(parent, data);
     initParentListener();
   
-    strokeWidthProperty().bind(child.strokeWidthProperty().add(getExtraWidth()));
+    strokeWidthProperty().bind(child.strokeWidthProperty().add(Settings.load().getMainwindow().getEditor().getLineClickRadius()));
   
     child.setStrokeWidth(child.getStrokeWidth());
   
@@ -49,10 +51,12 @@ public class ManagedLine extends ModifyableLine implements Hoverable, Selectable
   
   private void initParentListener() {
     this.parentProperty().addListener((observable, oldValue, newValue) -> {
-      if (oldValue instanceof Group && ((Group) oldValue).getChildren().contains(child))
-        ((Group) oldValue).getChildren().remove(child);
-      if (newValue instanceof Group && !((Group) newValue).getChildren().contains(child))
-        ((Group) newValue).getChildren().add(2, child);
+      Platform.runLater(() -> { //Possible Bug in jfx? no remove of children in Listener possible.
+        if (oldValue instanceof Group && ((Group) oldValue).getChildren().contains(child))
+          ((Group) oldValue).getChildren().remove(child);
+        if (newValue instanceof Group && !((Group) newValue).getChildren().contains(child))
+          ((Group) newValue).getChildren().add(2, child);
+      });
     });
   }
   

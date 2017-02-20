@@ -13,4 +13,6 @@ import org.simpleframework.xml.Element;
 public class Editor {
   @Element @NonNull Boolean defaultSnap = false;
   @Element @NonNull Double snapRadius = 2.5;
+  @Element @NonNull Double lineClickRadius = 4.;
+  
 }
