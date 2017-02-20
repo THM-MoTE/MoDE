@@ -138,10 +138,28 @@ public class ModifyableLine extends InvisibleLine implements Actionable, Deletab
     Double snapRadius = settings.getMainwindow().getEditor().getSnapRadius();
   
     if (status == STATUS.POINT) {
-      Point2D newPoint = calcSnapInPoint(getData().getPoints().get(firstPointPos - 1), firstPoint, delta, snapRadius);
-      if (newPoint.equals(firstPoint.add(delta))) newPoint = calcSnapInPoint(getData().getPoints().get(firstPointPos + 1), firstPoint, delta, snapRadius);
-  
+      Point2D newPoint = calcSnapInPoint(getData().getPoints().get(firstPointPos - 1), firstPoint.add(delta), snapRadius);
+      newPoint = calcSnapInPoint(getData().getPoints().get(firstPointPos + 1), newPoint, snapRadius);
+      
       this.getData().getPoints().set(firstPointPos, newPoint);
+    }
+  
+    if (status == STATUS.LINE) {
+      Point2D deltaFirstPoint = firstPoint.add(delta);
+      Point2D deltaSecondPoint = secondPoint.add(delta);
+    
+      Point2D newP1 = calcSnapInPoint(getData().getPoints().get(firstPointPos - 1), deltaFirstPoint, snapRadius);
+      Point2D newP2 = calcSnapInPoint(getData().getPoints().get(secondPointPos + 1), deltaSecondPoint, snapRadius);
+    
+      if (!newP1.equals(deltaFirstPoint)) newP2 = newP1.subtract(firstPoint).add(secondPoint);
+      else if (!newP2.equals(deltaSecondPoint)) newP1 = newP2.subtract(secondPoint).add(firstPoint);
+      else {
+        newP1 = firstPoint.add(delta);
+        newP2 = secondPoint.add(delta);
+      }
+    
+      this.getData().getPoints().set(firstPointPos, newP1);
+      this.getData().getPoints().set(secondPointPos, newP2);
     }
   }
   
@@ -181,13 +199,24 @@ public class ModifyableLine extends InvisibleLine implements Actionable, Deletab
     return null;
   }
   
-  private Point2D calcSnapInPoint(Point2D snapInCheck, Point2D basisPoint, Point2D delta, Double snapRadius) {
-    Point2D newPoint = basisPoint.add(delta);
+  
+  private Point2D calcSnapInPoint(Point2D snapInCheck, Point2D basisPoint, Double snapRadius) {
+    Point2D newPoint = basisPoint;
     
-    if (Math.abs(newPoint.getX() - snapInCheck.getX()) < snapRadius) newPoint = new Point2D(snapInCheck.getX(), newPoint.getY());
-    if (Math.abs(newPoint.getY() - snapInCheck.getY()) < snapRadius) newPoint = new Point2D(newPoint.getX(), snapInCheck.getY());
+    Point2D help0Degree = new Point2D(snapInCheck.getX(), basisPoint.getY());
+    Point2D help90Degree = new Point2D(basisPoint.getX(), snapInCheck.getY());
     
-    return newPoint;
+    if (Math.abs(help0Degree.distance(basisPoint)) < snapRadius) newPoint = new Point2D(snapInCheck.getX(), newPoint.getY());
+    if (Math.abs(help90Degree.distance(basisPoint)) < snapRadius) newPoint = new Point2D(newPoint.getX(), snapInCheck.getY());
+    if (!basisPoint.equals(newPoint)) return newPoint;
+    
+    Point2D help45Degree = snapInCheck.subtract(snapInCheck.getX() - basisPoint.getX(), snapInCheck.getX() - basisPoint.getX());
+    Point2D help135Degree = snapInCheck.subtract(snapInCheck.getX() - basisPoint.getX(), 0).add(0, snapInCheck.getX() - basisPoint.getX());
+    
+    if (Math.abs(help45Degree.distance(basisPoint)) < snapRadius) return help45Degree;
+    if (Math.abs(help135Degree.distance(basisPoint)) < snapRadius) return help135Degree;
+    
+    return basisPoint;
   }
   
 }
