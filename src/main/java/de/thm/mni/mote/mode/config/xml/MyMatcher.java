@@ -12,11 +12,8 @@ import java.util.Date;
 public class MyMatcher implements Matcher {
   @Override
   public Transform match(Class type) throws Exception {
-    if (Path.class.isAssignableFrom(type))
-      return new PathTransform();
-    if (Date.class.isAssignableFrom(type))
-      return new ISODateTransform();
-  
+    if (Path.class.isAssignableFrom(type)) return new PathTransform();
+    if (Date.class.isAssignableFrom(type)) return new ISODateTransform();
     return null;
   }
 }

@@ -31,7 +31,6 @@ public abstract class NotifyController extends Controller implements Observer {
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     super.initialize(location, resources);
-    getSettings().addObserver(this);
     poNotifications.setArrowLocation(PopOver.ArrowLocation.BOTTOM_RIGHT);
     poNotifications.setAutoHide(false);
     poNotifications.setDetachable(false);

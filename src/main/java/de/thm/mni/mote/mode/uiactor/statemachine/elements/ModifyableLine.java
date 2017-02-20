@@ -1,5 +1,6 @@
 package de.thm.mni.mote.mode.uiactor.statemachine.elements;
 
+import de.thm.mni.mote.mode.config.Settings;
 import de.thm.mni.mote.mode.modelica.MoConnection;
 import de.thm.mni.mote.mode.modelica.graphics.MoLine;
 import de.thm.mni.mote.mode.parser.ParserException;
@@ -29,6 +30,8 @@ public class ModifyableLine extends InvisibleLine implements Actionable, Deletab
     POINT,
     LINE
   }
+  
+  private Settings settings = Settings.load();
   
   private Boolean isMoving = false;
   
@@ -96,9 +99,8 @@ public class ModifyableLine extends InvisibleLine implements Actionable, Deletab
         sm.freeze();
         this.moveStart(event);
       } else {
-        if (event.isShiftDown()) this.moveSnap(event);
+        if (settings.getMainwindow().getEditor().getDefaultSnap() ^ event.isShiftDown()) this.moveSnap(event); //^ == XOR Operator
         else this.move(event);
-        System.out.println();
       }
       return true;
     } else if (event.getEventType().equals(MouseEvent.MOUSE_RELEASED)) {
@@ -133,8 +135,13 @@ public class ModifyableLine extends InvisibleLine implements Actionable, Deletab
   private void moveSnap(MouseEvent event) {
     Point2D mousePos = ((MoDiagramGroup) getMoParent()).convertScenePointToDiagramPoint(new Point2D(event.getSceneX(), event.getSceneY()));
     Point2D delta = mousePos.subtract(startMousePos);
+    Double snapRadius = settings.getMainwindow().getEditor().getSnapRadius();
+  
     if (status == STATUS.POINT) {
-      this.getData().getPoints().set(firstPointPos, calc90Degree(firstPointPos, firstPoint, delta));
+      Point2D newPoint = calcSnapInPoint(getData().getPoints().get(firstPointPos - 1), firstPoint, delta, snapRadius);
+      if (newPoint.equals(firstPoint.add(delta))) newPoint = calcSnapInPoint(getData().getPoints().get(firstPointPos + 1), firstPoint, delta, snapRadius);
+  
+      this.getData().getPoints().set(firstPointPos, newPoint);
     }
   }
   
@@ -174,16 +181,11 @@ public class ModifyableLine extends InvisibleLine implements Actionable, Deletab
     return null;
   }
   
-  private Point2D calc90Degree(Integer basisPointPos, Point2D basisPoint, Point2D delta) {
+  private Point2D calcSnapInPoint(Point2D snapInCheck, Point2D basisPoint, Point2D delta, Double snapRadius) {
     Point2D newPoint = basisPoint.add(delta);
-    Point2D prev = getData().getPoints().get(basisPointPos - 1);
-    Point2D next = getData().getPoints().get(basisPointPos + 1);
     
-    if (Math.abs(newPoint.getX() - prev.getX()) < 2.5) newPoint = new Point2D(prev.getX(), newPoint.getY());
-    else if (Math.abs(newPoint.getX() - next.getX()) < 2.5) newPoint = new Point2D(next.getX(), newPoint.getY());
-    
-    if (Math.abs(newPoint.getY() - prev.getY()) < 2.5) newPoint = new Point2D(newPoint.getX(), prev.getY());
-    else if (Math.abs(newPoint.getY() - next.getY()) < 2.5) newPoint = new Point2D(newPoint.getX(), next.getY());
+    if (Math.abs(newPoint.getX() - snapInCheck.getX()) < snapRadius) newPoint = new Point2D(snapInCheck.getX(), newPoint.getY());
+    if (Math.abs(newPoint.getY() - snapInCheck.getY()) < snapRadius) newPoint = new Point2D(newPoint.getX(), snapInCheck.getY());
     
     return newPoint;
   }

@@ -33,6 +33,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import org.apache.commons.lang3.tuple.MutablePair;
 
 import javax.management.ReflectionException;
 import java.io.IOException;
@@ -94,8 +95,8 @@ public class MainController extends NotifyController {
     super.deinitialize();
   
     MainWindow mw = getSettings().getMainwindow();
-    mw.setPos(getStage().getX(), getStage().getY());
-    mw.setSize(getStage().getWidth(), getStage().getHeight());
+    mw.setPos(new MutablePair<>(getStage().getX(), getStage().getY()));
+    mw.setSize(new MutablePair<>(getStage().getWidth(), getStage().getHeight()));
     mw.setWidthLeftPane((int) hbLeft.getPrefWidth());
     mw.setWidthRightPane((int) hbRight.getPrefWidth());
   }
@@ -105,10 +106,10 @@ public class MainController extends NotifyController {
     getActor().send(new GetDataOMCMessage(getGroup()));
     MainWindow mw = getSettings().getMainwindow();
   
-    getStage().setX(mw.getPos().getX());
-    getStage().setY(mw.getPos().getY());
-    getStage().setWidth(mw.getSize().getX());
-    getStage().setHeight(mw.getSize().getY());
+    getStage().setX(mw.getPos().getLeft());
+    getStage().setY(mw.getPos().getRight());
+    getStage().setWidth(mw.getSize().getLeft());
+    getStage().setHeight(mw.getSize().getRight());
     
     hbLeft.setPrefWidth(mw.getWidthLeftPane());
     hbRight.setPrefWidth(mw.getWidthRightPane());

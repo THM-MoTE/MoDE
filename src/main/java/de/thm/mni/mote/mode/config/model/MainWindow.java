@@ -1,8 +1,11 @@
 package de.thm.mni.mote.mode.config.model;
 
-import de.thm.mni.mote.mode.util.Tuple;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.Setter;
+import org.apache.commons.lang3.tuple.MutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.simpleframework.xml.Element;
 
 /**
@@ -10,40 +13,14 @@ import org.simpleframework.xml.Element;
  */
 
 @Getter
-public class MainWindow extends MyObservable {
+@Setter
+public class MainWindow {
   
-  @Element @NonNull Tuple<Double, Double> pos = new Tuple<>(20., 20.);
-  @Element @NonNull Tuple<Double, Double> size = new Tuple<>(1000., 700.);
+  @Element @NonNull Pair<Double, Double> pos = new MutablePair<>(20., 20.);
+  @Element @NonNull Pair<Double, Double> size = new MutablePair<>(1000., 700.);
   @Element @NonNull Integer widthLeftPane = 200;
   @Element @NonNull Integer widthRightPane = 200;
-  
-  public void setPos(Double x, Double y) {
-    setPos(new Tuple<>(x, y));
-  }
-  
-  public void setPos(Tuple<Double, Double> pos) {
-    this.pos = pos;
-    this.notifyObservers("Pos");
-  }
-  
-  public void setSize(Double w, Double h) {
-    setSize(new Tuple<>(w, h));
-  }
-  
-  public void setSize(Tuple<Double, Double> size) {
-    this.size = size;
-    this.notifyObservers("Size");
-  }
-  
-  public void setWidthLeftPane(Integer widthLeftPane) {
-    this.widthLeftPane = widthLeftPane;
-    this.notifyObservers("WidthLeftPane");
-  }
-  
-  public void setWidthRightPane(Integer widthRightPane) {
-    this.widthRightPane = widthRightPane;
-    this.notifyObservers("WidthRightPane");
-  }
+  @Setter(AccessLevel.PRIVATE) @Element(required = false) @NonNull Editor editor = new Editor();
   
   @Override
   public String toString() {

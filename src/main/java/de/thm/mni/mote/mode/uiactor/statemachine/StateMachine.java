@@ -75,7 +75,7 @@ public class StateMachine implements EventHandler<InputEvent> {
     handleElementManagment(event);
     if (!freezeState) {
       if (event.getSource() instanceof MoDiagramGroup && event.getEventType().equals(MouseEvent.MOUSE_MOVED)) return;
-//    if(!event.getEventType().equals(MouseEvent.MOUSE_MOVED)) MessageBus.getInstance().send(new TraceMessage(StateMachine.class, tab.getText() + " Event: " + event.getSource().getClass().getSimpleName() + " : " + event.getEventType()));
+      if (!event.getEventType().equals(MouseEvent.MOUSE_MOVED)) MessageBus.getInstance().send(new TraceMessage(StateMachine.class, tab.getText() + " Event: " + event.getSource().getClass().getSimpleName() + " : " + event.getEventType()));
       if (event instanceof MouseEvent) updateKeyState((MouseEvent) event);
       if (event instanceof ScrollEvent) updateKeyState((ScrollEvent) event);
       
@@ -119,7 +119,7 @@ public class StateMachine implements EventHandler<InputEvent> {
     State state = States.NONE;
     if (event instanceof MouseEvent) {
       MouseEvent e = (MouseEvent) event;
-      if (e.getEventType().equals(MouseEvent.MOUSE_CLICKED) && (keyState.get().equals(KeyState.SHIFT) || e.getClickCount() % 2 == 0) && hasMatchingParent(target, Actionable.class))
+      if (this.state != States.MOVE && e.getEventType().equals(MouseEvent.MOUSE_CLICKED) && (keyState.get().equals(KeyState.SHIFT) || e.getClickCount() % 2 == 0) && hasMatchingParent(target, Actionable.class))
         state = States.ACTION;
     }
     if (state == States.NONE) {

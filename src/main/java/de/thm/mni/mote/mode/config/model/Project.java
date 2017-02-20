@@ -26,8 +26,9 @@ import java.util.stream.Collectors;
 @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
 @Getter
 @Accessors(chain = true)
+@ToString
 @NoArgsConstructor
-public class Project extends MyObservable {
+public class Project {
   private static final String importFileName = "package.imports";
   
   
@@ -82,11 +83,6 @@ public class Project extends MyObservable {
     if (!Files.exists(importsFile)) return;
     projectLibraries.clear();
     projectLibraries.addAll(Files.lines(importsFile).map(Paths::get).collect(Collectors.toList()));
-  }
-  
-  @Override
-  public String toString() {
-    return String.format("{ name: %s, moFile: %s, lastOpened: %s }", name, moFile, lastOpened);
   }
   
   public static Project load(Path projectFile) throws Exception {

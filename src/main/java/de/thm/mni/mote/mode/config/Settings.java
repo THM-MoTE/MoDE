@@ -14,15 +14,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Locale;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.Properties;
 
 
 /**
  * Created by hobbypunk on 10.09.16.
  */
-public class Settings extends Configuration implements Observer {
+public class Settings extends Configuration {
   
   public static String TITLE;
   public static String VERSION;
@@ -76,7 +74,6 @@ public class Settings extends Configuration implements Observer {
       INSTANCE = serializer.read(Settings.class, f.toFile());
       INSTANCE.file = f;
       INSTANCE.serializer = serializer;
-      INSTANCE.init();
       Locale.setDefault(INSTANCE.getLang());
     } catch (Exception e) {
       if (!firstTime) throw new RuntimeException(e);
@@ -99,13 +96,5 @@ public class Settings extends Configuration implements Observer {
       }
     });
     t.start();
-  }
-  
-  @Override
-  public void update(Observable o, Object arg) {
-    if (arg instanceof String && !((String) arg).startsWith(getClass().getSimpleName())) {
-      super.update(o, arg);
-      this.save();
-    }
   }
 }
