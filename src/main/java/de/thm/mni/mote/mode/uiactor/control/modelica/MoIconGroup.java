@@ -6,7 +6,10 @@ import de.thm.mni.mote.mode.modelica.graphics.MoText;
 import de.thm.mni.mote.mode.modelica.graphics.MoTransformation;
 import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.editor.elementmanager.elements.ManagedMoIconConnectorGroup;
+import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.ObjectProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.transform.Affine;
@@ -90,28 +93,49 @@ public class MoIconGroup extends MoGroup {
     if (mt == null) mt = getVariable().getPlacement().getDiagramTransformation();
     if (mt == null) return;
   
-    //TODO: https://docs.oracle.com/javase/8/javafx/api/javafx/beans/binding/ObjectBinding.html
-    ObjectProperty<Point2D> origin = mt.getOrigin();
-    origin.addListener((observable, oldValue, newValue) -> {
-//      if (getOrigin().getX() == newValue.getX())
-      getOrigin().setX(newValue.getX());
-//      if (getOrigin().getY() == newValue.getY())
-      getOrigin().setY(newValue.getY());
+    final ObjectProperty<Point2D> origin = mt.getOrigin();
+  
+    getOrigin().xProperty().bind(new DoubleBinding() {
+      {
+        super.bind(origin);
+      }
+    
+      @Override
+      protected double computeValue() {
+        return origin.get().getX();
+      }
+    
+      @Override
+      public ObservableList<?> getDependencies() {
+        return FXCollections.singletonObservableList(origin);
+      }
+    
+      @Override
+      public void dispose() {
+        super.unbind(origin);
+      }
     });
-  
-    getOrigin().xProperty().addListener((observable, oldValue, newValue) -> {
-      if (origin.get().getX() != newValue.doubleValue())
-        origin.set(new Point2D(newValue.doubleValue(), origin.get().getY()));
+    getOrigin().yProperty().bind(new DoubleBinding() {
+      {
+        super.bind(origin);
+      }
+    
+      @Override
+      protected double computeValue() {
+        return origin.get().getY();
+      }
+    
+      @Override
+      public ObservableList<?> getDependencies() {
+        return FXCollections.singletonObservableList(origin);
+      }
+    
+      @Override
+      public void dispose() {
+        super.unbind(origin);
+      }
     });
-  
-    getOrigin().yProperty().addListener((observable, oldValue, newValue) -> {
-      if (origin.get().getY() != newValue.doubleValue())
-        origin.set(new Point2D(origin.get().getX(), newValue.doubleValue()));
-    });
-  
-    getOrigin().setX(origin.get().getX());
-    getOrigin().setY(origin.get().getY());
-  
+    
     Point2D extent0 = mt.getExtent().get(0).getValue();
     Point2D extent1 = mt.getExtent().get(1).getValue();
   

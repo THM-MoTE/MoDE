@@ -3,6 +3,7 @@ package de.thm.mni.mote.mode.uiactor.editor.statemachine.elements;
 import de.thm.mni.mote.mode.modelica.MoConnection;
 import de.thm.mni.mote.mode.modelica.MoContainer;
 import de.thm.mni.mote.mode.modelica.MoVariable;
+import de.thm.mni.mote.mode.modelica.graphics.MoTransformation;
 import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoDiagramGroup;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoIconGroup;
@@ -18,7 +19,6 @@ import javafx.scene.Parent;
 import javafx.scene.control.TabPane;
 import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.transform.Translate;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,7 +32,7 @@ import java.util.Map;
 public class ModifyableMoIconGroup extends MoIconGroup implements Actionable, Deletable, Moveable {
   
   private Boolean isMoving = false;
-  private Translate o = null;
+  private MoTransformation transformation = null;
   
   private Point2D startMousePos = null;
   private Point2D startOrigin = null;
@@ -90,21 +90,22 @@ public class ModifyableMoIconGroup extends MoIconGroup implements Actionable, De
     MouseEvent event = (MouseEvent) inputEvent;
     
     if (isMoving) {
+      if (this.transformation == null) return;
       Point2D mousePos = getMoParent().convertScenePointToDiagramPoint(new Point2D(event.getSceneX(), event.getSceneY()));
       Point2D delta = mousePos.subtract(startMousePos);
       updateConnections(delta);
-      Point2D origin = startOrigin.add(delta);
-      o.setX(origin.getX());
-      o.setY(origin.getY());
+  
+      transformation.getOrigin().set(startOrigin.add(delta));
     } else {
       isMoving = true;
-      this.o = this.getOrigin();
+      transformation = getVariable().getPlacement().getIconTransformation();
+      if (transformation == null) transformation = getVariable().getPlacement().getDiagramTransformation();
   
       this.toFront();
       this.setOpacity(0.8);
       
       startMousePos = this.getMoParent().convertScenePointToDiagramPoint(new Point2D(event.getSceneX(), event.getSceneY()));
-      startOrigin = new Point2D(o.getX(), o.getY());
+      startOrigin = transformation.getOrigin().get();
       this.getVariable().getConnections().forEach(moConn -> {
         Boolean to = moConn.toContains(this.getVariable());
         Boolean from = moConn.fromContains(this.getVariable());
