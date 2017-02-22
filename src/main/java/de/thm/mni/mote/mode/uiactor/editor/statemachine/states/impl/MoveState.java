@@ -21,10 +21,7 @@ public class MoveState extends State {
   
   @Override
   public Command handle(StateMachine sm, Node target, InputEvent event) {
-    if (target != null && target instanceof Moveable) {
-      return ((Moveable) target).move(sm, event);
-    } else {
-      return null;
-    }
+    return target != null && target instanceof Moveable ? ((Moveable) target).move(sm, event) : null;
+  
   }
 }

@@ -2,6 +2,7 @@ package de.thm.mni.mote.mode.uiactor.editor.statemachine.states.impl;
 
 import de.thm.mni.mote.mode.uiactor.editor.actionmanager.commands.Command;
 import de.thm.mni.mote.mode.uiactor.editor.statemachine.StateMachine;
+import de.thm.mni.mote.mode.uiactor.editor.statemachine.interfaces.Resizeable;
 import de.thm.mni.mote.mode.uiactor.editor.statemachine.states.State;
 import javafx.application.Platform;
 import javafx.scene.Cursor;
@@ -20,6 +21,6 @@ public class ResizeState extends State {
   
   @Override
   public Command handle(StateMachine sm, Node target, InputEvent event) {
-    return null;
+    return target != null && target instanceof Resizeable ? ((Resizeable) target).resize(sm, event) : null;
   }
 }

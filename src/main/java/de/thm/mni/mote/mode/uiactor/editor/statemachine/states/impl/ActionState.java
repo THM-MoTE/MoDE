@@ -23,9 +23,6 @@ public class ActionState extends State {
   
   @Override
   public Command handle(@NonNull StateMachine sm, @NonNull Node target, @NonNull InputEvent event) {
-    if (target != null && target instanceof Actionable) {
-      return ((Actionable) target).action(sm, event);
-    }
-    return null;
+    return target != null && target instanceof Actionable ? ((Actionable) target).action(sm, event) : null;
   }
 }
