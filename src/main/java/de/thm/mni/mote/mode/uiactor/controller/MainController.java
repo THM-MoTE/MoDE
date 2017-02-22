@@ -20,6 +20,7 @@ import de.thm.mni.mote.mode.uiactor.control.MainTabControl;
 import de.thm.mni.mote.mode.uiactor.control.MoTreeCell;
 import de.thm.mni.mote.mode.uiactor.controller.dialogs.ChangeProjectLibrariesDialogController;
 import de.thm.mni.mote.mode.uiactor.controller.dialogs.ChangeSystemLibrariesDialogController;
+import de.thm.mni.mote.mode.uiactor.editor.actionmanager.ActionManager;
 import de.thm.mni.mote.mode.uiactor.messages.OMCAvailableLibsUIMessage;
 import de.thm.mni.mote.mode.uiactor.messages.OMCDataUIMessage;
 import de.thm.mni.mote.mode.uiactor.messages.OMCSetProjectUIMessage;
@@ -71,7 +72,10 @@ public class MainController extends NotifyController {
   @FXML private TabPane tabPane;
   
   @FXML private TreeView<MoContainer> tvLibrary;
-  @FXML private TreeViewWithItemsWrapper<MoContainer> tvwiwLibrary;
+  private TreeViewWithItemsWrapper<MoContainer> tvwiwLibrary;
+  
+  @FXML private MenuItem miUndo;
+  @FXML private MenuItem miRedo;
   
   @Override
   public void initialize(URL location, ResourceBundle resources) {
@@ -88,6 +92,21 @@ public class MainController extends NotifyController {
     super.lateInitialize();
     this.project = (Project) getParams().get(1);
     initTreeView();
+    initActionManager();
+  }
+  
+  private void initActionManager() {
+    ActionManager.activeInstance.addListener((observable, oldValue, newValue) -> {
+      miUndo.disableProperty().unbind();
+      miRedo.disableProperty().unbind();
+      if (newValue != null) {
+        miUndo.disableProperty().bind(newValue.getHasUndoCommand().not());
+        miRedo.disableProperty().bind(newValue.getHasRedoCommand().not());
+      } else {
+        miUndo.setDisable(true);
+        miRedo.setDisable(true);
+      }
+    });
   }
   
   @Override
@@ -248,6 +267,18 @@ public class MainController extends NotifyController {
   @FXML
   private void handleClose() {
     MessageBus.getInstance().send(new ExitMessage(getGroup()));
+  }
+  
+  @FXML
+  private void undo() {
+    ActionManager am = ActionManager.activeInstance.get();
+    if (am != null) am.undo();
+  }
+  
+  @FXML
+  private void redo() {
+    ActionManager am = ActionManager.activeInstance.get();
+    if (am != null) am.redo();
   }
   
   private static class MainActor extends NotifyActor<MainController, Message> {

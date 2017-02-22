@@ -5,7 +5,7 @@ import de.thm.mni.mote.mode.modelica.MoConnector;
 import de.thm.mni.mote.mode.modelica.MoContainer;
 import de.thm.mni.mote.mode.modelica.MoVariable;
 import de.thm.mni.mote.mode.parser.ParserException;
-import de.thm.mni.mote.mode.uiactor.elementmanager.elements.ManagedMoIconGroup;
+import de.thm.mni.mote.mode.uiactor.editor.elementmanager.elements.ManagedMoIconGroup;
 import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
@@ -53,12 +53,8 @@ public class MoDiagramGroup extends MoGroup {
   }
   
   private void addIconListener(Node node, EventHandler<InputEvent> eventHandler) {
-    try {
-      if (node instanceof MoIconGroup && ((MoIconGroup) node).getMoClass() instanceof MoConnector) {
-        node.addEventHandler(MouseEvent.ANY, eventHandler);
-      }
-    } catch (ParserException e) {
-      e.printStackTrace();
+    if (node instanceof MoIconGroup && ((MoIconGroup) node).getMoClass() instanceof MoConnector) {
+      node.addEventHandler(MouseEvent.ANY, eventHandler);
     }
   }
   

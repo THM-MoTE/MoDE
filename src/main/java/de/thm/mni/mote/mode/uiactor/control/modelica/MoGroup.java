@@ -5,11 +5,12 @@ import de.thm.mni.mote.mode.modelica.MoContainer;
 import de.thm.mni.mote.mode.modelica.MoVariable;
 import de.thm.mni.mote.mode.modelica.graphics.*;
 import de.thm.mni.mote.mode.parser.ParserException;
-import de.thm.mni.mote.mode.uiactor.elementmanager.elements.ManagedLine;
+import de.thm.mni.mote.mode.uiactor.editor.actionmanager.elements.ModifyableMoClass;
+import de.thm.mni.mote.mode.uiactor.editor.elementmanager.elements.ManagedLine;
+import de.thm.mni.mote.mode.uiactor.editor.statemachine.interfaces.Deletable;
 import de.thm.mni.mote.mode.uiactor.shape.*;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.Element;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.HasStrokeWidth;
-import de.thm.mni.mote.mode.uiactor.statemachine.interfaces.Deletable;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -225,7 +226,11 @@ public abstract class MoGroup extends Group {
     basis.setStyle(style);
   }
   
-  public MoClass getMoClass() throws ParserException {
+  public MoClass getMoClass() {
     return this.container.getElement();
+  }
+  
+  public ModifyableMoClass getModifyableMoClass() {
+    return new ModifyableMoClass(this.getMoClass());
   }
 }

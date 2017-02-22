@@ -75,7 +75,11 @@ public class MoVariable extends MoElement implements Changeable {
   }
   
   public List<MoConnection> getConnections() {
-    return this.parent.getConnections().stream().filter(moConnection -> moConnection.contains(this)).collect(ImmutableListCollector.toImmutableList());
+    return getConnections(this.parent);
+  }
+  
+  public List<MoConnection> getConnections(MoClass baseParent) {
+    return baseParent.getConnections().stream().filter(moConnection -> moConnection.contains(this)).collect(ImmutableListCollector.toImmutableList());
   }
   
   public MoPlacement getPlacement() {

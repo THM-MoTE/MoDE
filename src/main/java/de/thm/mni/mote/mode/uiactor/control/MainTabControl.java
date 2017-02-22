@@ -5,9 +5,10 @@ import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoDiagramGroup;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoGroup;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoIconGroup;
-import de.thm.mni.mote.mode.uiactor.elementmanager.ElementManager;
-import de.thm.mni.mote.mode.uiactor.statemachine.StateMachine;
-import de.thm.mni.mote.mode.uiactor.statemachine.elements.ZoomableMoDiagramGroup;
+import de.thm.mni.mote.mode.uiactor.editor.actionmanager.ActionManager;
+import de.thm.mni.mote.mode.uiactor.editor.elementmanager.ElementManager;
+import de.thm.mni.mote.mode.uiactor.editor.statemachine.StateMachine;
+import de.thm.mni.mote.mode.uiactor.editor.statemachine.elements.ZoomableMoDiagramGroup;
 import de.thm.mni.mote.mode.uiactor.utilities.ScrollPaneHorizontalScroll;
 import de.thm.mni.mote.mode.util.Utilities;
 import javafx.beans.binding.Bindings;
@@ -117,6 +118,7 @@ public class MainTabControl extends Tab implements Initializable {
   
     this.setOnClosed(event -> {
       StateMachine.getInstance(data).leave();
+      ActionManager.removeInstance(data);
       ElementManager.removeInstance(data);
       StateMachine.removeInstance(data);
     });

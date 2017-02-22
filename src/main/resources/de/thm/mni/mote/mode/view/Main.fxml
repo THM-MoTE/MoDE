@@ -66,12 +66,14 @@
           <MenuItem accelerator="Shortcut+X" mnemonicParsing="false" onAction="#handleClose" text="%menu.file.exit"/>
         </Menu>
         <Menu mnemonicParsing="false" text="%menu.edit">
-          <MenuItem accelerator="Shortcut+Z" disable="true" mnemonicParsing="false" text="%menu.edit.undo">
+          <MenuItem fx:id="miUndo" onAction="#undo" accelerator="Shortcut+Z" disable="true" mnemonicParsing="false"
+                    text="%menu.edit.undo">
             <graphic>
               <FontIcon iconColor="mediumpurple" iconLiteral="gmi-undo" iconSize="18"/>
             </graphic>
           </MenuItem>
-          <MenuItem accelerator="Shortcut+Y" disable="true" mnemonicParsing="false" text="%menu.edit.redo">
+          <MenuItem fx:id="miRedo" onAction="#redo" accelerator="Shortcut+Y" disable="true" mnemonicParsing="false"
+                    text="%menu.edit.redo">
             <graphic>
               <FontIcon iconColor="mediumpurple" iconLiteral="gmi-redo" iconSize="18"/>
             </graphic>

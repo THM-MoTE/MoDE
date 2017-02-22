@@ -5,7 +5,7 @@ import de.thm.mni.mote.mode.modelica.MoVariable;
 import de.thm.mni.mote.mode.modelica.graphics.MoText;
 import de.thm.mni.mote.mode.modelica.graphics.MoTransformation;
 import de.thm.mni.mote.mode.parser.ParserException;
-import de.thm.mni.mote.mode.uiactor.elementmanager.elements.ManagedMoIconConnectorGroup;
+import de.thm.mni.mote.mode.uiactor.editor.elementmanager.elements.ManagedMoIconConnectorGroup;
 import javafx.beans.property.ObjectProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;

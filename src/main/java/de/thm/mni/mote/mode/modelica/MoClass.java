@@ -62,11 +62,11 @@ public class MoClass extends MoElement implements Changeable, Comparable<MoClass
     this("b", "");
   }
   
-  MoClass(String prefix, String comment) {
+  protected MoClass(String prefix, String comment) {
     super(prefix, comment);
   }
   
-  MoClass(ClassInformation classInformation, @NonNull MoLater that) {
+  protected MoClass(ClassInformation classInformation, @NonNull MoLater that) {
     super("c", "");
     this.classInformation = classInformation;
     this.container = that.getContainer();
@@ -102,12 +102,16 @@ public class MoClass extends MoElement implements Changeable, Comparable<MoClass
   }
   
   public void addVariable(MoVariable variable) {
-    this.variables.add(variable);
     variable.getUnsavedChanges().set(Change.NEW);
+    if (this.deletedVariables.contains(variable)) {
+      variable.getUnsavedChanges().set(Change.EDIT);
+      this.deletedVariables.remove(variable);
+    }
+    this.variables.add(variable);
   }
   
   private void addAllVariables(List<MoVariable> variables) {
-    this.variables.addAll(variables);
+    variables.forEach(this::addVariable);
   }
   
   public void removeVariable(MoVariable variable) {
@@ -128,8 +132,12 @@ public class MoClass extends MoElement implements Changeable, Comparable<MoClass
   }
   
   public void addConnection(MoConnection connection) {
-    this.connections.add(connection);
     connection.getUnsavedChanges().set(Change.NEW);
+    if (this.deletedConnections.contains(connection)) {
+      connection.getUnsavedChanges().set(Change.EDIT);
+      this.deletedConnections.remove(connection);
+    }
+    this.connections.add(connection);
   }
   
   public void removeConnection(MoConnection connection) {
@@ -138,8 +146,20 @@ public class MoClass extends MoElement implements Changeable, Comparable<MoClass
     this.deletedConnections.add(connection);
   }
   
-  private void addAllConnections(List<MoConnection> connections) {
-    this.connections.addAll(connections);
+  public void removeAllConnections(MoConnection... connections) {
+    for (MoConnection conn : connections) {
+      this.removeConnection(conn);
+    }
+  }
+  
+  public void addAllConnections(List<MoConnection> connections) {
+    connections.forEach(this::addConnection);
+  }
+  
+  public void addAllConnections(MoConnection... connections) {
+    for (MoConnection conn : connections) {
+      this.addConnection(conn);
+    }
   }
   
   
