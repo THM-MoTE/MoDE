@@ -28,7 +28,7 @@ public class MoDiagramGroup extends MoGroup {
   }
   
   @Override
-  protected void initImage() throws ParserException {
+  protected void initImage() {
     initVariables();
     initConnections();
     coordianteSystem.setFill(Color.WHITE);
@@ -82,7 +82,7 @@ public class MoDiagramGroup extends MoGroup {
     this.removeListeners(this, eventHandler);
   }
   
-  private void initVariables() throws ParserException {
+  private void initVariables() {
     this.getMoClass().getVariables().forEach(this::initVariable);
   
     this.getMoClass().getVariables().addListener((ListChangeListener<MoVariable>) c -> {
@@ -99,7 +99,8 @@ public class MoDiagramGroup extends MoGroup {
     getData().put(mv, mip);
     this.add(mip);
   }
-  private void initConnections() throws ParserException {
+  
+  private void initConnections() {
     this.getMoClass().getConnections().forEach(this::initConnection);
     this.getMoClass().getConnections().addListener((ListChangeListener<MoConnection>) c -> {
       while (c.next()) {

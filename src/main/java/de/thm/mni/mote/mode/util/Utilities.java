@@ -97,7 +97,7 @@ public class Utilities {
       try {
         f = Files.createDirectories(f);
       } catch (IOException e) {
-        throw new RuntimeException("can't create folders");
+        throw new RuntimeException("can't createMove folders");
       }
     }
     return f;
@@ -117,7 +117,7 @@ public class Utilities {
           e.printStackTrace();
         }
       } catch (Exception e) {
-        throw new RuntimeException("can't create file");
+        throw new RuntimeException("can't createMove file");
       }
     }
     return f;

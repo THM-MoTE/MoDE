@@ -11,6 +11,7 @@ import de.thm.mni.mote.mode.uiactor.editor.statemachine.interfaces.Deletable;
 import de.thm.mni.mote.mode.uiactor.shape.*;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.Element;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.HasStrokeWidth;
+import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -57,12 +58,12 @@ public abstract class MoGroup extends Group {
   
   MoGroup(@NonNull MoContainer container) {
     this.container = container;
-    this.getChildren().add(basis);
+    super.getChildren().add(basis);
     basis.getTransforms().addAll(scale, flipping, position);
     this.setFocusTraversable(true);
   }
   
-  final void init() throws ParserException {
+  final void init() {
     if (this.container.getElement().getIcon() != null) {
       initCoordinateSystem();
       initImage();
@@ -71,7 +72,7 @@ public abstract class MoGroup extends Group {
   
   //TODO: prevent scaling of stroke!
   private void preventScaling(Double scaleX, Double scaleY) {
-    getBasis().getChildren().forEach(node -> {
+    getChildren().forEach(node -> {
       if (node instanceof MoGroup) ((MoGroup) node).preventScaling(scaleX * scale.getX(), scaleY * scale.getY());
       else if (node instanceof HasStrokeWidth) {
         HasStrokeWidth s = (HasStrokeWidth) node;
@@ -91,7 +92,7 @@ public abstract class MoGroup extends Group {
   }
   
   
-  public MoGroup scaleToSize(Double newWidth, Double newHeight) throws ParserException {
+  public MoGroup scaleToSize(Double newWidth, Double newHeight) {
     Point2D extent0 = this.getMoClass().getIcon().getMoCoordinateSystem().getExtent().get(0).getValue();
     Point2D extent1 = this.getMoClass().getIcon().getMoCoordinateSystem().getExtent().get(1).getValue();
   
@@ -112,7 +113,7 @@ public abstract class MoGroup extends Group {
   }
   
   
-  private void initCoordinateSystem() throws ParserException {
+  private void initCoordinateSystem() {
   
     MoCoordinateSystem mcs;
     if (this instanceof MoIconGroup) mcs = this.getMoClass().getIconCoordinateSystem();
@@ -131,7 +132,7 @@ public abstract class MoGroup extends Group {
 //    coordianteSystem.setStroke(Color.BLACK);
     coordianteSystem.setFill(Color.TRANSPARENT);
 //    coordianteSystem.setOpacity(.1);
-    basis.getChildren().add(coordianteSystem);
+    getChildren().add(coordianteSystem);
   
   
     flipping.append(Transform.scale(1., -1.));
@@ -169,23 +170,32 @@ public abstract class MoGroup extends Group {
     }
   }
   
-  protected abstract void initImage() throws ParserException;
+  protected abstract void initImage();
+  
+  @Override
+  public ObservableList<Node> getChildren() {
+    return this.getBasis().getChildren();
+  }
+  
+  public ObservableList<Node> getOwnChildren() {
+    return super.getChildren();
+  }
   
   public void add(Node node) {
-    if (node instanceof ManagedLine || node instanceof Line) basis.getChildren().add(1, node);
-    else basis.getChildren().add(node);
+    if (node instanceof ManagedLine || node instanceof Line) getChildren().add(1, node);
+    else getChildren().add(node);
   }
   
   public void remove(Node node) {
-    basis.getChildren().remove(node);
+    getChildren().remove(node);
   }
   
   public void remove(MoGraphic mg) {
-    for (int i = 0, size = basis.getChildren().size(); i < size; i++) {
-      if (basis.getChildren().get(i) instanceof Element) {
-        Element child = (Element) basis.getChildren().get(i);
+    for (int i = 0, size = getChildren().size(); i < size; i++) {
+      if (getChildren().get(i) instanceof Element) {
+        Element child = (Element) getChildren().get(i);
         if (child.getData().equals(mg) && child instanceof Deletable) {
-          basis.getChildren().remove(child);
+          getChildren().remove(child);
           return;
         }
       }
@@ -193,11 +203,11 @@ public abstract class MoGroup extends Group {
   }
   
   public void remove(MoVariable mv) {
-    for (int i = 0, size = basis.getChildren().size(); i < size; i++) {
-      if (basis.getChildren().get(i) instanceof MoIconGroup) {
-        MoIconGroup child = (MoIconGroup) basis.getChildren().get(i);
+    for (int i = 0, size = getChildren().size(); i < size; i++) {
+      if (getChildren().get(i) instanceof MoIconGroup) {
+        MoIconGroup child = (MoIconGroup) getChildren().get(i);
         if (child.getVariable().equals(mv)) {
-          basis.getChildren().remove(i);
+          getChildren().remove(i);
           return;
         }
       }

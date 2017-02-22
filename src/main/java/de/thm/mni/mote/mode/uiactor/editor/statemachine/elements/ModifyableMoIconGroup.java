@@ -6,8 +6,8 @@ import de.thm.mni.mote.mode.modelica.MoVariable;
 import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoDiagramGroup;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoIconGroup;
-import de.thm.mni.mote.mode.uiactor.editor.actionmanager.commands.MoveCommand;
 import de.thm.mni.mote.mode.uiactor.editor.actionmanager.commands.Command;
+import de.thm.mni.mote.mode.uiactor.editor.actionmanager.elements.ModifyableMoVariable;
 import de.thm.mni.mote.mode.uiactor.editor.statemachine.StateMachine;
 import de.thm.mni.mote.mode.uiactor.editor.statemachine.interfaces.Actionable;
 import de.thm.mni.mote.mode.uiactor.editor.statemachine.interfaces.Deletable;
@@ -29,7 +29,7 @@ import java.util.Map;
  * Created by hobbypunk on 16.02.17.
  */
 
-public class ModifyableMoIconGroup extends MoIconGroup implements Actionable, Deletable, Moveable, de.thm.mni.mote.mode.uiactor.editor.actionmanager.interfaces.Moveable {
+public class ModifyableMoIconGroup extends MoIconGroup implements Actionable, Deletable, Moveable {
   
   private Boolean isMoving = false;
   private Translate o = null;
@@ -63,26 +63,6 @@ public class ModifyableMoIconGroup extends MoIconGroup implements Actionable, De
     return this.getMoParent().getModifyableMoClass().delete(this.getVariable());
   }
   
-  public Command move(Object... params) {
-    Point2D startOrigin = (Point2D) params[0];
-    Map<MoConnection, List<Integer>> startConnectionPointPoses = (HashMap<MoConnection, List<Integer>>) params[1];
-    Map<MoConnection, List<Point2D>> startConnectionPoints = (HashMap<MoConnection, List<Point2D>>) params[2];
-    
-    startConnectionPointPoses.keySet().forEach(moConn -> {
-      for (int i = 0, size = startConnectionPointPoses.get(moConn).size(); i < size; i++) {
-        Integer pos = startConnectionPointPoses.get(moConn).get(i);
-        Point2D point = startConnectionPoints.get(moConn).get(i);
-        startConnectionPoints.get(moConn).set(i, moConn.getLine().getPoints().get(pos));
-        moConn.getLine().getPoints().set(pos, point);
-      }
-    });
-    
-    Point2D oldOrigin = new Point2D(this.getOrigin().getX(), this.getOrigin().getY());
-    this.getOrigin().setX(startOrigin.getX());
-    this.getOrigin().setY(startOrigin.getY());
-    return new MoveCommand(this, oldOrigin, startConnectionPointPoses, startConnectionPoints);
-  }
-  
   @Override
   public Command move(StateMachine sm, InputEvent inputEvent) {
     MouseEvent event = (MouseEvent) inputEvent;
@@ -92,11 +72,12 @@ public class ModifyableMoIconGroup extends MoIconGroup implements Actionable, De
       return Command.IGNORE;
     } else if (event.getEventType().equals(MouseEvent.MOUSE_RELEASED)) {
       isMoving = false;
+      this.setOpacity(1);
       sm.unfreeze();
   
       Command c = Command.IGNORE;
       if (!startOrigin.equals(new Point2D(this.getOrigin().getX(), this.getOrigin().getY())))
-        c = new MoveCommand(this, startOrigin, new HashMap<>(startConnectionPointPoses), new HashMap<>(startConnectionPoints));
+        c = new ModifyableMoVariable(getVariable()).createMove(startOrigin, startConnectionPointPoses, startConnectionPoints);
       startOrigin = null;
       startConnectionPointPoses.clear();
       startConnectionPoints.clear();
@@ -105,7 +86,7 @@ public class ModifyableMoIconGroup extends MoIconGroup implements Actionable, De
     return null;
   }
   
-  private void moveDrag(InputEvent inputEvent) { //TODO: line not matching...
+  private void moveDrag(InputEvent inputEvent) {
     MouseEvent event = (MouseEvent) inputEvent;
     
     if (isMoving) {
@@ -118,16 +99,15 @@ public class ModifyableMoIconGroup extends MoIconGroup implements Actionable, De
     } else {
       isMoving = true;
       this.o = this.getOrigin();
-      
-      ModifyableMoIconGroup source = this;
-      source.toFront();
-      source.setOpacity(0.8);
+  
+      this.toFront();
+      this.setOpacity(0.8);
       
       startMousePos = this.getMoParent().convertScenePointToDiagramPoint(new Point2D(event.getSceneX(), event.getSceneY()));
       startOrigin = new Point2D(o.getX(), o.getY());
-      source.getVariable().getConnections().forEach(moConn -> {
-        Boolean to = moConn.toContains(source.getVariable());
-        Boolean from = moConn.fromContains(source.getVariable());
+      this.getVariable().getConnections().forEach(moConn -> {
+        Boolean to = moConn.toContains(this.getVariable());
+        Boolean from = moConn.fromContains(this.getVariable());
         if (!startConnectionPointPoses.containsKey(moConn)) {
           startConnectionPointPoses.put(moConn, new ArrayList<>());
           startConnectionPoints.put(moConn, new ArrayList<>());

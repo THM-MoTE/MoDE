@@ -51,11 +51,7 @@ public class MoIconGroup extends MoGroup {
     this.moParent = diagramParent;
     this.variable = variable;
     this.iconOnly = iconOnly;
-    try {
-      init();
-    } catch (ParserException e) {
-      e.printStackTrace(); //TODO send msg
-    }
+    init();
   }
   
   protected List<MoVariable> getVariables() {
@@ -70,14 +66,14 @@ public class MoIconGroup extends MoGroup {
     return getVariables(parent.getParent(), list);
   }
   
-  protected void initImage() throws ParserException {
+  protected void initImage() {
     this.getMoClass().getIcon().getMoGraphics().stream().filter(mg -> !iconOnly || (!(mg instanceof MoText))).forEach(this::initImage);
     if (!iconOnly)
       initConnectors();
     if (variable != null) initTransformation();
   }
   
-  private void initConnectors() throws ParserException {
+  private void initConnectors() {
     getMoClass().getConnectorVariables().forEach(this::initConnector);
   }
   
@@ -88,7 +84,7 @@ public class MoIconGroup extends MoGroup {
     this.add(mip);
   }
   
-  private void initTransformation() throws ParserException {
+  private void initTransformation() {
     MoTransformation mt;
     mt = getVariable().getPlacement().getIconTransformation();
     if (mt == null) mt = getVariable().getPlacement().getDiagramTransformation();
@@ -97,8 +93,10 @@ public class MoIconGroup extends MoGroup {
     //TODO: https://docs.oracle.com/javase/8/javafx/api/javafx/beans/binding/ObjectBinding.html
     ObjectProperty<Point2D> origin = mt.getOrigin();
     origin.addListener((observable, oldValue, newValue) -> {
-      if (getOrigin().getX() == newValue.getX()) getOrigin().setX(newValue.getX());
-      if (getOrigin().getY() == newValue.getY()) getOrigin().setY(newValue.getY());
+//      if (getOrigin().getX() == newValue.getX())
+      getOrigin().setX(newValue.getX());
+//      if (getOrigin().getY() == newValue.getY())
+      getOrigin().setY(newValue.getY());
     });
   
     getOrigin().xProperty().addListener((observable, oldValue, newValue) -> {
