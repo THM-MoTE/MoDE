@@ -79,6 +79,9 @@ public class ActionManager {
   }
   
   private void checkHasCommands() {
+    hasUndoCommand.set(undoStack.isEmpty());
+    hasRedoCommand.set(redoStack.isEmpty());
+    
     hasUndoCommand.set(!undoStack.isEmpty());
     hasRedoCommand.set(!redoStack.isEmpty());
   }

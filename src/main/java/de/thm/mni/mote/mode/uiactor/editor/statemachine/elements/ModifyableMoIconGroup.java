@@ -39,6 +39,16 @@ public class ModifyableMoIconGroup extends MoIconGroup implements Actionable, De
   private final Map<MoConnection, List<Point2D>> startConnectionPoints = new HashMap<>();
   private final Map<MoConnection, List<Integer>> startConnectionPointPoses = new HashMap<>();
   
+  //ROTATE
+  private Point2D variableCenter = null;
+  private Double startAngle = null;
+  private Double startRotation = null;
+  
+  //RESIZE
+  private Point2D startPos = null;
+  private Point2D extent0 = null;
+  private Point2D extent1 = null;
+  
   protected ModifyableMoIconGroup(MoDiagramGroup diagramParent, MoContainer parent, MoVariable variable, Boolean iconOnly) {
     super(diagramParent, parent, variable, iconOnly);
   }
@@ -65,6 +75,7 @@ public class ModifyableMoIconGroup extends MoIconGroup implements Actionable, De
   
   @Override
   public Command move(StateMachine sm, InputEvent inputEvent) {
+    if (!(inputEvent instanceof MouseEvent)) return null;
     MouseEvent event = (MouseEvent) inputEvent;
     if (event.getEventType().equals(MouseEvent.MOUSE_PRESSED) || event.getEventType().equals(MouseEvent.MOUSE_DRAGGED)) {
       this.moveDrag(inputEvent);
@@ -143,4 +154,65 @@ public class ModifyableMoIconGroup extends MoIconGroup implements Actionable, De
     return findTabPane(parent.getParent());
   }
   
+  Command rotate(StateMachine sm, InputEvent inputEvent) {
+    if (!(inputEvent instanceof MouseEvent) || this.transformation == null) return null;
+    
+    MouseEvent event = (MouseEvent) inputEvent;
+    if (event.getEventType().equals(MouseEvent.MOUSE_PRESSED)) {
+      sm.freeze();
+      calcCenter();
+      Point2D pos = this.getMoParent().convertScenePointToDiagramPoint(new Point2D(event.getSceneX(), event.getSceneY()));
+      startAngle = (double) Math.round(Math.toDegrees(Math.atan2(pos.getX() - variableCenter.getX(), variableCenter.getY() - pos.getY())));
+      startRotation = transformation.getRotation().get();
+      return Command.IGNORE;
+    } else if (event.getEventType().equals(MouseEvent.MOUSE_DRAGGED) && startAngle != null) {
+      Point2D pos = this.getMoParent().convertScenePointToDiagramPoint(new Point2D(event.getSceneX(), event.getSceneY()));
+      Double angle = (double) Math.round(Math.toDegrees(Math.atan2(pos.getX() - variableCenter.getX(), variableCenter.getY() - pos.getY())));
+      Double newRotation = (startRotation - (startAngle - angle)) % 360;
+      transformation.getRotation().set((newRotation < 0) ? 360 + newRotation : newRotation);
+      return Command.IGNORE;
+    } else if (event.getEventType().equals(MouseEvent.MOUSE_RELEASED)) {
+      Command c = new ModifyableMoVariable(getVariable()).createRotation(startRotation);
+      startAngle = null;
+      startRotation = null;
+      variableCenter = null;
+      sm.unfreeze();
+      return c;
+    }
+    
+    return null;
+  }
+  
+  private void calcCenter() {
+    if (transformation == null) return;
+    Point2D extent0 = transformation.getExtent().get(0).getValue();
+    Point2D extent1 = transformation.getExtent().get(1).getValue();
+    
+    Point2D largest = new Point2D(Math.max(extent0.getX(), extent1.getX()), Math.max(extent0.getY(), extent1.getY()));
+    Point2D smallest = new Point2D(Math.min(extent0.getX(), extent1.getX()), Math.min(extent0.getY(), extent1.getY()));
+    
+    Double width = largest.getX() - smallest.getX();
+    Double height = largest.getY() - smallest.getX();
+    
+    variableCenter = smallest.add(width / 2, height / 2).add(transformation.getOrigin().get());
+  }
+  
+  
+  //TODO: MoTransformation change: expand extent to hoffset, voffset(origin), hscale, vscale, hflip, vflip
+  Command resize(StateMachine sm, InputEvent inputEvent, Integer combination) {
+    if (!(inputEvent instanceof MouseEvent) || this.transformation == null) return null;
+    
+    MouseEvent event = (MouseEvent) inputEvent;
+    if (event.getEventType().equals(MouseEvent.MOUSE_PRESSED)) {
+      sm.freeze();
+      return Command.IGNORE;
+    } else if (event.getEventType().equals(MouseEvent.MOUSE_DRAGGED) && startPos != null) {
+      return Command.IGNORE;
+    } else if (event.getEventType().equals(MouseEvent.MOUSE_RELEASED)) {
+      //Command c = new ModifyableMoVariable(variable).createResize(extent0, extent1);
+      sm.unfreeze();
+      return Command.IGNORE;// return c;
+    }
+    return null;
+  }
 }

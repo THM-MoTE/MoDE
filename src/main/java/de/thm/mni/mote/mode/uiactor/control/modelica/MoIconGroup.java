@@ -8,14 +8,12 @@ import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.editor.elementmanager.elements.ManagedMoIconConnectorGroup;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
-import javafx.scene.transform.Affine;
-import javafx.scene.transform.Rotate;
-import javafx.scene.transform.Transform;
-import javafx.scene.transform.Translate;
+import javafx.scene.transform.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
@@ -92,24 +90,24 @@ public class MoIconGroup extends MoGroup {
     mt = getVariable().getPlacement().getIconTransformation();
     if (mt == null) mt = getVariable().getPlacement().getDiagramTransformation();
     if (mt == null) return;
-  
+    
     final ObjectProperty<Point2D> origin = mt.getOrigin();
-  
+    
     getOrigin().xProperty().bind(new DoubleBinding() {
       {
         super.bind(origin);
       }
-    
+      
       @Override
       protected double computeValue() {
         return origin.get().getX();
       }
-    
+      
       @Override
       public ObservableList<?> getDependencies() {
         return FXCollections.singletonObservableList(origin);
       }
-    
+      
       @Override
       public void dispose() {
         super.unbind(origin);
@@ -119,39 +117,83 @@ public class MoIconGroup extends MoGroup {
       {
         super.bind(origin);
       }
-    
+      
       @Override
       protected double computeValue() {
         return origin.get().getY();
       }
-    
+      
       @Override
       public ObservableList<?> getDependencies() {
         return FXCollections.singletonObservableList(origin);
       }
-    
+      
       @Override
       public void dispose() {
         super.unbind(origin);
       }
     });
     
+    
+    ChangeListener<? super Point2D> listner = (observable, oldValue, newValue) -> {
+      MoTransformation trans;
+      trans = getVariable().getPlacement().getIconTransformation();
+      if (trans == null) trans = getVariable().getPlacement().getDiagramTransformation();
+      if (trans == null) return;
+      
+      Point2D extent0 = trans.getExtent().get(0).getValue();
+      Point2D extent1 = trans.getExtent().get(1).getValue();
+      
+      Double newVariableWidth = Math.max(extent0.getX(), extent1.getX()) - Math.min(extent0.getX(), extent1.getX());
+      Double newVariableHeight = Math.max(extent0.getY(), extent1.getY()) - Math.min(extent0.getY(), extent1.getY());
+      
+      this.scaleToSize(newVariableWidth, newVariableHeight);
+    };
+    
+    mt.getExtent().get(0).addListener(listner);
+    mt.getExtent().get(1).addListener(listner);
+    
     Point2D extent0 = mt.getExtent().get(0).getValue();
     Point2D extent1 = mt.getExtent().get(1).getValue();
-  
+    
     Double newVariableWidth = Math.max(extent0.getX(), extent1.getX()) - Math.min(extent0.getX(), extent1.getX());
     Double newVariableHeight = Math.max(extent0.getY(), extent1.getY()) - Math.min(extent0.getY(), extent1.getY());
-  
+    
     this.scaleToSize(newVariableWidth, newVariableHeight);
-  
+    
     this.getTransforms().addAll(this.origin, this.rotation, this.transformation);
     this.transformation.append(Transform.translate(Math.min(extent0.getX(), extent1.getX()), Math.min(extent0.getY(), extent1.getY())));
     if (getFlippedX()) {
       this.transformation.append(Transform.translate(newVariableWidth, 0));
       this.transformation.append(Transform.scale(-1, 1));
     }
-  
+    
     this.transformation.append(Transform.translate(0, newVariableHeight));
     this.transformation.append(Transform.scale(1, -1));
+    
+    this.rotation.angleProperty().bind(mt.getRotation());
+  }
+  
+  private void scaleToSize(Point2D extent0, Point2D extent1) {
+    Double newVariableWidth = Math.max(extent0.getX(), extent1.getX()) - Math.min(extent0.getX(), extent1.getX());
+    Double newVariableHeight = Math.max(extent0.getY(), extent1.getY()) - Math.min(extent0.getY(), extent1.getY());
+    
+    this.scaleToSize(newVariableWidth, newVariableHeight);
+  }
+  
+  public Point2D convertVariablePointToDiagramPoint(Point2D p) {
+    p = this.rotation.inverseDeltaTransform(p.getX(), p.getY());
+    try {
+      p = this.transformation.inverseDeltaTransform(p.getX(), p.getY());
+    } catch (NonInvertibleTransformException e) {
+      System.err.println("should never call");
+    }
+    return p;
+  }
+  
+  public Point2D convertDiagramPointToVariablePoint(Point2D p) {
+    p = this.rotation.deltaTransform(p.getX(), p.getY());
+    p = this.transformation.deltaTransform(p.getX(), p.getY());
+    return p;
   }
 }

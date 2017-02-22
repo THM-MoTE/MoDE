@@ -17,7 +17,7 @@ import javafx.scene.input.MouseEvent;
 public class DeleteState extends State {
   @Override
   public void enter(Scene scene) {
-    Platform.runLater(() -> scene.setCursor(Cursor.DISAPPEAR));
+    Platform.runLater(() -> scene.setCursor(Cursor.CROSSHAIR));
   }
   
   @Override

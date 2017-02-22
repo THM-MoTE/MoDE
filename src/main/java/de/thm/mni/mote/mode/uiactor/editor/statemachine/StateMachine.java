@@ -80,7 +80,7 @@ public class StateMachine implements EventHandler<InputEvent> {
     handleElementManagment(event);
     if (!freezeState) {
       if (event.getSource() instanceof MoDiagramGroup && event.getEventType().equals(MouseEvent.MOUSE_MOVED)) return;
-      if (!event.getEventType().equals(MouseEvent.MOUSE_MOVED)) MessageBus.getInstance().send(new TraceMessage(StateMachine.class, tab.getText() + " Event: " + event.getSource().getClass().getSimpleName() + " : " + event.getEventType()));
+//      if (!event.getEventType().equals(MouseEvent.MOUSE_MOVED)) MessageBus.getInstance().send(new TraceMessage(StateMachine.class, tab.getText() + " Event: " + event.getSource().getClass().getSimpleName() + " : " + event.getEventType()));
       if (event instanceof MouseEvent) updateKeyState((MouseEvent) event);
       if (event instanceof ScrollEvent) updateKeyState((ScrollEvent) event);
       
@@ -132,9 +132,9 @@ public class StateMachine implements EventHandler<InputEvent> {
     }
     if (state == States.NONE) {
       if (keyState.get().equals(KeyState.CTRL) && hasMatchingParent(target, Deletable.class)) state = States.DELETE;
-      else if ((keyState.get().equals(KeyState.NONE) || keyState.get().equals(KeyState.SHIFT)) && hasMatchingParent(target, Moveable.class)) state = States.MOVE;
       else if (keyState.get().equals(KeyState.NONE) && hasMatchingParent(target, Resizeable.class)) state = States.RESIZE;
       else if (keyState.get().equals(KeyState.SHIFT) && hasMatchingParent(target, Rotateable.class)) state = States.ROTATE;
+      else if ((keyState.get().equals(KeyState.NONE) || keyState.get().equals(KeyState.SHIFT)) && hasMatchingParent(target, Moveable.class)) state = States.MOVE;
       else if ((Utilities.isMac() && keyState.get().equals(KeyState.META)) || (!Utilities.isMac() && keyState.get().equals(KeyState.CTRL))) state = States.ZOOM; //TODO
     }
     changeState(state);
@@ -146,14 +146,18 @@ public class StateMachine implements EventHandler<InputEvent> {
   
   private void handleElementManagment(InputEvent event, Node target) {
     EventType<? extends Event> type = event.getEventType();
-    if (type.equals(MouseEvent.MOUSE_PRESSED)) ElementManager.getInstance(tab.getData()).clearSelectedElement();
+  
     if (hasMatchingParent(target, Hoverable.class)) {
       if (type.equals(MouseEvent.MOUSE_ENTERED)) ElementManager.getInstance(tab.getData()).setHoveredElement((Hoverable) getMatchingParent(target, Hoverable.class));
       if (type.equals(MouseEvent.MOUSE_EXITED)) ElementManager.getInstance(tab.getData()).clearHoveredElement();
     }
-    
-    if (hasMatchingParent(target, Selectable.class)) {
-      if (type.equals(MouseEvent.MOUSE_PRESSED)) ElementManager.getInstance(tab.getData()).setSelectedElement((Selectable) getMatchingParent(target, Hoverable.class));
+  
+    if (type.equals(MouseEvent.MOUSE_PRESSED)) {
+      if (hasMatchingParent(target, Selectable.class)) {
+        ElementManager.getInstance(tab.getData()).setSelectedElement((Selectable) getMatchingParent(target, Hoverable.class));
+      } else {
+        ElementManager.getInstance(tab.getData()).clearSelectedElement();
+      }
     }
   }
   

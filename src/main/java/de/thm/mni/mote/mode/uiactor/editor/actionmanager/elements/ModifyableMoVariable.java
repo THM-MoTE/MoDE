@@ -5,7 +5,9 @@ import de.thm.mni.mote.mode.modelica.MoVariable;
 import de.thm.mni.mote.mode.modelica.graphics.MoTransformation;
 import de.thm.mni.mote.mode.uiactor.editor.actionmanager.commands.Command;
 import de.thm.mni.mote.mode.uiactor.editor.actionmanager.commands.MoveCommand;
+import de.thm.mni.mote.mode.uiactor.editor.actionmanager.commands.RotateCommand;
 import de.thm.mni.mote.mode.uiactor.editor.actionmanager.interfaces.Moveable;
+import de.thm.mni.mote.mode.uiactor.editor.actionmanager.interfaces.Rotateable;
 import javafx.geometry.Point2D;
 
 import java.util.HashMap;
@@ -15,13 +17,17 @@ import java.util.Map;
 /**
  * Created by hobbypunk on 22.02.17.
  */
-public class ModifyableMoVariable implements Moveable {
+public class ModifyableMoVariable implements Moveable, Rotateable {
   private final MoVariable element;
   
   public ModifyableMoVariable(MoVariable element) {this.element = element;}
   
   public Command createMove(Point2D startOrigin, Map<MoConnection, List<Integer>> startConnectionPointPoses, Map<MoConnection, List<Point2D>> startConnectionPoints) {
     return new MoveCommand(this, startOrigin, new HashMap<>(startConnectionPointPoses), new HashMap<>(startConnectionPoints));
+  }
+  
+  public Command createRotation(Double rotation) {
+    return new RotateCommand(this, rotation);
   }
   
   public Command move(Object... params) {
@@ -46,4 +52,14 @@ public class ModifyableMoVariable implements Moveable {
     return new MoveCommand(this, oldOrigin, startConnectionPointPoses, startConnectionPoints);
   }
   
+  @Override//TODO: update connections!
+  public Command rotate(Object... params) {
+    Double rotation = (Double) params[0];
+    MoTransformation mt = element.getPlacement().getIconTransformation();
+    if (mt == null) mt = element.getPlacement().getDiagramTransformation();
+    
+    Double oldRotation = mt.getRotation().get();
+    mt.getRotation().set(rotation);
+    return new RotateCommand(this, oldRotation);
+  }
 }
