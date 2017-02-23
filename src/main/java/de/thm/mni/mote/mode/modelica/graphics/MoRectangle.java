@@ -1,25 +1,19 @@
 package de.thm.mni.mote.mode.modelica.graphics;
 
-import de.thm.mni.mote.mode.modelica.interfaces.MoExtent;
+import de.thm.mni.mote.mode.modelica.interfaces.HasExtent;
 import de.thm.mni.mote.mode.parser.modelica.AnnotationParser.RectangleContext;
 import de.thm.mni.mote.mode.parser.modelica.AnnotationParser.RectangleDataContext;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Point2D;
 import lombok.Builder;
 import lombok.Getter;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Created by hobbypunk on 19.09.16.
  */
 @Getter
-public class MoRectangle extends MoFilledShape implements MoExtent {
+public class MoRectangle extends MoFilledShape implements HasExtent {
   
-  private final List<ObjectProperty<Point2D>> extent = Collections.unmodifiableList(Arrays.asList(new SimpleObjectProperty<>(), new SimpleObjectProperty<>()));
+  private final MoExtent extent;
   
   private BorderPattern borderPattern = BorderPattern.NONE;
   private Double radius = 0.0;
@@ -32,10 +26,9 @@ public class MoRectangle extends MoFilledShape implements MoExtent {
   }
   
   @Builder(builderMethodName = "rectangleBuilder")
-  MoRectangle(MoFilledShape mfs, Point2D first, Point2D second, BorderPattern borderPattern, Double radius) {
+  MoRectangle(MoFilledShape mfs, Point2D p1, Point2D p2, BorderPattern borderPattern, Double radius) {
     super(mfs);
-    extent.get(0).setValue(first);
-    extent.get(1).setValue(second);
+    extent = new MoSimpleExtent(p1, p2);
     if (borderPattern != null) this.borderPattern = borderPattern;
     if (radius != null) this.radius = radius;
   }
@@ -51,8 +44,8 @@ public class MoRectangle extends MoFilledShape implements MoExtent {
       } else if (data.filledShape() != null) {
         parse(mfsb, data.filledShape());
       } else if (data.extent() != null) {
-        mb.first(new Point2D(Double.parseDouble(data.extent().p1.x.getText()), Double.parseDouble(data.extent().p1.y.getText())));
-        mb.second(new Point2D(Double.parseDouble(data.extent().p2.x.getText()), Double.parseDouble(data.extent().p2.y.getText())));
+        mb.p1(new Point2D(Double.parseDouble(data.extent().p1.x.getText()), Double.parseDouble(data.extent().p1.y.getText())));
+        mb.p2(new Point2D(Double.parseDouble(data.extent().p2.x.getText()), Double.parseDouble(data.extent().p2.y.getText())));
       } else if (data.borderPattern() != null) {
         mb.borderPattern(BorderPattern.valueOf(data.borderPattern().type.getText().toUpperCase()));
       } else if (data.radius() != null) {

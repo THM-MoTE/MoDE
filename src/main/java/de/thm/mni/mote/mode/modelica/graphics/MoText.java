@@ -1,10 +1,8 @@
 package de.thm.mni.mote.mode.modelica.graphics;
 
-import de.thm.mni.mote.mode.modelica.interfaces.MoExtent;
+import de.thm.mni.mote.mode.modelica.interfaces.HasExtent;
 import de.thm.mni.mote.mode.parser.modelica.AnnotationParser.TextContext;
 import de.thm.mni.mote.mode.parser.modelica.AnnotationParser.TextDataContext;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import lombok.AccessLevel;
@@ -12,19 +10,16 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import java.util.regex.Pattern;
 
 /**
  * Created by hobbypunk on 19.09.16.
  */
 @Getter
-public class MoText extends MoFilledShape implements MoExtent {
+public class MoText extends MoFilledShape implements HasExtent {
   
   private static final Pattern COMPILE = Pattern.compile("(^[\\\\\"]+)|([\\\\\"]+$)");
-  private final List<ObjectProperty<Point2D>> extent = Collections.unmodifiableList(Arrays.asList(new SimpleObjectProperty<>(), new SimpleObjectProperty<>()));
+  private final MoExtent extent;
   
   public enum TextAlignment {
     LEFT,
@@ -61,10 +56,9 @@ public class MoText extends MoFilledShape implements MoExtent {
   Integer index = 1;
   
   @Builder(builderMethodName = "textBuilder")
-  MoText(MoFilledShape mfs, Point2D first, Point2D second, String string, Double fontSize, String fontName, Integer textStyle, Color textColor, TextAlignment horizontalAlignment, Integer index) {
+  MoText(MoFilledShape mfs, Point2D p1, Point2D p2, String string, Double fontSize, String fontName, Integer textStyle, Color textColor, TextAlignment horizontalAlignment, Integer index) {
     super(mfs);
-    extent.get(0).setValue(first);
-    extent.get(1).setValue(second);
+    extent = new MoSimpleExtent(p1, p2);
     if (string != null) this.string = string;
     if (fontSize != null) this.fontSize = fontSize;
     if (fontName != null) this.fontName = fontName;
@@ -95,8 +89,8 @@ public class MoText extends MoFilledShape implements MoExtent {
       } else if (data.filledShape() != null) {
         parse(mfsb, data.filledShape());
       } else if (data.extent() != null) {
-        mb.first(new Point2D(Double.parseDouble(data.extent().p1.x.getText()), Double.parseDouble(data.extent().p1.y.getText())));
-        mb.second(new Point2D(Double.parseDouble(data.extent().p2.x.getText()), Double.parseDouble(data.extent().p2.y.getText())));
+        mb.p1(new Point2D(Double.parseDouble(data.extent().p1.x.getText()), Double.parseDouble(data.extent().p1.y.getText())));
+        mb.p2(new Point2D(Double.parseDouble(data.extent().p2.x.getText()), Double.parseDouble(data.extent().p2.y.getText())));
       } else if (data.textString() != null) {
         mb.string(COMPILE.matcher(data.textString().val.getText()).replaceAll(""));
       } else if (data.fontName() != null) {

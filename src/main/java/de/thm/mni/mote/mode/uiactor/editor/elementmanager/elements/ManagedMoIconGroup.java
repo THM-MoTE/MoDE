@@ -18,10 +18,10 @@ public class ManagedMoIconGroup extends ModifyableMoIconGroup implements Hoverab
   public ManagedMoIconGroup(MoDiagramGroup diagramParent, MoVariable variable, Boolean iconOnly) {
     super(diagramParent, variable.getType(), variable, iconOnly);
     MoCoordinateSystem mcs = this.getMoClass().getIconCoordinateSystem();
-    corners[0] = new ModifyableCircle(this, mcs.getExtent().get(0).get().getX(), mcs.getExtent().get(0).get().getY(), 0);
-    corners[1] = new ModifyableCircle(this, mcs.getExtent().get(1).get().getX(), mcs.getExtent().get(0).get().getY(), 1);
-    corners[2] = new ModifyableCircle(this, mcs.getExtent().get(0).get().getX(), mcs.getExtent().get(1).get().getY(), 2);
-    corners[3] = new ModifyableCircle(this, mcs.getExtent().get(1).get().getX(), mcs.getExtent().get(1).get().getY(), 3);
+    corners[0] = new ModifyableCircle(this, mcs.getExtent().getP1().getX(), mcs.getExtent().getP1().getY(), 0);
+    corners[1] = new ModifyableCircle(this, mcs.getExtent().getP2().getX(), mcs.getExtent().getP1().getY(), 1);
+    corners[2] = new ModifyableCircle(this, mcs.getExtent().getP1().getX(), mcs.getExtent().getP2().getY(), 2);
+    corners[3] = new ModifyableCircle(this, mcs.getExtent().getP2().getX(), mcs.getExtent().getP2().getY(), 3);
   }
   
   @Override

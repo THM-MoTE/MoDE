@@ -1,34 +1,27 @@
 package de.thm.mni.mote.mode.modelica.graphics;
 
-import de.thm.mni.mote.mode.modelica.interfaces.MoExtent;
+import de.thm.mni.mote.mode.modelica.interfaces.HasExtent;
 import de.thm.mni.mote.mode.parser.modelica.AnnotationParser.EllipseContext;
 import de.thm.mni.mote.mode.parser.modelica.AnnotationParser.EllipseDataContext;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Point2D;
 import lombok.Builder;
 import lombok.Getter;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Created by hobbypunk on 19.09.16.
  */
 @Getter
-public class MoEllipse extends MoFilledShape implements MoExtent {
+public class MoEllipse extends MoFilledShape implements HasExtent {
   
-  private final List<ObjectProperty<Point2D>> extent = Collections.unmodifiableList(Arrays.asList(new SimpleObjectProperty<>(), new SimpleObjectProperty<>()));
+  private final MoExtent extent;
   
   private Double startAngle = 0.0;
   private Double endAngle = 360.0;
   
   @Builder(builderMethodName = "ellipseBuilder")
-  MoEllipse(MoFilledShape mfs, Point2D first, Point2D second, Double startAngle, Double endAngle) {
+  MoEllipse(MoFilledShape mfs, Point2D p1, Point2D p2, Double startAngle, Double endAngle) {
     super(mfs);
-    extent.get(0).setValue(first);
-    extent.get(1).setValue(second);
+    extent = new MoSimpleExtent(p1, p2);
     if (startAngle != null) this.startAngle = startAngle;
     if (endAngle != null) this.endAngle = endAngle;
   }
@@ -44,8 +37,8 @@ public class MoEllipse extends MoFilledShape implements MoExtent {
       } else if (data.filledShape() != null) {
         parse(mfsb, data.filledShape());
       } else if (data.extent() != null) {
-        mb.first(new Point2D(Double.parseDouble(data.extent().p1.x.getText()), Double.parseDouble(data.extent().p1.y.getText())));
-        mb.second(new Point2D(Double.parseDouble(data.extent().p2.x.getText()), Double.parseDouble(data.extent().p2.y.getText())));
+        mb.p1(new Point2D(Double.parseDouble(data.extent().p1.x.getText()), Double.parseDouble(data.extent().p1.y.getText())));
+        mb.p2(new Point2D(Double.parseDouble(data.extent().p2.x.getText()), Double.parseDouble(data.extent().p2.y.getText())));
       } else if (data.startAngle() != null) {
         mb.startAngle(Double.parseDouble(data.startAngle().val.getText()));
       } else if (data.endAngle() != null) {

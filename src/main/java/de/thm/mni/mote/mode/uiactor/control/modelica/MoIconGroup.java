@@ -2,13 +2,13 @@ package de.thm.mni.mote.mode.uiactor.control.modelica;
 
 import de.thm.mni.mote.mode.modelica.MoContainer;
 import de.thm.mni.mote.mode.modelica.MoVariable;
+import de.thm.mni.mote.mode.modelica.graphics.MoSimpleExtent;
 import de.thm.mni.mote.mode.modelica.graphics.MoText;
 import de.thm.mni.mote.mode.modelica.graphics.MoTransformation;
 import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.editor.elementmanager.elements.ManagedMoIconConnectorGroup;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
@@ -90,6 +90,8 @@ public class MoIconGroup extends MoGroup {
     mt = getVariable().getPlacement().getIconTransformation();
     if (mt == null) mt = getVariable().getPlacement().getDiagramTransformation();
     if (mt == null) return;
+  
+    mt.getExtent().setIconExtent((MoSimpleExtent) this.getMoClass().getIconCoordinateSystem().getExtent());
     
     final ObjectProperty<Point2D> origin = mt.getOrigin();
     
@@ -133,28 +135,10 @@ public class MoIconGroup extends MoGroup {
         super.unbind(origin);
       }
     });
-    
-    
-    ChangeListener<? super Point2D> listner = (observable, oldValue, newValue) -> {
-      MoTransformation trans;
-      trans = getVariable().getPlacement().getIconTransformation();
-      if (trans == null) trans = getVariable().getPlacement().getDiagramTransformation();
-      if (trans == null) return;
-      
-      Point2D extent0 = trans.getExtent().get(0).getValue();
-      Point2D extent1 = trans.getExtent().get(1).getValue();
-      
-      Double newVariableWidth = Math.max(extent0.getX(), extent1.getX()) - Math.min(extent0.getX(), extent1.getX());
-      Double newVariableHeight = Math.max(extent0.getY(), extent1.getY()) - Math.min(extent0.getY(), extent1.getY());
-      
-      this.scaleToSize(newVariableWidth, newVariableHeight);
-    };
-    
-    mt.getExtent().get(0).addListener(listner);
-    mt.getExtent().get(1).addListener(listner);
-    
-    Point2D extent0 = mt.getExtent().get(0).getValue();
-    Point2D extent1 = mt.getExtent().get(1).getValue();
+  
+  
+    Point2D extent0 = mt.getExtent().getP1();
+    Point2D extent1 = mt.getExtent().getP2();
     
     Double newVariableWidth = Math.max(extent0.getX(), extent1.getX()) - Math.min(extent0.getX(), extent1.getX());
     Double newVariableHeight = Math.max(extent0.getY(), extent1.getY()) - Math.min(extent0.getY(), extent1.getY());

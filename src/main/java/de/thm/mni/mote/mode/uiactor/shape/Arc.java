@@ -40,8 +40,8 @@ public class Arc extends javafx.scene.shape.Arc implements Element, FilledElemen
     FilledElement.super.init();
     StrokedElement.super.init();
   
-    Point2D extent0 = getData().getExtent().get(0).getValue();
-    Point2D extent1 = getData().getExtent().get(1).getValue();
+    Point2D extent0 = getData().getExtent().getP1();
+    Point2D extent1 = getData().getExtent().getP2();
   
     Double minX = Math.min(extent0.getX(), extent1.getX());
     Double minY = Math.min(extent0.getY(), extent1.getY());

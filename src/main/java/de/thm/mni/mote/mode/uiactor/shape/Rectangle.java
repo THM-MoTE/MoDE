@@ -5,7 +5,6 @@ import de.thm.mni.mote.mode.uiactor.control.modelica.MoGroup;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.Element;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.FilledElement;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.StrokedElement;
-import javafx.beans.property.DoubleProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Transform;
@@ -44,8 +43,8 @@ public class Rectangle extends javafx.scene.shape.Rectangle implements Element, 
     FilledElement.super.init();
     StrokedElement.super.init();
   
-    Point2D extent0 = getData().getExtent().get(0).getValue();
-    Point2D extent1 = getData().getExtent().get(1).getValue();
+    Point2D extent0 = getData().getExtent().getP1();
+    Point2D extent1 = getData().getExtent().getP2();
   
     this.setX(Math.min(extent0.getX(), extent1.getX()));
     this.setY(Math.min(extent0.getY(), extent1.getY()));

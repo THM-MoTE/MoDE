@@ -4,6 +4,7 @@ import de.thm.mni.mote.mode.modelica.MoContainer;
 import de.thm.mni.mote.mode.modelica.MoVariable;
 import de.thm.mni.mote.mode.modelica.annotations.MoPlacement;
 import de.thm.mni.mote.mode.modelica.graphics.MoCoordinateSystem;
+import de.thm.mni.mote.mode.modelica.graphics.MoSimpleExtent;
 import de.thm.mni.mote.mode.modelica.graphics.MoTransformation;
 import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.control.MainTabControl;
@@ -43,13 +44,11 @@ public class LibraryHandler {
       for (MoVariable mv : tab.getData().getElement().getVariables()) {
         if (mv.getName().equals(container.getSimpleName().toLowerCase() + "_" + counter)) counter++;
       }
-      //todo: add placement to variable
+  
       MoVariable mv = new MoVariable(tab.getData().getElement(), container, container.getSimpleName().toLowerCase() + "_" + counter);
       MoCoordinateSystem mcs = mv.getType().getElement().getDiagramCoordinateSystem();
-      Point2D first = mcs.getExtent().get(0).get().multiply(0.1);
-      Point2D second = mcs.getExtent().get(1).get().multiply(0.1);
   
-      MoTransformation trans = new MoTransformation(first, second, new Point2D(0, 0), 0.);
+      MoTransformation trans = new MoTransformation(new Point2D(0, 0), (MoSimpleExtent) mcs.getExtent(), mcs.getInitialScale().get(), 0.);
       mv.add(new MoPlacement(true, null, trans));
       tab.getData().getElement().addVariable(mv);
     }

@@ -11,6 +11,10 @@ import de.thm.mni.mote.mode.uiactor.editor.statemachine.interfaces.Deletable;
 import de.thm.mni.mote.mode.uiactor.shape.*;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.Element;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.HasStrokeWidth;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
@@ -46,8 +50,8 @@ public abstract class MoGroup extends Group {
   private Double moveX = 100.0;
   private Double moveY = 100.0;
   
-  private Double initialScale = 1.0;
-  private Boolean preserveAspectRatio = true;
+  private final DoubleProperty initialScale = new SimpleDoubleProperty(0.1);
+  private final BooleanProperty preserveAspectRatio = new SimpleBooleanProperty(true);
   
   @Getter private Scale scale = new Scale();
   @Getter private Affine flipping = new Affine();
@@ -93,8 +97,8 @@ public abstract class MoGroup extends Group {
   
   
   public MoGroup scaleToSize(Double newWidth, Double newHeight) {
-    Point2D extent0 = this.getMoClass().getIcon().getMoCoordinateSystem().getExtent().get(0).getValue();
-    Point2D extent1 = this.getMoClass().getIcon().getMoCoordinateSystem().getExtent().get(1).getValue();
+    Point2D extent0 = this.getMoClass().getIcon().getMoCoordinateSystem().getExtent().getP1();
+    Point2D extent1 = this.getMoClass().getIcon().getMoCoordinateSystem().getExtent().getP2();
   
   
     Double oldWidth = Math.max(extent0.getX(), extent1.getX()) - Math.min(extent0.getX(), extent1.getX());
@@ -119,8 +123,8 @@ public abstract class MoGroup extends Group {
     if (this instanceof MoIconGroup) mcs = this.getMoClass().getIconCoordinateSystem();
     else mcs = this.getMoClass().getDiagramCoordinateSystem();
   
-    Point2D extent0 = mcs.getExtent().get(0).getValue();
-    Point2D extent1 = mcs.getExtent().get(1).getValue();
+    Point2D extent0 = mcs.getExtent().getP1();
+    Point2D extent1 = mcs.getExtent().getP2();
   
     Double minX = Math.min(extent0.getX(), extent1.getX());
     Double minY = Math.min(extent0.getY(), extent1.getY());
@@ -143,9 +147,8 @@ public abstract class MoGroup extends Group {
     position.setX(-minX);
     position.setY(-minY);
   
-    if (mcs.getPreserveAspectRatio() != null) this.setPreserveAspectRatio(mcs.getPreserveAspectRatio());
-    if (mcs.getInitialScale() != null) this.setInitialScale(mcs.getInitialScale());
-  
+    this.preserveAspectRatio.bind(mcs.getPreserveAspectRatio());
+    this.initialScale.bind(mcs.getInitialScale());
   }
   
   private void extentChange(Point2D extent0, Point2D extent1) {

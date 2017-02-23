@@ -185,8 +185,8 @@ public class ModifyableMoIconGroup extends MoIconGroup implements Actionable, De
   
   private void calcCenter() {
     if (transformation == null) return;
-    Point2D extent0 = transformation.getExtent().get(0).getValue();
-    Point2D extent1 = transformation.getExtent().get(1).getValue();
+    Point2D extent0 = transformation.getExtent().getP1();
+    Point2D extent1 = transformation.getExtent().getP2();
     
     Point2D largest = new Point2D(Math.max(extent0.getX(), extent1.getX()), Math.max(extent0.getY(), extent1.getY()));
     Point2D smallest = new Point2D(Math.min(extent0.getX(), extent1.getX()), Math.min(extent0.getY(), extent1.getY()));

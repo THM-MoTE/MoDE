@@ -71,8 +71,8 @@ public class Text extends Pane implements Element, FilledElement, StrokedElement
     FilledElement.super.init();
     StrokedElement.super.init();
   
-    Point2D extent0 = getData().getExtent().get(0).getValue();
-    Point2D extent1 = getData().getExtent().get(1).getValue();
+    Point2D extent0 = getData().getExtent().getP1();
+    Point2D extent1 = getData().getExtent().getP2();
   
     Font f;
     if (getData().getFontSize() != 0) {

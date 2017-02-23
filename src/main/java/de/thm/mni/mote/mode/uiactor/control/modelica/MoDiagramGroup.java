@@ -31,6 +31,7 @@ public class MoDiagramGroup extends MoGroup {
   protected void initImage() {
     initVariables();
     initConnections();
+    this.getMoClass().getDiagram().getMoGraphics().forEach(this::initImage);
     coordianteSystem.setFill(Color.WHITE);
   }
   
