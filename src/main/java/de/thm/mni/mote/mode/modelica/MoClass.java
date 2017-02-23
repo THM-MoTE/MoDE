@@ -33,6 +33,7 @@ import static de.thm.mni.mote.mode.util.Translator.tr;
 @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
 @Getter
 public class MoClass extends MoElement implements Changeable, Comparable<MoClass> {
+  private final ObjectProperty<Change> unsavedChanges = new SimpleObjectProperty<>(Change.NONE);
   
   @Getter private static final List<MoContainer> bases;
   
@@ -47,7 +48,6 @@ public class MoClass extends MoElement implements Changeable, Comparable<MoClass
   
   private ClassInformation classInformation;
   @Setter(AccessLevel.PACKAGE) private MoContainer container = null;
-  private final ObjectProperty<Change> unsavedChanges = new SimpleObjectProperty<>(Change.NONE);
   private Boolean complete = false;
   
   
@@ -262,6 +262,7 @@ public class MoClass extends MoElement implements Changeable, Comparable<MoClass
     return tmp;
   }
   
+  //TODO: richtiges "vererben" aller elemente, nicht nur verknüpfen: deepcopy.
   private void parseExtra(@NonNull OMCompiler omc) throws ParserException {
     if (complete) return;
     List<String> list = omc.getInheritedClasses(this.container.getName());
@@ -278,10 +279,10 @@ public class MoClass extends MoElement implements Changeable, Comparable<MoClass
       }
       if (!classFound) throw new ParserException(tr("Error", "error.cant.find.package", s));
     }
-  
+    
     this.addAllAnnotations(MoAnnotation.parse(omc, this));
-    this.addAllVariables(MoVariable.parse(omc, this));
-    this.addAllConnections(MoConnection.parse(omc, this));
+    this.variables.addAll(MoVariable.parse(omc, this));
+    this.connections.addAll(MoConnection.parse(omc, this));
     complete = true;
   }
   

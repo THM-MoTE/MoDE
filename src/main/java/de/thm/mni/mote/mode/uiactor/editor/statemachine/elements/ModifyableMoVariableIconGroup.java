@@ -203,6 +203,8 @@ public class ModifyableMoVariableIconGroup extends MoVariableIconGroup implement
     MouseEvent event = (MouseEvent) inputEvent;
     if (event.getEventType().equals(MouseEvent.MOUSE_PRESSED)) {
       sm.freeze();
+      transformation.getExtent().getScaleXProperty().set(transformation.getExtent().getScaleXProperty().get() + 0.1);
+      transformation.getExtent().getScaleYProperty().set(transformation.getExtent().getScaleYProperty().get() + 0.1);
       return Command.IGNORE;
     } else if (event.getEventType().equals(MouseEvent.MOUSE_DRAGGED) && startPos != null) {
       return Command.IGNORE;

@@ -84,7 +84,9 @@ public class MainTabControl extends Tab implements Initializable {
   
   private void updateText(Change unsavedChanges) {
     this.setText(data.getSimpleName());
-    if (!unsavedChanges.equals(Change.NONE)) this.setText(this.getText() + "*");
+    if (!unsavedChanges.equals(Change.NONE)) {
+      this.setText(this.getText() + "*");
+    }
     //TODO: text color
   }
   

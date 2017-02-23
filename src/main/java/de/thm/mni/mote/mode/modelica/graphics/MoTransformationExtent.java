@@ -13,6 +13,9 @@ public class MoTransformationExtent extends MoExtent {
   private final ObjectProperty<Point2D> p1 = new SimpleObjectProperty<>(new Point2D(-100., -100.));
   private final ObjectProperty<Point2D> p2 = new SimpleObjectProperty<>(new Point2D(100., 100.));
   
+  @Getter private final DoubleProperty widthProperty = new SimpleDoubleProperty();
+  @Getter private final DoubleProperty heightProperty = new SimpleDoubleProperty();
+  
   @Getter private final DoubleProperty offsetXProperty = new SimpleDoubleProperty(0.);
   @Getter private final DoubleProperty offsetYProperty = new SimpleDoubleProperty(0.);
   
@@ -29,6 +32,7 @@ public class MoTransformationExtent extends MoExtent {
     
     calcOffset();
     calcFlipped();
+    //  initListener();
   }
   
   MoTransformationExtent(MoSimpleExtent iconExtent, Double initialScale) {
@@ -37,11 +41,40 @@ public class MoTransformationExtent extends MoExtent {
     this.iconExtent = iconExtent;
     
     calcOffset();
+    // initListener();
+  }
+  
+  private void initListener() {
+    scaleXProperty.addListener((observable, oldValue, newValue) -> {
+      calcPoints();
+      calcSize();
+    });
+    scaleYProperty.addListener((observable, oldValue, newValue) -> {
+      calcPoints();
+      calcSize();
+    });
+    
+    offsetXProperty.addListener((observable, oldValue, newValue) -> calcPoints());
+    offsetYProperty.addListener((observable, oldValue, newValue) -> calcPoints());
+    
+    flippedXProperty.addListener((observable, oldValue, newValue) -> calcPoints());
+    flippedYProperty.addListener((observable, oldValue, newValue) -> calcPoints());
+    
+  }
+  
+  public void setIconExtent(MoSimpleExtent iconExtent) {
+//    if (this.iconExtent != null)  //TODO: wahrscheinlich probleme bei vererbung und das kind verschiebt den connector. deepcopy der variablen nötig?
+//      throw new UnsupportedOperationException("Already set!");
+    if (this.iconExtent == null) {
+      this.iconExtent = iconExtent;
+      calcSize();
+      calcScale();
+    }
   }
   
   private void calcOffset() {
-    offsetXProperty.set(-p1.get().getX());
-    offsetYProperty.set(-p1.get().getY());
+    offsetXProperty.set(p1.get().getX());
+    offsetYProperty.set(p1.get().getY());
   }
   
   private void calcFlipped() {
@@ -62,19 +95,17 @@ public class MoTransformationExtent extends MoExtent {
     scaleYProperty.set(variableHeight / iconHeight);
   }
   
+  private void calcSize() {
+    widthProperty.set(Math.max(p1.get().getX(), p2.get().getX()) - Math.min(p1.get().getX(), p2.get().getX()));
+    heightProperty.set(Math.max(p1.get().getY(), p2.get().getY()) - Math.min(p1.get().getY(), p2.get().getY()));
+  }
+  
   public Double getWidth() {
-    return Math.max(p1.get().getX(), p2.get().getX()) - Math.min(p1.get().getX(), p2.get().getX());
+    return Math.max(p1.get().getX(), p2.get().getX()) - Math.min(p1.get().getX(), p2.get().getX());//widthProperty.get();
   }
   
   public Double getHeight() {
-    return Math.max(p1.get().getY(), p2.get().getY()) - Math.min(p1.get().getY(), p2.get().getY());
-  }
-  
-  public void setIconExtent(MoSimpleExtent iconExtent) {
-//    if (this.iconExtent != null)  TODO: wahrscheinlich probleme bei vererbung und das kind verschiebt den connector. deepcopy der variablen nötig?
-//      throw new UnsupportedOperationException("Already set!");
-    this.iconExtent = iconExtent;
-    calcScale();
+    return Math.max(p1.get().getY(), p2.get().getY()) - Math.min(p1.get().getY(), p2.get().getY());//heightProperty.get();
   }
   
   public Double getScaleX() {
@@ -103,10 +134,9 @@ public class MoTransformationExtent extends MoExtent {
   
   private void calcPoints() {
     if (this.iconExtent == null) return;
-    Point2D o1 = this.iconExtent.getP1();
-    Point2D o2 = this.iconExtent.getP2();
-    p1.set(new Point2D((o1.getX() * scaleXProperty.get()) + offsetXProperty.get(), (o1.getY() * scaleYProperty.get()) + offsetXProperty.get()));
-    p2.set(new Point2D((o2.getX() * scaleXProperty.get()) + offsetXProperty.get(), (o2.getY() * scaleYProperty.get()) + offsetXProperty.get()));
+    Point2D o = this.iconExtent.getP2().subtract(this.iconExtent.getP1());
+    p1.set(new Point2D(offsetXProperty.get(), offsetXProperty.get()));
+    p2.set(new Point2D((o.getX() * scaleXProperty.get()) - offsetXProperty.get(), (o.getY() * scaleYProperty.get()) - offsetXProperty.get()));
     
     Point2D tmp = p1.get();
     if (isFlipX()) {
@@ -118,13 +148,13 @@ public class MoTransformationExtent extends MoExtent {
       p1.set(new Point2D(tmp.getX(), p2.get().getY()));
       p2.set(new Point2D(p2.get().getX(), tmp.getY()));
     }
-    
-    //TODO: calc new p1 & p2
   }
   
   @Override
   public String toString() {
     calcPoints();
+    calcSize();
+    
     return super.toString();
   }
 }

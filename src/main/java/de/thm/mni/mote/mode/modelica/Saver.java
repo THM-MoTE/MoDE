@@ -89,7 +89,7 @@ public class Saver {
     str = str.substring(0, str.indexOf("annotation"));
     String tmp = mv.toString();
     str += tmp.substring(tmp.indexOf("annotation"));
-    return str;
+    return str.trim();
   }
   
   private void saveConnections(List<String> fileContent, MoClass moClass, Integer end) {

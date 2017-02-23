@@ -121,26 +121,20 @@ public abstract class MoGroup extends Group {
     Point2D extent0 = mcs.getExtent().getP1();
     Point2D extent1 = mcs.getExtent().getP2();
   
-    Double minX = Math.min(extent0.getX(), extent1.getX());
-    Double minY = Math.min(extent0.getY(), extent1.getY());
     Double width = Math.max(extent0.getX(), extent1.getX()) - Math.min(extent0.getX(), extent1.getX());
     Double height = Math.max(extent0.getY(), extent1.getY()) - Math.min(extent0.getY(), extent1.getY());
   
-    coordianteSystem = new javafx.scene.shape.Rectangle(minX, minY, width, height);
-//    coordianteSystem.setOwnStrokeWidth(1.);
-//    coordianteSystem.setStroke(Color.BLACK);
+    coordianteSystem = new javafx.scene.shape.Rectangle(extent0.getX(), extent0.getY(), width, height);
     coordianteSystem.setFill(Color.TRANSPARENT);
-//    coordianteSystem.setOpacity(.1);
     getChildren().add(coordianteSystem);
-  
   
     flipping.append(Transform.scale(1., -1.));
     flipping.append(Transform.translate(0, -height));
   
     extentChange(extent0, extent1);
   
-    position.setX(-minX);
-    position.setY(-minY);
+    position.setX(-extent0.getX());
+    position.setY(-extent0.getY());
   
     this.preserveAspectRatio.bind(mcs.getPreserveAspectRatio());
     this.initialScale.bind(mcs.getInitialScale());
