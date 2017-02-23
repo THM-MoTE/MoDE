@@ -6,17 +6,17 @@ import de.thm.mni.mote.mode.uiactor.control.modelica.MoDiagramGroup;
 import de.thm.mni.mote.mode.uiactor.editor.elementmanager.interfaces.Hoverable;
 import de.thm.mni.mote.mode.uiactor.editor.elementmanager.interfaces.Selectable;
 import de.thm.mni.mote.mode.uiactor.editor.statemachine.elements.ModifyableCircle;
-import de.thm.mni.mote.mode.uiactor.editor.statemachine.elements.ModifyableMoIconGroup;
+import de.thm.mni.mote.mode.uiactor.editor.statemachine.elements.ModifyableMoVariableIconGroup;
 import javafx.scene.paint.Color;
 
 /**
  * Created by hobbypunk on 13.02.17.
  */
-public class ManagedMoIconGroup extends ModifyableMoIconGroup implements Hoverable, Selectable {
+public class ManagedMoVariableIconGroup extends ModifyableMoVariableIconGroup implements Hoverable, Selectable {
   private final ModifyableCircle[] corners = new ModifyableCircle[4];
   
-  public ManagedMoIconGroup(MoDiagramGroup diagramParent, MoVariable variable, Boolean iconOnly) {
-    super(diagramParent, variable.getType(), variable, iconOnly);
+  public ManagedMoVariableIconGroup(MoDiagramGroup diagramParent, MoVariable variable) {
+    super(diagramParent, variable.getType(), variable);
     MoCoordinateSystem mcs = this.getMoClass().getIconCoordinateSystem();
     corners[0] = new ModifyableCircle(this, mcs.getExtent().getP1().getX(), mcs.getExtent().getP1().getY(), 0);
     corners[1] = new ModifyableCircle(this, mcs.getExtent().getP2().getX(), mcs.getExtent().getP1().getY(), 1);

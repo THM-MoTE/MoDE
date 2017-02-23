@@ -13,10 +13,10 @@ import javafx.scene.shape.Circle;
 public class ModifyableCircle extends Circle implements Rotateable, Resizeable {
   private static final Double RADIUS = 10.;
   
-  private final ModifyableMoIconGroup parent;
+  private final ModifyableMoVariableIconGroup parent;
   private Integer combination;
   
-  public ModifyableCircle(ModifyableMoIconGroup parent, Double centerX, Double centerY, Integer combination) {
+  public ModifyableCircle(ModifyableMoVariableIconGroup parent, Double centerX, Double centerY, Integer combination) {
     super(centerX, centerY, RADIUS);
     this.parent = parent;
     this.combination = combination;

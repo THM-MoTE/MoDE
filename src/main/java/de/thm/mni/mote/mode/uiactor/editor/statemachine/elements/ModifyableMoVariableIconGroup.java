@@ -6,7 +6,7 @@ import de.thm.mni.mote.mode.modelica.MoVariable;
 import de.thm.mni.mote.mode.modelica.graphics.MoTransformation;
 import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoDiagramGroup;
-import de.thm.mni.mote.mode.uiactor.control.modelica.MoIconGroup;
+import de.thm.mni.mote.mode.uiactor.control.modelica.MoVariableIconGroup;
 import de.thm.mni.mote.mode.uiactor.editor.actionmanager.commands.Command;
 import de.thm.mni.mote.mode.uiactor.editor.actionmanager.elements.ModifyableMoVariable;
 import de.thm.mni.mote.mode.uiactor.editor.statemachine.StateMachine;
@@ -29,7 +29,7 @@ import java.util.Map;
  * Created by hobbypunk on 16.02.17.
  */
 
-public class ModifyableMoIconGroup extends MoIconGroup implements Actionable, Deletable, Moveable {
+public class ModifyableMoVariableIconGroup extends MoVariableIconGroup implements Actionable, Deletable, Moveable {
   
   private Boolean isMoving = false;
   private MoTransformation transformation = null;
@@ -46,21 +46,19 @@ public class ModifyableMoIconGroup extends MoIconGroup implements Actionable, De
   
   //RESIZE
   private Point2D startPos = null;
-  private Point2D extent0 = null;
-  private Point2D extent1 = null;
   
-  protected ModifyableMoIconGroup(MoDiagramGroup diagramParent, MoContainer parent, MoVariable variable, Boolean iconOnly) {
-    super(diagramParent, parent, variable, iconOnly);
+  protected ModifyableMoVariableIconGroup(MoDiagramGroup diagramParent, MoContainer parent, MoVariable variable) {
+    super(diagramParent, parent, variable);
   }
   
   @Override
   public Command action(StateMachine sm, InputEvent event) {
-    if (this.getContainer().getElement().hasDiagram()) {
+    if (this.getThat().getElement().hasDiagram()) {
       TabPane tb = findTabPane(this);
       if (tb == null) return null;
       
       try {
-        LibraryHandler.getInstance().handleMenu(tb, this.getContainer(), "open_as_diagram");
+        LibraryHandler.getInstance().handleMenu(tb, this.getThat(), "open_as_diagram");
       } catch (ParserException e) {
         e.printStackTrace();
       }
@@ -70,7 +68,7 @@ public class ModifyableMoIconGroup extends MoIconGroup implements Actionable, De
   
   @Override
   public Command delete(InputEvent event) {
-    return this.getMoParent().getModifyableMoClass().delete(this.getVariable());
+    return this.getMoDiagram().getModifyableMoClass().delete(this.getVariable());
   }
   
   @Override
@@ -102,7 +100,7 @@ public class ModifyableMoIconGroup extends MoIconGroup implements Actionable, De
     
     if (isMoving) {
       if (this.transformation == null) return;
-      Point2D mousePos = getMoParent().convertScenePointToDiagramPoint(new Point2D(event.getSceneX(), event.getSceneY()));
+      Point2D mousePos = getMoDiagram().convertScenePointToDiagramPoint(new Point2D(event.getSceneX(), event.getSceneY()));
       Point2D delta = mousePos.subtract(startMousePos);
       updateConnections(delta);
   
@@ -114,8 +112,8 @@ public class ModifyableMoIconGroup extends MoIconGroup implements Actionable, De
   
       this.toFront();
       this.setOpacity(0.8);
-      
-      startMousePos = this.getMoParent().convertScenePointToDiagramPoint(new Point2D(event.getSceneX(), event.getSceneY()));
+  
+      startMousePos = this.getMoDiagram().convertScenePointToDiagramPoint(new Point2D(event.getSceneX(), event.getSceneY()));
       startOrigin = transformation.getOrigin().get();
       this.getVariable().getConnections().forEach(moConn -> {
         Boolean to = moConn.toContains(this.getVariable());
@@ -161,12 +159,12 @@ public class ModifyableMoIconGroup extends MoIconGroup implements Actionable, De
     if (event.getEventType().equals(MouseEvent.MOUSE_PRESSED)) {
       sm.freeze();
       calcCenter();
-      Point2D pos = this.getMoParent().convertScenePointToDiagramPoint(new Point2D(event.getSceneX(), event.getSceneY()));
+      Point2D pos = this.getMoDiagram().convertScenePointToDiagramPoint(new Point2D(event.getSceneX(), event.getSceneY()));
       startAngle = (double) Math.round(Math.toDegrees(Math.atan2(pos.getX() - variableCenter.getX(), variableCenter.getY() - pos.getY())));
       startRotation = transformation.getRotation().get();
       return Command.IGNORE;
     } else if (event.getEventType().equals(MouseEvent.MOUSE_DRAGGED) && startAngle != null) {
-      Point2D pos = this.getMoParent().convertScenePointToDiagramPoint(new Point2D(event.getSceneX(), event.getSceneY()));
+      Point2D pos = this.getMoDiagram().convertScenePointToDiagramPoint(new Point2D(event.getSceneX(), event.getSceneY()));
       Double angle = (double) Math.round(Math.toDegrees(Math.atan2(pos.getX() - variableCenter.getX(), variableCenter.getY() - pos.getY())));
       Double newRotation = (startRotation - (startAngle - angle)) % 360;
       transformation.getRotation().set((newRotation < 0) ? 360 + newRotation : newRotation);

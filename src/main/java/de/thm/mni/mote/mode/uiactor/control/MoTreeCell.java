@@ -119,7 +119,7 @@ public class MoTreeCell extends TreeCell<MoContainer> {
       
       if (cmi.getAction().equals("add_to_diagram")) {
         MainTabControl mtc = (MainTabControl) tabPane.getSelectionModel().getSelectedItem();
-        cmi.setDisable(!container.getElement().hasIcon() || mtc == null || !mtc.isDiagram());
+        cmi.setDisable(!container.getElement().hasIcon() || mtc == null);
       } else {
         if (cmi.getAction().equals("open_as_diagram")) cmi.setDisable(!container.getElement().hasDiagram());
         else if (cmi.getAction().equals("open_as_icon")) cmi.setDisable(!container.getElement().hasIcon());
@@ -141,7 +141,7 @@ public class MoTreeCell extends TreeCell<MoContainer> {
       
       if (event.getClickCount() == 2) {
         try {
-          if (tabPane.getSelectionModel().getSelectedItem() != null && ((MainTabControl) tabPane.getSelectionModel().getSelectedItem()).isDiagram() && item.getElement().hasIcon())
+          if (tabPane.getSelectionModel().getSelectedItem() != null && item.getElement().hasIcon())
             LibraryHandler.getInstance().handleMenu(tabPane, item, "add_to_diagram");
           else
             LibraryHandler.getInstance().handleMenu(tabPane, item, "open_as_diagram");

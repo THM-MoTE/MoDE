@@ -25,24 +25,24 @@ public class MoTransformation implements HasExtent, Changeable {
   @Setter private Changeable changeParent = null;
   private final ObjectProperty<Change> unsavedChanges = new SimpleObjectProperty<>(Change.NONE);
   
-  private final MoTransformExtent extent;
+  private final MoTransformationExtent extent;
   
   ObjectProperty<Point2D> origin = new SimpleObjectProperty<>(new Point2D(0.0, 0.0)); //Ursprung des Elements
   DoubleProperty rotation = new SimpleDoubleProperty(0.0);
   
   @Builder
   public MoTransformation(Point2D origin, Point2D p1, Point2D p2, Double rotation) {
-    extent = new MoTransformExtent(true, p1, p2);
     if (origin != null) this.origin.set(origin);
     if (rotation != null) this.rotation.set(rotation);
+  
+    extent = new MoTransformationExtent(p1, p2);
   
     initListeners();
   }
   
   public MoTransformation(Point2D origin, MoSimpleExtent iconExtent, Double initialScale, Double rotation) {
-    
-    extent = new MoTransformExtent(true, iconExtent.getP1().multiply(initialScale), iconExtent.getP2().multiply(initialScale));
-    extent.setIconExtent(iconExtent);
+  
+    extent = new MoTransformationExtent(iconExtent, initialScale);
     if (origin != null) this.origin.set(origin);
     if (rotation != null) this.rotation.set(rotation);
   }

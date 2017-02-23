@@ -36,16 +36,14 @@ import static de.thm.mni.mote.mode.modelica.interfaces.Changeable.Change;
 public class MainTabControl extends Tab implements Initializable {
   
   private final MoContainer data;
-  private final Boolean diagram;
   
   @FXML private StackPane main;
   @FXML private ScrollPane scroll;
   
   private FXMLLoader loader;
   
-  public MainTabControl(MoContainer data, Boolean diagram) {
+  public MainTabControl(MoContainer data) {
     this.data = data;
-    this.diagram = diagram;
     loader = new FXMLLoader();
     loader.setLocation(Utilities.getControlView("MainTab"));
     loader.setRoot(this);
@@ -66,10 +64,9 @@ public class MainTabControl extends Tab implements Initializable {
   
     try {
       this.setGraphic(new MoIconGroup(data).scaleToSize(20., 20.));
-    
-      if (diagram) mp = new ZoomableMoDiagramGroup(data);
-      else mp = new MoIconGroup(data, false);
   
+      mp = new ZoomableMoDiagramGroup(data);
+      
       updateText(Change.NONE);
   
       mp.scaleToSize(600., 600.);
@@ -86,13 +83,9 @@ public class MainTabControl extends Tab implements Initializable {
   }
   
   private void updateText(Change unsavedChanges) {
-    this.setText(data.getSimpleName() + ((diagram) ? "" : "(icon)"));
+    this.setText(data.getSimpleName());
     if (!unsavedChanges.equals(Change.NONE)) this.setText(this.getText() + "*");
     //TODO: text color
-  }
-  
-  public Boolean isDiagram() {
-    return diagram;
   }
   
   public void lateInitialize(Scene scene) {

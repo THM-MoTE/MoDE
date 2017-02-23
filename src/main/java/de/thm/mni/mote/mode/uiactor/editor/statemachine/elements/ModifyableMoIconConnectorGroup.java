@@ -4,8 +4,9 @@ import de.thm.mni.mote.mode.modelica.MoConnection;
 import de.thm.mni.mote.mode.modelica.MoVariable;
 import de.thm.mni.mote.mode.modelica.graphics.MoLine;
 import de.thm.mni.mote.mode.parser.ParserException;
+import de.thm.mni.mote.mode.uiactor.control.modelica.MoConnectorIconGroup;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoDiagramGroup;
-import de.thm.mni.mote.mode.uiactor.control.modelica.MoIconGroup;
+import de.thm.mni.mote.mode.uiactor.control.modelica.MoVariableIconGroup;
 import de.thm.mni.mote.mode.uiactor.editor.actionmanager.commands.Command;
 import de.thm.mni.mote.mode.uiactor.editor.statemachine.StateMachine;
 import de.thm.mni.mote.mode.uiactor.editor.statemachine.interfaces.Actionable;
@@ -26,14 +27,15 @@ import java.util.List;
 /**
  * Created by hobbypunk on 16.02.17.
  */
-public class ModifyableMoIconConnectorGroup extends MoIconGroup implements Actionable, Addable, Deletable {
+public class ModifyableMoIconConnectorGroup extends MoConnectorIconGroup implements Actionable, Addable, Deletable {
   
   private static ConnectionBuilder builder = null;
   private static ChangeListener<Boolean> changeListener = null;
   private ModifyableMoIconConnectorGroup freezeTarget = null;
   
-  public ModifyableMoIconConnectorGroup(MoDiagramGroup moParent, MoVariable variable, Boolean iconOnly) {
-    super(moParent, variable.getType(), variable, iconOnly);
+  
+  public ModifyableMoIconConnectorGroup(MoVariableIconGroup moParent, MoVariable variable) {
+    super(moParent, variable);
   }
   
   @Override
@@ -41,7 +43,7 @@ public class ModifyableMoIconConnectorGroup extends MoIconGroup implements Actio
     if (!(inputEvent instanceof MouseEvent)) return null;
     
     MouseEvent event = (MouseEvent) inputEvent;
-    Point2D p = getMoParent().convertScenePointToDiagramPoint(new Point2D(event.getSceneX(), event.getSceneY()));
+    Point2D p = this.getMoParent().getMoDiagram().convertScenePointToDiagramPoint(new Point2D(event.getSceneX(), event.getSceneY()));
     
     if (event.getEventType().equals(MouseEvent.MOUSE_MOVED)) {
       builder.updateLastPoint(p);
@@ -54,7 +56,7 @@ public class ModifyableMoIconConnectorGroup extends MoIconGroup implements Actio
     
     if (event.getEventType().equals(MouseEvent.MOUSE_CLICKED)) {
       if (builder == null) {
-        builder = new ConnectionBuilder(this.getMoParent(), this.getVariables(), p);
+        builder = new ConnectionBuilder(this.getMoParent().getMoDiagram(), this.getVariables(), p);
         changeListener = (observable, oldValue, newValue) -> {
           if (!newValue) {
             abort(sm);
@@ -70,7 +72,7 @@ public class ModifyableMoIconConnectorGroup extends MoIconGroup implements Actio
           try {
             builder.addPoint();
             MoConnection conn = builder.build(this.getVariables());
-            return this.getMoParent().getModifyableMoClass().add((Object) new MoConnection[]{conn});
+            return this.getMoParent().getMoDiagram().getModifyableMoClass().add((Object) new MoConnection[]{conn});
           } catch (ParserException e) {
             return Command.IGNORE;
           } finally {
@@ -99,8 +101,8 @@ public class ModifyableMoIconConnectorGroup extends MoIconGroup implements Actio
   
   @Override
   public Command delete(InputEvent event) {
-    MoConnection[] connections = getVariable().getConnections(getMoParent().getMoClass()).toArray(new MoConnection[]{});
-    return this.getMoParent().getModifyableMoClass().delete((Object) connections);
+    MoConnection[] connections = getVariable().getConnections(this.getMoParent().getMoDiagram().getMoClass()).toArray(new MoConnection[]{});
+    return this.getMoParent().getMoDiagram().getModifyableMoClass().delete((Object) connections);
   }
   
   private class ConnectionBuilder {
@@ -137,5 +139,10 @@ public class ModifyableMoIconConnectorGroup extends MoIconGroup implements Actio
     MoConnection build(List<MoVariable> endConnector) throws ParserException {
       return new MoConnection(moGroup.getMoClass(), startConnector, endConnector, Collections.singletonList(line.getData()));
     }
+  }
+  
+  @Override
+  public String toString() {
+    return getVariable().getName();
   }
 }

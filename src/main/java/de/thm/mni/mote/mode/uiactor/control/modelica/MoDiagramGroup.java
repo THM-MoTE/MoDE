@@ -5,7 +5,7 @@ import de.thm.mni.mote.mode.modelica.MoConnector;
 import de.thm.mni.mote.mode.modelica.MoContainer;
 import de.thm.mni.mote.mode.modelica.MoVariable;
 import de.thm.mni.mote.mode.parser.ParserException;
-import de.thm.mni.mote.mode.uiactor.editor.elementmanager.elements.ManagedMoIconGroup;
+import de.thm.mni.mote.mode.uiactor.editor.elementmanager.elements.ManagedMoVariableIconGroup;
 import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
@@ -15,12 +15,16 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.NonInvertibleTransformException;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Consumer;
 
 /**
  * Created by hobbypunk on 19.09.16.
  */
 public class MoDiagramGroup extends MoGroup {
+  
+  private Map<MoVariable, MoVariableIconGroup> data = new HashMap<>();
   
   public MoDiagramGroup(MoContainer container) throws ParserException {
     super(container);
@@ -31,7 +35,7 @@ public class MoDiagramGroup extends MoGroup {
   protected void initImage() {
     initVariables();
     initConnections();
-    this.getMoClass().getDiagram().getMoGraphics().forEach(this::initImage);
+    if (this.getMoClass().getDiagram() != null) this.getMoClass().getDiagram().getMoGraphics().forEach(this::initImage);
     coordianteSystem.setFill(Color.WHITE);
   }
   
@@ -40,13 +44,13 @@ public class MoDiagramGroup extends MoGroup {
       group.addEventHandler(MouseEvent.ANY, eventHandler);
       group.getBasis().getChildren().forEach(node -> this.addGroupListener(node, eventHandler));
   
-    } else if (group instanceof MoIconGroup) group.getBasis().getChildren().forEach(node -> this.addIconListener(node, eventHandler));
+    } else if (group instanceof MoVariableIconGroup) group.getBasis().getChildren().forEach(node -> this.addIconListener(node, eventHandler));
   
     group.getBasis().getChildren().addListener((ListChangeListener<Node>) c -> {
       while (c.next()) {
         c.getAddedSubList().forEach(n -> {
           if (group.equals(MoDiagramGroup.this)) addGroupListener(n, eventHandler);
-          else if (group instanceof MoIconGroup) addIconListener(n, eventHandler);
+          else if (group instanceof MoVariableIconGroup) addIconListener(n, eventHandler);
         });
         c.getRemoved().forEach(n -> this.removeListeners(n, eventHandler));
       }
@@ -54,18 +58,18 @@ public class MoDiagramGroup extends MoGroup {
   }
   
   private void addIconListener(Node node, EventHandler<InputEvent> eventHandler) {
-    if (node instanceof MoIconGroup && ((MoIconGroup) node).getMoClass() instanceof MoConnector) {
+    if (node instanceof MoVariableIconGroup && ((MoVariableIconGroup) node).getMoClass() instanceof MoConnector) {
       node.addEventHandler(MouseEvent.ANY, eventHandler);
     }
   }
   
   private void addGroupListener(Node node, EventHandler<InputEvent> eventHandler) {
-    if ((node instanceof MoIconGroup) && ((MoIconGroup) node).getVariable() == null) return;
+    if ((node instanceof MoVariableIconGroup) && ((MoVariableIconGroup) node).getVariable() == null) return;
     
     node.addEventHandler(MouseEvent.ANY, eventHandler);
-
-    if ((node instanceof MoIconGroup)) {
-      addListener((MoIconGroup) node, eventHandler);
+  
+    if ((node instanceof MoVariableIconGroup)) {
+      addListener((MoVariableIconGroup) node, eventHandler);
     }
   }
   
@@ -96,8 +100,8 @@ public class MoDiagramGroup extends MoGroup {
   
   private void initVariable(MoVariable mv) {
     if (mv.getPlacement() == null || (mv.getPlacement().getIconTransformation() == null && mv.getPlacement().getDiagramTransformation() == null)) return;
-    MoIconGroup mip = new ManagedMoIconGroup(this, mv, false);
-    getData().put(mv, mip);
+    MoVariableIconGroup mip = new ManagedMoVariableIconGroup(this, mv);
+    data.put(mv, mip);
     this.add(mip);
   }
   

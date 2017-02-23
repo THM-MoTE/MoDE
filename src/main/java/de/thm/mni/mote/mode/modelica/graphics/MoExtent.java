@@ -12,6 +12,6 @@ public abstract class MoExtent {
   
   @Override
   public String toString() {
-    return Utilities.toString(getP1()) + ", " + Utilities.toString(getP1());
+    return Utilities.toString(getP1()) + ", " + Utilities.toString(getP2());
   }
 }

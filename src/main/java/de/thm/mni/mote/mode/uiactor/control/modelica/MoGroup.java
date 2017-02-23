@@ -29,9 +29,6 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Created by hobbypunk on 26.10.16.
  */
@@ -43,9 +40,7 @@ public abstract class MoGroup extends Group {
   protected static final double ZOOMFACTOR = 1.2;
   @Getter private final Group basis = new Group();
   javafx.scene.shape.Rectangle coordianteSystem = null; //TODO: add InitialStroke Interface
-  @Getter private final MoContainer container;
-  
-  private Map<MoVariable, MoIconGroup> data = new HashMap<>();
+  @Getter private final MoContainer that;
   
   private Double moveX = 100.0;
   private Double moveY = 100.0;
@@ -60,15 +55,15 @@ public abstract class MoGroup extends Group {
   @Getter private Boolean flippedX = false; //X axis is flipped
   @Getter private Boolean flippedY = false; //Y axis is flipped
   
-  MoGroup(@NonNull MoContainer container) {
-    this.container = container;
+  MoGroup(@NonNull MoContainer that) {
+    this.that = that;
     super.getChildren().add(basis);
     basis.getTransforms().addAll(scale, flipping, position);
     this.setFocusTraversable(true);
   }
   
   final void init() {
-    if (this.container.getElement().getIcon() != null) {
+    if (this.that.getElement().getIcon() != null) {
       initCoordinateSystem();
       initImage();
     }
@@ -107,7 +102,7 @@ public abstract class MoGroup extends Group {
     return scaleToFactor(scale.getX() * newWidth / oldWidth, scale.getY() * newHeight / oldHeight, true);
   }
   
-  private MoGroup scaleToFactor(Double factorX, Double factorY, Boolean force) {
+  protected MoGroup scaleToFactor(Double factorX, Double factorY, Boolean force) {
     if (force || factorX > 0.25) {
       scale.setX(factorX);
       scale.setY(factorY);
@@ -207,8 +202,8 @@ public abstract class MoGroup extends Group {
   
   public void remove(MoVariable mv) {
     for (int i = 0, size = getChildren().size(); i < size; i++) {
-      if (getChildren().get(i) instanceof MoIconGroup) {
-        MoIconGroup child = (MoIconGroup) getChildren().get(i);
+      if (getChildren().get(i) instanceof MoVariableIconGroup) {
+        MoVariableIconGroup child = (MoVariableIconGroup) getChildren().get(i);
         if (child.getVariable().equals(mv)) {
           getChildren().remove(i);
           return;
@@ -240,7 +235,7 @@ public abstract class MoGroup extends Group {
   }
   
   public MoClass getMoClass() {
-    return this.container.getElement();
+    return this.that.getElement();
   }
   
   public ModifyableMoClass getModifyableMoClass() {

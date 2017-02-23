@@ -1,7 +1,7 @@
 package de.thm.mni.mote.mode.uiactor.editor.elementmanager.elements;
 
 import de.thm.mni.mote.mode.modelica.MoVariable;
-import de.thm.mni.mote.mode.uiactor.control.modelica.MoDiagramGroup;
+import de.thm.mni.mote.mode.uiactor.control.modelica.MoVariableIconGroup;
 import de.thm.mni.mote.mode.uiactor.editor.elementmanager.interfaces.Highlightable;
 import de.thm.mni.mote.mode.uiactor.editor.elementmanager.interfaces.Hoverable;
 import de.thm.mni.mote.mode.uiactor.editor.elementmanager.interfaces.Selectable;
@@ -14,8 +14,8 @@ import javafx.scene.paint.Color;
  */
 public class ManagedMoIconConnectorGroup extends ModifyableMoIconConnectorGroup implements Highlightable, Hoverable, Selectable {
   
-  public ManagedMoIconConnectorGroup(MoDiagramGroup moParent, MoVariable variable, Boolean iconOnly) {
-    super(moParent, variable, iconOnly);
+  public ManagedMoIconConnectorGroup(MoVariableIconGroup moParent, MoVariable variable) {
+    super(moParent, variable);
   }
   
   @Override
