@@ -6,13 +6,16 @@ import de.thm.mni.mote.mode.uiactor.control.modelica.MoGroup;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.Element;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.FilledElement;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.StrokedElement;
+import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.DoubleProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Scale;
 import javafx.scene.transform.Transform;
 import javafx.scene.transform.Translate;
 import lombok.Getter;
@@ -98,11 +101,52 @@ public class Text extends Pane implements Element, FilledElement, StrokedElement
     
     this.setPrefWidth(widthExtent);
     this.setPrefHeight(heightExtent);
-//    //translate the text
+    //translate the text
     this.getTransforms().add(Transform.translate(tlx, tly));
+  
+    Scale flipping = new Scale(1., 1.);
+    flipping.xProperty().bind(new DoubleBinding() {
+      {
+        super.bind(getMoParent().getFlippedXProperty());
+      }
     
-    if (getMoParent().getFlippedX()) this.text.getTransforms().add(Transform.scale(-1., 1.));
-    if (!getMoParent().getFlippedY()) this.text.getTransforms().add(Transform.scale(1., -1.));
+      @Override
+      protected double computeValue() {
+        return (getMoParent().getFlippedXProperty().get()) ? -1. : 1.;
+      }
+    
+      @Override
+      public ObservableList<?> getDependencies() {
+        return FXCollections.singletonObservableList(getMoParent().getFlippedXProperty());
+      }
+    
+      @Override
+      public void dispose() {
+        super.unbind(getMoParent().getFlippedXProperty());
+      }
+    });
+    flipping.yProperty().bind(new DoubleBinding() {
+      {
+        super.bind(getMoParent().getFlippedYProperty());
+      }
+    
+      @Override
+      protected double computeValue() {
+        return (getMoParent().getFlippedYProperty().get()) ? 1. : -1.;
+      }
+    
+      @Override
+      public ObservableList<?> getDependencies() {
+        return FXCollections.singletonObservableList(getMoParent().getFlippedYProperty());
+      }
+    
+      @Override
+      public void dispose() {
+        super.unbind(getMoParent().getFlippedYProperty());
+      }
+    });
+  
+    this.text.getTransforms().add(flipping);
     
     this.text.getTransforms().add(Transform.translate(0, heightText - heightExtent));
     if (getData().getHorizontalAlignment() == MoText.TextAlignment.RIGHT) {

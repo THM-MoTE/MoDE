@@ -11,6 +11,11 @@ import javafx.scene.shape.Circle;
  * Created by hobbypunk on 22.02.17.
  */
 public class ModifyableCircle extends Circle implements Rotateable, Resizeable {
+  
+  public static final int MODIFY_NO_OFFSET = 0;
+  public static final int MODIFY_X_OFFSET = 1;
+  public static final int MODIFY_Y_OFFSET = 2;
+  
   private static final Double RADIUS = 10.;
   
   private final ModifyableMoVariableIconGroup parent;

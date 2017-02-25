@@ -126,10 +126,8 @@ public class MoDiagramGroup extends MoGroup {
       p = getFlipping().deltaTransform(p);
       
       Double x, y;
-      if (getFlippedX()) x = -getPosition().getX() - p.getX();
-      else x = -getPosition().getX() + p.getX();
-      if (getFlippedY()) y = getPosition().getY() - p.getY();
-      else y = getPosition().getY() + p.getY();
+      x = -getPosition().getX() + p.getX();
+      y = getPosition().getY() + p.getY();
   
       return new Point2D(x, y);
     } catch (NonInvertibleTransformException e) {
@@ -142,10 +140,8 @@ public class MoDiagramGroup extends MoGroup {
     
     try {
       Double x, y;
-      if (getFlippedX()) x = getPosition().getX() - p.getX();
-      else x = getPosition().getX() + p.getX();
-      if (getFlippedY()) y = -getPosition().getY() - p.getY();
-      else y = -getPosition().getY() + p.getY();
+      x = getPosition().getX() + p.getX();
+      y = -getPosition().getY() + p.getY();
       
       p = getScale().deltaTransform(new Point2D(x, y));
       p = getFlipping().inverseDeltaTransform(p);

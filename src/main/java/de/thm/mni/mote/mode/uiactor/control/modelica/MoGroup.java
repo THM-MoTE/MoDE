@@ -52,8 +52,8 @@ public abstract class MoGroup extends Group {
   @Getter private Affine flipping = new Affine();
   @Getter private Translate position = new Translate();
   
-  @Getter private Boolean flippedX = false; //X axis is flipped
-  @Getter private Boolean flippedY = false; //Y axis is flipped
+  @Getter private final BooleanProperty flippedXProperty = new SimpleBooleanProperty(false);
+  @Getter private final BooleanProperty flippedYProperty = new SimpleBooleanProperty(false);
   
   MoGroup(@NonNull MoContainer that) {
     this.that = that;
@@ -113,7 +113,6 @@ public abstract class MoGroup extends Group {
   
   
   private void initCoordinateSystem() {
-  
     MoCoordinateSystem mcs;
     if (this instanceof MoIconGroup) mcs = this.getMoClass().getIconCoordinateSystem();
     else mcs = this.getMoClass().getDiagramCoordinateSystem();
@@ -131,35 +130,11 @@ public abstract class MoGroup extends Group {
     flipping.append(Transform.scale(1., -1.));
     flipping.append(Transform.translate(0, -height));
   
-    extentChange(extent0, extent1);
-  
     position.setX(-extent0.getX());
     position.setY(-extent0.getY());
   
     this.preserveAspectRatio.bind(mcs.getPreserveAspectRatio());
     this.initialScale.bind(mcs.getInitialScale());
-  }
-  
-  private void extentChange(Point2D extent0, Point2D extent1) {
-    if (!flippedX && extent1.getX() < extent0.getX()) {
-      flipping.append(Transform.scale(-1., 1.));
-      flipping.append(Transform.translate(coordianteSystem.getWidth(), 0));
-      flippedX = true;
-    } else if (flippedX && extent0.getX() < extent1.getX()) {
-      flipping.append(Transform.scale(-1., 1.));
-      flipping.append(Transform.translate(coordianteSystem.getWidth(), 0).createInverse());
-      flippedX = false;
-    }
-    
-    if (!flippedY && extent1.getY() < extent0.getY()) {
-      flipping.append(Transform.scale(1., -1.));
-      flipping.append(Transform.translate(0, -coordianteSystem.getHeight()));
-      flippedY = true;
-    } else if (flippedY && extent0.getY() < extent1.getY()) {
-      flipping.append(Transform.scale(1., -1.));
-      flipping.append(Transform.translate(0, -coordianteSystem.getHeight()).createInverse());
-      flippedY = false;
-    }
   }
   
   protected abstract void initImage();

@@ -38,8 +38,6 @@ public class ModifyableLine extends InvisibleLine implements Addable, Actionable
   
   private Settings settings = Settings.load();
   
-  private Boolean isMoving = false;
-  
   private STATUS status = STATUS.NOTHING;
   private Point2D startMousePos = null;
   
@@ -99,30 +97,27 @@ public class ModifyableLine extends InvisibleLine implements Addable, Actionable
   public Command move(StateMachine sm, InputEvent inputEvent) {
     if (!(inputEvent instanceof MouseEvent)) return null;
     MouseEvent event = (MouseEvent) inputEvent;
-    if (event.getEventType().equals(MouseEvent.MOUSE_PRESSED) || event.getEventType().equals(MouseEvent.MOUSE_DRAGGED)) {
-      if (!isMoving) {
-        isMoving = true;
-        sm.freeze();
-        this.moveStart(event);
-      } else if (firstPoint != null) {
+    if (event.getEventType().equals(MouseEvent.MOUSE_PRESSED)) {
+      sm.freeze();
+      this.moveStart(event);
+      return Command.IGNORE;
+    } else if (firstPoint != null) {
+      if (event.getEventType().equals(MouseEvent.MOUSE_DRAGGED)) {
         if (settings.getMainwindow().getEditor().getDefaultSnap() ^ event.isShiftDown()) this.moveSnap(event); //^ == XOR Operator
         else this.move(event);
+      } else if (event.getEventType().equals(MouseEvent.MOUSE_RELEASED)) {
+        sm.unfreeze();
+        Command c = Command.IGNORE;
+        if (!firstPoint.equals(this.getData().getPoints().get(firstPointPos)))
+          c = new MoveCommand(new ModifyableMoLine(this.getData()), firstPointPos, firstPoint, secondPointPos, secondPoint);
+        firstPointPos = secondPointPos = null;
+        firstPoint = secondPoint = null;
+        return c;
       }
-      return Command.IGNORE;
-    } else if (firstPoint != null && event.getEventType().equals(MouseEvent.MOUSE_RELEASED)) {
-      isMoving = false;
-      sm.unfreeze();
-      Command c = Command.IGNORE;
-      if (!firstPoint.equals(this.getData().getPoints().get(firstPointPos)))
-        c = new MoveCommand(new ModifyableMoLine(this.getData()), firstPointPos, firstPoint, secondPointPos, secondPoint);
-      firstPointPos = secondPointPos = null;
-      firstPoint = secondPoint = null;
-      return c;
     }
     
     if (firstPoint == null) {
       sm.unfreeze();
-      isMoving = false;
       firstPointPos = secondPointPos = null;
       firstPoint = secondPoint = null;
     }

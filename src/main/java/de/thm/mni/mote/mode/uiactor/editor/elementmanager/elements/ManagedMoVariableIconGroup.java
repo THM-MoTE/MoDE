@@ -18,10 +18,10 @@ public class ManagedMoVariableIconGroup extends ModifyableMoVariableIconGroup im
   public ManagedMoVariableIconGroup(MoDiagramGroup diagramParent, MoVariable variable) {
     super(diagramParent, variable.getType(), variable);
     MoCoordinateSystem mcs = this.getMoClass().getIconCoordinateSystem();
-    corners[0] = new ModifyableCircle(this, mcs.getExtent().getP1().getX(), mcs.getExtent().getP1().getY(), 0);
-    corners[1] = new ModifyableCircle(this, mcs.getExtent().getP2().getX(), mcs.getExtent().getP1().getY(), 1);
-    corners[2] = new ModifyableCircle(this, mcs.getExtent().getP1().getX(), mcs.getExtent().getP2().getY(), 2);
-    corners[3] = new ModifyableCircle(this, mcs.getExtent().getP2().getX(), mcs.getExtent().getP2().getY(), 3);
+    corners[0] = new ModifyableCircle(this, mcs.getExtent().getP1().getX(), mcs.getExtent().getP1().getY(), ModifyableCircle.MODIFY_X_OFFSET | ModifyableCircle.MODIFY_Y_OFFSET);
+    corners[1] = new ModifyableCircle(this, mcs.getExtent().getP2().getX(), mcs.getExtent().getP1().getY(), ModifyableCircle.MODIFY_Y_OFFSET);
+    corners[2] = new ModifyableCircle(this, mcs.getExtent().getP1().getX(), mcs.getExtent().getP2().getY(), ModifyableCircle.MODIFY_X_OFFSET);
+    corners[3] = new ModifyableCircle(this, mcs.getExtent().getP2().getX(), mcs.getExtent().getP2().getY(), ModifyableCircle.MODIFY_NO_OFFSET);
   }
   
   @Override

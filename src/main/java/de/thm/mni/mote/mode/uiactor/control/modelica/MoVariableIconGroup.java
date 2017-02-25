@@ -7,7 +7,6 @@ import de.thm.mni.mote.mode.modelica.graphics.MoTransformation;
 import de.thm.mni.mote.mode.uiactor.editor.elementmanager.elements.ManagedMoIconConnectorGroup;
 import de.thm.mni.mote.mode.uiactor.editor.statemachine.elements.ModifyableMoIconConnectorGroup;
 import javafx.beans.binding.DoubleBinding;
-import javafx.beans.property.ObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
@@ -67,73 +66,105 @@ public class MoVariableIconGroup extends MoGroup {
   }
   
   private void initTransformation(final MoTransformation mt) {
-    
     mt.getExtent().setIconExtent((MoSimpleExtent) this.getMoClass().getIconCoordinateSystem().getExtent());
-    
-    final ObjectProperty<Point2D> origin = mt.getOrigin();
-    
-    getOrigin().xProperty().bind(new DoubleBinding() {
+  
+    this.getFlippedXProperty().bind(mt.getExtent().getFlippedXProperty());
+    this.getFlippedYProperty().bind(mt.getExtent().getFlippedYProperty());
+  
+    this.origin.xProperty().bind(new DoubleBinding() {
       {
-        super.bind(origin);
+        super.bind(mt.getOrigin());
       }
       
       @Override
       protected double computeValue() {
-        return origin.get().getX();
+        return mt.getOrigin().get().getX();
       }
       
       @Override
       public ObservableList<?> getDependencies() {
-        return FXCollections.singletonObservableList(origin);
+        return FXCollections.singletonObservableList(mt.getOrigin());
       }
       
       @Override
       public void dispose() {
-        super.unbind(origin);
+        super.unbind(mt.getOrigin());
       }
     });
-    getOrigin().yProperty().bind(new DoubleBinding() {
+    this.origin.yProperty().bind(new DoubleBinding() {
       {
-        super.bind(origin);
+        super.bind(mt.getOrigin());
       }
       
       @Override
       protected double computeValue() {
-        return origin.get().getY();
+        return mt.getOrigin().get().getY();
       }
       
       @Override
       public ObservableList<?> getDependencies() {
-        return FXCollections.singletonObservableList(origin);
+        return FXCollections.singletonObservableList(mt.getOrigin());
       }
       
       @Override
       public void dispose() {
-        super.unbind(origin);
+        super.unbind(mt.getOrigin());
       }
     });
     
-    
-    Point2D extent0 = mt.getExtent().getP1();
-    Point2D extent1 = mt.getExtent().getP2();
-    
-    Double newVariableWidth = Math.max(extent0.getX(), extent1.getX()) - Math.min(extent0.getX(), extent1.getX());
-    Double newVariableHeight = Math.max(extent0.getY(), extent1.getY()) - Math.min(extent0.getY(), extent1.getY());
-    
-    this.getTransforms().addAll(this.origin, this.rotation, this.transformation);
-    this.transformation.append(Transform.translate(Math.min(extent0.getX(), extent1.getX()), Math.min(extent0.getY(), extent1.getY())));
-    if (getFlippedX()) {
-      this.transformation.append(Transform.translate(newVariableWidth, 0));
-      this.transformation.append(Transform.scale(-1, 1));
-    }
-    
-    this.transformation.append(Transform.translate(0, newVariableHeight));
     this.transformation.append(Transform.scale(1, -1));
+  
+    Translate offset = new Translate(0, 0);
+  
+    offset.xProperty().bind(new DoubleBinding() {
+      {
+        super.bind(mt.getExtent().getOffsetProperty());
+      }
+    
+      @Override
+      protected double computeValue() {
+        return mt.getExtent().getOffsetProperty().get().getX();
+      }
+    
+      @Override
+      public ObservableList<?> getDependencies() {
+        return FXCollections.singletonObservableList(mt.getExtent().getOffsetProperty());
+      }
+    
+      @Override
+      public void dispose() {
+        super.unbind(mt.getExtent().getOffsetProperty());
+      }
+    });
+    offset.yProperty().bind(new DoubleBinding() {
+      {
+        super.bind(mt.getExtent().getOffsetProperty());
+      }
+    
+      @Override
+      protected double computeValue() {
+        return mt.getExtent().getOffsetProperty().get().getY();
+      }
+    
+      @Override
+      public ObservableList<?> getDependencies() {
+        return FXCollections.singletonObservableList(mt.getExtent().getOffsetProperty());
+      }
+    
+      @Override
+      public void dispose() {
+        super.unbind(mt.getExtent().getOffsetProperty());
+      }
+    });
+  
+    this.transformation.append(offset);
     
     this.getScale().xProperty().bind(mt.getExtent().getScaleXProperty());
     this.getScale().yProperty().bind(mt.getExtent().getScaleYProperty());
     
     this.rotation.angleProperty().bind(mt.getRotation());
+  
+    this.getTransforms().addAll(this.origin, this.rotation, this.transformation);
   }
   
   
