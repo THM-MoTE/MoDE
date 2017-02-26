@@ -5,8 +5,10 @@ import de.thm.mni.mote.mode.modelica.MoVariable;
 import de.thm.mni.mote.mode.modelica.graphics.MoTransformation;
 import de.thm.mni.mote.mode.uiactor.editor.actionmanager.commands.Command;
 import de.thm.mni.mote.mode.uiactor.editor.actionmanager.commands.MoveCommand;
+import de.thm.mni.mote.mode.uiactor.editor.actionmanager.commands.ResizeCommand;
 import de.thm.mni.mote.mode.uiactor.editor.actionmanager.commands.RotateCommand;
 import de.thm.mni.mote.mode.uiactor.editor.actionmanager.interfaces.Moveable;
+import de.thm.mni.mote.mode.uiactor.editor.actionmanager.interfaces.Resizeable;
 import de.thm.mni.mote.mode.uiactor.editor.actionmanager.interfaces.Rotateable;
 import javafx.geometry.Point2D;
 
@@ -17,7 +19,7 @@ import java.util.Map;
 /**
  * Created by hobbypunk on 22.02.17.
  */
-public class ModifyableMoVariable implements Moveable, Rotateable {
+public class ModifyableMoVariable implements Moveable, Rotateable, Resizeable {
   private final MoVariable element;
   
   public ModifyableMoVariable(MoVariable element) {this.element = element;}
@@ -28,6 +30,10 @@ public class ModifyableMoVariable implements Moveable, Rotateable {
   
   public Command createRotation(Double rotation) {
     return new RotateCommand(this, rotation);
+  }
+  
+  public Command createResize(Point2D startOffset, Double startScaleX, Double startScaleY) {
+    return new ResizeCommand(this, startOffset, startScaleX, startScaleY);
   }
   
   public Command move(Object... params) {
@@ -61,5 +67,23 @@ public class ModifyableMoVariable implements Moveable, Rotateable {
     Double oldRotation = mt.getRotation().get();
     mt.getRotation().set(rotation);
     return new RotateCommand(this, oldRotation);
+  }
+  
+  @Override
+  public Command resize(Object... params) {
+    Point2D startOffset = (Point2D) params[0];
+    Double startScaleX = (Double) params[1];
+    Double startScaleY = (Double) params[2];
+    MoTransformation mt = element.getPlacement().getIconTransformation();
+    if (mt == null) mt = element.getPlacement().getDiagramTransformation();
+    
+    Point2D oldOffset = mt.getExtent().getOffsetProperty().get();
+    Double oldScaleX = mt.getExtent().getScaleX();
+    Double oldScaleY = mt.getExtent().getScaleY();
+    
+    mt.getExtent().getOffsetProperty().set(startOffset);
+    mt.getExtent().getScaleXProperty().set(startScaleX);
+    mt.getExtent().getScaleYProperty().set(startScaleY);
+    return new ResizeCommand(this, oldOffset, oldScaleX, oldScaleY);
   }
 }

@@ -35,6 +35,7 @@ public class ModifyableMoVariableIconGroup extends MoVariableIconGroup implement
   
   private MoTransformation transformation = null;
   
+  private Point2D startSceneMousePos = null;
   private Point2D startMousePos = null;
   private Point2D startOrigin = null;
   private final Map<MoConnection, List<Point2D>> startConnectionPoints = new HashMap<>();
@@ -49,6 +50,8 @@ public class ModifyableMoVariableIconGroup extends MoVariableIconGroup implement
   private Double startWidth = null;
   private Double startHeight = null;
   private Point2D startOffset = null;
+  private Double startScaleX = null;
+  private Double startScaleY = null;
   
   protected ModifyableMoVariableIconGroup(MoDiagramGroup diagramParent, MoContainer parent, MoVariable variable) {
     super(diagramParent, parent, variable);
@@ -160,7 +163,8 @@ public class ModifyableMoVariableIconGroup extends MoVariableIconGroup implement
       sm.freeze();
       startCenter = new Point2D(0, 0);
       this.getChildren().add(new Circle(startCenter.getX(), startCenter.getY(), 3, Color.GREEN));
-      Point2D pos = this.convertTo(new Point2D(event.getSceneX(), event.getSceneY()));
+      startSceneMousePos = new Point2D(event.getSceneX(), event.getSceneY());
+      Point2D pos = this.convertTo(startSceneMousePos);
       startAngle = (double) Math.round(Math.toDegrees(Math.atan2(pos.getX() - startCenter.getX(), startCenter.getY() - pos.getY())));
       startRotation = transformation.getRotation().get();
       return Command.IGNORE;
@@ -169,6 +173,8 @@ public class ModifyableMoVariableIconGroup extends MoVariableIconGroup implement
       Double angle = (double) Math.round(Math.toDegrees(Math.atan2(pos.getX() - startCenter.getX(), startCenter.getY() - pos.getY())));
       Double newRotation = (startRotation - (startAngle - angle)) % 360;
       transformation.getRotation().set((newRotation < 0) ? 360 + newRotation : newRotation);
+      pos = this.convertTo(startSceneMousePos);
+      startAngle = (double) Math.round(Math.toDegrees(Math.atan2(pos.getX() - startCenter.getX(), startCenter.getY() - pos.getY())));
       return Command.IGNORE;
     } else if (event.getEventType().equals(MouseEvent.MOUSE_RELEASED)) {
       Command c = new ModifyableMoVariable(getVariable()).createRotation(startRotation);
@@ -187,17 +193,20 @@ public class ModifyableMoVariableIconGroup extends MoVariableIconGroup implement
       sm.freeze();
       startWidth = transformation.getExtent().getWidth();
       startHeight = transformation.getExtent().getHeight();
-      startOrigin = transformation.getOrigin().get();
       startOffset = this.transformation.getExtent().getOffsetProperty().get();
-      startMousePos = this.convertTo(new Point2D(event.getSceneX(), event.getSceneY()));
+      startScaleX = transformation.getExtent().getScaleXProperty().get();
+      startScaleY = transformation.getExtent().getScaleYProperty().get();
+      startSceneMousePos = new Point2D(event.getSceneX(), event.getSceneY());
+      startMousePos = this.convertTo(startSceneMousePos);
       return Command.IGNORE;
     } else if (event.getEventType().equals(MouseEvent.MOUSE_DRAGGED) && startMousePos != null) {
       this.resizeDrag(event, combination);
       return Command.IGNORE;
     } else if (event.getEventType().equals(MouseEvent.MOUSE_RELEASED)) {
+      Command c = new ModifyableMoVariable(getVariable()).createResize(startOffset, startScaleX, startScaleY);
       clearVariables();
       sm.unfreeze();
-      return Command.IGNORE;// return c;
+      return c;
     }
     return null;
   }
@@ -219,6 +228,7 @@ public class ModifyableMoVariableIconGroup extends MoVariableIconGroup implement
       this.transformation.getExtent().getScaleXProperty().set(scaleX);
       this.transformation.getExtent().getScaleYProperty().set(scaleX);
   
+      startMousePos = this.convertTo(startSceneMousePos);
     }
   }
   
