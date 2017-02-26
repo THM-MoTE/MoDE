@@ -6,6 +6,6 @@ import javafx.scene.input.InputEvent;
 /**
  * Created by hobbypunk on 15.02.17.
  */
-public interface Deletable {
+public interface Deletable extends HandleEvent {
   Command delete(InputEvent event);
 }

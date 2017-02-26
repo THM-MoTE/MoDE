@@ -7,7 +7,7 @@ import javafx.scene.input.InputEvent;
 /**
  * Created by hobbypunk on 16.02.17.
  */
-public interface Actionable {
+public interface Actionable extends HandleEvent {
   
   Command action(StateMachine sm, InputEvent inputEvent);
 }

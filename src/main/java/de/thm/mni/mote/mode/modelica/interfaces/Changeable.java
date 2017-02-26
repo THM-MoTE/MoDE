@@ -2,6 +2,7 @@ package de.thm.mni.mote.mode.modelica.interfaces;
 
 import javafx.beans.property.ObjectProperty;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -21,7 +22,7 @@ public interface Changeable {
   
   Changeable getChangeParent();
   
-  List<Changeable> getChangeChildren();
+  default List<Changeable> getChangeChildren() {return Collections.EMPTY_LIST; }
   
   default void initChangeListener() {
     getUnsavedChanges().addListener((observable, oldValue, newValue) -> {

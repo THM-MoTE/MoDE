@@ -7,6 +7,6 @@ import javafx.scene.input.InputEvent;
 /**
  * Created by hobbypunk on 15.02.17.
  */
-public interface Rotateable {
+public interface Rotateable extends HandleEvent {
   Command rotate(StateMachine sm, InputEvent event);
 }

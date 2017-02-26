@@ -1,30 +1,34 @@
 package de.thm.mni.mote.mode.modelica.graphics;
 
+import de.thm.mni.mote.mode.modelica.interfaces.Changeable;
 import javafx.beans.property.*;
 import javafx.geometry.Point2D;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Created by hobbypunk on 23.02.17.
  */
-public class MoTransformationExtent extends MoExtent {
+@Getter
+public class MoTransformationExtent extends MoExtent implements Changeable {
+  @Setter private Changeable changeParent = null;
+  
+  private final ObjectProperty<Change> unsavedChanges = new SimpleObjectProperty<>(Change.NONE);
+  
   
   private final ObjectProperty<Point2D> p1 = new SimpleObjectProperty<>(new Point2D(-100., -100.));
   private final ObjectProperty<Point2D> p2 = new SimpleObjectProperty<>(new Point2D(100., 100.));
   
-  @Getter private Double initialWidth = -1.;
-  @Getter private Double initialHeight = -1.;
-
-  @Getter private final DoubleProperty widthProperty = new SimpleDoubleProperty();
-  @Getter private final DoubleProperty heightProperty = new SimpleDoubleProperty();
+  private Double initialWidth = -1.;
+  private Double initialHeight = -1.;
   
-  @Getter private final ObjectProperty<Point2D> offsetProperty = new SimpleObjectProperty<>(new Point2D(0, 0));
+  private final ObjectProperty<Point2D> offsetProperty = new SimpleObjectProperty<>(new Point2D(0, 0));
   
-  @Getter private final DoubleProperty scaleXProperty = new SimpleDoubleProperty(1.);
-  @Getter private final DoubleProperty scaleYProperty = new SimpleDoubleProperty(1.);
+  private final DoubleProperty scaleXProperty = new SimpleDoubleProperty(1.);
+  private final DoubleProperty scaleYProperty = new SimpleDoubleProperty(1.);
   
-  @Getter private final BooleanProperty flippedXProperty = new SimpleBooleanProperty(false);
-  @Getter private final BooleanProperty flippedYProperty = new SimpleBooleanProperty(false);
+  private final BooleanProperty flippedXProperty = new SimpleBooleanProperty(false);
+  private final BooleanProperty flippedYProperty = new SimpleBooleanProperty(false);
   
   
   MoTransformationExtent(Point2D p1, Point2D p2) {
@@ -37,42 +41,42 @@ public class MoTransformationExtent extends MoExtent {
   }
   
   MoTransformationExtent(MoSimpleExtent iconExtent, Double initialScale) {
+    scaleXProperty.set(initialScale);
+    scaleYProperty.set(initialScale);
+    
     initialWidth = iconExtent.getWidth();
     initialHeight = iconExtent.getHeight();
   
     initListener();
-
-    scaleXProperty.set(initialScale);
-    scaleYProperty.set(initialScale);
     
     calcOffset();
   }
   
   private void initListener() {
-    widthProperty.bind(scaleXProperty.multiply(getInitialWidth()));
-    heightProperty.bind(scaleYProperty.multiply(getInitialHeight()));
-  
-    scaleXProperty.addListener((observable, oldValue, newValue) -> calcPoints());
-    scaleYProperty.addListener((observable, oldValue, newValue) -> calcPoints());
-  
-    offsetProperty.addListener((observable, oldValue, newValue) -> {
-      calcPoints();
+    offsetProperty.addListener((observable, oldValue, newValue) -> changed());
+    scaleXProperty.addListener((observable, oldValue, newValue) -> {
+      if (this.initialWidth > -1)
+        changed();
     });
-    
-    flippedXProperty.addListener((observable, oldValue, newValue) -> calcPoints());
-    flippedYProperty.addListener((observable, oldValue, newValue) -> calcPoints());
-    
+    scaleYProperty.addListener((observable, oldValue, newValue) -> {
+      if (this.initialHeight > -1)
+        changed();
+    });
+    flippedXProperty.addListener((observable, oldValue, newValue) -> changed());
+    flippedYProperty.addListener((observable, oldValue, newValue) -> changed());
+  
+    initChangeListener();
   }
   
   public void setIconExtent(MoSimpleExtent iconExtent) {
 //    if (this.iconExtent != null)  //TODO: wahrscheinlich probleme bei vererbung und das kind verschiebt den connector. deepcopy der variablen nötig?
 //      throw new UnsupportedOperationException("Already set!");
-    if (this.initialWidth == -1.) {
+    if (this.initialWidth < 0 || this.initialHeight < 0) {
+      scaleXProperty.set(super.getWidth() / iconExtent.getWidth());
+      scaleYProperty.set(super.getHeight() / iconExtent.getHeight());
+      
       this.initialWidth = iconExtent.getWidth();
       this.initialHeight = iconExtent.getHeight();
-    
-      scaleXProperty.set(getWidth() / initialWidth);
-      scaleYProperty.set(getHeight() / initialHeight);
     }
   }
   
@@ -109,14 +113,10 @@ public class MoTransformationExtent extends MoExtent {
     return p2.get();
   }
   
-  public Point2D getOffset() {
-    return offsetProperty.get();
-  }
-  
   private void calcPoints() {
   
     p1.set(offsetProperty.get());
-    p2.set(p1.get().add(getWidth(), getHeight()));
+    p2.set(p1.get().add(this.initialWidth * scaleXProperty.get(), this.initialHeight * scaleYProperty.get()));
     
     Point2D tmp = p1.get();
     if (isFlipX()) {

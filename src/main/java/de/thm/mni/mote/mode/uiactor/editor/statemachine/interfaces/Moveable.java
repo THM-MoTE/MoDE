@@ -7,6 +7,6 @@ import javafx.scene.input.InputEvent;
 /**
  * Created by hobbypunk on 15.02.17.
  */
-public interface Moveable {
+public interface Moveable extends HandleEvent {
   Command move(StateMachine sm, InputEvent event);
 }

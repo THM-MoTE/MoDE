@@ -5,16 +5,16 @@ import de.thm.mni.mote.mode.uiactor.control.modelica.MoVariableIconGroup;
 import de.thm.mni.mote.mode.uiactor.editor.elementmanager.interfaces.Highlightable;
 import de.thm.mni.mote.mode.uiactor.editor.elementmanager.interfaces.Hoverable;
 import de.thm.mni.mote.mode.uiactor.editor.elementmanager.interfaces.Selectable;
-import de.thm.mni.mote.mode.uiactor.editor.statemachine.elements.ModifyableMoIconConnectorGroup;
+import de.thm.mni.mote.mode.uiactor.editor.statemachine.elements.ModifyableMoConnectorIconGroup;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.paint.Color;
 
 /**
  * Created by hobbypunk on 13.02.17.
  */
-public class ManagedMoIconConnectorGroup extends ModifyableMoIconConnectorGroup implements Highlightable, Hoverable, Selectable {
+public class ManagedMoConnectorIconGroup extends ModifyableMoConnectorIconGroup implements Highlightable, Hoverable, Selectable {
   
-  public ManagedMoIconConnectorGroup(MoVariableIconGroup moParent, MoVariable variable) {
+  public ManagedMoConnectorIconGroup(MoVariableIconGroup moParent, MoVariable variable) {
     super(moParent, variable);
   }
   

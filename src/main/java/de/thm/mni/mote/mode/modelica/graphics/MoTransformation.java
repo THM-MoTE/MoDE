@@ -45,18 +45,21 @@ public class MoTransformation implements HasExtent, Changeable {
     extent = new MoTransformationExtent(iconExtent, initialScale);
     if (origin != null) this.origin.set(origin);
     if (rotation != null) this.rotation.set(rotation);
+  
+    initListeners();
   }
   
   @SuppressWarnings("unchecked")
   @Override
   public List<Changeable> getChangeChildren() {
-    return Collections.EMPTY_LIST;
+    return Collections.singletonList(extent);
   }
   
   private void initListeners() {
     initChangeListener();
     origin.addListener((observable, oldValue, newValue) -> changed());
     rotation.addListener((observable, oldValue, newValue) -> changed());
+    extent.setChangeParent(this);
   }
   
   public static MoTransformation parse(TransformationContext val) {

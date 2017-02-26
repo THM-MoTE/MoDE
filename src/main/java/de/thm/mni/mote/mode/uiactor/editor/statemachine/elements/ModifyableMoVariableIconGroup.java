@@ -19,6 +19,8 @@ import javafx.scene.Parent;
 import javafx.scene.control.TabPane;
 import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -102,8 +104,8 @@ public class ModifyableMoVariableIconGroup extends MoVariableIconGroup implement
     
     this.toFront();
     this.setOpacity(0.8);
-    
-    startMousePos = this.getMoDiagram().convertScenePointToDiagramPoint(new Point2D(event.getSceneX(), event.getSceneY()));
+  
+    startMousePos = this.getMoDiagram().convertTo(new Point2D(event.getSceneX(), event.getSceneY()));
     startOrigin = transformation.getOrigin().get();
     this.getVariable().getConnections().forEach(moConn -> {
       Boolean to = moConn.toContains(this.getVariable());
@@ -127,7 +129,7 @@ public class ModifyableMoVariableIconGroup extends MoVariableIconGroup implement
   
   private void moveDrag(MouseEvent event) {
     if (this.transformation == null) return;
-    Point2D mousePos = getMoDiagram().convertScenePointToDiagramPoint(new Point2D(event.getSceneX(), event.getSceneY()));
+    Point2D mousePos = getMoDiagram().convertTo(new Point2D(event.getSceneX(), event.getSceneY()));
     Point2D delta = mousePos.subtract(startMousePos);
     updateConnections(delta);
     
@@ -156,13 +158,14 @@ public class ModifyableMoVariableIconGroup extends MoVariableIconGroup implement
     MouseEvent event = (MouseEvent) inputEvent;
     if (event.getEventType().equals(MouseEvent.MOUSE_PRESSED)) {
       sm.freeze();
-      calcCenter();
-      Point2D pos = this.getMoDiagram().convertScenePointToDiagramPoint(new Point2D(event.getSceneX(), event.getSceneY()));
+      startCenter = new Point2D(0, 0);
+      this.getChildren().add(new Circle(startCenter.getX(), startCenter.getY(), 3, Color.GREEN));
+      Point2D pos = this.convertTo(new Point2D(event.getSceneX(), event.getSceneY()));
       startAngle = (double) Math.round(Math.toDegrees(Math.atan2(pos.getX() - startCenter.getX(), startCenter.getY() - pos.getY())));
       startRotation = transformation.getRotation().get();
       return Command.IGNORE;
     } else if (event.getEventType().equals(MouseEvent.MOUSE_DRAGGED) && startAngle != null) {
-      Point2D pos = this.getMoDiagram().convertScenePointToDiagramPoint(new Point2D(event.getSceneX(), event.getSceneY()));
+      Point2D pos = this.convertTo(new Point2D(event.getSceneX(), event.getSceneY()));
       Double angle = (double) Math.round(Math.toDegrees(Math.atan2(pos.getX() - startCenter.getX(), startCenter.getY() - pos.getY())));
       Double newRotation = (startRotation - (startAngle - angle)) % 360;
       transformation.getRotation().set((newRotation < 0) ? 360 + newRotation : newRotation);
@@ -186,7 +189,7 @@ public class ModifyableMoVariableIconGroup extends MoVariableIconGroup implement
       startHeight = transformation.getExtent().getHeight();
       startOrigin = transformation.getOrigin().get();
       startOffset = this.transformation.getExtent().getOffsetProperty().get();
-      startMousePos = getMoDiagram().convertScenePointToDiagramPoint(new Point2D(event.getSceneX(), event.getSceneY()));
+      startMousePos = this.convertTo(new Point2D(event.getSceneX(), event.getSceneY()));
       return Command.IGNORE;
     } else if (event.getEventType().equals(MouseEvent.MOUSE_DRAGGED) && startMousePos != null) {
       this.resizeDrag(event, combination);
@@ -201,44 +204,22 @@ public class ModifyableMoVariableIconGroup extends MoVariableIconGroup implement
   
   private void resizeDrag(MouseEvent event, Integer modifyOffset) {
     if (this.transformation == null) return;
-    Point2D mousePos = getMoDiagram().convertScenePointToDiagramPoint(new Point2D(event.getSceneX(), event.getSceneY()));
+    Point2D mousePos = this.convertTo(new Point2D(event.getSceneX(), event.getSceneY()));
     Point2D delta = mousePos.subtract(startMousePos);
-    Point2D offset = this.transformation.getExtent().getOffsetProperty().get();
     
     Double scaleX = (startWidth + delta.getX()) / this.transformation.getExtent().getInitialWidth();
     Double scaleY = (startHeight + delta.getY()) / this.transformation.getExtent().getInitialHeight();
-//    System.out.println("Delta: " + delta + " ScaleX: " + scaleX + " ScaleY: " + scaleY);
+    System.out.print("Delta: " + delta);
+    System.out.println(" ScaleX: " + scaleX);
     if (scaleX > 0) {
-      System.out.print("P1: " + this.transformation.getExtent().getP1() + " P2: " + this.transformation.getExtent().getP2());
-      if ((modifyOffset & ModifyableCircle.MODIFY_X_OFFSET) == ModifyableCircle.MODIFY_X_OFFSET) {
-        offset = new Point2D(startOffset.getX() - delta.getX(), offset.getY());
+      if (modifyOffset != ModifyableCircle.MODIFY_NO_OFFSET) {
 //      System.out.println("Update X Offset: " + offset);
-        this.transformation.getExtent().getOffsetProperty().set(offset);
+        //  this.transformation.getExtent().getOffsetProperty().set(startOffset.add(delta));
       }
-      if ((modifyOffset & ModifyableCircle.MODIFY_Y_OFFSET) == ModifyableCircle.MODIFY_Y_OFFSET) {
-        offset = new Point2D(offset.getX(), startOffset.getY() - delta.getX());
-//      System.out.println("Update Y Offset: " + offset);
-        this.transformation.getExtent().getOffsetProperty().set(offset);
-      }
-      System.out.println(" - P1: " + this.transformation.getExtent().getP1() + " P2: " + this.transformation.getExtent().getP2());
       this.transformation.getExtent().getScaleXProperty().set(scaleX);
       this.transformation.getExtent().getScaleYProperty().set(scaleX);
+  
     }
-  }
-  
-  
-  private void calcCenter() {
-    if (transformation == null) return;
-    Point2D extent0 = transformation.getExtent().getP1();
-    Point2D extent1 = transformation.getExtent().getP2();
-    
-    Point2D largest = new Point2D(Math.max(extent0.getX(), extent1.getX()), Math.max(extent0.getY(), extent1.getY()));
-    Point2D smallest = new Point2D(Math.min(extent0.getX(), extent1.getX()), Math.min(extent0.getY(), extent1.getY()));
-    
-    Double width = largest.getX() - smallest.getX();
-    Double height = largest.getY() - smallest.getX();
-    
-    startCenter = smallest.add(width / 2, height / 2).add(transformation.getOrigin().get());
   }
   
   private void clearVariables() {

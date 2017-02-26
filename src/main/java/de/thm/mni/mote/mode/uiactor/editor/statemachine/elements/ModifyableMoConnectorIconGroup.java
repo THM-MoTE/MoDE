@@ -27,14 +27,14 @@ import java.util.List;
 /**
  * Created by hobbypunk on 16.02.17.
  */
-public class ModifyableMoIconConnectorGroup extends MoConnectorIconGroup implements Actionable, Addable, Deletable {
+public class ModifyableMoConnectorIconGroup extends MoConnectorIconGroup implements Actionable, Addable, Deletable {
   
   private static ConnectionBuilder builder = null;
   private static ChangeListener<Boolean> changeListener = null;
-  private ModifyableMoIconConnectorGroup freezeTarget = null;
+  private ModifyableMoConnectorIconGroup freezeTarget = null;
   
   
-  public ModifyableMoIconConnectorGroup(MoVariableIconGroup moParent, MoVariable variable) {
+  public ModifyableMoConnectorIconGroup(MoVariableIconGroup moParent, MoVariable variable) {
     super(moParent, variable);
   }
   
@@ -43,7 +43,7 @@ public class ModifyableMoIconConnectorGroup extends MoConnectorIconGroup impleme
     if (!(inputEvent instanceof MouseEvent)) return null;
     
     MouseEvent event = (MouseEvent) inputEvent;
-    Point2D p = this.getMoParent().getMoDiagram().convertScenePointToDiagramPoint(new Point2D(event.getSceneX(), event.getSceneY()));
+    Point2D p = this.getMoParent().getMoDiagram().convertTo(new Point2D(event.getSceneX(), event.getSceneY()));
     
     if (event.getEventType().equals(MouseEvent.MOUSE_MOVED)) {
       builder.updateLastPoint(p);

@@ -8,12 +8,10 @@ import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.editor.elementmanager.elements.ManagedMoVariableIconGroup;
 import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
-import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.transform.NonInvertibleTransformException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -117,40 +115,5 @@ public class MoDiagramGroup extends MoGroup {
   
   private void initConnection(MoConnection connection) {
     connection.getMoGraphics().forEach(super::initImage);
-  }
-  
-  public Point2D convertScenePointToDiagramPoint(Point2D scenePoint) {
-    try {
-      Point2D p = this.sceneToLocal(scenePoint);
-      p = getScale().inverseDeltaTransform(p.getX(), p.getY());
-      p = getFlipping().deltaTransform(p);
-      
-      Double x, y;
-      x = -getPosition().getX() + p.getX();
-      y = getPosition().getY() + p.getY();
-  
-      return new Point2D(x, y);
-    } catch (NonInvertibleTransformException e) {
-      System.out.println("Should never called...");
-    }
-    return null;
-  }
-  
-  public Point2D convertDiagramPointToScenePoint(Point2D p) {
-    
-    try {
-      Double x, y;
-      x = getPosition().getX() + p.getX();
-      y = -getPosition().getY() + p.getY();
-      
-      p = getScale().deltaTransform(new Point2D(x, y));
-      p = getFlipping().inverseDeltaTransform(p);
-      
-      return this.localToScene(p);
-      
-    } catch (NonInvertibleTransformException e) {
-      System.out.println("Should never called...");
-    }
-    return null;
   }
 }

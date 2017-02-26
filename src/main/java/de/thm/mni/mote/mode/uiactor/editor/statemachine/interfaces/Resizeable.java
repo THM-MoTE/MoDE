@@ -7,6 +7,6 @@ import javafx.scene.input.InputEvent;
 /**
  * Created by hobbypunk on 15.02.17.
  */
-public interface Resizeable {
+public interface Resizeable extends HandleEvent {
   Command resize(StateMachine sm, InputEvent event);
 }

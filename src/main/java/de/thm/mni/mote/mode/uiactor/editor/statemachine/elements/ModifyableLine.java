@@ -59,8 +59,8 @@ public class ModifyableLine extends InvisibleLine implements Addable, Actionable
   @Override
   public Command add(InputEvent inputEvent) {
     MouseEvent event = (MouseEvent) inputEvent;
-    
-    Point2D mousePos = ((MoDiagramGroup) getMoParent()).convertScenePointToDiagramPoint(new Point2D(event.getSceneX(), event.getSceneY()));
+  
+    Point2D mousePos = ((MoDiagramGroup) getMoParent()).convertTo(new Point2D(event.getSceneX(), event.getSceneY()));
     
     Integer[] poses = findNearLinePos(mousePos, true);
     if (poses != null) {
@@ -76,7 +76,7 @@ public class ModifyableLine extends InvisibleLine implements Addable, Actionable
   @Override
   public Command delete(InputEvent event) {
     MouseEvent mouseEvent = (MouseEvent) event;
-    Point2D mousePos = ((MoDiagramGroup) getMoParent()).convertScenePointToDiagramPoint(new Point2D(mouseEvent.getSceneX(), mouseEvent.getSceneY()));
+    Point2D mousePos = ((MoDiagramGroup) getMoParent()).convertTo(new Point2D(mouseEvent.getSceneX(), mouseEvent.getSceneY()));
     
     Integer pos = findNearPointPos(mousePos);
     Integer[] poses;
@@ -127,7 +127,7 @@ public class ModifyableLine extends InvisibleLine implements Addable, Actionable
   
   private void moveStart(MouseEvent event) {
     getMoParent().getScene().setCursor(Cursor.MOVE);
-    startMousePos = ((MoDiagramGroup) getMoParent()).convertScenePointToDiagramPoint(new Point2D(event.getSceneX(), event.getSceneY()));
+    startMousePos = ((MoDiagramGroup) getMoParent()).convertTo(new Point2D(event.getSceneX(), event.getSceneY()));
     Integer pos = findNearPointPos(startMousePos);
     if (pos != null) {
       firstPointPos = pos;
@@ -147,7 +147,7 @@ public class ModifyableLine extends InvisibleLine implements Addable, Actionable
   }
   
   private void moveSnap(MouseEvent event) {
-    Point2D mousePos = ((MoDiagramGroup) getMoParent()).convertScenePointToDiagramPoint(new Point2D(event.getSceneX(), event.getSceneY()));
+    Point2D mousePos = ((MoDiagramGroup) getMoParent()).convertTo(new Point2D(event.getSceneX(), event.getSceneY()));
     Point2D delta = mousePos.subtract(startMousePos);
     Double snapRadius = settings.getMainwindow().getEditor().getSnapRadius();
   
@@ -178,7 +178,7 @@ public class ModifyableLine extends InvisibleLine implements Addable, Actionable
   }
   
   private void move(MouseEvent event) {
-    Point2D mousePos = ((MoDiagramGroup) getMoParent()).convertScenePointToDiagramPoint(new Point2D(event.getSceneX(), event.getSceneY()));
+    Point2D mousePos = ((MoDiagramGroup) getMoParent()).convertTo(new Point2D(event.getSceneX(), event.getSceneY()));
     Point2D delta = mousePos.subtract(startMousePos);
     if (status != STATUS.NOTHING) {
       this.getData().getPoints().set(firstPointPos, firstPoint.add(delta));

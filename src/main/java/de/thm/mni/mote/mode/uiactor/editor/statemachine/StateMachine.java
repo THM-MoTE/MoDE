@@ -4,7 +4,7 @@ import de.thm.mni.mhpp11.jActor.actors.logging.messages.TraceMessage;
 import de.thm.mni.mhpp11.jActor.actors.messagebus.MessageBus;
 import de.thm.mni.mote.mode.modelica.MoContainer;
 import de.thm.mni.mote.mode.uiactor.control.MainTabControl;
-import de.thm.mni.mote.mode.uiactor.control.modelica.MoDiagramGroup;
+import de.thm.mni.mote.mode.uiactor.control.modelica.MoGroup;
 import de.thm.mni.mote.mode.uiactor.editor.actionmanager.ActionManager;
 import de.thm.mni.mote.mode.uiactor.editor.actionmanager.commands.Command;
 import de.thm.mni.mote.mode.uiactor.editor.elementmanager.ElementManager;
@@ -22,11 +22,14 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import lombok.Getter;
 import lombok.NonNull;
 
@@ -79,7 +82,7 @@ public class StateMachine implements EventHandler<InputEvent> {
   public void handle(InputEvent event) {
     handleElementManagment(event);
     if (!freezeState) {
-      if (event.getSource() instanceof MoDiagramGroup && event.getEventType().equals(MouseEvent.MOUSE_MOVED)) return;
+      //if (event.getSource() instanceof MoDiagramGroup && event.getEventType().equals(MouseEvent.MOUSE_MOVED)) return;
 //      if (!event.getEventType().equals(MouseEvent.MOUSE_MOVED)) MessageBus.getInstance().send(new TraceMessage(StateMachine.class, tab.getText() + " Event: " + event.getSource().getClass().getSimpleName() + " : " + event.getEventType()));
       if (event instanceof MouseEvent) updateKeyState((MouseEvent) event);
       if (event instanceof ScrollEvent) updateKeyState((ScrollEvent) event);
@@ -95,11 +98,45 @@ public class StateMachine implements EventHandler<InputEvent> {
     } else {
       this.target = target;
     }
+
+//    mousePositionHelp(event);
+        
     Command c = state.handle(this, target, event);
     if (c != null) {
       ActionManager.getInstance(data).addUndo(c);
       event.consume();
     }
+  }
+  
+  MoGroup old = null;
+  private Circle centerPosCircle = new Circle(0, 0, 4, Color.GREEN);
+  private Circle mousePosCircle = new Circle(0, 0, 4, Color.BLUE);
+  
+  private void mousePositionHelp(InputEvent event) {
+    if (event.getEventType().equals(MouseEvent.MOUSE_MOVED) || event.getEventType().equals(MouseEvent.MOUSE_DRAGGED)) {
+      MoGroup mg = (MoGroup) getMatchingParent((Node) event.getTarget(), MoGroup.class);
+      if (mg == null && event.getSource() instanceof MoGroup) mg = (MoGroup) event.getSource();
+      if (mg != null) {
+        if (old != null && old != mg) {
+          old.getChildren().remove(centerPosCircle);
+          old.getChildren().remove(mousePosCircle);
+        }
+        if (!mg.getChildren().contains(mousePosCircle)) {
+          mg.getChildren().add(centerPosCircle);
+          mg.getChildren().add(mousePosCircle);
+        }
+        Point2D pos = new Point2D(((MouseEvent) event).getSceneX(), ((MouseEvent) event).getSceneY());
+        System.out.print(event.getSource().getClass().getSimpleName());
+        System.out.print(" Obj: " + mg.getClass().getSimpleName());
+        System.out.print(" ScenePos: " + pos);
+        pos = mg.convertTo(pos);
+        System.out.println(" MoPos: " + pos);
+        mousePosCircle.setCenterX(pos.getX());
+        mousePosCircle.setCenterY(pos.getY());
+        old = mg;
+      }
+    }
+    
   }
   
   public void switchToNone() {

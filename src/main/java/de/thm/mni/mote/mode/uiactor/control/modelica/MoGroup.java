@@ -20,10 +20,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
-import javafx.scene.transform.Affine;
-import javafx.scene.transform.Scale;
-import javafx.scene.transform.Transform;
-import javafx.scene.transform.Translate;
+import javafx.scene.transform.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
@@ -50,7 +47,7 @@ public abstract class MoGroup extends Group {
   
   @Getter private Scale scale = new Scale();
   @Getter private Affine flipping = new Affine();
-  @Getter private Translate position = new Translate();
+  @Getter private Affine position = new Affine();
   
   @Getter private final BooleanProperty flippedXProperty = new SimpleBooleanProperty(false);
   @Getter private final BooleanProperty flippedYProperty = new SimpleBooleanProperty(false);
@@ -120,18 +117,15 @@ public abstract class MoGroup extends Group {
     Point2D extent0 = mcs.getExtent().getP1();
     Point2D extent1 = mcs.getExtent().getP2();
   
-    Double width = Math.max(extent0.getX(), extent1.getX()) - Math.min(extent0.getX(), extent1.getX());
-    Double height = Math.max(extent0.getY(), extent1.getY()) - Math.min(extent0.getY(), extent1.getY());
-  
-    coordianteSystem = new javafx.scene.shape.Rectangle(extent0.getX(), extent0.getY(), width, height);
+    coordianteSystem = new javafx.scene.shape.Rectangle(extent0.getX(), extent0.getY(), mcs.getExtent().getWidth(), mcs.getExtent().getHeight());
     coordianteSystem.setFill(Color.TRANSPARENT);
     getChildren().add(coordianteSystem);
   
+    //Flips to coordinate system - Modelica is bottom to top!
     flipping.append(Transform.scale(1., -1.));
-    flipping.append(Transform.translate(0, -height));
+    flipping.append(Transform.translate(0, -mcs.getExtent().getHeight()));
   
-    position.setX(-extent0.getX());
-    position.setY(-extent0.getY());
+    position.append(new Translate(-extent0.getX(), -extent0.getY()));
   
     this.preserveAspectRatio.bind(mcs.getPreserveAspectRatio());
     this.initialScale.bind(mcs.getInitialScale());
@@ -209,5 +203,41 @@ public abstract class MoGroup extends Group {
   
   public ModifyableMoClass getModifyableMoClass() {
     return new ModifyableMoClass(this.getMoClass());
+  }
+  
+  public Point2D convertTo(Point2D scenePoint) {
+    try {
+      Point2D p = this.sceneToLocal(scenePoint);
+      p = getScale().inverseDeltaTransform(p.getX(), p.getY());
+      p = getFlipping().deltaTransform(p);
+      
+      Double x, y;
+      
+      x = -getPosition().getTx() + p.getX();
+      y = getPosition().getTy() + p.getY();
+      
+      return new Point2D(x, y);
+    } catch (NonInvertibleTransformException e) {
+      System.out.println("Should never called...");
+    }
+    return null;
+  }
+  
+  public Point2D convertFrom(Point2D p) {
+    
+    try {
+      Double x, y;
+      x = getPosition().getTx() + p.getX();
+      y = -getPosition().getTy() + p.getY();
+      
+      p = getScale().deltaTransform(new Point2D(x, y));
+      p = getFlipping().inverseDeltaTransform(p);
+      
+      return this.localToScene(p);
+      
+    } catch (NonInvertibleTransformException e) {
+      System.out.println("Should never called...");
+    }
+    return null;
   }
 }

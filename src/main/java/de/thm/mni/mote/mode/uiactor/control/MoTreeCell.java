@@ -40,7 +40,7 @@ public class MoTreeCell extends TreeCell<MoContainer> {
     this.setOnContextMenuRequested(null);
     this.setOnMouseClicked(null);
     this.getStyleClass().removeAll("root-element");
-    if (empty) {
+    if (empty || item == null) {
       this.setText(null);
       this.setGraphic(null);
     } else {
