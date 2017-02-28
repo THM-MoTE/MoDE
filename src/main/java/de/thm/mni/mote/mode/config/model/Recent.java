@@ -5,6 +5,7 @@ import lombok.*;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementList;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,12 @@ public class Recent {
   
   @ElementList(required = false)
   @Getter(AccessLevel.PRIVATE) @Setter(AccessLevel.PRIVATE) private List<Path> projects = new ArrayList<>();
+  
+  public Path getLastPath() {
+    if (!(Files.exists(lastPath) && Files.isDirectory(lastPath)))
+      lastPath = Utilities.getHome();
+    return lastPath;
+  }
   
   public void add(Path project) {
     this.projects.add(project);

@@ -35,7 +35,7 @@ public abstract class Controller extends ActorController implements Initializabl
   }
   
   protected void lateInitialize() throws ReflectionException, NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
-    this.getScene().getStylesheets().add(0, Utilities.getRessources("css/Basis.css").toExternalForm());
+    this.getScene().getStylesheets().add(0, Utilities.getResource("css/Basis.css").toExternalForm());
     super.lateInitialize();
   }
   

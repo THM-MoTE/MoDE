@@ -42,10 +42,15 @@
             </graphic>
           </MenuItem>
           <Menu disable="true" mnemonicParsing="false" text="%menu.file.open_recent"/>
-          <MenuItem disable="true" mnemonicParsing="false" onAction="#handleCloseProject"
+          <MenuItem mnemonicParsing="false" onAction="#handleCloseProject"
                     text="%menu.file.close_project"/>
           <SeparatorMenuItem mnemonicParsing="false"/>
-          <MenuItem disable="true" mnemonicParsing="false" text="%menu.file.add_library">
+          <MenuItem disable="true" mnemonicParsing="false" text="%menu.file.add_system_library">
+            <graphic>
+              <FontIcon iconColor="cadetblue" iconLiteral="gmi-add-to-photos" iconSize="18"/>
+            </graphic>
+          </MenuItem>
+          <MenuItem disable="true" mnemonicParsing="false" text="%menu.file.add_project_library">
             <graphic>
               <FontIcon iconColor="cadetblue" iconLiteral="gmi-add-to-photos" iconSize="18"/>
             </graphic>

@@ -1,9 +1,10 @@
 package de.thm.mni.mote.mode.uiactor.controller.dialogs.newproject;
 
 import de.thm.mni.mote.mode.config.model.Project;
-import de.thm.mni.mote.mode.uiactor.controller.fragments.DialogStackController;
 import de.thm.mni.mote.mode.uiactor.control.NewProject;
-import de.thm.mni.mote.mode.uiactor.controller.fragments.ProjectFromSourceController;
+import de.thm.mni.mote.mode.uiactor.controller.dialogs.newproject.fragments.EmptyProjectController;
+import de.thm.mni.mote.mode.uiactor.controller.dialogs.newproject.fragments.ProjectFromSourceController;
+import de.thm.mni.mote.mode.uiactor.controller.fragments.DialogStackController;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
@@ -64,7 +65,6 @@ public class FirstPageController extends DialogStackController implements NewPro
           this.setDisable(false);
           this.setText(null);
         } else {
-          this.setDisable(item.getType().equals(Option.TYPE.EMPTY_PROJECT));
           icon.setIconLiteral(item.getFontIconLiteral());
           icon.setIconColor(item.getFontIconColor());
           this.setText(item.getText());
@@ -75,16 +75,25 @@ public class FirstPageController extends DialogStackController implements NewPro
     lvOptionList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
       switch (newValue.getType()) {
         case EMPTY_PROJECT:
+          onEmptyProject();
           break;
         case PROJECT_FROM_SOURCE:
           onProjectFromSource();
       }
     });
     this.dialogStackButtonsController.getBtnNext().setDisable(true);
-    
-    //TODO: change to 0 when empty project works
-    lvOptionList.getSelectionModel().select(1);
+  
+    lvOptionList.getSelectionModel().select(0);
     getIsValidProperty().addListener((observable, oldValue, newValue) -> dialogStackButtonsController.getBtnNext().setDisable(!newValue));
+  }
+  
+  private void onEmptyProject() {
+    EmptyProjectController tmp = new EmptyProjectController(getGroup());
+    tmp.setProjectBuilder(this.getProjectBuilder());
+    tmp.getIsValidProperty().addListener((observable, oldValue, newValue) -> getIsValidProperty().set(newValue));
+    
+    apRoot.getChildren().clear();
+    apRoot.getChildren().add(tmp);
   }
   
   private void onProjectFromSource() {
@@ -101,7 +110,6 @@ public class FirstPageController extends DialogStackController implements NewPro
     if (this.getIsValidProperty().get()) {
       SecondPageController page = new SecondPageController(getGroup(), this.getStackPane(), this.getLibs());
       page.setProjectBuilder(this.getProjectBuilder());
-      System.out.println(this.getProjectBuilder());
       page.setOnFinishListener(data -> {
         this.getOnFinishListener().handle(data);
         getStackPane().getChildren().remove(this);

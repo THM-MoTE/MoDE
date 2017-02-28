@@ -5,6 +5,7 @@ import de.thm.mni.mote.mode.uiactor.utilities.UTF8ResourceBundleControl;
 import lombok.experimental.UtilityClass;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -29,8 +30,16 @@ public class Utilities {
     numberFormat = new DecimalFormat("#.##", symbols);
   }
   
-  public URL getRessources(String postfix) {
+  public URL getResource(String postfix) {
     return Utilities.class.getResource("/" + BASEPATH + postfix);
+  }
+  
+  private InputStream getResourceAsStream(String postfix) {
+    return Utilities.class.getResourceAsStream("/" + BASEPATH + postfix);
+  }
+  
+  public InputStream getTemplate(String template) {
+    return getResourceAsStream("templates/" + template);
   }
   
   public URL getView(String view) {
@@ -48,7 +57,7 @@ public class Utilities {
   private URL getView(String prefix, String view) {
     if (!prefix.isEmpty())
       prefix += "/";
-    return Utilities.getRessources(prefix + "view/" + view + ".fxml");
+    return Utilities.getResource(prefix + "view/" + view + ".fxml");
   }
   
   

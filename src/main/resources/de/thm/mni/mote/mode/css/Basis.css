@@ -60,11 +60,14 @@
 .table-view, .table-view:focused,
 .tree-table-view, .tree-table-view:focused,
 .list-view, .list-view:focused {
-    -fx-background-color: white;
     -fx-background-insets: 0px;
     -fx-background-radius: 0px;
     -fx-border-color: lightgray;
     -fx-border-width: 1px;
+}
+
+.scroll-pane.white, .scroll-pane.white:focused {
+    -fx-background-color: white;
 }
 
 .scroll-pane > .viewport {
@@ -88,11 +91,11 @@
     -fx-padding: 2px 10px;
 }
 
-.menu-button:hover, .menu-button:showing, .menu-button:showing, .menu-item:hover, .menu-item:focused, .list-cell:selected {
+.menu-button:hover, .menu-button:showing, .menu-button:showing, .menu-item:hover, .menu-item:focused, .list-view .list-cell:selected {
     -fx-background-color: cornflowerblue;
 }
 
-.menu-button:hover > .label, .menu-button:showing > .label, .menu-button:showing > .label, .menu-item:hover > .label, .menu-item:showing > .label, .list-cell:selected > .text {
+.menu-button:hover > .label, .menu-button:showing > .label, .menu-button:showing > .label, .menu-item:hover > .label, .menu-item:showing > .label, .list-view .list-cell:selected > .text {
     -fx-text-fill: white;
 }
 
@@ -216,4 +219,21 @@
 .error-notification > .ikonli-font-icon {
     -fx-icon-code: gmi-notifications-active;
     -fx-icon-color: firebrick;
+}
+
+.hide-elements .html-editor-indent,
+.hide-elements .html-editor-outdent,
+.hide-elements .html-editor-cut,
+.hide-elements .html-editor-copy,
+.hide-elements .html-editor-paste,
+.hide-elements .font-menu-button {
+    visibility: hidden;
+    -fx-focus-traversable: false;
+    -fx-font-size: 1px;
+    -fx-max-width: 0px;
+    -fx-max-height: 0px;
+    -fx-padding: -15px;
+    -fx-pref-height: 0px;
+    -fx-pref-width: 0px;
+    -fx-start-margin: -5px;
 }

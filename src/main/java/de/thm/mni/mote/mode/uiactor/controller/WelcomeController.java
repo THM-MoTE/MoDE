@@ -4,16 +4,19 @@ import de.thm.mni.mhpp11.jActor.actors.logging.messages.ErrorMessage;
 import de.thm.mni.mhpp11.jActor.actors.messagebus.messages.StartMessage;
 import de.thm.mni.mhpp11.jActor.actors.ui.interfaces.ActorController;
 import de.thm.mni.mhpp11.jActor.actors.ui.messages.StartUIMessage;
+import de.thm.mni.mhpp11.jActor.actors.ui.splash.messages.SplashShowMessage;
 import de.thm.mni.mhpp11.jActor.messages.interfaces.Message;
 import de.thm.mni.mote.mode.config.Settings;
 import de.thm.mni.mote.mode.config.model.Project;
 import de.thm.mni.mote.mode.omcactor.OMCActor;
 import de.thm.mni.mote.mode.omcactor.OMCException;
 import de.thm.mni.mote.mode.omcactor.messages.GetAvailableLibsOMCMessage;
+import de.thm.mni.mote.mode.omcactor.messages.OMCLoadErrorMessage;
+import de.thm.mni.mote.mode.omcactor.messages.OMCLoadStatusUIMessage;
 import de.thm.mni.mote.mode.omcactor.messages.SetProjectOMCMessage;
-import de.thm.mni.mote.mode.uiactor.controller.dialogs.newproject.FirstPageController;
 import de.thm.mni.mote.mode.uiactor.control.RecentProjectControl;
 import de.thm.mni.mote.mode.uiactor.controller.dialogs.SettingsDialogController;
+import de.thm.mni.mote.mode.uiactor.controller.dialogs.newproject.FirstPageController;
 import de.thm.mni.mote.mode.uiactor.messages.OMCAvailableLibsUIMessage;
 import de.thm.mni.mote.mode.uiactor.messages.OMCSetProjectUIMessage;
 import de.thm.mni.mote.mode.uiactor.messages.OMCStartedMessage;
@@ -40,6 +43,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Observable;
 import java.util.ResourceBundle;
+import java.util.UUID;
 
 import static de.thm.mni.mote.mode.util.Translator.tr;
 
@@ -49,8 +53,12 @@ import static de.thm.mni.mote.mode.util.Translator.tr;
  */
 public class WelcomeController extends NotifyController {
   
-  public static void configure(List<String> params) throws ReflectionException, InvocationTargetException, IOException, InstantiationException, IllegalAccessException, NoSuchMethodException {
-    ActorController controller = configure(Utilities.getView("Welcome"), Utilities.getBundle("Welcome"));
+  public static void configure(List params) throws ReflectionException, InvocationTargetException, IOException, InstantiationException, IllegalAccessException, NoSuchMethodException {
+    ActorController controller;
+    if (params.size() > 0 && params.get(0) instanceof UUID)
+      controller = configure((UUID) params.get(0), Utilities.getView("Welcome"), Utilities.getBundle("Welcome"));
+    else
+      controller = configure(Utilities.getView("Welcome"), Utilities.getBundle("Welcome"));
     controller.setParams(params);
     controller.start();
   }
@@ -98,7 +106,9 @@ public class WelcomeController extends NotifyController {
   public void show() {
     if (getParams().size() == 0) showIgnoreParams();
     else {
-      String file = (String) getParams().get(0);
+      String file = "";
+      if (getParams().get(0) instanceof String)
+        file = (String) getParams().get(0);
       if (file.isEmpty()) showIgnoreParams();
       else {
         try {
@@ -117,6 +127,7 @@ public class WelcomeController extends NotifyController {
     this.getStage().setResizable(false);
     this.getStage().centerOnScreen();
     super.show();
+    this.getStage().toFront();
   }
   
   @Override
@@ -141,7 +152,14 @@ public class WelcomeController extends NotifyController {
   
   private void onCreateProject(List<String> libs) {
     FirstPageController tmp = new FirstPageController(getGroup(), dialogStack, libs);
-    tmp.setOnFinishListener(this::onOpenProject);
+    tmp.setOnFinishListener(data -> {
+      try {
+        data.save();
+        this.onOpenProject(data);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    });
   }
   
   @FXML
@@ -179,6 +197,7 @@ public class WelcomeController extends NotifyController {
       p.save();
       getSettings().getRecent().remove(p.getProjectPath());
       getSettings().getRecent().add(p.getProjectPath());
+      getActor().send(new SplashShowMessage(true));
       getActor().send(new SetProjectOMCMessage(getGroup(), p));
     } catch (Exception e) {
       getActor().send(new ErrorMessage(this.getClass(), p.getName(), e));
@@ -270,6 +289,11 @@ public class WelcomeController extends NotifyController {
     
     @Override
     public void executeUI(Message msg) {
+      if (msg instanceof OMCLoadErrorMessage) {
+        send(new SplashShowMessage(true));
+        getController().show();
+      }
+  
       if (msg instanceof OMCStartedMessage) {
         Platform.runLater(() -> {
           getController().updateUI(true);
@@ -284,6 +308,8 @@ public class WelcomeController extends NotifyController {
         send(new StartUIMessage(MainController.class, getGroup(), ((OMCSetProjectUIMessage) msg).getProject()));
       } else if (msg instanceof OMCAvailableLibsUIMessage) {
         Platform.runLater(() -> getController().onCreateProject(((OMCAvailableLibsUIMessage) msg).getLibs()));
+      } else if (msg instanceof OMCLoadStatusUIMessage) {
+        send(msg);
       }
   
       //if (!(msg instanceof ErrorMessage && ((ErrorMessage) msg).getThrowable() instanceof OMCException))

@@ -2,14 +2,17 @@ package de.thm.mni.mote.mode.config.model;
 
 import de.thm.mni.mote.mode.config.Settings;
 import de.thm.mni.mote.mode.config.xml.MyMatcher;
+import de.thm.mni.mote.mode.util.Utilities;
 import lombok.*;
 import lombok.experimental.Accessors;
+import org.apache.commons.io.IOUtils;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -43,9 +46,16 @@ public class Project {
   @NonNull private List<String> systemLibraries = new ArrayList<>();
   @NonNull private List<Path> projectLibraries = new ArrayList<>();
   
+  @Getter(AccessLevel.PRIVATE) private Boolean isNewProject = false;
+  @Getter(AccessLevel.PRIVATE) private String comment;
+  @Getter(AccessLevel.PRIVATE) private String documentation;
+  
   @Builder
-  public Project(String name, Path moFile, Path projectPath, @Singular List<String> systemLibraries, @Singular List<Path> projectLibraries) {
+  public Project(Boolean isNewProject, String name, String comment, String documentation, Path moFile, Path projectPath, @Singular List<String> systemLibraries, @Singular List<Path> projectLibraries) {
+    this.isNewProject = (isNewProject != null && isNewProject);
     this.name = name;
+    this.comment = (comment == null) ? "" : comment;
+    this.documentation = (documentation == null) ? "" : documentation;
     this.moFile = moFile;
     this.projectPath = projectPath;
     this.lastOpened = new Date();
@@ -60,6 +70,16 @@ public class Project {
   }
   
   public void save() throws Exception {
+    if (isNewProject) {
+      isNewProject = false;
+      List<String> fileContent = IOUtils.readLines(Utilities.getTemplate("base_package.mo"), StandardCharsets.UTF_8);
+      for (int i = 0; i < fileContent.size(); i++) {
+        fileContent.set(i, fileContent.get(i).replaceAll("<name>", this.name.replaceAll("\\s", "")).replaceFirst("<comment>", this.comment).replaceFirst("<documentation>", this.documentation));
+      }
+      if (!Files.exists(this.moFile.getParent()))
+        Files.createDirectory(this.moFile.getParent());
+      Files.write(this.moFile, fileContent, StandardCharsets.UTF_8, StandardOpenOption.CREATE_NEW);
+    }
     Serializer serializer = new Persister(new MyMatcher());
     serializer.write(this, this.projectPath.toFile());
     this.saveProjectLibraries();

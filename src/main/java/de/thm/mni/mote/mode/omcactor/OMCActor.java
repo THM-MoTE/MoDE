@@ -89,7 +89,7 @@ public class OMCActor extends AbstractActor {
   
       send(new OMCSetProjectUIMessage(getGroup(), this.project));
     } catch (Exception e) {
-      send(new ErrorMessage(OMCActor.class, getGroup(), new OMCException(tr("Error", "error.omcactor.cant_load_project", project.getName()), e)));
+      send(new OMCLoadErrorMessage(OMCActor.class, getGroup(), new OMCException(tr("Error", "error.omcactor.cant_load_project", project.getName()), e)));
     }
   }
   

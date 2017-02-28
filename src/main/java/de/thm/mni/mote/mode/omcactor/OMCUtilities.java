@@ -1,9 +1,9 @@
 package de.thm.mni.mote.mode.omcactor;
 
-import de.thm.mni.mhpp11.jActor.actors.logging.messages.ErrorMessage;
 import de.thm.mni.mhpp11.jActor.actors.messagebus.MessageBus;
 import de.thm.mni.mote.mode.modelica.MoContainer;
 import de.thm.mni.mote.mode.modelica.MoLater;
+import de.thm.mni.mote.mode.omcactor.messages.OMCLoadErrorMessage;
 import de.thm.mni.mote.mode.parser.ParserException;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.tuple.Pair;
@@ -22,7 +22,7 @@ class OMCUtilities {
       try {
         MoLater.lightParsing(omc, library.getKey(), parent);
       } catch (ParserException e) {
-        MessageBus.getInstance().send(new ErrorMessage(OMCUtilities.class, omc.getGroup(), e));
+        MessageBus.getInstance().send(new OMCLoadErrorMessage(OMCUtilities.class, omc.getGroup(), e));
       }
     });
   }
@@ -31,7 +31,7 @@ class OMCUtilities {
     try {
       MoLater.lightParsing(omc, project.getKey(), parent);
     } catch (ParserException e) {
-      MessageBus.getInstance().send(new ErrorMessage(OMCUtilities.class, omc.getGroup(), e));
+      MessageBus.getInstance().send(new OMCLoadErrorMessage(OMCUtilities.class, omc.getGroup(), e));
     }
   }
 }

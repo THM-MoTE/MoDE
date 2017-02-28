@@ -140,7 +140,6 @@ public class MainController extends NotifyController {
   
   @Override
   public void start() {
-    getActor().send(new SplashShowMessage(true));
   }
   
   private void initTreeView() {
@@ -262,6 +261,7 @@ public class MainController extends NotifyController {
   @FXML
   private void handleCloseProject() {
     MessageBus.getInstance().send(new StartUIMessage(WelcomeController.class, getGroup()));
+    this.getStage().close();
   }
   
   @FXML
