@@ -121,9 +121,13 @@ public class OMCompiler {
     f = f.toAbsolutePath().normalize();
     
     Result r = client.call("loadFile", ScriptingHelper.asString(f));
-    if (r.result.contains("false")) return null;
-    if (r.error.isPresent()) throw new ParserException(r.error.get());
-    
+    if (r.result.contains("false") && r.error.isPresent()) {
+      if (r.error.isPresent()) {
+        throw new ParserException(r.error.get());
+      }
+      throw new ParserException(tr("error", "error.omcactor.unknown_error"));
+    }
+
     r = client.call("getLoadedLibraries");
     
     List<Pair<String, Path>> list = toLibraryArray(r.result);
