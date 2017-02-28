@@ -29,7 +29,7 @@ public class Settings extends Configuration {
   static {
     Properties props = new Properties();
     InputStream is;
-    is = Settings.class.getResourceAsStream("/META-INF/maven/de.thm.mni.mhpp11/MoDE/pom.properties");
+    is = Settings.class.getResourceAsStream("/META-INF/maven/de.thm.mni.mote.mode/MoDE/pom.properties");
     
     try {
       if (is != null) {
