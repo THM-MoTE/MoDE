@@ -51,6 +51,7 @@ public class Settings extends Configuration {
           }
         }
       }
+      VERSION = VERSION.replace("-SNAPSHOT", "");
     } catch (NullPointerException | IOException e) {
       TITLE = "MoDE";
       VERSION = "0.1";
