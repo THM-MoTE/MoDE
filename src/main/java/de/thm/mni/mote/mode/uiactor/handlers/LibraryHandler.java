@@ -6,7 +6,6 @@ import de.thm.mni.mote.mode.modelica.annotations.MoPlacement;
 import de.thm.mni.mote.mode.modelica.graphics.MoCoordinateSystem;
 import de.thm.mni.mote.mode.modelica.graphics.MoSimpleExtent;
 import de.thm.mni.mote.mode.modelica.graphics.MoTransformation;
-import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.control.MainTabControl;
 import javafx.geometry.Point2D;
 import javafx.scene.control.TabPane;
@@ -24,8 +23,14 @@ public class LibraryHandler {
   private LibraryHandler() {
   }
   
-  public void handleMenu(TabPane tabPane, MoContainer container, String action) throws ParserException {
-    if (action.startsWith("open_as_diagram")) {
+  public void handleMenu(TabPane tabPane, MoContainer container, String action) {
+    if (action.startsWith("add_new")) {
+      if (action.endsWith("package")) {
+        System.out.println("New Package!");
+      } else if (action.endsWith("model")) {
+        System.out.println("New Model!");
+      }
+    } else if (action.equals("open_as_diagram")) {
       MainTabControl tab = new MainTabControl(container);
       tabPane.getTabs().add(tab);
       tab.lateInitialize(tabPane.getScene());

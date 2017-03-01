@@ -2,11 +2,13 @@ package de.thm.mni.mote.mode.uiactor.control;
 
 import de.thm.mni.mote.mode.modelica.MoContainer;
 import de.thm.mni.mote.mode.modelica.MoRoot;
+import de.thm.mni.mote.mode.modelica.graphics.MoDefaults;
 import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoIconGroup;
 import de.thm.mni.mote.mode.uiactor.handlers.LibraryHandler;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
@@ -24,7 +26,11 @@ public class MoTreeCell extends TreeCell<MoContainer> {
   private ContextMenu cm = null;
   private TabPane tabPane;
   
-  ObjectProperty<EventHandler<ActionEvent>> onEditAction = new SimpleObjectProperty<>(null);
+  private ObjectProperty<EventHandler<ActionEvent>> onEditAction = new SimpleObjectProperty<>(null);
+  private ObjectProperty<EventHandler<ActionEvent>> onAddNewActionProperty = new SimpleObjectProperty<>(null);
+  
+  private ObjectProperty<EventHandler<MouseEvent>> onNonRootMouseClickedProperty = new SimpleObjectProperty<>(null);
+  private ObjectProperty<EventHandler<? super ContextMenuEvent>> onNonRootContextMenuRequest = new SimpleObjectProperty<>(null);
   
   public MoTreeCell(TabPane tabPane) {
     super();
@@ -37,7 +43,9 @@ public class MoTreeCell extends TreeCell<MoContainer> {
     this.setDisable(false);
     this.setStyle(null);
     this.setContextMenu(null);
+    this.onContextMenuRequestedProperty().unbind();
     this.setOnContextMenuRequested(null);
+    this.onMouseClickedProperty().unbind();
     this.setOnMouseClicked(null);
     this.getStyleClass().removeAll("root-element");
     if (empty || item == null) {
@@ -67,7 +75,7 @@ public class MoTreeCell extends TreeCell<MoContainer> {
       this.setOnMouseClicked(event -> {
         if (event.getClickCount() % 2 == 0 && btn.getOnAction() != null) btn.getOnAction().handle(new ActionEvent(btn, null));
       });
-      btn.onActionProperty().bindBidirectional(onEditAction);
+      btn.onActionProperty().bind(onEditAction);
     }
   }
   
@@ -78,78 +86,82 @@ public class MoTreeCell extends TreeCell<MoContainer> {
       this.setGraphic(new MoIconGroup(item).scaleToSize(25., 25.));
       this.setContentDisplay(ContentDisplay.LEFT);
       this.setContextMenu(createLibraryMenu());
-      this.setOnContextMenuRequested(createContextHandler());
-      this.setOnMouseClicked(createMouseHandler());
+  
+      this.onMouseClickedProperty().bind(this.onNonRootMouseClickedProperty);
+      this.onContextMenuRequestedProperty().bind(this.onNonRootContextMenuRequest);
+    
     } catch (ParserException e) {
       e.printStackTrace(); //TODO: send msg
     }
   }
   
-  public final ObjectProperty<EventHandler<ActionEvent>> onEditActionProperty() { return onEditAction; }
+  private final ObjectProperty<EventHandler<ActionEvent>> onEditActionProperty() { return onEditAction; }
   
   public final void setOnEditAction(EventHandler<ActionEvent> value) { onEditActionProperty().set(value); }
   
-  public final EventHandler<ActionEvent> getOnEditAction() { return onEditActionProperty().get(); }
+  private final ObjectProperty<EventHandler<MouseEvent>> onNonRootMouseClickedProperty() { return onNonRootMouseClickedProperty; }
   
+  public final void setOnNonRootMouseClicked(EventHandler<MouseEvent> value) { onNonRootMouseClickedProperty().set(value); }
+  
+  private final ObjectProperty<EventHandler<? super ContextMenuEvent>> onNonRootContextMenuRequest() { return onNonRootContextMenuRequest; }
+  
+  public final void setOnNonRootContextMenuRequest(EventHandler<? super ContextMenuEvent> value) { onNonRootContextMenuRequest().set(value); }
   
   private ContextMenu createLibraryMenu() {
     if (cm != null) return cm;
     cm = new ContextMenu();
-    
-    for (String action : new String[]{"open_as_diagram", "add_to_diagram", "open_as_icon"}) {
-      MenuItem tmp = new ContextMenuItem(tr("Main", "menu.context." + action), action);
-      
-      tmp.setOnAction(event -> {
-        try {
-          LibraryHandler.getInstance().handleMenu(tabPane, this.getItem(), action);
-        } catch (ParserException e) {
-          e.printStackTrace();//TODO: send msg
-        }
-      });
-      
-      cm.getItems().add(tmp);
+  
+    for (String action : new String[]{"add_new.package", "add_new.model", "seperator", "open_as_diagram", "add_to_diagram", "open_as_icon"}) {
+      createMenu(action, 0, cm.getItems());
     }
     return cm;
   }
   
-  private EventHandler<? super ContextMenuEvent> createContextHandler() {
-    return event -> MoTreeCell.this.getContextMenu().getItems().forEach(menuItem -> {
-      ContextMenuItem cmi = (ContextMenuItem) menuItem;
-      MoContainer container = MoTreeCell.this.getItem();
-      
-      if (cmi.getAction().equals("add_to_diagram")) {
-        MainTabControl mtc = (MainTabControl) tabPane.getSelectionModel().getSelectedItem();
-        cmi.setDisable(!container.getElement().hasIcon() || mtc == null);
-      } else {
-        if (cmi.getAction().equals("open_as_diagram")) cmi.setDisable(!container.getElement().hasDiagram());
-        else if (cmi.getAction().equals("open_as_icon")) cmi.setDisable(!container.getElement().hasIcon());
+  private void createMenu(String action, int part, ObservableList<MenuItem> items) {
+    String[] splittedAction = action.split("\\.");
+    if (part + 1 >= splittedAction.length) {
+      items.add(createMenuItem(action));
+    } else {
+      String newAction = "";
+      for (int i = 0; i <= part; i++) {
+        if (!newAction.isEmpty()) newAction += ".";
+        newAction += ((newAction.isEmpty()) ? "" : ".") + splittedAction[i];
       }
-    });
+      Menu submenu = null;
+      for (MenuItem item : items) {
+        if (item instanceof Menu && item.getText().equals(tr("Main", "menu.context." + newAction))) {
+          submenu = (ContextSubMenu) item;
+          break;
+        }
+      }
+      if (submenu == null) {
+        submenu = new ContextSubMenu(tr("Main", "menu.context." + newAction), newAction);
+        items.add(submenu);
+      }
+      createMenu(action, part + 1, submenu.getItems());
+    }
   }
   
-  private EventHandler<? super MouseEvent> createMouseHandler() {
-    return event -> {
-      MoContainer item = this.getItem();
-      if (item == null || !item.getElement().hasDiagram()) return;//TODO
-      
-      for (Tab t : tabPane.getTabs()) {
-        if (t instanceof MainTabControl && ((MainTabControl) t).getData().equals(item)) {
-          tabPane.getSelectionModel().select(t);
-          return;
+  private MenuItem createMenuItem(String action) {
+    if (action.equals("seperator")) return new SeparatorMenuItem();
+    ContextMenuItem tmp = new ContextMenuItem(tr("Main", "menu.context." + action), action);
+    
+    if (action.startsWith("add_new")) {
+      if (action.endsWith("package")) tmp.setGraphic(new MoIconGroup(MoDefaults.newPackage()).scaleToSize(20., 20.));
+      else if (action.endsWith("model")) tmp.setGraphic(new MoIconGroup(MoDefaults.newModel()).scaleToSize(20., 20.));
+    }
+    
+    tmp.setOnAction(event -> {
+      if (tmp.getAction().startsWith("add_new")) {
+        if (onAddNewActionProperty.isNotNull().get()) {
+          onAddNewActionProperty.get().handle(event);
         }
+      } else {
+        LibraryHandler.getInstance().handleMenu(tabPane, this.getItem(), action);
       }
-      
-      if (event.getClickCount() == 2) {
-        try {
-          if (tabPane.getSelectionModel().getSelectedItem() != null && item.getElement().hasIcon())
-            LibraryHandler.getInstance().handleMenu(tabPane, item, "add_to_diagram");
-          else
-            LibraryHandler.getInstance().handleMenu(tabPane, item, "open_as_diagram");
-        } catch (ParserException e) {
-          e.printStackTrace(); //TODO: send msg;
-        }
-      }
-    };
+    });
+    
+    return tmp;
   }
   
   

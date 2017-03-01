@@ -59,8 +59,8 @@ public abstract class MoGroup extends Group {
     this.setFocusTraversable(true);
   }
   
-  final void init() {
-    if (this.that.getElement().getIcon() != null) {
+  protected void init() {
+    if (this instanceof MoIconGroup || this.that.getElement().getIcon() != null) {
       initCoordinateSystem();
       initImage();
     }
@@ -89,8 +89,15 @@ public abstract class MoGroup extends Group {
   
   
   public MoGroup scaleToSize(Double newWidth, Double newHeight) {
-    Point2D extent0 = this.getMoClass().getIcon().getMoCoordinateSystem().getExtent().getP1();
-    Point2D extent1 = this.getMoClass().getIcon().getMoCoordinateSystem().getExtent().getP2();
+    Point2D extent0;
+    Point2D extent1;
+    if (this instanceof MoIconGroup) {
+      extent0 = ((MoIconGroup) this).getImage().getMoCoordinateSystem().getExtent().getP1();
+      extent1 = ((MoIconGroup) this).getImage().getMoCoordinateSystem().getExtent().getP2();
+    } else {
+      extent0 = this.getMoClass().getIcon().getMoCoordinateSystem().getExtent().getP1();
+      extent1 = this.getMoClass().getIcon().getMoCoordinateSystem().getExtent().getP2();
+    }
   
   
     Double oldWidth = Math.max(extent0.getX(), extent1.getX()) - Math.min(extent0.getX(), extent1.getX());
@@ -110,9 +117,11 @@ public abstract class MoGroup extends Group {
   
   
   private void initCoordinateSystem() {
-    MoCoordinateSystem mcs;
-    if (this instanceof MoIconGroup) mcs = this.getMoClass().getIconCoordinateSystem();
-    else mcs = this.getMoClass().getDiagramCoordinateSystem();
+    if (this instanceof MoIconGroup) initCoordinateSystem(((MoIconGroup) this).getImage().getMoCoordinateSystem());
+    else initCoordinateSystem(this.getMoClass().getDiagramCoordinateSystem());
+  }
+  
+  protected void initCoordinateSystem(MoCoordinateSystem mcs) {
   
     Point2D extent0 = mcs.getExtent().getP1();
     Point2D extent1 = mcs.getExtent().getP2();

@@ -4,7 +4,6 @@ import de.thm.mni.mote.mode.modelica.MoConnection;
 import de.thm.mni.mote.mode.modelica.MoContainer;
 import de.thm.mni.mote.mode.modelica.MoVariable;
 import de.thm.mni.mote.mode.modelica.graphics.MoTransformation;
-import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoDiagramGroup;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoVariableIconGroup;
 import de.thm.mni.mote.mode.uiactor.editor.actionmanager.commands.Command;
@@ -62,12 +61,8 @@ public class ModifyableMoVariableIconGroup extends MoVariableIconGroup implement
     if (this.getThat().getElement().hasDiagram()) {
       TabPane tb = findTabPane(this);
       if (tb == null) return null;
-      
-      try {
-        LibraryHandler.getInstance().handleMenu(tb, this.getThat(), "open_as_diagram");
-      } catch (ParserException e) {
-        e.printStackTrace();
-      }
+  
+      LibraryHandler.getInstance().handleMenu(tb, this.getThat(), "open_as_diagram");
     }
     return Command.IGNORE;
   }

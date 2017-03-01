@@ -11,16 +11,19 @@ import de.thm.mni.mote.mode.config.Settings;
 import de.thm.mni.mote.mode.config.model.MainWindow;
 import de.thm.mni.mote.mode.config.model.Project;
 import de.thm.mni.mote.mode.modelica.MoContainer;
+import de.thm.mni.mote.mode.modelica.MoPackage;
 import de.thm.mni.mote.mode.modelica.MoRoot;
 import de.thm.mni.mote.mode.modelica.Saver;
 import de.thm.mni.mote.mode.omcactor.messages.*;
 import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.control.DragResizer;
+import de.thm.mni.mote.mode.uiactor.control.HasAction;
 import de.thm.mni.mote.mode.uiactor.control.MainTabControl;
 import de.thm.mni.mote.mode.uiactor.control.MoTreeCell;
 import de.thm.mni.mote.mode.uiactor.controller.dialogs.ChangeProjectLibrariesDialogController;
 import de.thm.mni.mote.mode.uiactor.controller.dialogs.ChangeSystemLibrariesDialogController;
 import de.thm.mni.mote.mode.uiactor.editor.actionmanager.ActionManager;
+import de.thm.mni.mote.mode.uiactor.handlers.LibraryHandler;
 import de.thm.mni.mote.mode.uiactor.messages.OMCAvailableLibsUIMessage;
 import de.thm.mni.mote.mode.uiactor.messages.OMCDataUIMessage;
 import de.thm.mni.mote.mode.uiactor.messages.OMCSetProjectUIMessage;
@@ -33,6 +36,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import org.apache.commons.lang3.tuple.MutablePair;
 
@@ -157,12 +162,52 @@ public class MainController extends NotifyController {
     });
     tvLibrary.setCellFactory(param -> {
       MoTreeCell tmp = new MoTreeCell(tabPane);
-      tmp.setOnEditAction(this::handleLibraryEdit);
+      tmp.setOnEditAction(this::handleTreeCellLibraryEdit);
+      tmp.setOnNonRootMouseClicked(this::handleTreeCellMouseClick);
+      tmp.setOnNonRootContextMenuRequest(this::handleTreeCellContextMenuRequest);
       return tmp;
     });
   }
   
-  private void handleLibraryEdit(ActionEvent event) {
+  private void handleTreeCellContextMenuRequest(ContextMenuEvent event) {
+    MoTreeCell cell = ((MoTreeCell) event.getSource());
+    cell.getContextMenu().getItems().forEach(menuItem -> {
+      
+      if (!(menuItem instanceof HasAction)) return;
+      
+      HasAction tmp = (HasAction) menuItem;
+      MoContainer container = cell.getItem();
+      if (tmp.getAction().equals("add_new")) {
+        menuItem.setDisable(!(container.getElement() instanceof MoPackage));
+      } else if (tmp.getAction().equals("add_to_diagram")) {
+        MainTabControl mtc = (MainTabControl) tabPane.getSelectionModel().getSelectedItem();
+        menuItem.setDisable(!container.getElement().hasIcon() || mtc == null);
+      } else {
+        if (tmp.getAction().equals("open_as_diagram")) menuItem.setDisable(!container.getElement().hasDiagram());
+        else if (tmp.getAction().equals("open_as_icon")) menuItem.setDisable(!container.getElement().hasIcon());
+      }
+    });
+  }
+  
+  private void handleTreeCellMouseClick(MouseEvent event) {
+    MoContainer item = ((MoTreeCell) event.getSource()).getItem();
+    if (item == null || !item.getElement().hasDiagram()) return;//TODO
+    
+    for (Tab t : tabPane.getTabs()) {
+      if (t instanceof MainTabControl && ((MainTabControl) t).getData().equals(item)) {
+        tabPane.getSelectionModel().select(t);
+        return;
+      }
+    }
+    if (event.getClickCount() == 2) {
+      if (tabPane.getSelectionModel().getSelectedItem() != null && item.getElement().hasIcon())
+        LibraryHandler.getInstance().handleMenu(tabPane, item, "add_to_diagram");
+      else
+        LibraryHandler.getInstance().handleMenu(tabPane, item, "open_as_diagram");
+    }
+  }
+  
+  private void handleTreeCellLibraryEdit(ActionEvent event) {
     if (((Node) event.getSource()).getParent() instanceof MoTreeCell) {
       String text = ((MoTreeCell) ((Node) event.getSource()).getParent()).getText();
       if (text.equals(tr("Main", "tree.entries.system_libraries"))) {
