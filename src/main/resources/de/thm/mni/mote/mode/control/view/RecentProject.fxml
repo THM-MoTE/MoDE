@@ -1,54 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
-
-<fx:root minHeight="70.0" minWidth="270" prefWidth="300.0" styleClass="base" stylesheets="@../css/RecentProject.css" type="GridPane" xmlns="http://javafx.com/javafx/8.0.76-ea" xmlns:fx="http://javafx.com/fxml/1">
-    <columnConstraints>
-        <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="100.0" />
-        <ColumnConstraints fillWidth="false" hgrow="NEVER" />
-    </columnConstraints>
-    <rowConstraints>
-        <RowConstraints minHeight="25.0" vgrow="SOMETIMES" />
-      <RowConstraints minHeight="25.0" vgrow="SOMETIMES" />
-        <RowConstraints minHeight="25.0" vgrow="SOMETIMES" />
-    </rowConstraints>
-    <Button fx:id="bClose" mnemonicParsing="false" styleClass="icon" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.valignment="TOP">
-        <graphic>
-            <FontIcon fill="#9e9e9e" iconLiteral="gmi-close" iconSize="20" styleClass="icon" />
-        </graphic>
-        <padding>
-            <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
-        </padding>
-    </Button>
-    <Label fx:id="lName" text="Name of this Module" textFill="#515151">
-        <font>
-            <Font name="System Bold" size="14.0" />
-        </font>
-      <GridPane.margin>
-         <Insets left="5.0" />
-      </GridPane.margin>
+<fx:root minHeight="70.0" minWidth="270" prefWidth="300.0" styleClass="base" stylesheets="@../css/RecentProject.css"
+         type="GridPane" xmlns="http://javafx.com/javafx/8.0.76-ea" xmlns:fx="http://javafx.com/fxml/1">
+  <columnConstraints>
+    <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="100.0"/>
+    <ColumnConstraints fillWidth="false" hgrow="NEVER"/>
+  </columnConstraints>
+  <rowConstraints>
+    <RowConstraints minHeight="25.0" vgrow="SOMETIMES"/>
+    <RowConstraints minHeight="25.0" vgrow="SOMETIMES"/>
+    <RowConstraints minHeight="25.0" vgrow="SOMETIMES"/>
+  </rowConstraints>
+  <Button fx:id="bClose" mnemonicParsing="false" styleClass="icon" GridPane.columnIndex="1" GridPane.halignment="RIGHT"
+          GridPane.valignment="TOP">
+    <graphic>
+      <FontIcon fill="#9e9e9e" iconLiteral="gmi-close" iconSize="20" styleClass="icon"/>
+    </graphic>
+    <padding>
+      <Insets bottom="1.0" left="1.0" right="1.0" top="1.0"/>
+    </padding>
+  </Button>
+  <Label fx:id="lName" text="Name of this Module" textFill="#515151">
+    <font>
+      <Font name="System Bold" size="14.0"/>
+    </font>
+    <GridPane.margin>
+      <Insets left="5.0"/>
+    </GridPane.margin>
+  </Label>
+  <HBox alignment="CENTER_LEFT" spacing="5.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="1">
+    <Label text="%last.opened" textFill="#838383"/>
+    <Label fx:id="lDate" text="11.09.2016 13:16" textFill="#6b6b6b">
+      <font>
+        <Font name="System Bold" size="12.0"/>
+      </font>
     </Label>
-    <HBox alignment="CENTER_LEFT" spacing="5.0" GridPane.columnSpan="2147483647" GridPane.rowIndex="1">
-        <Label text="%last.opened" textFill="#838383" />
-        <Label fx:id="lDate" text="11.09.2016 13:16" textFill="#6b6b6b">
-            <font>
-                <Font name="System Bold" size="12.0" />
-            </font>
-        </Label>
-      <GridPane.margin>
-         <Insets left="5.0" top="5.0" />
-      </GridPane.margin>
-    </HBox>
-    <Label fx:id="lPath" text="path to this module" textFill="#727272" textOverrun="LEADING_ELLIPSIS" GridPane.columnSpan="2147483647" GridPane.rowIndex="2">
-      <GridPane.margin>
-         <Insets left="10.0" right="10.0" />
-      </GridPane.margin></Label>
+    <GridPane.margin>
+      <Insets left="5.0" top="5.0"/>
+    </GridPane.margin>
+  </HBox>
+  <Label fx:id="lPath" text="path to this module" textFill="#727272" textOverrun="LEADING_ELLIPSIS"
+         GridPane.columnSpan="2147483647" GridPane.rowIndex="2">
+    <GridPane.margin>
+      <Insets left="10.0" right="10.0"/>
+    </GridPane.margin>
+  </Label>
 </fx:root>

@@ -65,6 +65,12 @@ public class Project {
     this.projectLibraries.addAll(projectLibraries);
   }
   
+  public Path getMoFile() {
+    if (this.moFile.isAbsolute())
+      return this.moFile;
+    return projectPath.getParent().resolve(this.moFile).normalize();
+  }
+  
   public void updateLastOpened() {
     this.lastOpened = new Date();
   }
@@ -76,9 +82,9 @@ public class Project {
       for (int i = 0; i < fileContent.size(); i++) {
         fileContent.set(i, fileContent.get(i).replaceAll("<name>", this.name.replaceAll("\\s", "")).replaceFirst("<comment>", this.comment).replaceFirst("<documentation>", this.documentation));
       }
-      if (!Files.exists(this.moFile.getParent()))
-        Files.createDirectory(this.moFile.getParent());
-      Files.write(this.moFile, fileContent, StandardCharsets.UTF_8, StandardOpenOption.CREATE_NEW);
+      if (!Files.exists(this.projectPath.getParent()))
+        Files.createDirectory(this.projectPath.getParent());
+      Files.write(this.getMoFile(), fileContent, StandardCharsets.UTF_8, StandardOpenOption.CREATE_NEW);
     }
     Serializer serializer = new Persister(new MyMatcher());
     serializer.write(this, this.projectPath.toFile());

@@ -117,7 +117,7 @@ public class EmptyProjectController extends GridPane implements NewProject, Init
   private void updateBuilder() {
     Path path = Paths.get(tfPath.getText());
     this.projectBuilder.isNewProject(true)
-        .moFile(Paths.get(tfPathPreview.getText()))
+        .moFile(Paths.get("./package.mo"))
         .name(tfName.getText())
         .projectPath(path.resolve(tfName.getText().replaceAll("\\s", "") + File.separator + tfName.getText() + ".mp"));
   }

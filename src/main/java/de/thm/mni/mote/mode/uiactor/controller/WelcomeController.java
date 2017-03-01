@@ -40,10 +40,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.Observable;
-import java.util.ResourceBundle;
-import java.util.UUID;
+import java.util.*;
 
 import static de.thm.mni.mote.mode.util.Translator.tr;
 
@@ -84,7 +81,6 @@ public class WelcomeController extends NotifyController {
     
     lName.setText(Settings.TITLE);
     lVersion.setText(Settings.VERSION);
-    updateRecentList();
   }
   
   @Override
@@ -95,6 +91,7 @@ public class WelcomeController extends NotifyController {
     po.setDetachable(false);
     po.setAutoHide(false);
     po.setHideOnEscape(false);
+    updateRecentList();
   }
   
   @Override
@@ -139,6 +136,7 @@ public class WelcomeController extends NotifyController {
   
   private void onRemoveLastProject(Project project) {
     getSettings().getRecent().remove(project.getProjectPath());
+    Platform.runLater(this::updateRecentList);
   }
   
   private void onOpenLastProject(Project project) {
@@ -226,16 +224,9 @@ public class WelcomeController extends NotifyController {
     }
   }
   
-  @Override
-  public void update(Observable o, Object arg) {
-    super.update(o, arg);
-    if (arg instanceof String && ((String) arg).contains("Recent")) {
-      updateRecentList();
-    }
-  }
-  
   private void updateRecentList() {
     vbRecent.getChildren().clear();
+    List<Path> removedProjects = new ArrayList<>();
     for (Path tmp : getSettings().getRecent().getAll()) {
       try {
         Project p = Project.load(tmp);
@@ -244,9 +235,12 @@ public class WelcomeController extends NotifyController {
         rpc.setOnClick(event -> onOpenLastProject(rpc.getProject()));
         rpc.setOnClose(event -> onRemoveLastProject(rpc.getProject()));
       } catch (Exception e) {
-        e.printStackTrace();
+        getActor().send(new ErrorMessage(WelcomeController.class, getGroup(), e));
+        removedProjects.add(tmp);
       }
     }
+  
+    removedProjects.forEach(getSettings().getRecent()::remove);
   }
   
   @FXML

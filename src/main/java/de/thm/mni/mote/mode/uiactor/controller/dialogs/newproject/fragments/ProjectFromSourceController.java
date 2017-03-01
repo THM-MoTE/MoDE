@@ -79,11 +79,7 @@ public class ProjectFromSourceController extends GridPane implements NewProject,
     isPathValidProperty.addListener(listener);
     isValidProperty.addListener((observable, oldValue, newValue) -> {
       if (!newValue) return;
-      Path path = Paths.get(tfPath.getText());
-      String name = tfName.getText();
-      Path projectPath = path.getParent().resolve(name + ".mp");
-    
-      this.projectBuilder.name(name).moFile(path).projectPath(projectPath);
+      updateBuilder();
     });
     
     
@@ -93,8 +89,8 @@ public class ProjectFromSourceController extends GridPane implements NewProject,
         this.projectBuilder.name(null);
         isNameValidProperty.set(false);
       } else {
-        this.projectBuilder.name(newValue);
         isNameValidProperty.set(true);
+        updateBuilder();
       }
     });
     
@@ -106,7 +102,7 @@ public class ProjectFromSourceController extends GridPane implements NewProject,
       
       if (Files.exists(newPath)) {
         isPathValidProperty.set(true);
-        this.projectBuilder.moFile(newPath);
+        updateBuilder();
   
         if (oldPath.toString().endsWith("package.mo")) oldPath = oldPath.getParent();
         if (newPath.toString().endsWith("package.mo")) newPath = newPath.getParent();
@@ -119,6 +115,15 @@ public class ProjectFromSourceController extends GridPane implements NewProject,
       }
     });
   }
+  
+  private void updateBuilder() {
+    Path path = Paths.get(tfPath.getText()).getParent();
+    this.projectBuilder.isNewProject(false)
+        .moFile(Paths.get("./" + Paths.get(tfPath.getText()).getFileName()))
+        .name(tfName.getText())
+        .projectPath(path.resolve(tfName.getText() + ".mp"));
+  }
+  
   
   @FXML
   private void onChoosePathClick() {
