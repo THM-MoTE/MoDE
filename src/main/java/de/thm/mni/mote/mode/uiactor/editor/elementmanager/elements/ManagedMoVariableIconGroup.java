@@ -7,7 +7,11 @@ import de.thm.mni.mote.mode.uiactor.editor.elementmanager.interfaces.Hoverable;
 import de.thm.mni.mote.mode.uiactor.editor.elementmanager.interfaces.Selectable;
 import de.thm.mni.mote.mode.uiactor.editor.statemachine.elements.ModifyableCircle;
 import de.thm.mni.mote.mode.uiactor.editor.statemachine.elements.ModifyableMoVariableIconGroup;
+import javafx.scene.Node;
 import javafx.scene.paint.Color;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by hobbypunk on 13.02.17.
@@ -46,5 +50,14 @@ public class ManagedMoVariableIconGroup extends ModifyableMoVariableIconGroup im
   @Override
   public void leaveHover() {
     this.getCoordianteSystem().setStroke(null);
+  }
+  
+  List<ManagedMoConnectorIconGroup> collectConnectors() {
+    List<ManagedMoConnectorIconGroup> connectors = new ArrayList<>();
+    for (Node child : this.getChildren())
+      if (child instanceof ManagedMoConnectorIconGroup)
+        connectors.add((ManagedMoConnectorIconGroup) child);
+    
+    return connectors;
   }
 }

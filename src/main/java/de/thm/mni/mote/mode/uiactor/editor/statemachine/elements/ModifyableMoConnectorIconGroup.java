@@ -8,6 +8,7 @@ import de.thm.mni.mote.mode.uiactor.control.modelica.MoConnectorIconGroup;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoDiagramGroup;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoVariableIconGroup;
 import de.thm.mni.mote.mode.uiactor.editor.actionmanager.commands.Command;
+import de.thm.mni.mote.mode.uiactor.editor.elementmanager.elements.ManagedMoDiagramGroup;
 import de.thm.mni.mote.mode.uiactor.editor.statemachine.StateMachine;
 import de.thm.mni.mote.mode.uiactor.editor.statemachine.interfaces.Actionable;
 import de.thm.mni.mote.mode.uiactor.editor.statemachine.interfaces.Addable;
@@ -55,7 +56,7 @@ public class ModifyableMoConnectorIconGroup extends MoConnectorIconGroup impleme
     }
     
     if (event.getEventType().equals(MouseEvent.MOUSE_CLICKED)) {
-      if (builder == null) {
+      if (builder == null) { //first Click
         builder = new ConnectionBuilder(this.getMoParent().getMoDiagram(), this.getVariables(), p);
         changeListener = (observable, oldValue, newValue) -> {
           if (!newValue) {
@@ -65,18 +66,22 @@ public class ModifyableMoConnectorIconGroup extends MoConnectorIconGroup impleme
         sm.active.addListener(changeListener);
         sm.freeze();
         freezeTarget = this;
+        ((ManagedMoDiagramGroup) this.getMoParent().getMoDiagram()).highlightConnectors(this);
       } else {
         if (freezeTarget == this) {
           builder.addPoint();
         } else {
           try {
+            //TODO: check if this Connector matches
             builder.addPoint();
             MoConnection conn = builder.build(this.getVariables());
-            return this.getMoParent().getMoDiagram().getModifyableMoClass().add((Object) new MoConnection[]{conn});
+            if (((ManagedMoDiagramGroup) this.getMoParent().getMoDiagram()).isConnectableTo(conn.getFrom(), conn.getTo())) {
+              abort(sm);
+              return this.getMoParent().getMoDiagram().getModifyableMoClass().add((Object) new MoConnection[]{conn});
+            }
           } catch (ParserException e) {
-            return Command.IGNORE;
-          } finally {
             abort(sm);
+            return Command.IGNORE;
           }
         }
       }
@@ -86,6 +91,7 @@ public class ModifyableMoConnectorIconGroup extends MoConnectorIconGroup impleme
   
   private void abort(StateMachine sm) {
     builder.abort();
+    ((ManagedMoDiagramGroup) this.getMoParent().getMoDiagram()).clearHighlight();
     sm.active.removeListener(changeListener);
     builder = null;
     changeListener = null;
@@ -129,7 +135,7 @@ public class ModifyableMoConnectorIconGroup extends MoConnectorIconGroup impleme
     void addPoint() {
       Point2D p = lastPoint.get();
       lastPoint.set(null);
-      line.getData().getPoints().add(p);
+      if (p != null) line.getData().getPoints().add(p);
     }
     
     void abort() {

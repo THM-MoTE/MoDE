@@ -28,10 +28,11 @@ public class MoVariable extends MoElement implements Changeable {
   private static final Pattern PATTERN = Pattern.compile("(^\"|\"$)");
   
   private final MoClass parent;
-  private String name;
-  private Specification kind;
+  private final Boolean isParameter;
+  private final String name;
+  private final Specification kind;
   @Setter private MoContainer type = null;
-  private String line = "";
+  private final String line;
   
   public enum Specification {
     NONE,
@@ -41,15 +42,16 @@ public class MoVariable extends MoElement implements Changeable {
   }
   
   public MoVariable(@NonNull MoClass parent, MoContainer type, String name) {
-    this(parent, Specification.NONE, type, name, "", null, "");
+    this(parent, Specification.NONE, false, type, name, "", null, "");
   }
   
   @Builder
-  private MoVariable(@NonNull MoClass parent, Specification kind, MoContainer type, String name, String comment, @Singular List<MoAnnotation> annotations, String line) {
+  private MoVariable(@NonNull MoClass parent, Specification kind, Boolean isParameter, MoContainer type, String name, String comment, @Singular List<MoAnnotation> annotations, String line) {
     super("v", comment);
     this.name = name;
     this.parent = parent;
     this.kind = kind;
+    this.isParameter = (isParameter != null && isParameter);
     if (type != null) this.type = type;
     if (annotations != null) this.addAllAnnotations(annotations);
     this.line = line;
@@ -88,7 +90,7 @@ public class MoVariable extends MoElement implements Changeable {
     return null;
   }
   
-  public String getIndicator() {
+  String getIndicator() {
     return String.format("%s %s", type.getName(), getName());
   }
   
@@ -127,6 +129,7 @@ public class MoVariable extends MoElement implements Changeable {
       if (m.get("inputOutput").contains("input")) mb.kind(Specification.INPUT);
       else mb.kind(Specification.OUTPUT);
     } else mb.kind(Specification.NONE);
+    mb.isParameter(Boolean.parseBoolean(m.get("isParam")));
     mb.parent(parent);
     mb.type(MoClass.findClass(m.get("type")));
     mb.name(m.get("name"));

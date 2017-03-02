@@ -15,9 +15,9 @@ import javafx.scene.input.ScrollEvent;
 /**
  * Created by hobbypunk on 15.02.17.
  */
-public class ZoomableMoDiagramGroup extends MoDiagramGroup implements Zoomable {
+public class ModifyableMoDiagramGroup extends MoDiagramGroup implements Zoomable {
   
-  public ZoomableMoDiagramGroup(MoContainer container) throws ParserException {
+  public ModifyableMoDiagramGroup(MoContainer container) throws ParserException {
     super(container);
   }
   

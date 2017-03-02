@@ -7,8 +7,8 @@ import de.thm.mni.mote.mode.uiactor.control.modelica.MoGroup;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoIconGroup;
 import de.thm.mni.mote.mode.uiactor.editor.actionmanager.ActionManager;
 import de.thm.mni.mote.mode.uiactor.editor.elementmanager.ElementManager;
+import de.thm.mni.mote.mode.uiactor.editor.elementmanager.elements.ManagedMoDiagramGroup;
 import de.thm.mni.mote.mode.uiactor.editor.statemachine.StateMachine;
-import de.thm.mni.mote.mode.uiactor.editor.statemachine.elements.ZoomableMoDiagramGroup;
 import de.thm.mni.mote.mode.uiactor.utilities.ScrollPaneHorizontalScroll;
 import de.thm.mni.mote.mode.util.Utilities;
 import javafx.beans.binding.Bindings;
@@ -65,7 +65,7 @@ public class MainTabControl extends Tab implements Initializable {
     try {
       this.setGraphic(new MoIconGroup(data).scaleToSize(20., 20.));
   
-      mp = new ZoomableMoDiagramGroup(data);
+      mp = new ManagedMoDiagramGroup(data);
       
       updateText(Change.NONE);
   

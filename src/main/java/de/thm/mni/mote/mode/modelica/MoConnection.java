@@ -74,13 +74,29 @@ public class MoConnection implements Changeable {
     return contains(var, from);
   }
   
+  private boolean fromContains(List<MoVariable> list) {
+    return contains(list, from);
+  }
+  
   public boolean toContains(MoVariable var) {
     return contains(var, to);
+  }
+  
+  private boolean toContains(List<MoVariable> list) {
+    return contains(list, to);
   }
   
   private boolean contains(MoVariable var, List<MoVariable> list) {
     for (MoVariable mv : list) if (mv.equals(var)) return true;
     return false;
+  }
+  
+  private boolean contains(List<MoVariable> list, List<MoVariable> list2) {
+    return list2.containsAll(list) && list.containsAll(list2);
+  }
+  
+  public boolean contains(List<MoVariable> list) {
+    return fromContains(list) || toContains(list);
   }
   
   public boolean contains(MoVariable var) {

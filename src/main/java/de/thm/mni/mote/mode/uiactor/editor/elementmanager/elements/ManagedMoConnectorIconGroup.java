@@ -40,7 +40,7 @@ public class ManagedMoConnectorIconGroup extends ModifyableMoConnectorIconGroup 
   
   @Override
   public void enterHighlight() {
-    this.setEffect(new DropShadow(10., Color.DEEPSKYBLUE));
+    this.setEffect(new DropShadow(15., Color.PURPLE));
   }
   
   @Override

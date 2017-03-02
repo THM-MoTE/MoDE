@@ -74,7 +74,7 @@ public class MoConnectorIconGroup extends MoGroup {
     this.rotation.setAngle(mt.getRotation().get());
   }
   
-  protected List<MoVariable> getVariables() {
+  public List<MoVariable> getVariables() {
     List<MoVariable> list = new ArrayList<>();
     list.add(this.variable);
     return getVariables(this.moParent, list);
