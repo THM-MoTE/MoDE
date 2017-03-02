@@ -16,12 +16,10 @@ import de.thm.mni.mote.mode.modelica.MoRoot;
 import de.thm.mni.mote.mode.modelica.Saver;
 import de.thm.mni.mote.mode.omcactor.messages.*;
 import de.thm.mni.mote.mode.parser.ParserException;
-import de.thm.mni.mote.mode.uiactor.control.DragResizer;
-import de.thm.mni.mote.mode.uiactor.control.HasAction;
-import de.thm.mni.mote.mode.uiactor.control.MainTabControl;
-import de.thm.mni.mote.mode.uiactor.control.MoTreeCell;
+import de.thm.mni.mote.mode.uiactor.control.*;
 import de.thm.mni.mote.mode.uiactor.controller.dialogs.ChangeProjectLibrariesDialogController;
 import de.thm.mni.mote.mode.uiactor.controller.dialogs.ChangeSystemLibrariesDialogController;
+import de.thm.mni.mote.mode.uiactor.controller.dialogs.CreateNewController;
 import de.thm.mni.mote.mode.uiactor.editor.actionmanager.ActionManager;
 import de.thm.mni.mote.mode.uiactor.handlers.LibraryHandler;
 import de.thm.mni.mote.mode.uiactor.messages.OMCAvailableLibsUIMessage;
@@ -165,8 +163,22 @@ public class MainController extends NotifyController {
       tmp.setOnEditAction(this::handleTreeCellLibraryEdit);
       tmp.setOnNonRootMouseClicked(this::handleTreeCellMouseClick);
       tmp.setOnNonRootContextMenuRequest(this::handleTreeCellContextMenuRequest);
+      tmp.setOnNonRootContextMenuItemAction(event -> this.handleTreeCellContextMenuItemAction(tmp, event));
       return tmp;
     });
+  }
+  
+  private void handleTreeCellContextMenuItemAction(MoTreeCell cell, ActionEvent event) {
+    ContextMenuItem item = ((ContextMenuItem) event.getSource());
+    
+    if (item.getAction().startsWith("add_new")) {
+      String type = item.getAction().substring(8);
+      type = Character.toUpperCase(type.charAt(0)) + type.substring(1);
+      System.out.println(item.getAction() + ": " + type + ":" + cell.getItem().getName());
+      if (type.equals("Package") || type.equals("Model")) handleCreateNew(type, cell.getItem());
+    } else {
+      LibraryHandler.getInstance().handleMenu(tabPane, cell.getItem(), item.getAction());
+    }
   }
   
   private void handleTreeCellContextMenuRequest(ContextMenuEvent event) {
@@ -270,6 +282,30 @@ public class MainController extends NotifyController {
     } catch (IOException e) {
       getActor().send(new ErrorMessage(this.getClass(), getGroup(), e));
     }
+  }
+  
+  private void handleCreateNew(String type, MoContainer parent) {
+    Dialog<Boolean> d = new Dialog<>();
+    FXMLLoader loader = new FXMLLoader();
+    loader.setLocation(Utilities.getView("dialogs/CreateNew" + type));
+    loader.setResources(Utilities.getBundle("MoDE"));
+    
+    try {
+      DialogPane dp = loader.load();
+      CreateNewController controller = loader.getController();
+      controller.setPath(parent.getName());
+      d.setDialogPane(dp);
+      d.show();
+      d.setResultConverter(param -> param.getButtonData().getTypeCode().equals("I"));
+      d.setOnCloseRequest(event -> {
+        if (d.getResult()) {
+          getActor().send(new CreateNewOMCMessage(getGroup(), parent, type, controller.getData()));
+        }
+      });
+    } catch (IOException e) {
+      getActor().send(new ErrorMessage(this.getClass(), getGroup(), e));
+    }
+    
   }
   
   private void reloadProject() {

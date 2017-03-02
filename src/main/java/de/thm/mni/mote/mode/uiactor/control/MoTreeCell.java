@@ -5,7 +5,6 @@ import de.thm.mni.mote.mode.modelica.MoRoot;
 import de.thm.mni.mote.mode.modelica.graphics.MoDefaults;
 import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoIconGroup;
-import de.thm.mni.mote.mode.uiactor.handlers.LibraryHandler;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
@@ -31,6 +30,7 @@ public class MoTreeCell extends TreeCell<MoContainer> {
   
   private ObjectProperty<EventHandler<MouseEvent>> onNonRootMouseClickedProperty = new SimpleObjectProperty<>(null);
   private ObjectProperty<EventHandler<? super ContextMenuEvent>> onNonRootContextMenuRequest = new SimpleObjectProperty<>(null);
+  private ObjectProperty<EventHandler<ActionEvent>> onNonRootContextMenuItemAction = new SimpleObjectProperty<>(null);
   
   public MoTreeCell(TabPane tabPane) {
     super();
@@ -107,6 +107,10 @@ public class MoTreeCell extends TreeCell<MoContainer> {
   
   public final void setOnNonRootContextMenuRequest(EventHandler<? super ContextMenuEvent> value) { onNonRootContextMenuRequest().set(value); }
   
+  private final ObjectProperty<EventHandler<ActionEvent>> onNonRootContextMenuItemAction() { return onNonRootContextMenuItemAction; }
+  
+  public final void setOnNonRootContextMenuItemAction(EventHandler<ActionEvent> value) { onNonRootContextMenuItemAction().set(value); }
+  
   private ContextMenu createLibraryMenu() {
     if (cm != null) return cm;
     cm = new ContextMenu();
@@ -150,17 +154,8 @@ public class MoTreeCell extends TreeCell<MoContainer> {
       if (action.endsWith("package")) tmp.setGraphic(new MoIconGroup(MoDefaults.newPackage()).scaleToSize(20., 20.));
       else if (action.endsWith("model")) tmp.setGraphic(new MoIconGroup(MoDefaults.newModel()).scaleToSize(20., 20.));
     }
-    
-    tmp.setOnAction(event -> {
-      if (tmp.getAction().startsWith("add_new")) {
-        if (onAddNewActionProperty.isNotNull().get()) {
-          onAddNewActionProperty.get().handle(event);
-        }
-      } else {
-        LibraryHandler.getInstance().handleMenu(tabPane, this.getItem(), action);
-      }
-    });
-    
+    tmp.onActionProperty().bind(onNonRootContextMenuItemAction);
+
     return tmp;
   }
   

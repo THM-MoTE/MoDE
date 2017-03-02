@@ -11,18 +11,29 @@ import de.thm.mni.mote.mode.config.Settings;
 import de.thm.mni.mote.mode.config.model.Modelica;
 import de.thm.mni.mote.mode.config.model.Project;
 import de.thm.mni.mote.mode.modelica.MoContainer;
+import de.thm.mni.mote.mode.modelica.MoLater;
 import de.thm.mni.mote.mode.modelica.MoRoot;
 import de.thm.mni.mote.mode.omcactor.messages.*;
 import de.thm.mni.mote.mode.omcactor.messages.StartDataCollectionOMCMessage.TYPE;
+import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.messages.OMCAvailableLibsUIMessage;
 import de.thm.mni.mote.mode.uiactor.messages.OMCDataUIMessage;
 import de.thm.mni.mote.mode.uiactor.messages.OMCSetProjectUIMessage;
 import de.thm.mni.mote.mode.uiactor.messages.OMCStartedMessage;
 import de.thm.mni.mote.mode.util.Constants;
+import de.thm.mni.mote.mode.util.Utilities;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.Getter;
+import org.apache.commons.io.IOUtils;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -101,6 +112,46 @@ public class OMCActor extends AbstractActor {
     }
   }
   
+  private void createNew(CreateNewOMCMessage msg) {
+    MoContainer parent = msg.getParent();
+    String type = msg.getType().toLowerCase();
+    String name = msg.getData().get("name");
+    System.out.println(parent + ":" + name);
+    Path parentDir = parent.getElement().getClassInformation().getFileName().getParent();
+    List<String> fileContent = null;
+    try {
+      fileContent = IOUtils.readLines(Utilities.getTemplate(type + ".mo"), StandardCharsets.UTF_8);
+      for (Map.Entry<String, String> entry : msg.getData().entrySet()) {
+        for (int i = 0; i < fileContent.size(); i++) {
+          fileContent.set(i, fileContent.get(i).replaceAll("<" + entry.getKey() + ">", entry.getValue()));
+        }
+      }
+      
+      Path file = parentDir.resolve(name + ".mo");
+      if (type.equals("package")) {
+        parentDir = parentDir.resolve(name);
+        Files.createDirectory(parentDir);
+        file = parentDir.resolve("package.mo");
+      }
+      
+      Files.write(file, fileContent, StandardCharsets.UTF_8, StandardOpenOption.CREATE_NEW);
+      reload(parent, name);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+  
+  private void reload(MoContainer parent, String name) {
+    try {
+      omc.reloadProject();
+      parent.getChildren().add(new MoContainer(omc, parent, name).setElement(new MoLater()));
+      parent.update(omc);
+    } catch (ParserException e) {
+      e.printStackTrace();
+    }
+  }
+  
+  
   private void collectDataInBackground(TYPE type) {
     es.execute(() -> {
       switch (type) {
@@ -149,6 +200,8 @@ public class OMCActor extends AbstractActor {
         updateClass(((UpdateClassOMCMessage) msg).getContainer());
       } else if (msg instanceof GetAvailableLibsOMCMessage) {
         send(new OMCAvailableLibsUIMessage(getGroup(), omc.getAvailableLibraries()));
+      } else if (msg instanceof CreateNewOMCMessage) {
+        createNew((CreateNewOMCMessage) msg);
       }
     }
   }
