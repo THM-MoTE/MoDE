@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public class MoLater extends MoClass {
   
-  MoLater() {
+  public MoLater() {
     super("l", MoLater.class.getSimpleName());
   }
   

@@ -117,6 +117,18 @@ public class OMCompiler {
     this.project = lib;
   }
   
+  void reloadProject() throws ParserException {
+    Path f = this.project.getValue();
+    if (Files.isDirectory(f)) f = f.resolve("package.mo");
+    Result r = client.call("loadFile", ScriptingHelper.asString(f));
+    if (r.result.contains("false") && r.error.isPresent()) {
+      if (r.error.isPresent()) {
+        throw new ParserException(r.error.get());
+      }
+      throw new ParserException(tr("error", "error.omcactor.unknown_error"));
+    }
+  }
+  
   private Pair<String, Path> loadProject(Path f) throws ParserException {
     f = f.toAbsolutePath().normalize();
     
@@ -333,6 +345,10 @@ public class OMCompiler {
     List<String> list = getClassWithoutContainingClasses(className, ci);
     
     return list.stream().filter(s -> s.trim().startsWith("connect")).collect(Collectors.toList());
+  }
+  
+  public void reload(String className) {
+    client.call("reloadClass", className);
   }
   
   void disconnect() {

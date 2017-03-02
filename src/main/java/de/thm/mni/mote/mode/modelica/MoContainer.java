@@ -154,6 +154,6 @@ public class MoContainer implements Comparable<MoContainer>, HierarchyData<MoCon
   }
   
   public void update(OMCompiler omc) throws ParserException {
-    update(omc, MAX_LOADING_DEPTH);// magicnumber from settings ;)
+    update(omc, MAX_LOADING_DEPTH);
   }
 }
