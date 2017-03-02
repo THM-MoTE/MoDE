@@ -171,6 +171,9 @@
     -fx-font-weight: bold;
     -fx-font-size: 90%;
     -fx-padding: 2 -15;
+    -fx-min-height: 25px;
+    -fx-max-height: 25px;
+    -fx-pref-height: 25px;
 }
 
 .tree-cell.root-element .ikonli-font-icon {

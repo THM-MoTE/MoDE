@@ -7,6 +7,7 @@ import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoIconGroup;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -32,6 +33,19 @@ public class MoTreeCell extends TreeCell<MoContainer> {
   private ObjectProperty<EventHandler<? super ContextMenuEvent>> onNonRootContextMenuRequest = new SimpleObjectProperty<>(null);
   private ObjectProperty<EventHandler<ActionEvent>> onNonRootContextMenuItemAction = new SimpleObjectProperty<>(null);
   
+  private ChangeListener<Boolean> preventRootSelection = (observable, oldValue, newValue) -> {
+    if (newValue) this.updateSelected(false);
+  };
+  
+  private Button btnRootEdit = new Button("");
+  
+  {
+    btnRootEdit.getStyleClass().add("no-border");
+    btnRootEdit.setGraphic(new FontIcon("gmi-edit"));
+    btnRootEdit.onActionProperty().bind(onEditAction);
+  }
+    
+  
   public MoTreeCell(TabPane tabPane) {
     super();
     this.tabPane = tabPane;
@@ -40,17 +54,21 @@ public class MoTreeCell extends TreeCell<MoContainer> {
   @Override
   protected void updateItem(MoContainer item, boolean empty) {
     super.updateItem(item, empty);
-    this.setDisable(false);
-    this.setStyle(null);
     this.setContextMenu(null);
     this.onContextMenuRequestedProperty().unbind();
     this.setOnContextMenuRequested(null);
+  
     this.onMouseClickedProperty().unbind();
     this.setOnMouseClicked(null);
+  
+    this.selectedProperty().removeListener(preventRootSelection);
+    
     this.getStyleClass().removeAll("root-element");
+  
     if (empty || item == null) {
       this.setText(null);
       this.setGraphic(null);
+      this.setStyle(null);
     } else {
       if (item instanceof MoRoot) updateItem((MoRoot) item);
       else updateItem(item);
@@ -60,22 +78,17 @@ public class MoTreeCell extends TreeCell<MoContainer> {
   private void updateItem(MoRoot item) {
     String text = tr("Main", "tree.entries." + item.getSimpleName());
     this.setText(text);
-    this.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      if (newValue) this.updateSelected(false);
-    });
+    this.selectedProperty().addListener(preventRootSelection);
     this.setEditable(false);
+  
     this.getStyleClass().add("root-element");
-    Button btn = new Button("");
-    btn.getStyleClass().add("no-border");
-    this.setGraphic(btn);
-    this.setContentDisplay(ContentDisplay.RIGHT);
-    
-    if (!text.equals(tr("Main", "tree.entries.project"))) {
-      btn.setGraphic(new FontIcon("gmi-edit"));
+  
+    if (!item.getSimpleName().equals("project")) {
+      this.setGraphic(btnRootEdit);
       this.setOnMouseClicked(event -> {
-        if (event.getClickCount() % 2 == 0 && btn.getOnAction() != null) btn.getOnAction().handle(new ActionEvent(btn, null));
+        if (event.getClickCount() % 2 == 0 && btnRootEdit.getOnAction() != null) btnRootEdit.getOnAction().handle(new ActionEvent(btnRootEdit, null));
       });
-      btn.onActionProperty().bind(onEditAction);
+      this.setContentDisplay(ContentDisplay.RIGHT);
     }
   }
   
@@ -83,13 +96,14 @@ public class MoTreeCell extends TreeCell<MoContainer> {
     try {
       this.setText(item.getSimpleName());
       if (item.getElement().hasConnectors()) this.setStyle("-fx-font-weight: bold");
-      this.setGraphic(new MoIconGroup(item).scaleToSize(25., 25.));
+      this.setGraphic(new MoIconGroup(item).scaleToSize(20., 20.));
       this.setContentDisplay(ContentDisplay.LEFT);
       this.setContextMenu(createLibraryMenu());
-  
+
       this.onMouseClickedProperty().bind(this.onNonRootMouseClickedProperty);
       this.onContextMenuRequestedProperty().bind(this.onNonRootContextMenuRequest);
-    
+  
+      this.layout();
     } catch (ParserException e) {
       e.printStackTrace(); //TODO: send msg
     }

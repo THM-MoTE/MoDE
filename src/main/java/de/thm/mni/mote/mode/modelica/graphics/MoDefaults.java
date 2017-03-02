@@ -15,6 +15,7 @@ public class MoDefaults {
   private static MoIcon moPackage = null;
   private static MoIcon moModel = null;
   private static MoIcon moFunction = null;
+  private static MoIcon moEmpty = null;
   
   private static MoGraphic getMoGraphic() {
     return new MoGraphic(null, null, null);
@@ -24,86 +25,37 @@ public class MoDefaults {
     return new MoFilledShape(getMoGraphic(), fillColor, borderColor, Utilities.LinePattern.SOLID, Utilities.FillPattern.SOLID, 2.);
   }
   
-  private static MoIcon newAnything(Color c, List<Point2D> points, Utilities.Smooth smooth) {
+  private static MoIcon newAnything(Color c, String character) {
     MoCoordinateSystem mcs = new MoCoordinateSystem();
     List<MoGraphic> list = new ArrayList<>();
     
-    list.add(new MoRectangle(getMoFilledShape(c, Color.TRANSPARENT), new Point2D(-100., 100.), new Point2D(100., -100.), MoRectangle.BorderPattern.NONE, 0.));
-    list.add(new MoPolygon(getMoFilledShape(Color.BLACK, c), points, smooth));
+    list.add(new MoEllipse(getMoFilledShape(c, c), new Point2D(-100., 100.), new Point2D(100., -100.)));
+    list.add(new MoText(getMoFilledShape(Color.BLACK, Color.BLACK), new Point2D(-100., -80.), new Point2D(100., 100.), character));
     return new MoIcon(mcs, list);
     
   }
   
   public static MoIcon newPackage() {
     if (moPackage == null) {
-      List<Point2D> points = new ArrayList<>();
-      points.add(new Point2D(-40., -70.));
-      points.add(new Point2D(-40., -69.));
-      points.add(new Point2D(-40., 69.));
-      points.add(new Point2D(-40., 70.));
-      points.add(new Point2D(-39., 70.));
-      points.add(new Point2D(-20., 70.));
-      points.add(new Point2D(0., 70.));
-      points.add(new Point2D(30., 35.));
-      points.add(new Point2D(0., 0.));
-      points.add(new Point2D(-19., 0.));
-      points.add(new Point2D(-20., 0.));
-  
-      points.add(new Point2D(-20., 1.));
-      points.add(new Point2D(-20., 19.));
-      points.add(new Point2D(-20., 20.));
-      points.add(new Point2D(-19., 20.));
-      points.add(new Point2D(-5., 20.));
-      points.add(new Point2D(10., 35.));
-      points.add(new Point2D(-5., 50.));
-      points.add(new Point2D(-19., 50.));
-      points.add(new Point2D(-20., 50.));
-      points.add(new Point2D(-20., 49.));
-  
-      points.add(new Point2D(-20., 0.));
-      points.add(new Point2D(-20., -69.));
-      points.add(new Point2D(-20., -70.));
-      points.add(new Point2D(-21., -70.));
-      points.add(new Point2D(-39., -70.));
-      points.add(new Point2D(-40., -70.));
-  
-      moPackage = newAnything(Color.DARKRED, points, Utilities.Smooth.BEZIER);
+      moPackage = newAnything(Color.LIGHTGRAY, "P");
     }
     return moPackage;
   }
   
   public static MoIcon newModel() {
     if (moModel == null) {
-      List<Point2D> points = new ArrayList<>();
-      points.add(new Point2D(-60., -70.));
-      points.add(new Point2D(-60., 70.));
-      points.add(new Point2D(-40., 70.));
-  
-      points.add(new Point2D(0., 0.));
-  
-      points.add(new Point2D(40., 70.));
-      points.add(new Point2D(60., 70.));
-      points.add(new Point2D(60., -70.));
-      points.add(new Point2D(40., -70.));
-      points.add(new Point2D(40., 40.));
-  
-      points.add(new Point2D(0., -30.));
-  
-      points.add(new Point2D(-40., 40.));
-      points.add(new Point2D(-40., -70.));
-      points.add(new Point2D(-60., -70.));
-      moModel = newAnything(Color.BLUE, points, Utilities.Smooth.NONE);
+      moModel = newAnything(Color.LIGHTBLUE, "M");
     }
     return moModel;
   }
   
   public static MoIcon newFunction() {
-    if (moFunction == null) moFunction = newAnything(Color.GREEN, new ArrayList<>(), Utilities.Smooth.NONE);
+    if (moFunction == null) moFunction = newAnything(Color.LIGHTGREEN, "F");
     return moFunction;
   }
   
   public static MoIcon newEmpty() {
-    if (moFunction == null) moFunction = newAnything(Color.PINK, new ArrayList<>(), Utilities.Smooth.NONE);
-    return moFunction;
+    if (moEmpty == null) moEmpty = newAnything(Color.LIGHTCORAL, "E");
+    return moEmpty;
   }
 }

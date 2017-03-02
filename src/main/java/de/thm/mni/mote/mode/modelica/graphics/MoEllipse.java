@@ -18,8 +18,12 @@ public class MoEllipse extends MoFilledShape implements HasExtent {
   private Double startAngle = 0.0;
   private Double endAngle = 360.0;
   
+  MoEllipse(MoFilledShape mfs, Point2D p1, Point2D p2) {
+    this(mfs, p1, p2, null, null);
+  }
+  
   @Builder(builderMethodName = "ellipseBuilder")
-  MoEllipse(MoFilledShape mfs, Point2D p1, Point2D p2, Double startAngle, Double endAngle) {
+  private MoEllipse(MoFilledShape mfs, Point2D p1, Point2D p2, Double startAngle, Double endAngle) {
     super(mfs);
     extent = new MoSimpleExtent(p1, p2);
     if (startAngle != null) this.startAngle = startAngle;

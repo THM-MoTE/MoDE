@@ -20,6 +20,7 @@ public class MoText extends MoFilledShape implements HasExtent {
   
   private static final Pattern COMPILE = Pattern.compile("(^[\\\\\"]+)|([\\\\\"]+$)");
   private final MoExtent extent;
+  private Boolean showAlways;
   
   public enum TextAlignment {
     LEFT,
@@ -55,8 +56,13 @@ public class MoText extends MoFilledShape implements HasExtent {
   TextAlignment horizontalAlignment = TextAlignment.CENTER;
   Integer index = 1;
   
+  MoText(MoFilledShape mfs, Point2D p1, Point2D p2, String string) {
+    this(mfs, p1, p2, string, null, null, null, null, null, null);
+    this.showAlways = true;
+  }
+  
   @Builder(builderMethodName = "textBuilder")
-  MoText(MoFilledShape mfs, Point2D p1, Point2D p2, String string, Double fontSize, String fontName, Integer textStyle, Color textColor, TextAlignment horizontalAlignment, Integer index) {
+  private MoText(MoFilledShape mfs, Point2D p1, Point2D p2, String string, Double fontSize, String fontName, Integer textStyle, Color textColor, TextAlignment horizontalAlignment, Integer index) {
     super(mfs);
     extent = new MoSimpleExtent(p1, p2);
     if (string != null) this.string = string;
@@ -66,6 +72,7 @@ public class MoText extends MoFilledShape implements HasExtent {
     if (horizontalAlignment != null) this.horizontalAlignment = horizontalAlignment;
     this.textColor = (textColor != null) ? textColor : this.lineColor;
     if (index != null) this.index = index;
+    this.showAlways = false;
   }
   
   public Color getFillColor() {

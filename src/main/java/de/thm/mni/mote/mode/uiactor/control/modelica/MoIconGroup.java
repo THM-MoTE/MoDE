@@ -28,6 +28,6 @@ public class MoIconGroup extends MoGroup {
   }
   
   protected void initImage() {
-    this.image.getMoGraphics().stream().filter(mg -> !(mg instanceof MoText)).forEach(this::initImage);
+    this.image.getMoGraphics().stream().filter(mg -> !(mg instanceof MoText) || ((MoText) mg).getShowAlways()).forEach(this::initImage);
   }
 }

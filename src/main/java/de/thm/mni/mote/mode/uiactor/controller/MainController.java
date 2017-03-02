@@ -203,6 +203,7 @@ public class MainController extends NotifyController {
   
   private void handleTreeCellMouseClick(MouseEvent event) {
     MoContainer item = ((MoTreeCell) event.getSource()).getItem();
+    tvLibrary.getSelectionModel().select(((MoTreeCell) event.getSource()).getTreeItem());
     if (item == null || !item.getElement().hasDiagram()) return;//TODO
     
     for (Tab t : tabPane.getTabs()) {
