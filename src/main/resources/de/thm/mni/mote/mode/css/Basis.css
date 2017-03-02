@@ -118,7 +118,7 @@
 }
 
 .separator {
-    -fx-cursor: h_resize;
+    -fx-cursor: w_resize;
 }
 
 /* Tabs*/
@@ -128,31 +128,34 @@
     -fx-tab-max-height: 24px;
     -fx-open-tab-animation: none;
     -fx-close-tab-animation: none;
+    -fx-padding: 0px 0px -2px -1px;
+    -fx-border-width: 0px 1px;
+    -fx-border-color: darkgray;
 }
 
 .tab-pane .tab-header-area > .tab-header-background {
     -fx-background-color: transparent;
-    -fx-border-width: 1px 0px 1px 2px;
+    -fx-border-width: 0px 0px 1px 1px;
     -fx-border-color: derive(darkgray, -10%);
 }
 
 .tab-pane .tab-header-area {
-    -fx-padding: 1px 1px 3px 2px;
-    -fx-background-color: linear-gradient(lightgray 0%, lightgray 88%, derive(darkgray, -10%) 89%, derive(darkgray, -10%) 91%, whitesmoke 91%, whitesmoke 100%);
+    -fx-padding: 0px 1px 3px 1px;
+    -fx-background-color: linear-gradient(whitesmoke 0%, whitesmoke 85%, derive(darkgray, -10%) 85%, derive(darkgray, -10%) 91%, derive(white, -2%) 91%, derive(white, -2%) 100%);
 }
 
 .tab-pane .tab {
     -fx-background-color: derive(darkgray, 50%);
     -fx-background-radius: 0px;
-    -fx-padding: 2px 5px;
-    -fx-border-width: 0px 1px 1px 0px;
+    -fx-padding: 0px 4px;
+    -fx-border-width: 1px 1px 1px 0px;
     -fx-border-color: derive(darkgray, -10%);
 }
 
 .tab-pane .tab:selected {
-    -fx-background-color: whitesmoke;
-    -fx-border-width: 0px 1px 1px 0px;
-    -fx-border-color: whitesmoke derive(darkgray, -10%);
+    -fx-background-color: derive(white, -2%);
+    -fx-border-width: 1px 1px 1px 0px;
+    -fx-border-color: derive(darkgray, -10%) derive(darkgray, -10%) whitesmoke derive(darkgray, -10%);
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
 }
