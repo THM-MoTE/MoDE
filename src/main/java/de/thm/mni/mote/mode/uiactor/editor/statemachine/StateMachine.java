@@ -80,7 +80,7 @@ public class StateMachine implements EventHandler<InputEvent> {
   
   @Override
   public void handle(InputEvent event) {
-    handleElementManagment(event);
+    handleElementManagment(event, freezeState);
     if (!freezeState) {
       //if (event.getSource() instanceof MoDiagramGroup && event.getEventType().equals(MouseEvent.MOUSE_MOVED)) return;
 //      if (!event.getEventType().equals(MouseEvent.MOUSE_MOVED)) MessageBus.getInstance().send(new TraceMessage(StateMachine.class, tab.getText() + " Event: " + event.getSource().getClass().getSimpleName() + " : " + event.getEventType()));
@@ -177,11 +177,11 @@ public class StateMachine implements EventHandler<InputEvent> {
     changeState(state);
   }
   
-  private void handleElementManagment(InputEvent event) {
-    handleElementManagment(event, (Node) event.getTarget());
+  private void handleElementManagment(InputEvent event, Boolean fixedSelection) {
+    handleElementManagment(event, (Node) event.getTarget(), fixedSelection);
   }
   
-  private void handleElementManagment(InputEvent event, Node target) {
+  private void handleElementManagment(InputEvent event, Node target, Boolean fixedSelection) {
     EventType<? extends Event> type = event.getEventType();
   
     if (hasMatchingParent(target, Hoverable.class)) {
@@ -190,10 +190,12 @@ public class StateMachine implements EventHandler<InputEvent> {
     }
   
     if (type.equals(MouseEvent.MOUSE_PRESSED)) {
-      if (hasMatchingParent(target, Selectable.class)) {
-        ElementManager.getInstance(tab.getData()).setSelectedElement((Selectable) getMatchingParent(target, Hoverable.class));
-      } else {
-        ElementManager.getInstance(tab.getData()).clearSelectedElement();
+      if (!fixedSelection) {
+        if (hasMatchingParent(target, Selectable.class)) {
+          ElementManager.getInstance(tab.getData()).setSelectedElement((Selectable) getMatchingParent(target, Hoverable.class));
+        } else {
+          ElementManager.getInstance(tab.getData()).clearSelectedElement();
+        }
       }
     }
   }
