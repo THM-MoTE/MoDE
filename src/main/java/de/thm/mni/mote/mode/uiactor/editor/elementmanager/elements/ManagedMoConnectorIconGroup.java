@@ -1,6 +1,7 @@
 package de.thm.mni.mote.mode.uiactor.editor.elementmanager.elements;
 
 import de.thm.mni.mote.mode.modelica.MoVariable;
+import de.thm.mni.mote.mode.uiactor.control.modelica.MoIconGroup;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoVariableIconGroup;
 import de.thm.mni.mote.mode.uiactor.editor.elementmanager.interfaces.Highlightable;
 import de.thm.mni.mote.mode.uiactor.editor.elementmanager.interfaces.Hoverable;
@@ -15,9 +16,11 @@ import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.stage.Screen;
 import lombok.Getter;
 import org.controlsfx.control.PopOver;
 
@@ -31,7 +34,8 @@ public class ManagedMoConnectorIconGroup extends ModifyableMoConnectorIconGroup 
   
   @Getter private final ObservableList<String> highlightExtra = FXCollections.observableArrayList();
   private final Map<String, Label> entries = new HashMap<>();
-  private final PopOver popOver;
+  private final PopOver errorPopOver;
+  private final PopOver infoPopOver;
   private boolean isHighlighted = false;
   
   private static final DropShadow SELECTION = new DropShadow(10., Color.RED);
@@ -46,26 +50,21 @@ public class ManagedMoConnectorIconGroup extends ModifyableMoConnectorIconGroup 
   
   public ManagedMoConnectorIconGroup(MoVariableIconGroup moParent, MoVariable variable) {
     super(moParent, variable);
-    VBox content = new VBox(5.0);
-    content.setPadding(new Insets(5.));
-    popOver = new PopOver(content);
-    popOver.setDetachable(false);
-    popOver.setDetached(false);
-    popOver.setAutoHide(false);
-    popOver.setArrowLocation(PopOver.ArrowLocation.LEFT_CENTER);
+    errorPopOver = configuredPopOver();
+    infoPopOver = configuredInfoPopOver();
     highlightExtra.addListener((ListChangeListener<? super String>) c -> {
       while (c.next()) {
         c.getAddedSubList().forEach(str -> {
           if (!entries.containsKey(str)) {
             Label tmp = new Label(Translator.tr("Main", str));
             entries.put(str, tmp);
-            ((Pane) popOver.getContentNode()).getChildren().add(tmp);
+            ((Pane) errorPopOver.getContentNode()).getChildren().add(tmp);
           }
         });
         
         c.getRemoved().forEach(str -> {
           if (entries.containsKey(str)) {
-            ((Pane) popOver.getContentNode()).getChildren().remove(entries.get(str));
+            ((Pane) errorPopOver.getContentNode()).getChildren().remove(entries.get(str));
             entries.remove(str);
           }
         });
@@ -73,9 +72,44 @@ public class ManagedMoConnectorIconGroup extends ModifyableMoConnectorIconGroup 
     });
   }
   
-  private Point2D calcPopOverPos() {
+  private PopOver configuredInfoPopOver() {
+    PopOver p = configuredPopOver();
+    VBox content = (VBox) p.getContentNode();
+    Label name = new Label(this.getVariable().getSimpleName());
+    name.setStyle("-fx-font-weight: bold");
+    Label type = new Label(this.getVariable().getType().getName());
+    type.setStyle("-fx-font-style: italic");
+    content.getChildren().addAll(new HBox(5., new MoIconGroup(this.getMoClass().getContainer()).scaleToSize(20., 20.), name), type, new Label(this.getVariable().getComment()));
+    return p;
+  }
+  
+  private PopOver configuredPopOver() {
+    VBox content = new VBox(5.0);
+    content.setPadding(new Insets(5.));
+    PopOver p = new PopOver(content);
+    p.setDetachable(false);
+    p.setDetached(false);
+    p.setAutoHide(false);
+    return p;
+  }
+  
+  private void setPopOverPos(PopOver popOver) {
     Bounds b = this.localToScreen(this.getBoundsInLocal());
-    return new Point2D(b.getMaxX() + 2, b.getMinY() + (b.getHeight() / 2));
+    Point2D p = new Point2D(b.getMaxX() + 2, b.getMinY() + (b.getHeight() / 2));
+    Screen s = null;
+    for (Screen tmp : Screen.getScreens()) {
+      if (tmp.getBounds().contains(p)) {
+        s = tmp;
+        break;
+      }
+    }
+    if (s != null) {
+      if (p.getX() + 300 > s.getBounds().getMaxX()) {
+        popOver.setArrowLocation(PopOver.ArrowLocation.RIGHT_CENTER);
+      } else popOver.setArrowLocation(PopOver.ArrowLocation.LEFT_CENTER);
+    }
+    popOver.setAnchorX(p.getX());
+    popOver.setAnchorY(p.getY());
   }
   
   @Override
@@ -91,18 +125,19 @@ public class ManagedMoConnectorIconGroup extends ModifyableMoConnectorIconGroup 
   @Override
   public void enterHover() {
     this.setEffect(HOVER);
-    if (isHighlighted && !highlightExtra.isEmpty()) {
-      Point2D p = calcPopOverPos();
-      popOver.show(this, p.getX(), p.getY());
-    }
+    PopOver popOver;
+    if (isHighlighted && !highlightExtra.isEmpty()) popOver = errorPopOver;
+    else popOver = infoPopOver;
+  
+    setPopOverPos(popOver);
+    popOver.show(this, 0);
   }
   
   @Override
   public void leaveHover() {
     this.setEffect(null);
-    if (isHighlighted && !highlightExtra.isEmpty()) {
-      popOver.hide();
-    }
+    errorPopOver.hide();
+    infoPopOver.hide();
   }
   
   @Override

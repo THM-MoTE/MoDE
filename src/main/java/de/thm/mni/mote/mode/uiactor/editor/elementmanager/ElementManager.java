@@ -32,10 +32,11 @@ public class ElementManager {
   public void setHoveredElement(Hoverable element) {
     if (element != null && this.selectedElement == element) return;
     if (this.hoveredElement != element) {
-      if (this.hoveredElement != null && this.hoveredElement != this.selectedElement) {
+      if (this.hoveredElement != null) {
         this.hoveredElement.leaveHover();
         if (this.hoveredElement instanceof Highlightable && this.highlightedElements.contains(this.hoveredElement))
           ((Highlightable) this.hoveredElement).enterHighlight();
+        if (this.hoveredElement == this.selectedElement) this.selectedElement.enterSelection();
       }
       this.hoveredElement = element;
       if (this.hoveredElement != null) this.hoveredElement.enterHover();
