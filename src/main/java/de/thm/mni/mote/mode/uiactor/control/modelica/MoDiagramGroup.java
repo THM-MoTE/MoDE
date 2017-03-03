@@ -1,7 +1,6 @@
 package de.thm.mni.mote.mode.uiactor.control.modelica;
 
 import de.thm.mni.mote.mode.modelica.MoConnection;
-import de.thm.mni.mote.mode.modelica.MoConnector;
 import de.thm.mni.mote.mode.modelica.MoContainer;
 import de.thm.mni.mote.mode.modelica.MoVariable;
 import de.thm.mni.mote.mode.parser.ParserException;
@@ -56,7 +55,7 @@ public class MoDiagramGroup extends MoGroup {
   }
   
   private void addIconListener(Node node, EventHandler<InputEvent> eventHandler) {
-    if (node instanceof MoVariableIconGroup && ((MoVariableIconGroup) node).getMoClass() instanceof MoConnector) {
+    if (node instanceof MoConnectorIconGroup) {
       node.addEventHandler(MouseEvent.ANY, eventHandler);
     }
   }

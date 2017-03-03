@@ -75,7 +75,7 @@ public class ModifyableMoConnectorIconGroup extends MoConnectorIconGroup impleme
             //TODO: check if this Connector matches
             builder.addPoint();
             MoConnection conn = builder.build(this.getVariables());
-            if (((ManagedMoDiagramGroup) this.getMoParent().getMoDiagram()).isConnectableTo(conn.getFrom(), conn.getTo())) {
+            if (((ManagedMoDiagramGroup) this.getMoParent().getMoDiagram()).isConnectAbleTo(conn.getFrom(), conn.getTo())) {
               abort(sm);
               return this.getMoParent().getMoDiagram().getModifyableMoClass().add((Object) new MoConnection[]{conn});
             }

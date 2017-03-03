@@ -141,6 +141,7 @@ public class StateMachine implements EventHandler<InputEvent> {
   
   public void switchToNone() {
     this.state = States.NONE;
+    ElementManager.getInstance(this.data).clearSelectedElement();
   }
   
   private void updateKeyState(MouseEvent event) {
@@ -184,9 +185,12 @@ public class StateMachine implements EventHandler<InputEvent> {
   private void handleElementManagment(InputEvent event, Node target, Boolean fixedSelection) {
     EventType<? extends Event> type = event.getEventType();
   
-    if (hasMatchingParent(target, Hoverable.class)) {
-      if (type.equals(MouseEvent.MOUSE_ENTERED)) ElementManager.getInstance(tab.getData()).setHoveredElement((Hoverable) getMatchingParent(target, Hoverable.class));
-      if (type.equals(MouseEvent.MOUSE_EXITED)) ElementManager.getInstance(tab.getData()).clearHoveredElement();
+    if (type.equals(MouseEvent.MOUSE_ENTERED) || type.equals(MouseEvent.MOUSE_MOVED) || type.equals(MouseEvent.MOUSE_EXITED)) {
+      if (hasMatchingParent(target, Hoverable.class)) {
+        if (type.equals(MouseEvent.MOUSE_ENTERED) || type.equals(MouseEvent.MOUSE_MOVED))
+          ElementManager.getInstance(tab.getData()).setHoveredElement((Hoverable) getMatchingParent(target, Hoverable.class));
+        if (type.equals(MouseEvent.MOUSE_EXITED)) ElementManager.getInstance(tab.getData()).clearHoveredElement();
+      }
     }
   
     if (type.equals(MouseEvent.MOUSE_PRESSED)) {

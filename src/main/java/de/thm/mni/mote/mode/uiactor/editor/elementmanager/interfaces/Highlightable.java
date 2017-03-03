@@ -5,6 +5,5 @@ package de.thm.mni.mote.mode.uiactor.editor.elementmanager.interfaces;
  */
 public interface Highlightable {
   void enterHighlight();
-  
   void leaveHighlight();
 }

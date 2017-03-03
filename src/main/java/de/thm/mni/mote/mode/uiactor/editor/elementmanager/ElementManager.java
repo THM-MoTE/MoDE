@@ -31,11 +31,15 @@ public class ElementManager {
   
   public void setHoveredElement(Hoverable element) {
     if (element != null && this.selectedElement == element) return;
-    
-    if (this.hoveredElement != null && this.hoveredElement != this.selectedElement) this.hoveredElement.leaveHover();
-    this.hoveredElement = element;
-    if (this.hoveredElement != null) this.hoveredElement.enterHover();
-    
+    if (this.hoveredElement != element) {
+      if (this.hoveredElement != null && this.hoveredElement != this.selectedElement) {
+        this.hoveredElement.leaveHover();
+        if (this.hoveredElement instanceof Highlightable && this.highlightedElements.contains(this.hoveredElement))
+          ((Highlightable) this.hoveredElement).enterHighlight();
+      }
+      this.hoveredElement = element;
+      if (this.hoveredElement != null) this.hoveredElement.enterHover();
+    }
   }
   
   public void clearHoveredElement() {
