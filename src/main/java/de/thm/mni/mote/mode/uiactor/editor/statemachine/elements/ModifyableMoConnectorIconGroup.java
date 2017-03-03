@@ -17,6 +17,7 @@ import de.thm.mni.mote.mode.uiactor.shape.Line;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseButton;
@@ -57,7 +58,8 @@ public class ModifyableMoConnectorIconGroup extends MoConnectorIconGroup impleme
     
     if (event.getEventType().equals(MouseEvent.MOUSE_CLICKED)) {
       if (builder == null) { //first Click
-        builder = new ConnectionBuilder(this.getMoParent().getMoDiagram(), this.getVariables(), p);
+        Bounds b = this.localToScene(this.getBoundsInLocal());
+        builder = new ConnectionBuilder(this.getMoParent().getMoDiagram(), this.getVariables(), this.getMoParent().getMoDiagram().convertTo(convertFrom(new Point2D(0, 0))));
         changeListener = (observable, oldValue, newValue) -> {
           if (!newValue) {
             abort(sm);
@@ -72,12 +74,14 @@ public class ModifyableMoConnectorIconGroup extends MoConnectorIconGroup impleme
           builder.addPoint();
         } else {
           try {
-            //TODO: check if this Connector matches
+            builder.updateLastPoint(this.getMoParent().getMoDiagram().convertTo(convertFrom(new Point2D(0, 0))));
             builder.addPoint();
             MoConnection conn = builder.build(this.getVariables());
             if (((ManagedMoDiagramGroup) this.getMoParent().getMoDiagram()).isConnectAbleTo(conn.getFrom(), conn.getTo())) {
               abort(sm);
               return this.getMoParent().getMoDiagram().getModifyableMoClass().add((Object) new MoConnection[]{conn});
+            } else {
+              builder.removePoint();
             }
           } catch (ParserException e) {
             abort(sm);
@@ -144,6 +148,12 @@ public class ModifyableMoConnectorIconGroup extends MoConnectorIconGroup impleme
     
     MoConnection build(List<MoVariable> endConnector) throws ParserException {
       return new MoConnection(moGroup.getMoClass(), startConnector, endConnector, Collections.singletonList(line.getData()));
+    }
+  
+    void removePoint() {
+      Point2D p = line.getData().getPoints().get(line.getData().getPoints().size() - 1);
+      line.getData().getPoints().remove(p);
+      lastPoint.set(p);
     }
   }
   
