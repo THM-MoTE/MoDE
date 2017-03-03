@@ -72,7 +72,7 @@ public class ManagedMoDiagramGroup extends ModifyableMoDiagramGroup {
   }
   
   private List<String> getConnectableToMessages(MoClass from, MoClass to) {
-    if (!from.getClass().equals(to.getClass())) return Collections.singletonList("editor.connectors.no_matching_type");
+    if (!from.getClass().equals(to.getClass())) return Collections.singletonList("editor.connectors.no_matching_type|" + from.getName() + "|" + to.getName());
     
     if (from instanceof MoConnector && to instanceof MoConnector) {
       if (from.getVariables().size() != to.getVariables().size()) return Collections.singletonList("editor.connectors.no_matching_variable_count");
@@ -86,10 +86,13 @@ public class ManagedMoDiagramGroup extends ModifyableMoDiagramGroup {
             break;
           }
         }
-        if (!hasMatchingOpposite) return list;
+        if (!hasMatchingOpposite) {
+          final int pos = i;
+          return list.stream().map(s -> s + "|" + from.getVariables().get(pos).getName()).collect(Collectors.toList());
+        }
       }
     } else {
-      if (from != to) return Collections.singletonList("editor.connectors.no_matching_type");
+      if (from != to) return Collections.singletonList("editor.connectors.no_matching_type|" + from.getName() + "|" + to.getName());
     }
     
     return Collections.EMPTY_LIST;
