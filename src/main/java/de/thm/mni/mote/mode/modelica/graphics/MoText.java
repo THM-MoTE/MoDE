@@ -1,5 +1,6 @@
 package de.thm.mni.mote.mode.modelica.graphics;
 
+import de.thm.mni.mote.mode.modelica.MoVariable;
 import de.thm.mni.mote.mode.modelica.interfaces.HasExtent;
 import de.thm.mni.mote.mode.parser.modelica.AnnotationParser.TextContext;
 import de.thm.mni.mote.mode.parser.modelica.AnnotationParser.TextDataContext;
@@ -21,6 +22,10 @@ public class MoText extends MoFilledShape implements HasExtent {
   private static final Pattern COMPILE = Pattern.compile("(^[\\\\\"]+)|([\\\\\"]+$)");
   private final MoExtent extent;
   private Boolean showAlways;
+  private String replaceClazz = null;
+  private String replaceName = null;
+  
+  private MoVariable moVarForParams;
   
   public enum TextAlignment {
     LEFT,
@@ -81,6 +86,31 @@ public class MoText extends MoFilledShape implements HasExtent {
   
   public Color getLineColor() {
     return Color.TRANSPARENT;
+  }
+  
+  public void initReplaceText(MoVariable that) {
+    this.moVarForParams = that;
+  }
+  
+  
+  public String getString() {
+    String str = string;
+    
+    if (moVarForParams != null && str.contains("%")) {
+      str = str.replaceAll("%name", moVarForParams.getSimpleName());
+      str = str.replaceAll("%class", moVarForParams.getType().getName());
+      for (MoVariable param : moVarForParams.getParameters()) {
+        if (moVarForParams.getParamValues().containsKey(param)) {
+          str = str.replaceAll("%" + param.getSimpleName(), moVarForParams.getParamValues().get(param));
+        } else if (!param.getValue().isEmpty()) {
+          str = str.replaceAll("%" + param.getSimpleName(), param.getValue());
+        }
+      }
+    }
+    
+    str = str.replaceAll("%%", "%");
+    
+    return str;
   }
   
   public static MoText parse(TextContext elem) {

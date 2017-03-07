@@ -97,6 +97,7 @@ public class MoDiagramGroup extends MoGroup {
   
   private void initVariable(MoVariable mv) {
     if (mv.getPlacement() == null || (mv.getPlacement().getIconTransformation() == null && mv.getPlacement().getDiagramTransformation() == null)) return;
+    mv.initReplaceText();
     MoVariableIconGroup mip = new ManagedMoVariableIconGroup(this, mv);
     data.put(mv, mip);
     this.add(mip);

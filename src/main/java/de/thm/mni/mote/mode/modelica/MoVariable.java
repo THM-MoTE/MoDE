@@ -2,21 +2,19 @@ package de.thm.mni.mote.mode.modelica;
 
 import de.thm.mni.mote.mode.modelica.annotations.MoAnnotation;
 import de.thm.mni.mote.mode.modelica.annotations.MoPlacement;
+import de.thm.mni.mote.mode.modelica.graphics.MoText;
 import de.thm.mni.mote.mode.modelica.interfaces.Changeable;
 import de.thm.mni.mote.mode.modelica.interfaces.MoElement;
 import de.thm.mni.mote.mode.omcactor.OMCompiler;
-import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.util.ImmutableListCollector;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import lombok.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Created by hobbypunk on 20.10.16.
@@ -33,6 +31,9 @@ public class MoVariable extends MoElement implements Changeable {
   private final Specification kind;
   @Setter private MoContainer type = null;
   private final String line;
+  @Setter(AccessLevel.PRIVATE) private String value = "";
+  
+  private final Map<MoVariable, String> paramValues = new HashMap<>();
   
   public enum Specification {
     NONE,
@@ -52,11 +53,42 @@ public class MoVariable extends MoElement implements Changeable {
     this.parent = parent;
     this.kind = kind;
     this.isParameter = (isParameter != null && isParameter);
-    if (type != null) this.type = type;
-    if (annotations != null) this.addAllAnnotations(annotations);
     this.line = line;
+  
+    if (type != null) {
+      this.type = type;
+      String l = this.line.replace("\"" + this.getComment() + "\"", "");
+      if (l.matches(".*?" + type.getSimpleName() + "\\s+" + this.getName() + "\\s+=.*")) parseValue(l);
+      else if (l.matches(".*?" + this.getName() + "\\s*\\(.*")) this.parseParameter(l);
+    }
+    if (annotations != null) this.addAllAnnotations(annotations);
     if (getPlacement() != null) getPlacement().setChangeParent(this);
     initChangeListener();
+  }
+  
+  private void parseParameter(String line) {
+    line = line.replaceFirst("^.*?" + this.getName() + "\\s*\\(", "");
+    line = line.replaceFirst("\\s*//.+$", "");
+    line = line.replaceFirst("\\)[^\\)]*?;$", "");
+    line = line.replaceFirst("\\)[^\\)]*?annotation.*$", "");
+    String[] params = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)"); //http://stackoverflow.com/questions/1757065/java-splitting-a-comma-separated-string-but-ignoring-commas-in-quotes
+    for (String param : params) {
+      for (MoVariable p : getParameters()) {
+        if (param.matches("^" + p.getName() + "\\s*=.*$")) {
+          paramValues.put(p, param.replaceFirst(p.getName() + "\\s*=\\s*", ""));
+        }
+      }
+    }
+  }
+  
+  private void parseValue(String line) {
+    this.value = line;
+    this.value = this.value.replaceFirst("^.*?" + this.getName() + "\\s+=\\s+", "");
+    this.value = this.value.replace("\"" + this.getComment() + "\"", "");
+    this.value = this.value.replaceFirst("\\s*//.+$", "");
+    this.value = this.value.replaceFirst("\\s+;$", "");
+    
+    this.value = this.value.replaceFirst("annotation.*$", "");
   }
   
   @Override
@@ -72,8 +104,17 @@ public class MoVariable extends MoElement implements Changeable {
     return list;
   }
   
-  public List<MoVariable> getVariables() throws ParserException {
+  public List<MoVariable> getVariables() {
     return getType().getElement().getVariables();
+  }
+  
+  public List<MoVariable> getParameters() {
+    try {
+      return getVariables().stream().filter(MoVariable::getIsParameter).collect(Collectors.toList());
+    } catch (NullPointerException e) {
+      e.printStackTrace();
+      return null;
+    }
   }
   
   public List<MoConnection> getConnections() {
@@ -92,6 +133,12 @@ public class MoVariable extends MoElement implements Changeable {
   
   String getIndicator() {
     return String.format("%s %s", type.getName(), getName());
+  }
+  
+  public void initReplaceText() {
+    type.getElement().getIcon().getMoGraphics().stream().filter(mg -> mg instanceof MoText).forEach(mg -> {
+      ((MoText) mg).initReplaceText(this);
+    });
   }
   
   @Override

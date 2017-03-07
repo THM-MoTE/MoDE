@@ -73,6 +73,9 @@ public class MoClass extends MoElement implements Changeable, Comparable<MoClass
     if (!(this instanceof MoLater)) initChangeListener();
   }
   
+  public Boolean isBasisType() {
+    return bases.contains(this.getContainer());
+  }
   @Override
   public Changeable getChangeParent() {
     return null;
@@ -94,9 +97,9 @@ public class MoClass extends MoElement implements Changeable, Comparable<MoClass
   
   public ObservableList<MoVariable> getVariables() {
   
-    this.container.getInheritedClasses().forEach(inheritedClass -> inheritedClass.getElement().getVariables().forEach(variable -> {
-      if (!this.variables.contains(variable)) this.variables.add(variable);
-    }));
+    this.container.getInheritedClasses().forEach(inheritedClass ->
+                                                     inheritedClass.getElement().getVariables().filtered(variable -> !this.variables.contains(variable)).forEach(this.variables::add)
+    );
     
     return this.variables;
   }
