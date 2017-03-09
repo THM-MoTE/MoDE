@@ -44,6 +44,7 @@ import java.util.NoSuchElementException;
 @Getter
 public class StateMachine implements EventHandler<InputEvent> {
   private static Map<MoContainer, StateMachine> INSTANCES = new HashMap<>();
+  private EventType<? extends Event> eventToSkip = null;
   
   public static StateMachine getInstance(MoContainer container) {
     if (!INSTANCES.containsKey(container)) throw new NoSuchElementException("No such StateMachine");
@@ -81,9 +82,14 @@ public class StateMachine implements EventHandler<InputEvent> {
   @Override
   public void handle(InputEvent event) {
     handleElementManagment(event, freezeState);
+    if (eventToSkip != null && event.getEventType() == eventToSkip) {
+      eventToSkip = null;
+      event.consume();
+      return;
+    }
     if (!freezeState) {
       //if (event.getSource() instanceof MoDiagramGroup && event.getEventType().equals(MouseEvent.MOUSE_MOVED)) return;
-//      if (!event.getEventType().equals(MouseEvent.MOUSE_MOVED)) MessageBus.getInstance().send(new TraceMessage(StateMachine.class, tab.getText() + " Event: " + event.getSource().getClass().getSimpleName() + " : " + event.getEventType()));
+      if (!event.getEventType().equals(MouseEvent.MOUSE_MOVED)) MessageBus.getInstance().send(new TraceMessage(StateMachine.class, tab.getText() + " Event: " + event.getSource().getClass().getSimpleName() + " : " + event.getEventType()));
       if (event instanceof MouseEvent) updateKeyState((MouseEvent) event);
       if (event instanceof ScrollEvent) updateKeyState((ScrollEvent) event);
       
@@ -255,5 +261,9 @@ public class StateMachine implements EventHandler<InputEvent> {
   
   public void unfreeze() {
     this.freezeState = false;
+  }
+  
+  public void skipNextEvent(EventType<? extends Event> type) {
+    this.eventToSkip = type;
   }
 }
