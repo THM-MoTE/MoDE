@@ -49,11 +49,15 @@ public class ElementManager {
   
   
   public void setSelectedElement(Selectable element) {
-    
-    if (this.selectedElement != null) this.selectedElement.leaveSelection();
+  
+    if (this.selectedElement != null)
+      this.selectedElement.leaveSelection();
     this.selectedElement = element;
     if (element != null && element == this.hoveredElement) clearHoveredElement();
-    if (this.selectedElement != null) this.selectedElement.enterSelection();
+    if (this.selectedElement != null) {
+      this.selectedElement.enterSelection();
+      this.selectedElement.toFront();
+    }
   }
   
   public void clearSelectedElement() {

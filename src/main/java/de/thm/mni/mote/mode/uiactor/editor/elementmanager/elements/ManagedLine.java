@@ -47,9 +47,13 @@ public class ManagedLine extends ModifyableLine implements Hoverable, Selectable
     });
   
     children.add(child);
-    
   }
   
+  @Override
+  public void toFront() {
+    super.toFront();
+    this.child.toFront();
+  }
   
   @Override
   public void init() {

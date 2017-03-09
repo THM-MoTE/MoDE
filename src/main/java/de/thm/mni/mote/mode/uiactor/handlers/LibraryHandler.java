@@ -7,6 +7,7 @@ import de.thm.mni.mote.mode.modelica.graphics.MoCoordinateSystem;
 import de.thm.mni.mote.mode.modelica.graphics.MoSimpleExtent;
 import de.thm.mni.mote.mode.modelica.graphics.MoTransformation;
 import de.thm.mni.mote.mode.uiactor.control.MainTabControl;
+import de.thm.mni.mote.mode.uiactor.editor.elementmanager.ElementManager;
 import javafx.geometry.Point2D;
 import javafx.scene.control.TabPane;
 
@@ -52,6 +53,7 @@ public class LibraryHandler {
   
       MoTransformation trans = new MoTransformation(new Point2D(0, 0), (MoSimpleExtent) mcs.getExtent(), mcs.getInitialScale().get(), 0.);
       mv.add(new MoPlacement(true, null, trans));
+      ElementManager.getInstance(tab.getData()).clearSelectedElement();
       tab.getData().getElement().addVariable(mv);
     }
   }

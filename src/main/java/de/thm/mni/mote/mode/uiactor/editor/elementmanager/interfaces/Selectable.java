@@ -8,4 +8,6 @@ public interface Selectable {
   void enterSelection();
   
   void leaveSelection();
+  
+  void toFront();
 }
