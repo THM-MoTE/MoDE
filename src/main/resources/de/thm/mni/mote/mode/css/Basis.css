@@ -243,3 +243,46 @@
     -fx-pref-width: 0px;
     -fx-start-margin: -5px;
 }
+
+.scroll-bar:vertical {
+    -fx-padding: 0px -1px;
+}
+
+.scroll-bar:horizontal {
+    -fx-padding: 0px 0px 0px 0px;
+}
+
+.scroll-bar {
+    -fx-background-color: transparent;
+    -fx-background-insets: inherit;
+}
+
+.scroll-pane .corner {
+    -fx-background-color: transparent;
+    -fx-max-height: 0px;
+    -fx-padding: 0px 10px 0px 0px;
+}
+
+.scroll-bar > .decrement-button, .scroll-bar > .increment-button {
+    -fx-background-color: transparent;
+}
+
+.scroll-bar:horizontal > .decrement-button, .scroll-bar:horizontal > .increment-button {
+    -fx-padding: 5px 0px;
+}
+
+.scroll-bar:vertical > .decrement-button, .scroll-bar:vertical > .increment-button {
+    -fx-padding: 0px 5px;
+}
+
+.scroll-bar .decrement-arrow, .scroll-bar .increment-arrow {
+    -fx-effect: inherit;
+    -fx-padding: 0px;
+    -fx-background-color: blue;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: rgba(149, 149, 149, 0.7);
+    -fx-background-insets: inherit;
+    -fx-background-radius: inherit;
+}
