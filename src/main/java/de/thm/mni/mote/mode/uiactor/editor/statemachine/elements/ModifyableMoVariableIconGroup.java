@@ -88,7 +88,7 @@ public class ModifyableMoVariableIconGroup extends MoVariableIconGroup implement
       sm.unfreeze();
     
       Command c = Command.IGNORE;
-      if (!startOrigin.equals(new Point2D(this.getOrigin().getX(), this.getOrigin().getY())))
+      if (startOrigin != null && !startOrigin.equals(new Point2D(this.getOrigin().getX(), this.getOrigin().getY())))
         c = new ModifyableMoVariable(getVariable()).createMove(startOrigin, startConnectionPointPoses, startConnectionPoints);
       clearVariables();
       return c;

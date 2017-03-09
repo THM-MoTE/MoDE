@@ -89,7 +89,7 @@ public class StateMachine implements EventHandler<InputEvent> {
     }
     if (!freezeState) {
       //if (event.getSource() instanceof MoDiagramGroup && event.getEventType().equals(MouseEvent.MOUSE_MOVED)) return;
-      if (!event.getEventType().equals(MouseEvent.MOUSE_MOVED)) MessageBus.getInstance().send(new TraceMessage(StateMachine.class, tab.getText() + " Event: " + event.getSource().getClass().getSimpleName() + " : " + event.getEventType()));
+      //if (!event.getEventType().equals(MouseEvent.MOUSE_MOVED)) MessageBus.getInstance().send(new TraceMessage(StateMachine.class, tab.getText() + " Event: " + event.getSource().getClass().getSimpleName() + " : " + event.getEventType()));
       if (event instanceof MouseEvent) updateKeyState((MouseEvent) event);
       if (event instanceof ScrollEvent) updateKeyState((ScrollEvent) event);
       
@@ -202,7 +202,7 @@ public class StateMachine implements EventHandler<InputEvent> {
     if (type.equals(MouseEvent.MOUSE_PRESSED)) {
       if (!fixedSelection) {
         if (hasMatchingParent(target, Selectable.class)) {
-          ElementManager.getInstance(tab.getData()).setSelectedElement((Selectable) getMatchingParent(target, Hoverable.class));
+          ElementManager.getInstance(tab.getData()).setSelectedElement((Selectable) getMatchingParent(target, Selectable.class));
         } else {
           ElementManager.getInstance(tab.getData()).clearSelectedElement();
         }

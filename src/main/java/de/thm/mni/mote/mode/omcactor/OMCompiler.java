@@ -120,7 +120,7 @@ public class OMCompiler {
   void reloadProject() throws ParserException {
     Path f = this.project.getValue();
     if (Files.isDirectory(f)) f = f.resolve("package.mo");
-    Result r = client.call("loadFile", ScriptingHelper.asString(f));
+    Result r = client.call("loadFile", ScriptingHelper.convertPath(f));
     if (r.result.contains("false") && r.error.isPresent()) {
       if (r.error.isPresent()) {
         throw new ParserException(r.error.get());
@@ -131,8 +131,8 @@ public class OMCompiler {
   
   private Pair<String, Path> loadProject(Path f) throws ParserException {
     f = f.toAbsolutePath().normalize();
-    
-    Result r = client.call("loadFile", ScriptingHelper.asString(f));
+  
+    Result r = client.call("loadFile", ScriptingHelper.convertPath(f));
     if (r.result.contains("false") && r.error.isPresent()) {
       if (r.error.isPresent()) {
         throw new ParserException(r.error.get());

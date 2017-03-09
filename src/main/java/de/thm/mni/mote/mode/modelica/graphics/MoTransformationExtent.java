@@ -48,8 +48,8 @@ public class MoTransformationExtent extends MoExtent implements Changeable {
     initialHeight = iconExtent.getHeight();
   
     initListener();
-    
-    calcOffset();
+  
+    offsetProperty.set(new Point2D(-(initialWidth * scaleXProperty.get()) / 2., -(initialHeight * scaleYProperty.get()) / 2.));
   }
   
   private void initListener() {

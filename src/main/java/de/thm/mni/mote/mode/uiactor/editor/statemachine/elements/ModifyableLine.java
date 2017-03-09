@@ -106,6 +106,7 @@ public class ModifyableLine extends InvisibleLine implements Addable, Actionable
         else this.move(event);
       } else if (event.getEventType().equals(MouseEvent.MOUSE_RELEASED)) {
         sm.unfreeze();
+        sm.skipNextEvent(MouseEvent.MOUSE_CLICKED);
         Command c = Command.IGNORE;
         if (!firstPoint.equals(this.getData().getPoints().get(firstPointPos)))
           c = new MoveCommand(new ModifyableMoLine(this.getData()), firstPointPos, firstPoint, secondPointPos, secondPoint);
@@ -117,7 +118,6 @@ public class ModifyableLine extends InvisibleLine implements Addable, Actionable
     
     if (firstPoint == null) {
       sm.unfreeze();
-      sm.skipNextEvent(MouseEvent.MOUSE_CLICKED);
       firstPointPos = secondPointPos = null;
       firstPoint = secondPoint = null;
     }

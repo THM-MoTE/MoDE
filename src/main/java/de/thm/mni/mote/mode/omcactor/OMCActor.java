@@ -13,6 +13,7 @@ import de.thm.mni.mote.mode.config.model.Project;
 import de.thm.mni.mote.mode.modelica.MoContainer;
 import de.thm.mni.mote.mode.modelica.MoLater;
 import de.thm.mni.mote.mode.modelica.MoRoot;
+import de.thm.mni.mote.mode.modelica.Saver;
 import de.thm.mni.mote.mode.omcactor.messages.*;
 import de.thm.mni.mote.mode.omcactor.messages.StartDataCollectionOMCMessage.TYPE;
 import de.thm.mni.mote.mode.parser.ParserException;
@@ -32,6 +33,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -202,7 +204,20 @@ public class OMCActor extends AbstractActor {
         send(new OMCAvailableLibsUIMessage(getGroup(), omc.getAvailableLibraries()));
       } else if (msg instanceof CreateNewOMCMessage) {
         createNew((CreateNewOMCMessage) msg);
+      } else if (msg instanceof SaveOMCMessage) {
+        saveAll(Collections.singletonList(((SaveOMCMessage) msg).getContainer()));
+      } else if (msg instanceof SaveAllOMCMessage) {
+        saveAll(((SaveAllOMCMessage) msg).getContainers());
       }
+    }
+  }
+  
+  private void saveAll(List<MoContainer> containers) {
+    containers.forEach(Saver::save);
+    try {
+      omc.reloadProject();
+    } catch (ParserException e) {
+      e.printStackTrace();
     }
   }
   

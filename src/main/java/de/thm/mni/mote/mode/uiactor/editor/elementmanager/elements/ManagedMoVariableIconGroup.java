@@ -11,6 +11,7 @@ import javafx.scene.Node;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -29,10 +30,19 @@ public class ManagedMoVariableIconGroup extends ModifyableMoVariableIconGroup im
   }
   
   @Override
+  public void toFront() {
+    super.toFront();
+    for (ModifyableCircle c : corners) {
+      c.toFront();
+    }
+  }
+  
+  @Override
   public void enterSelection() {
     this.getCoordianteSystem().setStroke(Color.RED);
     this.getCoordianteSystem().setOpacity(1);
-    this.getChildren().addAll(corners);
+    if (!getChildren().containsAll(Arrays.asList(corners)))
+      this.getChildren().addAll(corners);
   }
   
   @Override

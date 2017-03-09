@@ -49,12 +49,13 @@ public class ElementManager {
   
   
   public void setSelectedElement(Selectable element) {
+    Boolean isSelectedSameElement = this.selectedElement == element;
   
-    if (this.selectedElement != null)
+    if (this.selectedElement != null && !isSelectedSameElement)
       this.selectedElement.leaveSelection();
     this.selectedElement = element;
     if (element != null && element == this.hoveredElement) clearHoveredElement();
-    if (this.selectedElement != null) {
+    if (this.selectedElement != null && !isSelectedSameElement) {
       this.selectedElement.enterSelection();
       this.selectedElement.toFront();
     }

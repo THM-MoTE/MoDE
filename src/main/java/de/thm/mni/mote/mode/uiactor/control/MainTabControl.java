@@ -11,6 +11,7 @@ import de.thm.mni.mote.mode.uiactor.editor.elementmanager.elements.ManagedMoDiag
 import de.thm.mni.mote.mode.uiactor.editor.statemachine.StateMachine;
 import de.thm.mni.mote.mode.uiactor.utilities.ScrollPaneHorizontalScroll;
 import de.thm.mni.mote.mode.util.Utilities;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -83,11 +84,13 @@ public class MainTabControl extends Tab implements Initializable {
   }
   
   private void updateText(Change unsavedChanges) {
-    this.setText(data.getSimpleName());
-    if (!unsavedChanges.equals(Change.NONE)) {
-      this.setText(this.getText() + "*");
-    }
-    //TODO: text color
+    Platform.runLater(() -> {
+      this.setText(data.getSimpleName());
+      if (!unsavedChanges.equals(Change.NONE)) {
+        this.setText(this.getText() + "*");
+      }
+      //TODO: text color
+    });
   }
   
   public void lateInitialize(Scene scene) {

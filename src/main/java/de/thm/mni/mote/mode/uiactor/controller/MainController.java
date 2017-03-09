@@ -13,9 +13,7 @@ import de.thm.mni.mote.mode.config.model.Project;
 import de.thm.mni.mote.mode.modelica.MoContainer;
 import de.thm.mni.mote.mode.modelica.MoPackage;
 import de.thm.mni.mote.mode.modelica.MoRoot;
-import de.thm.mni.mote.mode.modelica.Saver;
 import de.thm.mni.mote.mode.omcactor.messages.*;
-import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.control.*;
 import de.thm.mni.mote.mode.uiactor.controller.dialogs.ChangeProjectLibrariesDialogController;
 import de.thm.mni.mote.mode.uiactor.controller.dialogs.ChangeSystemLibrariesDialogController;
@@ -46,6 +44,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static de.thm.mni.mote.mode.util.Translator.tr;
 
@@ -329,15 +328,12 @@ public class MainController extends NotifyController {
   
   @FXML
   private void handleSaveAll() {
+    getActor().send(new SaveAllOMCMessage(getGroup(), tabPane.getTabs().stream().map(tab -> ((MainTabControl) tab).getData()).collect(Collectors.toList())));
     tabPane.getTabs().forEach(tab -> handleSave(((MainTabControl) tab).getData()));
   }
   
   private void handleSave(MoContainer container) {
-    try {
-      Saver.save(container);
-    } catch (ParserException e) {
-      e.printStackTrace(); //TODO: send msg
-    }
+    getActor().send(new SaveOMCMessage(getGroup(), container));
   }
   
   @FXML

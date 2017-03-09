@@ -1,6 +1,5 @@
 package de.thm.mni.mote.mode.modelica;
 
-import de.thm.mni.mote.mode.parser.ParserException;
 import lombok.experimental.UtilityClass;
 
 import java.io.IOException;
@@ -16,7 +15,7 @@ import static de.thm.mni.mote.mode.modelica.interfaces.Changeable.Change;
 
 @UtilityClass
 public class Saver {
-  public void save(MoContainer container) throws ParserException {
+  public void save(MoContainer container) {
     if (container.getElement().getUnsavedChanges().getValue().equals(Change.NONE)) return;
     
     ClassInformation ci = container.getElement().getClassInformation();
@@ -41,7 +40,7 @@ public class Saver {
     Integer start = ci.getLineNumberStart();
     Integer end = ci.getLineNumberEnd();
   
-    String leading = fileContent.get(start).replaceAll("^(\\s*).+", "$1") + "  ";
+    String leading = fileContent.get(start - 1).replaceAll("^(\\s*).+", "$1") + "  ";
     
     for (int i = start; i < end; i++) {
       for (MoVariable mv : moClass.getDeletedVariables()) {
@@ -97,7 +96,7 @@ public class Saver {
     
     Integer pos = -1;
     for (Integer i = ci.getLineNumberStart(); i < end; i++) {
-      if (fileContent.get(i).startsWith("equation")) {
+      if (fileContent.get(i).trim().startsWith("equation")) {
         pos = i + 1;
         break;
       }
@@ -133,7 +132,7 @@ public class Saver {
             fileContent.remove(i);
             end--;
           } while (!line.endsWith(";"));
-          fileContent.add(i, leading + "  " + mc.toString());
+          fileContent.add(i, leading + mc.toString());
           mc.getUnsavedChanges().set(Change.NONE);
           break;
         }
@@ -144,7 +143,7 @@ public class Saver {
     for (MoConnection mc : moClass.getConnections().filtered(moConnection -> moConnection.getUnsavedChanges().get().equals(Change.NEW))) {
       String str = mc.toString();
       if (!str.isEmpty()) {
-        fileContent.add(pos, leading + "  " + mc.toString());
+        fileContent.add(pos, leading + mc.toString());
         mc.getUnsavedChanges().set(Change.NONE);
       }
     }
