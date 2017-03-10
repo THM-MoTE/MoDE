@@ -1,3 +1,3 @@
-MoDE - Modelica Diagramm Editor
+MoDE - Modelica Diagram Editor
 ===============================
-MoDE is a graphical editor for modelica diagramms.
+MoDE is a graphical editor for modelica diagrams.
