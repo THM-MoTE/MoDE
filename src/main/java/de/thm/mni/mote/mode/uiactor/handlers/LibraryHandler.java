@@ -1,13 +1,8 @@
 package de.thm.mni.mote.mode.uiactor.handlers;
 
 import de.thm.mni.mote.mode.modelica.MoContainer;
-import de.thm.mni.mote.mode.modelica.MoVariable;
-import de.thm.mni.mote.mode.modelica.annotations.MoPlacement;
-import de.thm.mni.mote.mode.modelica.graphics.MoCoordinateSystem;
-import de.thm.mni.mote.mode.modelica.graphics.MoSimpleExtent;
-import de.thm.mni.mote.mode.modelica.graphics.MoTransformation;
 import de.thm.mni.mote.mode.uiactor.control.MainTabControl;
-import de.thm.mni.mote.mode.uiactor.editor.elementmanager.ElementManager;
+import de.thm.mni.mote.mode.uiactor.editor.statemachine.elements.ModifyableMoDiagramGroup;
 import javafx.geometry.Point2D;
 import javafx.scene.control.TabPane;
 
@@ -43,18 +38,9 @@ public class LibraryHandler {
     } else if (action.equals("add_to_diagram")) {
       MainTabControl tab = (MainTabControl) tabPane.getSelectionModel().getSelectedItem();
   
-      Integer counter = 0;
-      for (MoVariable mv : tab.getData().getElement().getVariables()) {
-        if (mv.getName().equals(container.getSimpleName().toLowerCase() + "_" + counter)) counter++;
-      }
+      ModifyableMoDiagramGroup mmdg = (ModifyableMoDiagramGroup) tabPane.getScene().lookup("#" + tab.getData().getName().replaceAll("\\.", "_"));
   
-      MoVariable mv = new MoVariable(tab.getData().getElement(), container, container.getSimpleName().toLowerCase() + "_" + counter);
-      MoCoordinateSystem mcs = mv.getType().getElement().getDiagramCoordinateSystem();
-  
-      MoTransformation trans = new MoTransformation(new Point2D(0, 0), (MoSimpleExtent) mcs.getExtent(), mcs.getInitialScale().get(), 0.);
-      mv.add(new MoPlacement(true, null, trans));
-      ElementManager.getInstance(tab.getData()).clearSelectedElement();
-      tab.getData().getElement().addVariable(mv);
+      mmdg.addNewVariable(container, new Point2D(0, 0));
     }
   }
 }

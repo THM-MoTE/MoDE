@@ -3,7 +3,6 @@ package de.thm.mni.mote.mode.uiactor.control;
 import de.thm.mni.mote.mode.modelica.MoContainer;
 import de.thm.mni.mote.mode.modelica.MoRoot;
 import de.thm.mni.mote.mode.modelica.graphics.MoDefaults;
-import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoIconGroup;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -12,10 +11,10 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
-import javafx.scene.input.ContextMenuEvent;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.input.*;
 import org.kordamp.ikonli.javafx.FontIcon;
 
+import static de.thm.mni.mote.mode.uiactor.utilities.Constants.MOCONTAINER;
 import static de.thm.mni.mote.mode.util.Translator.tr;
 
 /**
@@ -93,20 +92,33 @@ public class MoTreeCell extends TreeCell<MoContainer> {
   }
   
   private void updateItem(MoContainer item) {
-    try {
-      this.setText(item.getSimpleName());
-      if (item.getElement().hasConnectors()) this.setStyle("-fx-font-weight: bold");
-      this.setGraphic(new MoIconGroup(item).scaleToSize(20., 20.));
-      this.setContentDisplay(ContentDisplay.LEFT);
-      this.setContextMenu(createLibraryMenu());
-
-      this.onMouseClickedProperty().bind(this.onNonRootMouseClickedProperty);
-      this.onContextMenuRequestedProperty().bind(this.onNonRootContextMenuRequest);
+    this.setText(item.getSimpleName());
+    if (item.getElement().hasConnectors()) this.setStyle("-fx-font-weight: bold");
+    this.setGraphic(new MoIconGroup(item).scaleToSize(20., 20.));
+    this.setContentDisplay(ContentDisplay.LEFT);
+    this.setContextMenu(createLibraryMenu());
   
-      this.layout();
-    } catch (ParserException e) {
-      e.printStackTrace(); //TODO: send msg
-    }
+    this.onMouseClickedProperty().bind(this.onNonRootMouseClickedProperty);
+    this.onContextMenuRequestedProperty().bind(this.onNonRootContextMenuRequest);
+    this.setOnDragDetected(createDragDetectEventHandler());
+    this.layout();
+  }
+  
+  private EventHandler<MouseEvent> createDragDetectEventHandler() {
+    return (event) -> {
+      System.out.println("Drag begin: " + this.getItem().getElement());
+      Dragboard db;
+      if (this.getItem().getElement().hasConnectors())
+        db = this.startDragAndDrop(TransferMode.COPY_OR_MOVE);
+      else
+        db = this.startDragAndDrop(TransferMode.MOVE);
+      
+      ClipboardContent cc = new ClipboardContent();
+      cc.put(MOCONTAINER, this.getItem().getName());
+      cc.putString(this.getItem().getName());
+      db.setContent(cc);
+      event.consume();
+    };
   }
   
   private final ObjectProperty<EventHandler<ActionEvent>> onEditActionProperty() { return onEditAction; }

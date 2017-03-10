@@ -23,4 +23,9 @@ public abstract class MoElement extends MoAnnotatable implements Serializable {
   
   public abstract String getSimpleName();
   
+  @Override
+  public String toString() {
+    return PREFIX + ": " + getName();
+  }
+  
 }

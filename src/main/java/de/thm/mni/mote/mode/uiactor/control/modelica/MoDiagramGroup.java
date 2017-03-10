@@ -26,6 +26,7 @@ public class MoDiagramGroup extends MoGroup {
   public MoDiagramGroup(MoContainer container) throws ParserException {
     super(container);
     init();
+    this.setId(container.getName().replaceAll("\\.", "_"));
   }
   
   @Override

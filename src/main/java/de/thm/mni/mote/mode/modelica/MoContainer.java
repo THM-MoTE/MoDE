@@ -11,7 +11,9 @@ import lombok.Getter;
 import lombok.NonNull;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static de.thm.mni.mote.mode.util.Translator.tr;
 
@@ -21,6 +23,17 @@ import static de.thm.mni.mote.mode.util.Translator.tr;
 @Getter
 public class MoContainer implements Comparable<MoContainer>, HierarchyData<MoContainer> {
   private static final int MAX_LOADING_DEPTH = 2;
+  
+  @Getter static final Set<MoRoot> ROOTS = new HashSet<>();
+  
+  public static MoContainer staticFind(String s) {
+    MoContainer that;
+    for (MoContainer root : ROOTS) {
+      that = root.find(s);
+      if (that != null) return that;
+    }
+    return null;
+  }
   
   private OMCompiler omc = null;
   private MoContainer parent = null;

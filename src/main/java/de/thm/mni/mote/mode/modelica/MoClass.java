@@ -166,7 +166,7 @@ public class MoClass extends MoElement implements Changeable, Comparable<MoClass
   }
   
   
-  public Boolean hasConnectors() throws ParserException {
+  public Boolean hasConnectors() {
     for (MoVariable mv : getVariables())
       if (mv.getType().getElement() instanceof MoConnector) return true;
     return false;

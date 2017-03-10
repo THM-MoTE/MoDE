@@ -57,6 +57,12 @@ public class OMCActor extends AbstractActor {
   private MoRoot mrProjectLibraries = new MoRoot("project_libraries");
   private MoRoot mrProject = new MoRoot("project");
   
+  {
+    MoContainer.getROOTS().add(mrSystemLibraries);
+    MoContainer.getROOTS().add(mrProjectLibraries);
+    MoContainer.getROOTS().add(mrProject);
+  }
+  
   private int loadStatus = 0;
   
   private ExecutorService es = Executors.newCachedThreadPool();

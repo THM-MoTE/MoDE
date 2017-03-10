@@ -3,14 +3,26 @@ package de.thm.mni.mote.mode.uiactor.editor.statemachine.elements;
 import de.thm.mni.mhpp11.jActor.actors.logging.messages.ErrorMessage;
 import de.thm.mni.mhpp11.jActor.actors.messagebus.MessageBus;
 import de.thm.mni.mote.mode.modelica.MoContainer;
+import de.thm.mni.mote.mode.modelica.MoVariable;
+import de.thm.mni.mote.mode.modelica.annotations.MoPlacement;
+import de.thm.mni.mote.mode.modelica.graphics.MoCoordinateSystem;
+import de.thm.mni.mote.mode.modelica.graphics.MoSimpleExtent;
+import de.thm.mni.mote.mode.modelica.graphics.MoTransformation;
 import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoDiagramGroup;
+import de.thm.mni.mote.mode.uiactor.editor.actionmanager.ActionManager;
+import de.thm.mni.mote.mode.uiactor.editor.actionmanager.commands.DeleteCommand;
+import de.thm.mni.mote.mode.uiactor.editor.actionmanager.elements.ModifyableMoClass;
+import de.thm.mni.mote.mode.uiactor.editor.elementmanager.ElementManager;
 import de.thm.mni.mote.mode.uiactor.editor.statemachine.interfaces.Zoomable;
+import de.thm.mni.mote.mode.uiactor.utilities.Constants;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.input.Dragboard;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.input.TransferMode;
 
 /**
  * Created by hobbypunk on 15.02.17.
@@ -19,6 +31,7 @@ public class ModifyableMoDiagramGroup extends MoDiagramGroup implements Zoomable
   
   public ModifyableMoDiagramGroup(MoContainer container) throws ParserException {
     super(container);
+    initDragNDrop();
   }
   
   @Override
@@ -60,4 +73,51 @@ public class ModifyableMoDiagramGroup extends MoDiagramGroup implements Zoomable
       MessageBus.getInstance().send(new ErrorMessage(this.getClass(), e));
     }
   }
+  
+  private void initDragNDrop() {
+    this.getBasis().getChildren().get(0).setOnDragOver(event -> {
+      Dragboard db = event.getDragboard();
+      if (db.hasContent(Constants.MOCONTAINER))
+        event.acceptTransferModes(TransferMode.COPY);
+    });
+    
+    this.getBasis().getChildren().get(0).setOnDragDropped(event -> {
+      Dragboard db = event.getDragboard();
+      
+      
+      if (db.hasContent(Constants.MOCONTAINER)) {
+        MoContainer container = MoContainer.staticFind((String) db.getContent(Constants.MOCONTAINER));
+        if (container != null) {
+          
+          System.out.println("Dropped: " + container.getName());
+          
+          addNewVariable(container, this.convertTo(new Point2D(event.getSceneX(), event.getSceneY())));
+          
+          event.setDropCompleted(true);
+          return;
+        }
+      }
+      
+      event.setDropCompleted(false);
+    });
+  }
+  
+  
+  public void addNewVariable(MoContainer variable, Point2D pos) {
+    Integer counter = 0;
+    for (MoVariable mv : this.getThat().getElement().getVariables()) {
+      if (mv.getName().equals(variable.getSimpleName().toLowerCase() + "_" + counter)) counter++;
+    }
+    
+    MoVariable mv = new MoVariable(this.getThat().getElement(), variable, variable.getSimpleName().toLowerCase() + "_" + counter);
+    MoCoordinateSystem mcs = mv.getType().getElement().getDiagramCoordinateSystem();
+    
+    MoTransformation trans = new MoTransformation(pos, (MoSimpleExtent) mcs.getExtent(), mcs.getInitialScale().get(), 0.);
+    
+    mv.add(new MoPlacement(true, null, trans));
+    ElementManager.getInstance(this.getThat()).clearSelectedElement();
+    this.getThat().getElement().addVariable(mv);
+    ActionManager.getInstance(this.getThat()).addUndo(new DeleteCommand(new ModifyableMoClass(this.getThat().getElement()), mv));
+  }
+  
 }
