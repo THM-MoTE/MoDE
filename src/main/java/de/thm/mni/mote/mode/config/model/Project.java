@@ -68,7 +68,7 @@ public class Project {
   public Path getMoFile() {
     if (this.moFile.isAbsolute())
       return this.moFile;
-    return projectPath.getParent().resolve(this.moFile).normalize();
+    return projectPath.resolveSibling(this.moFile).normalize();
   }
   
   public void updateLastOpened() {
@@ -95,7 +95,7 @@ public class Project {
   }
   
   private void saveProjectLibraries() throws IOException {
-    Path importsFile = moFile.resolveSibling(importFileName);
+    Path importsFile = this.getMoFile().resolveSibling(importFileName);
     if (projectLibraries.isEmpty()) {
       if (Files.exists(importsFile)) Files.delete(importsFile);
       return;
@@ -105,7 +105,7 @@ public class Project {
   }
   
   private void loadProjectLibraries() throws IOException {
-    Path importsFile = moFile.resolveSibling(importFileName);
+    Path importsFile = this.getMoFile().resolveSibling(importFileName);
     if (!Files.exists(importsFile)) return;
     projectLibraries.clear();
     projectLibraries.addAll(Files.lines(importsFile).map(Paths::get).collect(Collectors.toList()));
