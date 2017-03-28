@@ -106,7 +106,6 @@ public class MoTreeCell extends TreeCell<MoContainer> {
   
   private EventHandler<MouseEvent> createDragDetectEventHandler() {
     return (event) -> {
-      System.out.println("Drag begin: " + this.getItem().getElement());
       Dragboard db;
       if (this.getItem().getElement().hasConnectors())
         db = this.startDragAndDrop(TransferMode.COPY_OR_MOVE);
@@ -183,6 +182,25 @@ public class MoTreeCell extends TreeCell<MoContainer> {
     tmp.onActionProperty().bind(onNonRootContextMenuItemAction);
 
     return tmp;
+  }
+  
+  public boolean isLibrary() {
+    return isSystemLib() || isProjectLib();
+  }
+  
+  public boolean isSystemLib() {
+    return itemHasParentType(getItem(), "system_libraries");
+  }
+  
+  public boolean isProjectLib() {
+    return itemHasParentType(getItem(), "project_libraries");
+  }
+  
+  private boolean itemHasParentType(MoContainer item, String type) {
+    if (item instanceof MoRoot) {
+      return item.getName().equals(type);
+    } else
+      return itemHasParentType(item.getParent(), type);
   }
   
   

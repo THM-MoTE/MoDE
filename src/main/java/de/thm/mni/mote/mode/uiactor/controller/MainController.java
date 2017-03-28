@@ -189,7 +189,7 @@ public class MainController extends NotifyController {
       HasAction tmp = (HasAction) menuItem;
       MoContainer container = cell.getItem();
       if (tmp.getAction().equals("add_new")) {
-        menuItem.setDisable(!(container.getElement() instanceof MoPackage));
+        menuItem.setDisable(!(container.getElement() instanceof MoPackage) || cell.isLibrary());
       } else if (tmp.getAction().equals("add_to_diagram")) {
         MainTabControl mtc = (MainTabControl) tabPane.getSelectionModel().getSelectedItem();
         menuItem.setDisable(!container.getElement().hasIcon() || mtc == null);
