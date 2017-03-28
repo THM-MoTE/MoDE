@@ -1,7 +1,5 @@
 package de.thm.mni.mote.mode.util;
 
-import lombok.NonNull;
-
 import java.text.MessageFormat;
 import java.util.*;
 
@@ -19,47 +17,36 @@ public final class Translator {
   }
   
   public static String tr(String bundle, String key) {
-    return tr(getBundle(bundle), key);
+    return tr(getBundle(bundle), "", key);
   }
   
   public static String tr(String bundle, String group, String key) {
     if (bundle == null) bundle = "MoDE";
-    return tr(getBundle(bundle), group.toLowerCase() + "." + key);
+    String[] keyWithParams = key.split("\\|");
+    key = keyWithParams[0];
+    Object[] params = new String[0];
+    if (keyWithParams.length > 1)
+      params = Arrays.copyOfRange(keyWithParams, 1, keyWithParams.length);
+    return tr(getBundle(bundle), group, key, params);
+    
   }
   
-  public static String tr(@NonNull ResourceBundle bundle, String key) {
-    try {
-      return bundle.getString(key);
-    } catch (MissingResourceException e) {
-      return '!' + key + '!';
-    }
-  }
-  
-  
-  public static String tr(String bundle, String key, Object... params) {
-    return tr(getBundle(bundle), key, params);
+  public static String tr(String bundle, String group, String key, Object... params) {
+    return tr(getBundle(bundle), group, key, params);
   }
   
   
   public static String tr(ResourceBundle bundle, String key, Object... params) {
-    try {
-      return MessageFormat.format(bundle.getString(key), params);
-    } catch (MissingResourceException e) {
-      return '!' + key + '!';
-    }
+    return tr(bundle, "", key, params);
   }
   
-  public static String tr(String bundle, String key, Integer splitAt, Object... params) {
-    return tr(getBundle(bundle), key, splitAt, params);
-  }
-  
-  public static String tr(ResourceBundle bundle, String key, Integer splitAt, Object... params) {
+  public static String tr(ResourceBundle bundle, String group, String key, Object... params) {
+    if (!group.isEmpty()) key = group.toLowerCase() + "." + key;
     try {
-      Object[] p1 = Arrays.copyOfRange(params, 0, splitAt);
-      Object[] p2 = Arrays.copyOfRange(params, splitAt, params.length);
-      String k1 = key.split("|")[0];
-      String k2 = key.split("|")[1];
-      return MessageFormat.format(bundle.getString(k1), p1) + "|" + MessageFormat.format(bundle.getString(k2), p2);
+      if (params.length == 0)
+        return bundle.getString(key);
+      else
+        return MessageFormat.format(bundle.getString(key), params);
     } catch (MissingResourceException e) {
       return '!' + key + '!';
     }

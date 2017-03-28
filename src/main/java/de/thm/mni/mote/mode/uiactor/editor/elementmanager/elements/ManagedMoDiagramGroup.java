@@ -61,7 +61,7 @@ public class ManagedMoDiagramGroup extends ModifyableMoDiagramGroup {
   
   private List<String> getConnectableToMessages(MoVariable from, MoVariable to, boolean compare) {
     if (compare) {
-      if (!from.getName().equals(to.getName())) return Collections.singletonList("editor.connectors.no_matching_name");
+      if (!from.getName().equals(to.getName())) return Collections.singletonList("editor.connectors.no_matching_name|" + from.getName());
       if (from.getKind().equals(MoVariable.Specification.FLOW) && !from.getKind().equals(to.getKind())) return Collections.singletonList("editor.connectors.no_matching_modifier");
       if (from.getKind().equals(MoVariable.Specification.INPUT) && !to.getKind().equals(MoVariable.Specification.OUTPUT)) return Collections.singletonList("editor.connectors.no_matching_modifier");
       if (from.getKind().equals(MoVariable.Specification.OUTPUT) && !to.getKind().equals(MoVariable.Specification.INPUT)) return Collections.singletonList("editor.connectors.no_matching_modifier");

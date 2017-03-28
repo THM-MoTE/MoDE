@@ -56,7 +56,7 @@ public class ManagedMoConnectorIconGroup extends ModifyableMoConnectorIconGroup 
       while (c.next()) {
         c.getAddedSubList().forEach(str -> {
           if (!entries.containsKey(str)) {
-            Label tmp = new Label(Translator.tr("Main", str));
+            Label tmp = new Label(Translator.tr("MoDE", "main", str));
             entries.put(str, tmp);
             ((Pane) errorPopOver.getContentNode()).getChildren().add(tmp);
           }

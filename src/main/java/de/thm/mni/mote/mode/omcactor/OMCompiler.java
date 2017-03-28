@@ -103,7 +103,7 @@ public class OMCompiler {
   
   void clearProject() throws ParserException {
     Result r = client.call("clear");
-    if (!Boolean.parseBoolean(r.result)) throw new ParserException(tr("Error", "error.omcactor.cant_unload_project"));
+    if (!Boolean.parseBoolean(r.result)) throw new ParserException(tr("Error", "error", "omcactor.cant_unload_project"));
     this.getSystemLibraries().clear();
     this.getProjectLibraries().clear();
     project = null;
@@ -111,9 +111,9 @@ public class OMCompiler {
   
   
   void setProject(Path f) throws ParserException {
-    if (project != null) throw new ParserException(tr("Error", "error.omcactor.project_already_set"));
+    if (project != null) throw new ParserException(tr("Error", "error", "omcactor.project_already_set"));
     Pair<String, Path> lib = loadProject(f);
-    if (lib == null) throw new ParserException(tr("Error", "error.omcactor.cant_load_project", f.getFileName()));
+    if (lib == null) throw new ParserException(tr("Error", "error", "omcactor.cant_load_project", f.getFileName()));
     this.project = lib;
   }
   
@@ -125,7 +125,7 @@ public class OMCompiler {
       if (r.error.isPresent()) {
         throw new ParserException(r.error.get());
       }
-      throw new ParserException(tr("error", "error.omcactor.unknown_error"));
+      throw new ParserException(tr("Error", "error", "omcactor.unknown_error"));
     }
   }
   
@@ -137,7 +137,7 @@ public class OMCompiler {
       if (r.error.isPresent()) {
         throw new ParserException(r.error.get());
       }
-      throw new ParserException(tr("error", "error.omcactor.unknown_error"));
+      throw new ParserException(tr("Error", "error", "omcactor.unknown_error"));
     }
 
     r = client.call("getLoadedLibraries");

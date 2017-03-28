@@ -259,7 +259,7 @@ public class MoClass extends MoElement implements Changeable, Comparable<MoClass
         break;
     }
   
-    if (tmp == null) throw new ParserException(tr("Error", "error.modelica.cant_parse", ci.getType()));
+    if (tmp == null) throw new ParserException(tr("Error", "error", "modelica.cant_parse", ci.getType()));
   
     tmp.parseExtra(omc);
     return tmp;
