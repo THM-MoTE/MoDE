@@ -143,8 +143,13 @@ public class OMCompiler {
     r = client.call("getLoadedLibraries");
     
     List<Pair<String, Path>> list = toLibraryArray(r.result);
-    
-    f = f.getParent();
+  
+    try {
+      f = f.getParent().toRealPath();
+    } catch (IOException e) {
+      throw new ParserException(tr("Error", "error", "omcactor.unknown_error"));
+    }
+  
     for (Pair<String, Path> entry : list) {
       if (f.equals(entry.getValue()))
         return new ImmutablePair<>(entry.getKey(), f);
