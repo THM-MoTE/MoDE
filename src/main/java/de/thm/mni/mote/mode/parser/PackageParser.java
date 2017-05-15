@@ -1,7 +1,7 @@
 package de.thm.mni.mote.mode.parser;
 
-import de.thm.mni.mhpp11.jActor.actors.logging.messages.WarnMessage;
-import de.thm.mni.mhpp11.jActor.actors.messagebus.MessageBus;
+import de.thm.mni.mhpp11.smbj.messages.logging.WarnMessage;
+import de.thm.mni.mhpp11.smbj.actors.messagebus.MessageBus;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;

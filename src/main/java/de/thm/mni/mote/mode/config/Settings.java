@@ -1,7 +1,7 @@
 package de.thm.mni.mote.mode.config;
 
-import de.thm.mni.mhpp11.jActor.actors.logging.messages.ErrorMessage;
-import de.thm.mni.mhpp11.jActor.actors.messagebus.MessageBus;
+import de.thm.mni.mhpp11.smbj.messages.logging.ErrorMessage;
+import de.thm.mni.mhpp11.smbj.actors.messagebus.MessageBus;
 import de.thm.mni.mote.mode.config.model.Configuration;
 import de.thm.mni.mote.mode.config.xml.MyMatcher;
 import de.thm.mni.mote.mode.util.Constants;

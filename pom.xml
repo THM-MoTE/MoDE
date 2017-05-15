@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>de.thm.mni.mote.mode</groupId>
   <artifactId>MoDE</artifactId>
-  <version>0.6.10-SNAPSHOT</version>
+  <version>0.6.11-SNAPSHOT</version>
   
   <packaging>jar</packaging>
   
@@ -101,11 +101,37 @@
       <version>0.3.2-dev</version>
     </dependency>
   
+    
     <dependency>
-      <groupId>de.thm.mni.mhpp11</groupId>
-      <artifactId>jActor</artifactId>
-      <version>0.5</version>
+      <groupId>de.thm.mni.mhpp11.smbj</groupId>
+      <artifactId>Base</artifactId>
+      <version>0.6.0-SNAPSHOT</version>
     </dependency>
+  
+    <dependency>
+      <groupId>de.thm.mni.mhpp11.smbj</groupId>
+      <artifactId>Logging</artifactId>
+      <version>0.6.0-SNAPSHOT</version>
+    </dependency>
+  
+    <dependency>
+      <groupId>de.thm.mni.mhpp11.smbj.ui</groupId>
+      <artifactId>Base</artifactId>
+      <version>0.6.0-SNAPSHOT</version>
+    </dependency>
+  
+    <dependency>
+      <groupId>de.thm.mni.mhpp11.smbj.ui</groupId>
+      <artifactId>Creator</artifactId>
+      <version>0.6.0-SNAPSHOT</version>
+    </dependency>
+  
+    <dependency>
+      <groupId>de.thm.mni.mhpp11.smbj.ui</groupId>
+      <artifactId>SplashScreen</artifactId>
+      <version>0.6.0-SNAPSHOT</version>
+    </dependency>
+  
   
     <dependency>
       <groupId>ch.qos.logback</groupId>

@@ -1,11 +1,11 @@
 package de.thm.mni.mote.mode.uiactor.controller;
 
-import de.thm.mni.mhpp11.jActor.actors.logging.messages.ErrorMessage;
-import de.thm.mni.mhpp11.jActor.actors.messagebus.messages.StartMessage;
-import de.thm.mni.mhpp11.jActor.actors.ui.interfaces.ActorController;
-import de.thm.mni.mhpp11.jActor.actors.ui.messages.StartUIMessage;
-import de.thm.mni.mhpp11.jActor.actors.ui.splash.messages.SplashShowMessage;
-import de.thm.mni.mhpp11.jActor.messages.interfaces.Message;
+import de.thm.mni.mhpp11.smbj.messages.logging.ErrorMessage;
+import de.thm.mni.mhpp11.smbj.messages.messagebus.StartMessage;
+import de.thm.mni.mhpp11.smbj.controller.ui.ActorController;
+import de.thm.mni.mhpp11.smbj.messages.ui.creator.StartUIMessage;
+import de.thm.mni.mhpp11.smbj.messages.ui.SplashShowMessage;
+import de.thm.mni.mhpp11.smbj.messages.Message;
 import de.thm.mni.mote.mode.config.Settings;
 import de.thm.mni.mote.mode.config.model.Project;
 import de.thm.mni.mote.mode.omcactor.OMCActor;

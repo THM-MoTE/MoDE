@@ -1,12 +1,12 @@
 package de.thm.mni.mote.mode.omcactor;
 
-import de.thm.mni.mhpp11.jActor.actors.interfaces.AbstractActor;
-import de.thm.mni.mhpp11.jActor.actors.logging.messages.ErrorMessage;
-import de.thm.mni.mhpp11.jActor.actors.messagebus.messages.RegisterMessage;
-import de.thm.mni.mhpp11.jActor.actors.messagebus.messages.StartMessage;
-import de.thm.mni.mhpp11.jActor.actors.messagebus.messages.UnregisteredMessage;
-import de.thm.mni.mhpp11.jActor.messages.ExitMessage;
-import de.thm.mni.mhpp11.jActor.messages.interfaces.Message;
+import de.thm.mni.mhpp11.smbj.actors.AbstractActor;
+import de.thm.mni.mhpp11.smbj.messages.logging.ErrorMessage;
+import de.thm.mni.mhpp11.smbj.messages.messagebus.RegisterMessage;
+import de.thm.mni.mhpp11.smbj.messages.messagebus.StartMessage;
+import de.thm.mni.mhpp11.smbj.messages.messagebus.UnregisteredMessage;
+import de.thm.mni.mhpp11.smbj.messages.ExitMessage;
+import de.thm.mni.mhpp11.smbj.messages.Message;
 import de.thm.mni.mote.mode.config.Settings;
 import de.thm.mni.mote.mode.config.model.Modelica;
 import de.thm.mni.mote.mode.config.model.Project;

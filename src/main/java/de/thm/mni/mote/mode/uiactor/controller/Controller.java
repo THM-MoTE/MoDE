@@ -1,7 +1,7 @@
 package de.thm.mni.mote.mode.uiactor.controller;
 
-import de.thm.mni.mhpp11.jActor.actors.logging.messages.ErrorMessage;
-import de.thm.mni.mhpp11.jActor.actors.ui.interfaces.ActorController;
+import de.thm.mni.mhpp11.smbj.controller.ui.ActorController;
+import de.thm.mni.mhpp11.smbj.messages.logging.ErrorMessage;
 import de.thm.mni.mote.mode.config.Settings;
 import de.thm.mni.mote.mode.util.Utilities;
 import javafx.fxml.Initializable;

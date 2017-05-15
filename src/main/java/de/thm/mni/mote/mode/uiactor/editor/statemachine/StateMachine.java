@@ -1,7 +1,7 @@
 package de.thm.mni.mote.mode.uiactor.editor.statemachine;
 
-import de.thm.mni.mhpp11.jActor.actors.logging.messages.TraceMessage;
-import de.thm.mni.mhpp11.jActor.actors.messagebus.MessageBus;
+import de.thm.mni.mhpp11.smbj.messages.logging.TraceMessage;
+import de.thm.mni.mhpp11.smbj.actors.messagebus.MessageBus;
 import de.thm.mni.mote.mode.modelica.MoContainer;
 import de.thm.mni.mote.mode.uiactor.control.MainTabControl;
 import de.thm.mni.mote.mode.uiactor.control.modelica.MoGroup;

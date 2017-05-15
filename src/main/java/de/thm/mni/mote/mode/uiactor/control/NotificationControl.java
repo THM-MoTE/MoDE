@@ -1,9 +1,9 @@
 package de.thm.mni.mote.mode.uiactor.control;
 
-import de.thm.mni.mhpp11.jActor.actors.logging.messages.ErrorMessage;
-import de.thm.mni.mhpp11.jActor.actors.logging.messages.InfoMessage;
-import de.thm.mni.mhpp11.jActor.actors.logging.messages.LogMessage;
-import de.thm.mni.mhpp11.jActor.actors.logging.messages.WarnMessage;
+import de.thm.mni.mhpp11.smbj.messages.logging.ErrorMessage;
+import de.thm.mni.mhpp11.smbj.messages.logging.InfoMessage;
+import de.thm.mni.mhpp11.smbj.messages.logging.LogMessage;
+import de.thm.mni.mhpp11.smbj.messages.logging.WarnMessage;
 import de.thm.mni.mote.mode.config.Settings;
 import de.thm.mni.mote.mode.util.Utilities;
 import javafx.fxml.FXML;

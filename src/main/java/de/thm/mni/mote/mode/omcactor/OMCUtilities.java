@@ -1,6 +1,6 @@
 package de.thm.mni.mote.mode.omcactor;
 
-import de.thm.mni.mhpp11.jActor.actors.messagebus.MessageBus;
+import de.thm.mni.mhpp11.smbj.actors.messagebus.MessageBus;
 import de.thm.mni.mote.mode.modelica.MoContainer;
 import de.thm.mni.mote.mode.modelica.MoLater;
 import de.thm.mni.mote.mode.omcactor.messages.OMCLoadErrorMessage;

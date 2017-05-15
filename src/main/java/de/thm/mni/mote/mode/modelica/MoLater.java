@@ -1,7 +1,7 @@
 package de.thm.mni.mote.mode.modelica;
 
-import de.thm.mni.mhpp11.jActor.actors.logging.messages.ErrorMessage;
-import de.thm.mni.mhpp11.jActor.actors.messagebus.MessageBus;
+import de.thm.mni.mhpp11.smbj.messages.logging.ErrorMessage;
+import de.thm.mni.mhpp11.smbj.actors.messagebus.MessageBus;
 import de.thm.mni.mote.mode.omcactor.OMCompiler;
 import de.thm.mni.mote.mode.parser.ParserException;
 import lombok.NonNull;

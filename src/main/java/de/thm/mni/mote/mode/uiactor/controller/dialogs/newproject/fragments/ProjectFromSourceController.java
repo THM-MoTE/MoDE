@@ -1,7 +1,7 @@
 package de.thm.mni.mote.mode.uiactor.controller.dialogs.newproject.fragments;
 
-import de.thm.mni.mhpp11.jActor.actors.logging.messages.WarnMessage;
-import de.thm.mni.mhpp11.jActor.actors.messagebus.MessageBus;
+import de.thm.mni.mhpp11.smbj.messages.logging.WarnMessage;
+import de.thm.mni.mhpp11.smbj.actors.messagebus.MessageBus;
 import de.thm.mni.mote.mode.config.Settings;
 import de.thm.mni.mote.mode.config.model.Project;
 import de.thm.mni.mote.mode.parser.PackageParser;

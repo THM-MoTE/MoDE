@@ -34,7 +34,7 @@ import java.util.Map;
 public class TreeViewWithItemsWrapper<T extends HierarchyData<T>> {
   
   /**
-   * Keep hard references for each listener, so that they don'actors get garbage collected too soon.
+   * Keep hard references for each listener, so that they don'messagebus get garbage collected too soon.
    */
   private final Map<TreeItem<T>, ListChangeListener<T>> hardReferences = new HashMap<>();
   
@@ -81,7 +81,7 @@ public class TreeViewWithItemsWrapper<T extends HierarchyData<T>> {
   
     setItems(FXCollections.observableArrayList());
     
-    // Do not use ChangeListener, because it won'actors trigger if old list equals new list (but in fact different references).
+    // Do not use ChangeListener, because it won'messagebus trigger if old list equals new list (but in fact different references).
     items.addListener(observable -> {
       clear(getRoot());
       updateItems();

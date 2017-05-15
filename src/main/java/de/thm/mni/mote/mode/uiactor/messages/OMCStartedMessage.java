@@ -1,6 +1,6 @@
 package de.thm.mni.mote.mode.uiactor.messages;
 
-import de.thm.mni.mhpp11.jActor.messages.interfaces.Message;
+import de.thm.mni.mhpp11.smbj.messages.Message;
 import lombok.NonNull;
 
 import java.util.UUID;

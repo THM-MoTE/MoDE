@@ -1,8 +1,8 @@
 package de.thm.mni.mote.mode.uiactor.controller;
 
-import de.thm.mni.mhpp11.jActor.actors.logging.messages.LogMessage;
-import de.thm.mni.mhpp11.jActor.actors.ui.interfaces.AbstractUIActor;
-import de.thm.mni.mhpp11.jActor.messages.interfaces.Message;
+import de.thm.mni.mhpp11.smbj.actors.ui.AbstractUIActor;
+import de.thm.mni.mhpp11.smbj.messages.Message;
+import de.thm.mni.mhpp11.smbj.messages.logging.LogMessage;
 import de.thm.mni.mote.mode.uiactor.control.NotificationControl;
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;

@@ -1,6 +1,6 @@
 package de.thm.mni.mote.mode.omcactor.messages;
 
-import de.thm.mni.mhpp11.jActor.actors.logging.messages.ErrorMessage;
+import de.thm.mni.mhpp11.smbj.messages.logging.ErrorMessage;
 import lombok.NonNull;
 
 import java.util.UUID;

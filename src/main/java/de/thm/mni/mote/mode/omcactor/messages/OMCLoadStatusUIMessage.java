@@ -1,6 +1,6 @@
 package de.thm.mni.mote.mode.omcactor.messages;
 
-import de.thm.mni.mhpp11.jActor.actors.ui.messages.UIMessage;
+import de.thm.mni.mhpp11.smbj.messages.ui.UIMessage;
 import lombok.Getter;
 import lombok.NonNull;
 
