@@ -3,6 +3,7 @@ package de.thm.mni.mote.mode.uiactor.editor.actionmanager.elements;
 import de.thm.mni.mote.mode.modelica.MoConnection;
 import de.thm.mni.mote.mode.modelica.MoVariable;
 import de.thm.mni.mote.mode.modelica.graphics.MoTransformation;
+import de.thm.mni.mote.mode.modelica.graphics.MoTransformationExtent;
 import de.thm.mni.mote.mode.uiactor.editor.actionmanager.commands.Command;
 import de.thm.mni.mote.mode.uiactor.editor.actionmanager.commands.MoveCommand;
 import de.thm.mni.mote.mode.uiactor.editor.actionmanager.commands.ResizeCommand;
@@ -32,8 +33,8 @@ public class ModifyableMoVariable implements Moveable, Rotateable, Resizeable {
     return new RotateCommand(this, rotation);
   }
   
-  public Command createResize(Point2D startOffset, Double startScaleX, Double startScaleY) {
-    return new ResizeCommand(this, startOffset, startScaleX, startScaleY);
+  public Command createResize(Point2D p1, Point2D p2) {
+    return new ResizeCommand(this, p1, p2);
   }
   
   public Command move(Object... params) {
@@ -69,21 +70,19 @@ public class ModifyableMoVariable implements Moveable, Rotateable, Resizeable {
     return new RotateCommand(this, oldRotation);
   }
   
-  @Override
+  @Override//TODO: update connections!
   public Command resize(Object... params) {
-    Point2D startOffset = (Point2D) params[0];
-    Double startScaleX = (Double) params[1];
-    Double startScaleY = (Double) params[2];
+    Point2D p1 = (Point2D) params[0];
+    Point2D p2 = (Point2D) params[1];
     MoTransformation mt = element.getPlacement().getIconTransformation();
     if (mt == null) mt = element.getPlacement().getDiagramTransformation();
     
-    Point2D oldOffset = mt.getExtent().getOffsetProperty().get();
-    Double oldScaleX = mt.getExtent().getScaleX();
-    Double oldScaleY = mt.getExtent().getScaleY();
-    
-    mt.getExtent().getOffsetProperty().set(startOffset);
-    mt.getExtent().getScaleXProperty().set(startScaleX);
-    mt.getExtent().getScaleYProperty().set(startScaleY);
-    return new ResizeCommand(this, oldOffset, oldScaleX, oldScaleY);
+    MoTransformationExtent extent = mt.getExtent();
+    Point2D oldP1 = extent.getP1();
+    Point2D oldP2 = extent.getP2();
+  
+    extent.getP1Property().set(p1);
+    extent.getP2Property().set(p2);
+    return new ResizeCommand(this, oldP1, oldP2);
   }
 }

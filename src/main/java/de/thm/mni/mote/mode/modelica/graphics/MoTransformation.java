@@ -42,7 +42,7 @@ public class MoTransformation implements HasExtent, Changeable {
   
   public MoTransformation(Point2D origin, MoSimpleExtent iconExtent, Double initialScale, Double rotation) {
   
-    extent = new MoTransformationExtent(iconExtent, initialScale);
+    extent = new MoTransformationExtent(iconExtent.getP1().multiply(initialScale), iconExtent.getP2().multiply(initialScale));
     if (origin != null) this.origin.set(origin);
     if (rotation != null) this.rotation.set(rotation);
   

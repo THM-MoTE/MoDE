@@ -19,12 +19,12 @@ public class ModifyableCircle extends Circle implements Rotateable, Resizeable {
   private static final Double RADIUS = 10.;
   
   private final ModifyableMoVariableIconGroup parent;
-  private Integer combination;
+  private Integer buttonId;
   
-  public ModifyableCircle(ModifyableMoVariableIconGroup parent, Double centerX, Double centerY, Integer combination) {
+  public ModifyableCircle(ModifyableMoVariableIconGroup parent, Double centerX, Double centerY, Integer buttonId) {
     super(centerX, centerY, RADIUS);
     this.parent = parent;
-    this.combination = combination;
+    this.buttonId = buttonId;
   }
   
   @Override//TODO: update connections!
@@ -34,6 +34,6 @@ public class ModifyableCircle extends Circle implements Rotateable, Resizeable {
   
   @Override
   public Command resize(StateMachine sm, InputEvent inputEvent) {
-    return parent.resize(sm, inputEvent, combination);
+    return parent.resize(sm, inputEvent, buttonId);
   }
 }

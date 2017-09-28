@@ -16,7 +16,7 @@ import javafx.scene.input.InputEvent;
 public class ResizeState extends State {
   @Override
   public void enter(Scene scene) {
-    Platform.runLater(() -> scene.setCursor(Cursor.H_RESIZE));
+    Platform.runLater(() -> scene.setCursor(Cursor.SE_RESIZE));
   }
   
   @Override

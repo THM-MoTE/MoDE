@@ -18,15 +18,15 @@ import java.util.List;
  * Created by hobbypunk on 13.02.17.
  */
 public class ManagedMoVariableIconGroup extends ModifyableMoVariableIconGroup implements Hoverable, Selectable {
-  private final ModifyableCircle[] corners = new ModifyableCircle[4];
+  private final ModifyableCircle[] corners = new ModifyableCircle[1];
   
   public ManagedMoVariableIconGroup(MoDiagramGroup diagramParent, MoVariable variable) {
     super(diagramParent, variable.getType(), variable);
     MoCoordinateSystem mcs = this.getMoClass().getIconCoordinateSystem();
-    corners[0] = new ModifyableCircle(this, mcs.getExtent().getP1().getX(), mcs.getExtent().getP1().getY(), ModifyableCircle.MODIFY_X_OFFSET | ModifyableCircle.MODIFY_Y_OFFSET);
-    corners[1] = new ModifyableCircle(this, mcs.getExtent().getP2().getX(), mcs.getExtent().getP1().getY(), ModifyableCircle.MODIFY_Y_OFFSET);
-    corners[2] = new ModifyableCircle(this, mcs.getExtent().getP1().getX(), mcs.getExtent().getP2().getY(), ModifyableCircle.MODIFY_X_OFFSET);
-    corners[3] = new ModifyableCircle(this, mcs.getExtent().getP2().getX(), mcs.getExtent().getP2().getY(), ModifyableCircle.MODIFY_NO_OFFSET);
+//    corners[0] = new ModifyableCircle(this, mcs.getExtent().getP1().getX(), mcs.getExtent().getP1().getY(), ModifyableCircle.MODIFY_X_OFFSET | ModifyableCircle.MODIFY_Y_OFFSET);
+    corners[0] = new ModifyableCircle(this, mcs.getExtent().getP2().getX(), mcs.getExtent().getP1().getY(), ModifyableCircle.MODIFY_Y_OFFSET);
+//    corners[0] = new ModifyableCircle(this, mcs.getExtent().getP1().getX(), mcs.getExtent().getP2().getY(), ModifyableCircle.MODIFY_X_OFFSET);
+//    corners[0] = new ModifyableCircle(this, mcs.getExtent().getP2().getX(), mcs.getExtent().getP2().getY(), ModifyableCircle.MODIFY_NO_OFFSET);
   }
   
   @Override

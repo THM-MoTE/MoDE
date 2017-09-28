@@ -46,11 +46,9 @@ public class ModifyableMoVariableIconGroup extends MoVariableIconGroup implement
   private Double startRotation = null;
   
   //RESIZE
-  private Double startWidth = null;
-  private Double startHeight = null;
-  private Point2D startOffset = null;
-  private Double startScaleX = null;
-  private Double startScaleY = null;
+  private Point2D startP1 = null;
+  private Point2D startP2 = null;
+  
   
   protected ModifyableMoVariableIconGroup(MoDiagramGroup diagramParent, MoContainer parent, MoVariable variable) {
     super(diagramParent, parent, variable);
@@ -181,24 +179,21 @@ public class ModifyableMoVariableIconGroup extends MoVariableIconGroup implement
     return null;
   }
   
-  Command resize(StateMachine sm, InputEvent inputEvent, Integer combination) {
+  Command resize(StateMachine sm, InputEvent inputEvent, Integer buttonId) {
     if (!(inputEvent instanceof MouseEvent) || this.transformation == null) return null;
     MouseEvent event = (MouseEvent) inputEvent;
     if (event.getEventType().equals(MouseEvent.MOUSE_PRESSED)) {
       sm.freeze();
-      startWidth = transformation.getExtent().getWidth();
-      startHeight = transformation.getExtent().getHeight();
-      startOffset = this.transformation.getExtent().getOffsetProperty().get();
-      startScaleX = transformation.getExtent().getScaleXProperty().get();
-      startScaleY = transformation.getExtent().getScaleYProperty().get();
+      startP1 = transformation.getExtent().getP1();
+      startP2 = transformation.getExtent().getP2();
       startSceneMousePos = new Point2D(event.getSceneX(), event.getSceneY());
-      startMousePos = this.convertTo(startSceneMousePos);
+      startMousePos = this.getMoDiagram().convertTo(startSceneMousePos);
       return Command.IGNORE;
-    } else if (event.getEventType().equals(MouseEvent.MOUSE_DRAGGED) && startMousePos != null) {
-      this.resizeDrag(event, combination);
+    } else if (event.getEventType().equals(MouseEvent.MOUSE_DRAGGED)) {
+      this.resizeDrag(event, buttonId);
       return Command.IGNORE;
     } else if (event.getEventType().equals(MouseEvent.MOUSE_RELEASED)) {
-      Command c = new ModifyableMoVariable(getVariable()).createResize(startOffset, startScaleX, startScaleY);
+      Command c = new ModifyableMoVariable(getVariable()).createResize(startP1, startP2);
       clearVariables();
       sm.unfreeze();
       return c;
@@ -208,32 +203,18 @@ public class ModifyableMoVariableIconGroup extends MoVariableIconGroup implement
   
   private void resizeDrag(MouseEvent event, Integer modifyOffset) {
     if (this.transformation == null) return;
-    Point2D mousePos = this.convertTo(new Point2D(event.getSceneX(), event.getSceneY()));
-    Point2D delta = mousePos.subtract(startMousePos);
-    
-    Double scaleX = (startWidth + delta.getX()) / this.transformation.getExtent().getInitialWidth();
-    Double scaleY = (startHeight + delta.getY()) / this.transformation.getExtent().getInitialHeight();
-    System.out.print("Delta: " + delta);
-    System.out.println(" ScaleX: " + scaleX);
-    if (scaleX > 0) {
-      if (modifyOffset != ModifyableCircle.MODIFY_NO_OFFSET) {
-//      System.out.println("Update X Offset: " + offset);
-        //  this.transformation.getExtent().getOffsetProperty().set(startOffset.add(delta));
-      }
-      this.transformation.getExtent().getScaleXProperty().set(scaleX);
-      this.transformation.getExtent().getScaleYProperty().set(scaleX);
+    Point2D mousePos = this.getMoDiagram().convertTo(new Point2D(event.getSceneX(), event.getSceneY()));
+    Point2D delta = startMousePos.subtract(mousePos);
   
-      startMousePos = this.convertTo(startSceneMousePos);
-    }
+    this.transformation.getExtent().setP2(new Point2D(startP2.subtract(delta).getX(), startP2.add(delta).getY()));
   }
   
   private void clearVariables() {
-    startWidth = null;
+    startP1 = null;
+    startP2 = null;
     startAngle = null;
-    startHeight = null;
     startOrigin = null;
     startCenter = null;
-    startOffset = null;
     startMousePos = null;
     startRotation = null;
     startConnectionPoints.clear();
