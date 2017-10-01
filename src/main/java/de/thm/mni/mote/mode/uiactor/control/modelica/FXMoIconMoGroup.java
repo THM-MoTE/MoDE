@@ -11,17 +11,17 @@ import lombok.experimental.FieldDefaults;
  * Created by hobbypunk on 19.09.16.
  */
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
-public class MoIconGroup extends MoGroup {
+public class FXMoIconMoGroup extends FXMoGroup {
   
   @Getter private final MoIcon image;
   
-  public MoIconGroup(MoContainer parent) {
+  public FXMoIconMoGroup(MoContainer parent) {
     super(parent);
     this.image = parent.getElement().getIcon();
     init();
   }
   
-  public MoIconGroup(MoIcon image) {
+  public FXMoIconMoGroup(MoIcon image) {
     super(new MoContainer(null, null, ""));
     this.image = image;
     init();

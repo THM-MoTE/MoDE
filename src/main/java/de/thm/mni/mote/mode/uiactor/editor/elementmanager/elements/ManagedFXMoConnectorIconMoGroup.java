@@ -1,12 +1,12 @@
 package de.thm.mni.mote.mode.uiactor.editor.elementmanager.elements;
 
 import de.thm.mni.mote.mode.modelica.MoVariable;
-import de.thm.mni.mote.mode.uiactor.control.modelica.MoIconGroup;
-import de.thm.mni.mote.mode.uiactor.control.modelica.MoVariableIconGroup;
+import de.thm.mni.mote.mode.uiactor.control.modelica.FXMoIconMoGroup;
+import de.thm.mni.mote.mode.uiactor.control.modelica.FXMoVariableIconMoGroup;
 import de.thm.mni.mote.mode.uiactor.editor.elementmanager.interfaces.Highlightable;
 import de.thm.mni.mote.mode.uiactor.editor.elementmanager.interfaces.Hoverable;
 import de.thm.mni.mote.mode.uiactor.editor.elementmanager.interfaces.Selectable;
-import de.thm.mni.mote.mode.uiactor.editor.statemachine.elements.ModifyableMoConnectorIconGroup;
+import de.thm.mni.mote.mode.uiactor.editor.statemachine.elements.ModifyableFXMoConnectorIconMoGroup;
 import de.thm.mni.mote.mode.util.Translator;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -30,7 +30,7 @@ import java.util.Map;
 /**
  * Created by hobbypunk on 13.02.17.
  */
-public class ManagedMoConnectorIconGroup extends ModifyableMoConnectorIconGroup implements Highlightable, Hoverable, Selectable {
+public class ManagedFXMoConnectorIconMoGroup extends ModifyableFXMoConnectorIconMoGroup implements Highlightable, Hoverable, Selectable {
   
   @Getter private final ObservableList<String> highlightExtra = FXCollections.observableArrayList();
   private final Map<String, Label> entries = new HashMap<>();
@@ -48,7 +48,7 @@ public class ManagedMoConnectorIconGroup extends ModifyableMoConnectorIconGroup 
     HIGHLIGHT.setSpread(.8);
   }
   
-  public ManagedMoConnectorIconGroup(MoVariableIconGroup moParent, MoVariable variable) {
+  public ManagedFXMoConnectorIconMoGroup(FXMoVariableIconMoGroup moParent, MoVariable variable) {
     super(moParent, variable);
     errorPopOver = configuredPopOver();
     infoPopOver = configuredInfoPopOver();
@@ -79,7 +79,7 @@ public class ManagedMoConnectorIconGroup extends ModifyableMoConnectorIconGroup 
     name.setStyle("-fx-font-weight: bold");
     Label type = new Label(this.getVariable().getType().getName());
     type.setStyle("-fx-font-style: italic");
-    content.getChildren().addAll(new HBox(5., new MoIconGroup(this.getMoClass().getContainer()).scaleToSize(20., 20.), name), type, new Label(this.getVariable().getComment()));
+    content.getChildren().addAll(new HBox(5., new FXMoIconMoGroup(this.getMoClass().getContainer()).scaleToSize(20., 20.), name), type, new Label(this.getVariable().getComment()));
     return p;
   }
   

@@ -1,7 +1,7 @@
 package de.thm.mni.mote.mode.uiactor.shape;
 
 import de.thm.mni.mote.mode.modelica.graphics.MoRectangle;
-import de.thm.mni.mote.mode.uiactor.control.modelica.MoGroup;
+import de.thm.mni.mote.mode.uiactor.control.modelica.FXMoGroup;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.Element;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.FilledElement;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.StrokedElement;
@@ -19,7 +19,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Rectangle extends javafx.scene.shape.Rectangle implements Element, StrokedElement, FilledElement {
-  private final MoGroup moParent;
+  private final FXMoGroup moParent;
   private final MoRectangle data;
   
   private final Translate origin = Transform.translate(0., 0.);
@@ -27,7 +27,7 @@ public class Rectangle extends javafx.scene.shape.Rectangle implements Element, 
   
   Double initialStrokeWidth = 1.;
   
-  public Rectangle(@NonNull MoGroup parent, @NonNull MoRectangle data) {
+  public Rectangle(@NonNull FXMoGroup parent, @NonNull MoRectangle data) {
     this.moParent = parent;
     this.data = data;
     this.init();

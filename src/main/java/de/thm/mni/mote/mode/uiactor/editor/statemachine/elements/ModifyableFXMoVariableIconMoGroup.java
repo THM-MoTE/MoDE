@@ -4,8 +4,8 @@ import de.thm.mni.mote.mode.modelica.MoConnection;
 import de.thm.mni.mote.mode.modelica.MoContainer;
 import de.thm.mni.mote.mode.modelica.MoVariable;
 import de.thm.mni.mote.mode.modelica.graphics.MoTransformation;
-import de.thm.mni.mote.mode.uiactor.control.modelica.MoDiagramGroup;
-import de.thm.mni.mote.mode.uiactor.control.modelica.MoVariableIconGroup;
+import de.thm.mni.mote.mode.uiactor.control.modelica.FXMoDiagramMoGroup;
+import de.thm.mni.mote.mode.uiactor.control.modelica.FXMoVariableIconMoGroup;
 import de.thm.mni.mote.mode.uiactor.editor.actionmanager.commands.Command;
 import de.thm.mni.mote.mode.uiactor.editor.actionmanager.elements.ModifyableMoVariable;
 import de.thm.mni.mote.mode.uiactor.editor.statemachine.StateMachine;
@@ -30,7 +30,7 @@ import java.util.Map;
  * Created by hobbypunk on 16.02.17.
  */
 
-public class ModifyableMoVariableIconGroup extends MoVariableIconGroup implements Actionable, Deletable, Moveable {
+public class ModifyableFXMoVariableIconMoGroup extends FXMoVariableIconMoGroup implements Actionable, Deletable, Moveable {
   
   private MoTransformation transformation = null;
   
@@ -50,7 +50,7 @@ public class ModifyableMoVariableIconGroup extends MoVariableIconGroup implement
   private Point2D startP2 = null;
   
   
-  protected ModifyableMoVariableIconGroup(MoDiagramGroup diagramParent, MoContainer parent, MoVariable variable) {
+  protected ModifyableFXMoVariableIconMoGroup(FXMoDiagramMoGroup diagramParent, MoContainer parent, MoVariable variable) {
     super(diagramParent, parent, variable);
   }
   

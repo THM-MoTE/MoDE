@@ -9,7 +9,7 @@ import de.thm.mni.mote.mode.modelica.graphics.MoCoordinateSystem;
 import de.thm.mni.mote.mode.modelica.graphics.MoSimpleExtent;
 import de.thm.mni.mote.mode.modelica.graphics.MoTransformation;
 import de.thm.mni.mote.mode.parser.ParserException;
-import de.thm.mni.mote.mode.uiactor.control.modelica.MoDiagramGroup;
+import de.thm.mni.mote.mode.uiactor.control.modelica.FXMoDiagramMoGroup;
 import de.thm.mni.mote.mode.uiactor.editor.actionmanager.ActionManager;
 import de.thm.mni.mote.mode.uiactor.editor.actionmanager.commands.DeleteCommand;
 import de.thm.mni.mote.mode.uiactor.editor.actionmanager.elements.ModifyableMoClass;
@@ -27,10 +27,10 @@ import javafx.scene.input.TransferMode;
 /**
  * Created by hobbypunk on 15.02.17.
  */
-public class ModifyableMoDiagramGroup extends MoDiagramGroup implements Zoomable {
+public class ModifyableFXMoDiagramMoGroup extends FXMoDiagramMoGroup implements Zoomable {
   
-  public ModifyableMoDiagramGroup(MoContainer container) throws ParserException {
-    super(container);
+  public ModifyableFXMoDiagramMoGroup(MoContainer container, Boolean imageAsBackground) throws ParserException {
+    super(container, imageAsBackground);
     initDragNDrop();
   }
   

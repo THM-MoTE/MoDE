@@ -3,7 +3,7 @@ package de.thm.mni.mote.mode.uiactor.control;
 import de.thm.mni.mote.mode.modelica.MoContainer;
 import de.thm.mni.mote.mode.modelica.MoRoot;
 import de.thm.mni.mote.mode.modelica.graphics.MoDefaults;
-import de.thm.mni.mote.mode.uiactor.control.modelica.MoIconGroup;
+import de.thm.mni.mote.mode.uiactor.control.modelica.FXMoIconMoGroup;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -94,7 +94,7 @@ public class MoTreeCell extends TreeCell<MoContainer> {
   private void updateItem(MoContainer item) {
     this.setText(item.getSimpleName());
     if (item.getElement().hasConnectors()) this.setStyle("-fx-font-weight: bold");
-    this.setGraphic(new MoIconGroup(item).scaleToSize(20., 20.));
+    this.setGraphic(new FXMoIconMoGroup(item).scaleToSize(20., 20.));
     this.setContentDisplay(ContentDisplay.LEFT);
     this.setContextMenu(createLibraryMenu());
   
@@ -176,8 +176,8 @@ public class MoTreeCell extends TreeCell<MoContainer> {
     ContextMenuItem tmp = new ContextMenuItem(tr("Main", "menu.context." + action), action);
     
     if (action.startsWith("add_new")) {
-      if (action.endsWith("package")) tmp.setGraphic(new MoIconGroup(MoDefaults.newPackage()).scaleToSize(20., 20.));
-      else if (action.endsWith("model")) tmp.setGraphic(new MoIconGroup(MoDefaults.newModel()).scaleToSize(20., 20.));
+      if (action.endsWith("package")) tmp.setGraphic(new FXMoIconMoGroup(MoDefaults.newPackage()).scaleToSize(20., 20.));
+      else if (action.endsWith("model")) tmp.setGraphic(new FXMoIconMoGroup(MoDefaults.newModel()).scaleToSize(20., 20.));
     }
     tmp.onActionProperty().bind(onNonRootContextMenuItemAction);
 

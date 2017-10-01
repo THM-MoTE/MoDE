@@ -11,7 +11,7 @@ import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.parser.modelica.AnnotationLexer;
 import de.thm.mni.mote.mode.parser.modelica.AnnotationParser;
 import de.thm.mni.mote.mode.parser.modelica.AnnotationParser.ConnectAnnotationElementContext;
-import de.thm.mni.mote.mode.uiactor.control.modelica.MoDiagramGroup;
+import de.thm.mni.mote.mode.uiactor.control.modelica.FXMoDiagramMoGroup;
 import de.thm.mni.mote.mode.util.ImmutableListCollector;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -174,7 +174,7 @@ public class MoConnection implements Changeable {
     return list;
   }
   
-  public Integer getVariablePos(MoDiagramGroup diagram, MoVariable variable) {
+  public Integer getVariablePos(FXMoDiagramMoGroup diagram, MoVariable variable) {
     
     return null;
   }

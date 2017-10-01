@@ -2,7 +2,7 @@ package de.thm.mni.mote.mode.uiactor.handlers;
 
 import de.thm.mni.mote.mode.modelica.MoContainer;
 import de.thm.mni.mote.mode.uiactor.control.MainTabControl;
-import de.thm.mni.mote.mode.uiactor.editor.statemachine.elements.ModifyableMoDiagramGroup;
+import de.thm.mni.mote.mode.uiactor.editor.statemachine.elements.ModifyableFXMoDiagramMoGroup;
 import javafx.geometry.Point2D;
 import javafx.scene.control.TabPane;
 
@@ -26,11 +26,17 @@ public class LibraryHandler {
       } else if (action.endsWith("model")) {
         System.out.println("New Model!");
       }
-    } else if (action.equals("open_as_diagram")) {
-      MainTabControl tab = new MainTabControl(container);
+    } else if (action.startsWith("open_as_")) {
+      
+      MainTabControl tab;
+      if(action.endsWith("diagram"))
+        tab = new MainTabControl(container);
+      else
+        tab = new MainTabControl(container, true);
+      
       tabPane.getTabs().add(tab);
       tab.lateInitialize(tabPane.getScene());
-    
+  
       if (tabPane.getSelectionModel().getSelectedItem() == null)
         tabPane.getSelectionModel().clearSelection();
       tabPane.getSelectionModel().select(tab);
@@ -38,7 +44,7 @@ public class LibraryHandler {
     } else if (action.equals("add_to_diagram")) {
       MainTabControl tab = (MainTabControl) tabPane.getSelectionModel().getSelectedItem();
   
-      ModifyableMoDiagramGroup mmdg = (ModifyableMoDiagramGroup) tabPane.getScene().lookup("#" + tab.getData().getName().replaceAll("\\.", "_"));
+      ModifyableFXMoDiagramMoGroup mmdg = (ModifyableFXMoDiagramMoGroup) tabPane.getScene().lookup("#" + tab.getData().getName().replaceAll("\\.", "_"));
   
       mmdg.addNewVariable(container, new Point2D(0, 0));
     }

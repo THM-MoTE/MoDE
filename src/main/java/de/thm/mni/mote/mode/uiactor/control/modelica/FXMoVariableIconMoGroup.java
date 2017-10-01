@@ -4,8 +4,8 @@ import de.thm.mni.mote.mode.modelica.MoContainer;
 import de.thm.mni.mote.mode.modelica.MoVariable;
 import de.thm.mni.mote.mode.modelica.graphics.MoSimpleExtent;
 import de.thm.mni.mote.mode.modelica.graphics.MoTransformation;
-import de.thm.mni.mote.mode.uiactor.editor.elementmanager.elements.ManagedMoConnectorIconGroup;
-import de.thm.mni.mote.mode.uiactor.editor.statemachine.elements.ModifyableMoConnectorIconGroup;
+import de.thm.mni.mote.mode.uiactor.editor.elementmanager.elements.ManagedFXMoConnectorIconMoGroup;
+import de.thm.mni.mote.mode.uiactor.editor.statemachine.elements.ModifyableFXMoConnectorIconMoGroup;
 import javafx.beans.binding.DoubleBinding;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -24,18 +24,18 @@ import java.util.Map;
  */
 @Getter
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
-public class MoVariableIconGroup extends MoGroup {
-  private Map<MoVariable, ModifyableMoConnectorIconGroup> data = new HashMap<>();
+public class FXMoVariableIconMoGroup extends FXMoGroup {
+  private Map<MoVariable, ModifyableFXMoConnectorIconMoGroup> data = new HashMap<>();
   
   Translate offset = new Translate();
   Translate origin = new Translate();
   Rotate rotation = new Rotate();
   Affine transformation = new Affine();
   
-  private final MoDiagramGroup moDiagram;
+  private final FXMoDiagramMoGroup moDiagram;
   @NonNull MoVariable variable;
   
-  protected MoVariableIconGroup(MoDiagramGroup moDiagram, MoContainer parent, MoVariable variable) {
+  protected FXMoVariableIconMoGroup(FXMoDiagramMoGroup moDiagram, MoContainer parent, MoVariable variable) {
     super(parent);
     this.moDiagram = moDiagram;
     this.variable = variable;
@@ -54,7 +54,7 @@ public class MoVariableIconGroup extends MoGroup {
   
   private void initConnector(MoVariable mv) {
     if (mv.getPlacement() == null || (mv.getPlacement().getIconTransformation() == null && mv.getPlacement().getDiagramTransformation() == null)) return;
-    ModifyableMoConnectorIconGroup mip = new ManagedMoConnectorIconGroup(this, mv);
+    ModifyableFXMoConnectorIconMoGroup mip = new ManagedFXMoConnectorIconMoGroup(this, mv);
     getData().put(mv, mip);
     this.add(mip);
   }
@@ -166,8 +166,8 @@ public class MoVariableIconGroup extends MoGroup {
   
   
   @Override
-  public Point2D convertTo(Point2D point) {
-    point = super.convertTo(point);
+  public Point2D convertTo(Point2D scenePoint) {
+    Point2D point = super.convertTo(scenePoint);
     point = this.origin.inverseTransform(point.getX(), point.getY());
     point = this.rotation.inverseTransform(point.getX(), point.getY());
     point = this.offset.inverseTransform(point.getX(), point.getY());

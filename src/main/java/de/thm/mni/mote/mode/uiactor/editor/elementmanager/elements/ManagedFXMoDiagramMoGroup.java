@@ -7,8 +7,8 @@ import de.thm.mni.mote.mode.modelica.MoVariable;
 import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.editor.elementmanager.ElementManager;
 import de.thm.mni.mote.mode.uiactor.editor.elementmanager.interfaces.Highlightable;
-import de.thm.mni.mote.mode.uiactor.editor.statemachine.elements.ModifyableMoConnectorIconGroup;
-import de.thm.mni.mote.mode.uiactor.editor.statemachine.elements.ModifyableMoDiagramGroup;
+import de.thm.mni.mote.mode.uiactor.editor.statemachine.elements.ModifyableFXMoConnectorIconMoGroup;
+import de.thm.mni.mote.mode.uiactor.editor.statemachine.elements.ModifyableFXMoDiagramMoGroup;
 import javafx.scene.Node;
 
 import java.util.ArrayList;
@@ -19,25 +19,25 @@ import java.util.stream.Collectors;
 /**
  * Created by hobbypunk on 02.03.17.
  */
-public class ManagedMoDiagramGroup extends ModifyableMoDiagramGroup {
+public class ManagedFXMoDiagramMoGroup extends ModifyableFXMoDiagramMoGroup {
   
-  public ManagedMoDiagramGroup(MoContainer container) throws ParserException {
-    super(container);
+  public ManagedFXMoDiagramMoGroup(MoContainer container, Boolean imageAsBackground) throws ParserException {
+    super(container, imageAsBackground);
   }
   
-  public void highlightConnectors(ModifyableMoConnectorIconGroup connector) {
-    List<ManagedMoConnectorIconGroup> connectors = collectConnectors();
+  public void highlightConnectors(ModifyableFXMoConnectorIconMoGroup connector) {
+    List<ManagedFXMoConnectorIconMoGroup> connectors = collectConnectors();
     ElementManager.getInstance(this.getThat()).setHighlightedElements(connectors.stream().filter(c -> c != connector).map(c -> {
       c.getHighlightExtra().setAll(getConnectableToMessages(connector.getVariables(), c.getVariables()));
       return c;
     }).collect(Collectors.toList()).toArray(new Highlightable[]{}));
   }
   
-  private List<ManagedMoConnectorIconGroup> collectConnectors() {
-    List<ManagedMoConnectorIconGroup> connectors = new ArrayList<>();
+  private List<ManagedFXMoConnectorIconMoGroup> collectConnectors() {
+    List<ManagedFXMoConnectorIconMoGroup> connectors = new ArrayList<>();
     for (Node child : getChildren()) {
-      if (child instanceof ManagedMoVariableIconGroup)
-        connectors.addAll(((ManagedMoVariableIconGroup) child).collectConnectors());
+      if (child instanceof ManagedFXMoVariableIconMoGroup)
+        connectors.addAll(((ManagedFXMoVariableIconMoGroup) child).collectConnectors());
     }
     return connectors;
   }

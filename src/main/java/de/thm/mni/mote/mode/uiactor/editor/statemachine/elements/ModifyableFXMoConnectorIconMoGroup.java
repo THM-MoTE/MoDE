@@ -4,11 +4,11 @@ import de.thm.mni.mote.mode.modelica.MoConnection;
 import de.thm.mni.mote.mode.modelica.MoVariable;
 import de.thm.mni.mote.mode.modelica.graphics.MoLine;
 import de.thm.mni.mote.mode.parser.ParserException;
-import de.thm.mni.mote.mode.uiactor.control.modelica.MoConnectorIconGroup;
-import de.thm.mni.mote.mode.uiactor.control.modelica.MoDiagramGroup;
-import de.thm.mni.mote.mode.uiactor.control.modelica.MoVariableIconGroup;
+import de.thm.mni.mote.mode.uiactor.control.modelica.FXMoConnectorIconMoGroup;
+import de.thm.mni.mote.mode.uiactor.control.modelica.FXMoDiagramMoGroup;
+import de.thm.mni.mote.mode.uiactor.control.modelica.FXMoVariableIconMoGroup;
 import de.thm.mni.mote.mode.uiactor.editor.actionmanager.commands.Command;
-import de.thm.mni.mote.mode.uiactor.editor.elementmanager.elements.ManagedMoDiagramGroup;
+import de.thm.mni.mote.mode.uiactor.editor.elementmanager.elements.ManagedFXMoDiagramMoGroup;
 import de.thm.mni.mote.mode.uiactor.editor.statemachine.StateMachine;
 import de.thm.mni.mote.mode.uiactor.editor.statemachine.interfaces.Actionable;
 import de.thm.mni.mote.mode.uiactor.editor.statemachine.interfaces.Addable;
@@ -29,14 +29,14 @@ import java.util.List;
 /**
  * Created by hobbypunk on 16.02.17.
  */
-public class ModifyableMoConnectorIconGroup extends MoConnectorIconGroup implements Actionable, Addable, Deletable {
+public class ModifyableFXMoConnectorIconMoGroup extends FXMoConnectorIconMoGroup implements Actionable, Addable, Deletable {
   
   private static ConnectionBuilder builder = null;
   private static ChangeListener<Boolean> changeListener = null;
-  private ModifyableMoConnectorIconGroup freezeTarget = null;
+  private ModifyableFXMoConnectorIconMoGroup freezeTarget = null;
   
   
-  public ModifyableMoConnectorIconGroup(MoVariableIconGroup moParent, MoVariable variable) {
+  public ModifyableFXMoConnectorIconMoGroup(FXMoVariableIconMoGroup moParent, MoVariable variable) {
     super(moParent, variable);
   }
   
@@ -68,7 +68,7 @@ public class ModifyableMoConnectorIconGroup extends MoConnectorIconGroup impleme
         sm.active.addListener(changeListener);
         sm.freeze();
         freezeTarget = this;
-        ((ManagedMoDiagramGroup) this.getMoParent().getMoDiagram()).highlightConnectors(this);
+        ((ManagedFXMoDiagramMoGroup) this.getMoParent().getMoDiagram()).highlightConnectors(this);
       } else {
         if (freezeTarget == this) {
           builder.addPoint();
@@ -77,7 +77,7 @@ public class ModifyableMoConnectorIconGroup extends MoConnectorIconGroup impleme
             builder.updateLastPoint(this.getMoParent().getMoDiagram().convertTo(convertFrom(new Point2D(0, 0))));
             builder.addPoint();
             MoConnection conn = builder.build(this.getVariables());
-            if (((ManagedMoDiagramGroup) this.getMoParent().getMoDiagram()).isConnectAbleTo(conn.getFrom(), conn.getTo())) {
+            if (((ManagedFXMoDiagramMoGroup) this.getMoParent().getMoDiagram()).isConnectAbleTo(conn.getFrom(), conn.getTo())) {
               abort(sm);
               return this.getMoParent().getMoDiagram().getModifyableMoClass().add((Object) new MoConnection[]{conn});
             } else {
@@ -95,7 +95,7 @@ public class ModifyableMoConnectorIconGroup extends MoConnectorIconGroup impleme
   
   private void abort(StateMachine sm) {
     builder.abort();
-    ((ManagedMoDiagramGroup) this.getMoParent().getMoDiagram()).clearHighlight();
+    ((ManagedFXMoDiagramMoGroup) this.getMoParent().getMoDiagram()).clearHighlight();
     sm.active.removeListener(changeListener);
     builder = null;
     changeListener = null;
@@ -118,10 +118,10 @@ public class ModifyableMoConnectorIconGroup extends MoConnectorIconGroup impleme
   private class ConnectionBuilder {
     private final Line line;
     private List<MoVariable> startConnector;
-    private MoDiagramGroup moGroup;
+    private FXMoDiagramMoGroup moGroup;
     private ObjectProperty<Point2D> lastPoint = new SimpleObjectProperty<>(null);
     
-    ConnectionBuilder(MoDiagramGroup moGroup, List<MoVariable> connector, Point2D start) {
+    ConnectionBuilder(FXMoDiagramMoGroup moGroup, List<MoVariable> connector, Point2D start) {
       this.moGroup = moGroup;
       this.startConnector = connector;
       line = new Line(moGroup, new MoLine(start));

@@ -18,10 +18,10 @@ public class ModifyableCircle extends Circle implements Rotateable, Resizeable {
   
   private static final Double RADIUS = 10.;
   
-  private final ModifyableMoVariableIconGroup parent;
+  private final ModifyableFXMoVariableIconMoGroup parent;
   private Integer buttonId;
   
-  public ModifyableCircle(ModifyableMoVariableIconGroup parent, Double centerX, Double centerY, Integer buttonId) {
+  public ModifyableCircle(ModifyableFXMoVariableIconMoGroup parent, Double centerX, Double centerY, Integer buttonId) {
     super(centerX, centerY, RADIUS);
     this.parent = parent;
     this.buttonId = buttonId;

@@ -2,7 +2,7 @@ package de.thm.mni.mote.mode.uiactor.editor.elementmanager.elements;
 
 import de.thm.mni.mote.mode.config.Settings;
 import de.thm.mni.mote.mode.modelica.graphics.MoLine;
-import de.thm.mni.mote.mode.uiactor.control.modelica.MoGroup;
+import de.thm.mni.mote.mode.uiactor.control.modelica.FXMoGroup;
 import de.thm.mni.mote.mode.uiactor.editor.elementmanager.interfaces.Hoverable;
 import de.thm.mni.mote.mode.uiactor.editor.elementmanager.interfaces.Selectable;
 import de.thm.mni.mote.mode.uiactor.editor.interfaces.Childable;
@@ -31,7 +31,7 @@ public class ManagedLine extends ModifyableLine implements Hoverable, Selectable
   private Boolean isSelected = false;
   ObservableList<Node> children = FXCollections.observableArrayList();
   
-  public ManagedLine(@NonNull MoGroup parent, @NonNull MoLine data) {
+  public ManagedLine(@NonNull FXMoGroup parent, @NonNull MoLine data) {
     super(parent, data);
     initParentListener();
   

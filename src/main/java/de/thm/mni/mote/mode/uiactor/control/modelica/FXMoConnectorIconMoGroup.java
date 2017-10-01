@@ -23,16 +23,16 @@ import java.util.List;
  * Created by hobbypunk on 19.09.16.
  */
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
-public class MoConnectorIconGroup extends MoGroup {
+public class FXMoConnectorIconMoGroup extends FXMoGroup {
   Translate origin = new Translate();
   Rotate rotation = new Rotate();
   Affine transformation = new Affine();
   
   
-  @Getter @NonNull private final MoVariableIconGroup moParent;
+  @Getter @NonNull private final FXMoVariableIconMoGroup moParent;
   @Getter @NonNull private final MoVariable variable;
   
-  public MoConnectorIconGroup(MoVariableIconGroup moParent, MoVariable variable) {
+  public FXMoConnectorIconMoGroup(FXMoVariableIconMoGroup moParent, MoVariable variable) {
     super(variable.getType());
     this.moParent = moParent;
     this.variable = variable;
@@ -81,8 +81,8 @@ public class MoConnectorIconGroup extends MoGroup {
   }
   
   private List<MoVariable> getVariables(Node that, List<MoVariable> list) {
-    if (that instanceof MoDiagramGroup) return list;
-    if (that instanceof MoVariableIconGroup) list.add(0, ((MoVariableIconGroup) that).getVariable());
+    if (that instanceof FXMoDiagramMoGroup) return list;
+    if (that instanceof FXMoVariableIconMoGroup) list.add(0, ((FXMoVariableIconMoGroup) that).getVariable());
     return getVariables(that.getParent(), list);
   }
 }

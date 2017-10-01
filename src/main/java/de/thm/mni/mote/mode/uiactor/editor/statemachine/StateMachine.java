@@ -4,7 +4,7 @@ import de.thm.mni.mhpp11.smbj.messages.logging.TraceMessage;
 import de.thm.mni.mhpp11.smbj.actors.messagebus.MessageBus;
 import de.thm.mni.mote.mode.modelica.MoContainer;
 import de.thm.mni.mote.mode.uiactor.control.MainTabControl;
-import de.thm.mni.mote.mode.uiactor.control.modelica.MoGroup;
+import de.thm.mni.mote.mode.uiactor.control.modelica.FXMoGroup;
 import de.thm.mni.mote.mode.uiactor.editor.actionmanager.ActionManager;
 import de.thm.mni.mote.mode.uiactor.editor.actionmanager.commands.Command;
 import de.thm.mni.mote.mode.uiactor.editor.elementmanager.ElementManager;
@@ -88,7 +88,7 @@ public class StateMachine implements EventHandler<InputEvent> {
       return;
     }
     if (!freezeState) {
-      //if (event.getSource() instanceof MoDiagramGroup && event.getEventType().equals(MouseEvent.MOUSE_MOVED)) return;
+      //if (event.getSource() instanceof FXMoDiagramMoGroup && event.getEventType().equals(MouseEvent.MOUSE_MOVED)) return;
       //if (!event.getEventType().equals(MouseEvent.MOUSE_MOVED)) MessageBus.getInstance().send(new TraceMessage(StateMachine.class, tab.getText() + " Event: " + event.getSource().getClass().getSimpleName() + " : " + event.getEventType()));
       if (event instanceof MouseEvent) updateKeyState((MouseEvent) event);
       if (event instanceof ScrollEvent) updateKeyState((ScrollEvent) event);
@@ -114,14 +114,14 @@ public class StateMachine implements EventHandler<InputEvent> {
     }
   }
   
-  MoGroup old = null;
+  FXMoGroup old = null;
   private Circle centerPosCircle = new Circle(0, 0, 4, Color.GREEN);
   private Circle mousePosCircle = new Circle(0, 0, 4, Color.BLUE);
   
   private void mousePositionHelp(InputEvent event) {
     if (event.getEventType().equals(MouseEvent.MOUSE_MOVED) || event.getEventType().equals(MouseEvent.MOUSE_DRAGGED)) {
-      MoGroup mg = (MoGroup) getMatchingParent((Node) event.getTarget(), MoGroup.class);
-      if (mg == null && event.getSource() instanceof MoGroup) mg = (MoGroup) event.getSource();
+      FXMoGroup mg = (FXMoGroup) getMatchingParent((Node) event.getTarget(), FXMoGroup.class);
+      if (mg == null && event.getSource() instanceof FXMoGroup) mg = (FXMoGroup) event.getSource();
       if (mg != null) {
         if (old != null && old != mg) {
           old.getChildren().remove(centerPosCircle);

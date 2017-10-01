@@ -1,7 +1,7 @@
 package de.thm.mni.mote.mode.uiactor.shape;
 
 import de.thm.mni.mote.mode.modelica.graphics.MoEllipse;
-import de.thm.mni.mote.mode.uiactor.control.modelica.MoGroup;
+import de.thm.mni.mote.mode.uiactor.control.modelica.FXMoGroup;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.Element;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.FilledElement;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.StrokedElement;
@@ -20,7 +20,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Arc extends javafx.scene.shape.Arc implements Element, FilledElement, StrokedElement {
-  private final MoGroup moParent;
+  private final FXMoGroup moParent;
   private final MoEllipse data;
   
   private final Translate origin = Transform.translate(0., 0.);
@@ -28,7 +28,7 @@ public class Arc extends javafx.scene.shape.Arc implements Element, FilledElemen
   
   Double initialStrokeWidth = 1.;
   
-  public Arc(@NonNull MoGroup parent, @NonNull MoEllipse data) {
+  public Arc(@NonNull FXMoGroup parent, @NonNull MoEllipse data) {
     this.moParent = parent;
     this.data = data;
     

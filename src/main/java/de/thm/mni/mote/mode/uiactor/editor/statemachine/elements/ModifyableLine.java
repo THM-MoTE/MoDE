@@ -2,7 +2,7 @@ package de.thm.mni.mote.mode.uiactor.editor.statemachine.elements;
 
 import de.thm.mni.mote.mode.config.Settings;
 import de.thm.mni.mote.mode.modelica.graphics.MoLine;
-import de.thm.mni.mote.mode.uiactor.control.modelica.MoGroup;
+import de.thm.mni.mote.mode.uiactor.control.modelica.FXMoGroup;
 import de.thm.mni.mote.mode.uiactor.editor.actionmanager.commands.Command;
 import de.thm.mni.mote.mode.uiactor.editor.actionmanager.commands.MoveCommand;
 import de.thm.mni.mote.mode.uiactor.editor.actionmanager.elements.ModifyableMoLine;
@@ -45,7 +45,7 @@ public class ModifyableLine extends InvisibleLine implements Addable, Actionable
   private Point2D firstPoint = null;
   private Point2D secondPoint = null;
   
-  public ModifyableLine(@NonNull MoGroup parent, @NonNull MoLine data) {
+  public ModifyableLine(@NonNull FXMoGroup parent, @NonNull MoLine data) {
     super(parent, data);
   }
   

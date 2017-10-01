@@ -2,12 +2,12 @@ package de.thm.mni.mote.mode.uiactor.control;
 
 import de.thm.mni.mote.mode.modelica.MoContainer;
 import de.thm.mni.mote.mode.parser.ParserException;
-import de.thm.mni.mote.mode.uiactor.control.modelica.MoDiagramGroup;
-import de.thm.mni.mote.mode.uiactor.control.modelica.MoGroup;
-import de.thm.mni.mote.mode.uiactor.control.modelica.MoIconGroup;
+import de.thm.mni.mote.mode.uiactor.control.modelica.FXMoGroup;
+import de.thm.mni.mote.mode.uiactor.control.modelica.FXMoDiagramMoGroup;
+import de.thm.mni.mote.mode.uiactor.control.modelica.FXMoIconMoGroup;
 import de.thm.mni.mote.mode.uiactor.editor.actionmanager.ActionManager;
 import de.thm.mni.mote.mode.uiactor.editor.elementmanager.ElementManager;
-import de.thm.mni.mote.mode.uiactor.editor.elementmanager.elements.ManagedMoDiagramGroup;
+import de.thm.mni.mote.mode.uiactor.editor.elementmanager.elements.ManagedFXMoDiagramMoGroup;
 import de.thm.mni.mote.mode.uiactor.editor.statemachine.StateMachine;
 import de.thm.mni.mote.mode.uiactor.utilities.ScrollPaneHorizontalScroll;
 import de.thm.mni.mote.mode.util.Utilities;
@@ -37,6 +37,7 @@ import static de.thm.mni.mote.mode.modelica.interfaces.Changeable.Change;
 public class MainTabControl extends Tab implements Initializable {
   
   private final MoContainer data;
+  private final Boolean imagesAsBackground;
   
   @FXML private StackPane main;
   @FXML private ScrollPane scroll;
@@ -44,7 +45,12 @@ public class MainTabControl extends Tab implements Initializable {
   private FXMLLoader loader;
   
   public MainTabControl(MoContainer data) {
+    this(data, false);
+  }
+  
+  public MainTabControl(MoContainer data, Boolean imagesAsBackground) {
     this.data = data;
+    this.imagesAsBackground = imagesAsBackground;
     loader = new FXMLLoader();
     loader.setLocation(Utilities.getControlView("MainTab"));
     loader.setRoot(this);
@@ -61,12 +67,12 @@ public class MainTabControl extends Tab implements Initializable {
     ScrollPaneHorizontalScroll.modify(scroll);
     this.setClosable(true);
     //data.getUnsavedChanges().setValue(Change.NONE);
-    MoGroup mp;
+    FXMoGroup mp;
   
     try {
-      this.setGraphic(new MoIconGroup(data).scaleToSize(20., 20.));
+      this.setGraphic(new FXMoIconMoGroup(data).scaleToSize(20., 20.));
   
-      mp = new ManagedMoDiagramGroup(data);
+      mp = new ManagedFXMoDiagramMoGroup(data, imagesAsBackground);
       
       updateText(Change.NONE);
   
@@ -97,7 +103,7 @@ public class MainTabControl extends Tab implements Initializable {
     ElementManager.getInstance(data);
     Node child = main.getChildren().get(0);
   
-    if (child instanceof MoDiagramGroup) ((MoDiagramGroup) child).addHandler(StateMachine.getInstance(scene, this, data));
+    if (child instanceof FXMoDiagramMoGroup) ((FXMoDiagramMoGroup) child).addHandler(StateMachine.getInstance(scene, this, data));
   
     main.addEventHandler(InputEvent.ANY, StateMachine.getInstance(data));
     main.addEventFilter(ScrollEvent.ANY, StateMachine.getInstance(data));
