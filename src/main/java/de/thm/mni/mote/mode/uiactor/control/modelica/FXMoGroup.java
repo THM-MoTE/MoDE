@@ -33,7 +33,7 @@ import lombok.Setter;
 @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
 @Getter(AccessLevel.PROTECTED)
 @Setter(AccessLevel.PROTECTED)
-public abstract class FXMoGroup extends Group {
+public abstract class FXMoGroup extends FXMoParentGroup {
   protected static final double ZOOMFACTOR = 1.2;
   @Getter private final Group basis = new Group();
   javafx.scene.shape.Rectangle coordianteSystem = null; //TODO: add InitialStroke Interface
@@ -213,6 +213,7 @@ public abstract class FXMoGroup extends Group {
     if(elem != null) {
       if(grayOut) {
         ColorAdjust effect = new ColorAdjust();
+        effect.setSaturation(-0.8);
         effect.setSaturation(-0.8);
         elem.setEffect(effect);
       }

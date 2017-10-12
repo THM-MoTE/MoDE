@@ -1,7 +1,7 @@
 package de.thm.mni.mote.mode.uiactor.shape;
 
 import de.thm.mni.mote.mode.modelica.graphics.MoPolygon;
-import de.thm.mni.mote.mode.uiactor.control.modelica.FXMoGroup;
+import de.thm.mni.mote.mode.uiactor.control.modelica.FXMoParentGroup;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.CalculatePathElements;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.Element;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.FilledElement;
@@ -24,7 +24,7 @@ import java.util.List;
 @Getter
 @Setter
 public class Polygon extends Path implements Element, StrokedElement, FilledElement, CalculatePathElements {
-  private final FXMoGroup moParent;
+  private final FXMoParentGroup moParent;
   private final MoPolygon data;
   
   private final Translate origin = Transform.translate(0., 0.);
@@ -32,7 +32,7 @@ public class Polygon extends Path implements Element, StrokedElement, FilledElem
   
   Double initialStrokeWidth = 1.;
   
-  public Polygon(@NonNull FXMoGroup parent, @NonNull MoPolygon data) {
+  public Polygon(@NonNull FXMoParentGroup parent, @NonNull MoPolygon data) {
     this.moParent = parent;
     this.data = data;
     this.init();

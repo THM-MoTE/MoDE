@@ -2,7 +2,7 @@ package de.thm.mni.mote.mode.uiactor.shape;
 
 import de.thm.mni.mote.mode.modelica.graphics.MoText;
 import de.thm.mni.mote.mode.modelica.graphics.Utilities;
-import de.thm.mni.mote.mode.uiactor.control.modelica.FXMoGroup;
+import de.thm.mni.mote.mode.uiactor.control.modelica.FXMoParentGroup;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.Element;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.FilledElement;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.StrokedElement;
@@ -28,7 +28,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Text extends Pane implements Element, FilledElement, StrokedElement {
-  private final FXMoGroup moParent;
+  private final FXMoParentGroup moParent;
   private final MoText data;
   private final javafx.scene.text.Text text = new javafx.scene.text.Text();
   
@@ -37,7 +37,7 @@ public class Text extends Pane implements Element, FilledElement, StrokedElement
   
   Double initialStrokeWidth = 1.;
   
-  public Text(@NonNull FXMoGroup parent, @NonNull MoText data) {
+  public Text(@NonNull FXMoParentGroup parent, @NonNull MoText data) {
     this.moParent = parent;
     this.data = data;
     this.getChildren().add(text);

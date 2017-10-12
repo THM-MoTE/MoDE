@@ -2,7 +2,7 @@ package de.thm.mni.mote.mode.uiactor.shape;
 
 import de.thm.mni.mote.mode.modelica.graphics.MoLine;
 import de.thm.mni.mote.mode.modelica.graphics.Utilities;
-import de.thm.mni.mote.mode.uiactor.control.modelica.FXMoGroup;
+import de.thm.mni.mote.mode.uiactor.control.modelica.FXMoParentGroup;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.CalculatePathElements;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.Element;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.HasStrokeWidth;
@@ -23,7 +23,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Line extends Path implements Element, HasStrokeWidth, CalculatePathElements {
-  private final FXMoGroup moParent;
+  private final FXMoParentGroup moParent;
   private final MoLine data;
   
   private final Translate origin = Transform.translate(0., 0.);
@@ -31,7 +31,7 @@ public class Line extends Path implements Element, HasStrokeWidth, CalculatePath
   
   Double initialStrokeWidth = 1.;
   
-  public Line(@NonNull FXMoGroup parent, @NonNull MoLine data) {
+  public Line(@NonNull FXMoParentGroup parent, @NonNull MoLine data) {
     this.moParent = parent;
     this.data = data;
     data.getPoints().addListener((ListChangeListener<Point2D>) c -> calcElements(getData().getPoints()));

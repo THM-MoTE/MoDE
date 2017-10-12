@@ -1,7 +1,7 @@
 package de.thm.mni.mote.mode.uiactor.shape;
 
 import de.thm.mni.mote.mode.modelica.graphics.MoLine;
-import de.thm.mni.mote.mode.uiactor.control.modelica.FXMoGroup;
+import de.thm.mni.mote.mode.uiactor.control.modelica.FXMoParentGroup;
 import javafx.scene.paint.Color;
 import lombok.NonNull;
 
@@ -10,7 +10,7 @@ import lombok.NonNull;
  */
 public class InvisibleLine extends Line {
   
-  public InvisibleLine(@NonNull FXMoGroup parent, @NonNull MoLine data) {
+  public InvisibleLine(@NonNull FXMoParentGroup parent, @NonNull MoLine data) {
     super(parent, data);
   }
   

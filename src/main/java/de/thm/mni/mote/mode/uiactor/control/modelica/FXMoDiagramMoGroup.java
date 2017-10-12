@@ -118,7 +118,7 @@ public class FXMoDiagramMoGroup extends FXMoGroup {
   }
   
   private void initConnection(MoConnection mc) {
-//    mc.getMoGraphics().forEach(super::initImage);
+  //  mc.getMoGraphics().forEach(super::initImage);
     FXMoConnectionGroup mcg = new FXMoConnectionGroup(this, mc);
     connections.put(mc, mcg);
     this.add(1, mcg);

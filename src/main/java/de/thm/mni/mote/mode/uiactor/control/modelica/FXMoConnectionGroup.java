@@ -7,16 +7,17 @@ import de.thm.mni.mote.mode.modelica.graphics.MoText;
 import de.thm.mni.mote.mode.uiactor.shape.Line;
 import de.thm.mni.mote.mode.uiactor.shape.Text;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.HasStrokeWidth;
-import javafx.scene.Group;
+import javafx.beans.property.BooleanProperty;
+import javafx.geometry.Point2D;
 import lombok.Getter;
 
 @Getter
-public class FXMoConnectionGroup extends Group {
-  private FXMoDiagramMoGroup moDiagram;
-  private MoConnection connection;
+public class FXMoConnectionGroup extends FXMoParentGroup {
+  private final FXMoParentGroup moParent;
+  private final MoConnection connection;
   
-  public FXMoConnectionGroup(FXMoDiagramMoGroup moDiagram, MoConnection connection) {
-    this.moDiagram = moDiagram;
+  public FXMoConnectionGroup(FXMoParentGroup moParent, MoConnection connection) {
+    this.moParent = moParent;
     this.connection = connection;
     initImage();
   }
@@ -26,8 +27,8 @@ public class FXMoConnectionGroup extends Group {
   }
   
   private void initImage(MoGraphic mg) {
-    if (mg instanceof MoText) this.getChildren().add(new Text(moDiagram, (MoText) mg));
-    else if (mg instanceof MoLine) this.getChildren().add(new Line(moDiagram, (MoLine) mg));
+    if (mg instanceof MoText) this.getChildren().add(new Text(this, (MoText) mg));
+    else if (mg instanceof MoLine) this.getChildren().add(new Line(this, (MoLine) mg));
     preventScaling(1., 1.);
   }
   
@@ -36,10 +37,25 @@ public class FXMoConnectionGroup extends Group {
     getChildren().forEach(node -> {
       if (node instanceof HasStrokeWidth) {
         HasStrokeWidth s = (HasStrokeWidth) node;
-        Double factor = Math.max(scaleX * moDiagram.getScale().getX(), scaleY * moDiagram.getScale().getY());
+        Double factor = Math.max(scaleX, scaleY);
         factor = (factor < 1.) ? 1. : factor; //dirty hack
         s.setOwnStrokeWidth(s.getInitialStrokeWidth() * (1 / (factor)));
       }
     });
+  }
+  
+  @Override
+  public BooleanProperty getFlippedXProperty() {
+    return moParent.getFlippedXProperty();
+  }
+  
+  @Override
+  public BooleanProperty getFlippedYProperty() {
+    return moParent.getFlippedYProperty();
+  }
+  
+  @Override
+  public Point2D convertTo(Point2D scenePoint) {
+    return moParent.convertTo(scenePoint);
   }
 }
