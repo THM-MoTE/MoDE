@@ -15,14 +15,12 @@ import javafx.scene.transform.Transform;
 import javafx.scene.transform.Translate;
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.Setter;
 
 /**
  * Created by hobbypunk on 02.11.16.
  */
 
 @Getter
-@Setter
 public class InternalLine extends Path implements Element, HasStrokeWidth, CalculatePathElements {
   private final MoLine data;
   

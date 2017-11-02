@@ -43,11 +43,11 @@ public class MoLine extends MoGraphic implements HasSmoothOption {
   }
   
   ObservableList<Point2D> points = FXCollections.observableArrayList();
-  ObjectProperty<Color> colorProperty = new SimpleObjectProperty<>(null, "color", DEFAULT_COLOR);
-  ObjectProperty<LinePattern> linePatternProperty = new SimpleObjectProperty<>(null, "linePattern", DEFAULT_LINEPATTERN);
-  ObjectProperty<Arrow> startArrowProperty = new SimpleObjectProperty<>(null, "startArrow", DEFAULT_STARTARROW);
-  ObjectProperty<Arrow> endArrowProperty = new SimpleObjectProperty<>(null, "endArrow", DEFAULT_ENDARROW);
-  ObjectProperty<Smooth> smoothProperty = new SimpleObjectProperty<>(null, "endArrow", DEFAULT_SMOOTH);
+  ObjectProperty<Color> colorProperty = new SimpleObjectProperty<>(DEFAULT_COLOR);
+  ObjectProperty<LinePattern> linePatternProperty = new SimpleObjectProperty<>(DEFAULT_LINEPATTERN);
+  ObjectProperty<Arrow> startArrowProperty = new SimpleObjectProperty<>(DEFAULT_STARTARROW);
+  ObjectProperty<Arrow> endArrowProperty = new SimpleObjectProperty<>(DEFAULT_ENDARROW);
+  ObjectProperty<Smooth> smoothProperty = new SimpleObjectProperty<>(DEFAULT_SMOOTH);
   
   DoubleProperty thicknessProperty = new SimpleDoubleProperty(1.0);
   DoubleProperty arrowSizeProperty = new SimpleDoubleProperty(3.0);
@@ -69,9 +69,8 @@ public class MoLine extends MoGraphic implements HasSmoothOption {
   MoLine(MoGraphic mg, @Singular List<Point2D> points, Color color, LinePattern linePattern, Double thickness, Arrow start, Arrow end, Double arrowSize, Smooth smooth) {
     super(mg);
     this.points.addAll(points);
-    startArrowProperty.set(start);
-    endArrowProperty.set(end);
-  
+    if(start != null) startArrowProperty.set(start);
+    if(end != null) endArrowProperty.set(end);
     if (color != null) this.colorProperty.set(color);
     if (linePattern != null) this.linePatternProperty.set(linePattern);
     if (thickness != null) this.thicknessProperty.set(thickness);
@@ -85,16 +84,21 @@ public class MoLine extends MoGraphic implements HasSmoothOption {
     if (this.points == null) return;
     super.initChangeListeners();
     this.points.addListener((ListChangeListener<? super Point2D>) c -> changed());
+  
+    updatePointProperties();
+    this.points.addListener((ListChangeListener<? super Point2D>) c -> updatePointProperties());
   }
   
-  public Point2D getFirstPoint() {
-    return this.points.get(0);
+  private void updatePointProperties() {
+    Point2D p = this.points.get(0);
+    if(p != this.firstPointProperty.get()) this.firstPointProperty.set(p);
+    p = this.points.get(1);
+    if(p != this.secondPointProperty.get()) this.secondPointProperty.set(p);
+    p = this.points.get(this.points.size()-2);
+    if(p != this.secondLastPointProperty.get()) this.secondLastPointProperty.set(p);
+    p = this.points.get(this.points.size()-1);
+    if(p != this.lastPointProperty.get()) this.lastPointProperty.set(p);
   }
-  
-  public Point2D getLastPoint() {
-    return this.points.get(this.points.size()-1);
-  }
-  
   
   @Override
   public String toString() {
