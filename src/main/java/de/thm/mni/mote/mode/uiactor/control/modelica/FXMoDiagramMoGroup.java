@@ -122,6 +122,7 @@ public class FXMoDiagramMoGroup extends FXMoGroup {
     FXMoConnectionGroup mcg = new FXMoConnectionGroup(this, mc);
     connections.put(mc, mcg);
     this.add(1, mcg);
+    mcg.preventScaling(getScale().getX(), getScale().getY());
   }
   
   public void remove(MoConnection mc) {

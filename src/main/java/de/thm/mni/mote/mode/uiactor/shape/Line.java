@@ -20,12 +20,14 @@ public class Line extends Group implements HasStrokeWidth {
   public Line(@NonNull FXMoParentGroup parent, @NonNull MoLine data) {
     this.moParent = parent;
     this.data = data;
-    this.line = new InternalLine(this, data);
+    this.line = new InternalLine(data);
     if(this.getClass() == Line.class) init();
   }
   
   public void init() {
     this.getChildren().add(this.line);
+    this.getChildren().add(new StartArrow(this));
+    this.getChildren().add(new EndArrow(this));
   }
   
   @Override

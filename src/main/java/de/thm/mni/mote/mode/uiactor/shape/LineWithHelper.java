@@ -11,7 +11,7 @@ public class LineWithHelper extends Line {
   
   public LineWithHelper(FXMoParentGroup parent, MoLine data) {
     super(parent, data);
-    this.lineHelper = new InternalLine(this, data, false);
+    this.lineHelper = new InternalLine(data, false);
     init();
   }
   

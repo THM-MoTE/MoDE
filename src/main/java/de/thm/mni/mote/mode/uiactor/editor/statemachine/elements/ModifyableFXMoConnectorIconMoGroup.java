@@ -13,7 +13,7 @@ import de.thm.mni.mote.mode.uiactor.editor.statemachine.StateMachine;
 import de.thm.mni.mote.mode.uiactor.editor.statemachine.interfaces.Actionable;
 import de.thm.mni.mote.mode.uiactor.editor.statemachine.interfaces.Addable;
 import de.thm.mni.mote.mode.uiactor.editor.statemachine.interfaces.Deletable;
-import de.thm.mni.mote.mode.uiactor.shape.Line;
+import de.thm.mni.mote.mode.uiactor.shape.InternalLine;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -116,7 +116,7 @@ public class ModifyableFXMoConnectorIconMoGroup extends FXMoConnectorIconMoGroup
   }
   
   private class ConnectionBuilder {
-    private final Line line;
+    private final InternalLine line;
     private List<MoVariable> startConnector;
     private FXMoDiagramMoGroup moGroup;
     private ObjectProperty<Point2D> lastPoint = new SimpleObjectProperty<>(null);
@@ -124,8 +124,8 @@ public class ModifyableFXMoConnectorIconMoGroup extends FXMoConnectorIconMoGroup
     ConnectionBuilder(FXMoDiagramMoGroup moGroup, List<MoVariable> connector, Point2D start) {
       this.moGroup = moGroup;
       this.startConnector = connector;
-      line = new Line(moGroup, new MoLine(start));
-      moGroup.add(line);
+      line = new InternalLine(new MoLine(start));
+      moGroup.add(1, line);
       lastPoint.addListener((observable, oldValue, newValue) -> {
         if (oldValue != null) line.getData().getPoints().remove(oldValue);
         if (newValue != null) line.getData().getPoints().add(newValue);

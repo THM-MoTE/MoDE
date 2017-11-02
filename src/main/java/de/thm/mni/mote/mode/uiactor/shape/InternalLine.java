@@ -22,7 +22,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class InternalLine extends Path implements Element, HasStrokeWidth, CalculatePathElements {
-  private final Line lineParent;
   private final MoLine data;
   
   private final Translate origin = Transform.translate(0., 0.);
@@ -30,12 +29,11 @@ public class InternalLine extends Path implements Element, HasStrokeWidth, Calcu
   
   Double initialStrokeWidth = 1.;
   
-  public InternalLine(@NonNull Line parent, @NonNull MoLine data) {
-    this(parent, data, true);
+  public InternalLine(@NonNull MoLine data) {
+    this(data, true);
   }
   
-  public InternalLine(@NonNull Line parent, @NonNull MoLine data, Boolean bindProperties) {
-    this.lineParent = parent;
+  public InternalLine(@NonNull MoLine data, Boolean bindProperties) {
     this.data = data;
     init();
   }
