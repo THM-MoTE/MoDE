@@ -6,18 +6,17 @@ import javafx.beans.property.DoubleProperty;
  * Created by hobbypunk on 02.11.16.
  */
 public interface HasStrokeWidth {
-  Double getInitialStrokeWidth();
   
-  void setInitialStrokeWidth(Double value);
+  DoubleProperty getInitialStrokeWidthProperty();
+  
+  default Double getInitialStrokeWidth() {
+    return getInitialStrokeWidthProperty().get();
+  }
+  default void setInitialStrokeWidth(Double value) {
+    getInitialStrokeWidthProperty().set(value);
+  }
   
   void setStrokeWidth(double value);
-  
-  DoubleProperty strokeWidthProperty();
-  
-  
-  default DoubleProperty ownStrokeWidthProperty() {
-    return strokeWidthProperty();
-  }
   
   default void setOwnStrokeWidth(double value) {
     setStrokeWidth(value);

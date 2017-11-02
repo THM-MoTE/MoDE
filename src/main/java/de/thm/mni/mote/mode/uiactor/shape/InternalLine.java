@@ -5,6 +5,8 @@ import de.thm.mni.mote.mode.modelica.graphics.Utilities;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.CalculatePathElements;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.Element;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.HasStrokeWidth;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.Path;
@@ -27,7 +29,7 @@ public class InternalLine extends Path implements Element, HasStrokeWidth, Calcu
   private final Translate origin = Transform.translate(0., 0.);
   private final Rotate rotation = Transform.rotate(0., 0., 0.);
   
-  Double initialStrokeWidth = 1.;
+  DoubleProperty initialStrokeWidthProperty = new SimpleDoubleProperty(1.);
   
   public InternalLine(@NonNull MoLine data) {
     this(data, true);
@@ -39,7 +41,7 @@ public class InternalLine extends Path implements Element, HasStrokeWidth, Calcu
   }
   
   public void setInitialStrokeWidth(Double value) {
-    initialStrokeWidth = value;
+    HasStrokeWidth.super.setInitialStrokeWidth(value);
     setOwnStrokeWidth(value);
   }
   

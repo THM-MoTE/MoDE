@@ -5,20 +5,20 @@ import de.thm.mni.mote.mode.uiactor.control.modelica.FXMoParentGroup;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.Element;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.FilledElement;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.StrokedElement;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Transform;
 import javafx.scene.transform.Translate;
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.Setter;
 
 /**
  * Created by hobbypunk on 02.11.16.
  */
 
 @Getter
-@Setter
 public class Ellipse extends javafx.scene.shape.Ellipse implements Element, FilledElement, StrokedElement {
   private final FXMoParentGroup moParent;
   private final MoEllipse data;
@@ -26,7 +26,7 @@ public class Ellipse extends javafx.scene.shape.Ellipse implements Element, Fill
   private final Translate origin = Transform.translate(0., 0.);
   private final Rotate rotation = Transform.rotate(0., 0., 0.);
   
-  Double initialStrokeWidth = 1.;
+  DoubleProperty initialStrokeWidthProperty = new SimpleDoubleProperty(1.);
   
   public Ellipse(@NonNull FXMoParentGroup parent, @NonNull MoEllipse data) {
     this.moParent = parent;
@@ -36,7 +36,7 @@ public class Ellipse extends javafx.scene.shape.Ellipse implements Element, Fill
   }
   
   public void setInitialStrokeWidth(Double value) {
-    initialStrokeWidth = value;
+    StrokedElement.super.setInitialStrokeWidth(value);
     setStrokeWidth(value);
   }
   

@@ -8,6 +8,7 @@ import de.thm.mni.mote.mode.uiactor.shape.interfaces.FilledElement;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.StrokedElement;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
@@ -35,7 +36,7 @@ public class Text extends Pane implements Element, FilledElement, StrokedElement
   private final Translate origin = Transform.translate(0., 0.);
   private final Rotate rotation = Transform.rotate(0., 0., 0.);
   
-  Double initialStrokeWidth = 1.;
+  DoubleProperty initialStrokeWidthProperty = new SimpleDoubleProperty(1.);
   
   public Text(@NonNull FXMoParentGroup parent, @NonNull MoText data) {
     this.moParent = parent;
@@ -45,18 +46,13 @@ public class Text extends Pane implements Element, FilledElement, StrokedElement
   }
   
   public void setInitialStrokeWidth(Double value) {
-    initialStrokeWidth = value;
+    StrokedElement.super.setInitialStrokeWidth(value);
     setOwnStrokeWidth(value);
   }
   
   @Override
   public void setStrokeWidth(double value) {
     this.text.setStrokeWidth(value);
-  }
-  
-  @Override
-  public DoubleProperty strokeWidthProperty() {
-    return this.text.strokeWidthProperty();
   }
   
   @Override
@@ -78,16 +74,16 @@ public class Text extends Pane implements Element, FilledElement, StrokedElement
     Point2D extent1 = getData().getExtent().getP2();
   
     Font f;
-    if (getData().getFontSize() != 0) {
-      f = Font.font(getData().getFontName(), getData().getFontSize());
+    if (getData().getFontSizeProperty().get() != 0) {
+      f = Font.font(getData().getFontNameProperty().get(), getData().getFontSizeProperty().get());
     } else {
-      f = Font.font(getData().getFontName(), 20);
+      f = Font.font(getData().getFontNameProperty().get(), 20);
       f = Font.font(f.getFamily(), Utilities.calculateMaxFontSize(f, getData().getString(), Math.abs(-extent0.getX() + extent1.getX()), Math.abs(-extent0.getY() + extent1.getY())));
     }
     
     this.text.setFont(f);
     this.text.setText(getData().getString());
-    this.text.setUnderline(MoText.TextStyle.isUnterline(getData().getTextStyle()));
+    this.text.setUnderline(MoText.TextStyle.isUnterline(getData().getTextStyleProperty().get()));
   
   
     Double tlx = Math.min(extent0.getX(), extent1.getX());
@@ -149,9 +145,9 @@ public class Text extends Pane implements Element, FilledElement, StrokedElement
     this.text.getTransforms().add(flipping);
     
     this.text.getTransforms().add(Transform.translate(0, heightText - heightExtent));
-    if (getData().getHorizontalAlignment() == MoText.TextAlignment.RIGHT) {
+    if (getData().getHorizontalAlignmentProperty().get() == MoText.TextAlignment.RIGHT) {
       this.text.getTransforms().add(Transform.translate(widthExtent - widthText, 0));
-    } else if (getData().getHorizontalAlignment() == MoText.TextAlignment.CENTER) {
+    } else if (getData().getHorizontalAlignmentProperty().get() == MoText.TextAlignment.CENTER) {
       this.text.getTransforms().add(Transform.translate((widthExtent - widthText) / 2, 0));
     }
   }

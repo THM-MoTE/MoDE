@@ -27,6 +27,8 @@ public class MoPolygon extends MoFilledShape implements HasSmoothOption {
     super(mfs);
     this.points = points;
     if (smooth != null) this.smoothProperty.set(smooth);
+  
+    initChangeListeners();
   }
   
   public static MoPolygon parse(PolygonContext elem) {

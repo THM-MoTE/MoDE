@@ -4,6 +4,7 @@ import de.thm.mni.mote.mode.modelica.MoVariable;
 import de.thm.mni.mote.mode.modelica.interfaces.HasExtent;
 import de.thm.mni.mote.mode.parser.modelica.AnnotationParser.TextContext;
 import de.thm.mni.mote.mode.parser.modelica.AnnotationParser.TextDataContext;
+import javafx.beans.property.*;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import lombok.AccessLevel;
@@ -53,13 +54,13 @@ public class MoText extends MoFilledShape implements HasExtent {
     }
   }
   
-  String string = "";
-  Double fontSize = 0.0;
-  String fontName = "";
-  Integer textStyle = 0;
-  @Getter(AccessLevel.PRIVATE) Color textColor = this.lineColor;
-  TextAlignment horizontalAlignment = TextAlignment.CENTER;
-  Integer index = 1;
+  StringProperty stringProperty = new SimpleStringProperty("");
+  DoubleProperty fontSizeProperty = new SimpleDoubleProperty(0.0);
+  StringProperty fontNameProperty = new SimpleStringProperty("");
+  IntegerProperty textStyleProperty = new SimpleIntegerProperty(0);
+  @Getter(AccessLevel.PRIVATE) ObjectProperty<Color> textColorProperty = this.lineColorProperty;
+  ObjectProperty<TextAlignment> horizontalAlignmentProperty = new SimpleObjectProperty<>(TextAlignment.CENTER);
+  IntegerProperty indexProperty = new SimpleIntegerProperty(1);
   
   MoText(MoFilledShape mfs, Point2D p1, Point2D p2, String string) {
     this(mfs, p1, p2, string, null, null, null, null, null, null);
@@ -70,18 +71,20 @@ public class MoText extends MoFilledShape implements HasExtent {
   private MoText(MoFilledShape mfs, Point2D p1, Point2D p2, String string, Double fontSize, String fontName, Integer textStyle, Color textColor, TextAlignment horizontalAlignment, Integer index) {
     super(mfs);
     extent = new MoSimpleExtent(p1, p2);
-    if (string != null) this.string = string;
-    if (fontSize != null) this.fontSize = fontSize;
-    if (fontName != null) this.fontName = fontName;
-    if (textStyle != null) this.textStyle = textStyle;
-    if (horizontalAlignment != null) this.horizontalAlignment = horizontalAlignment;
-    this.textColor = (textColor != null) ? textColor : this.lineColor;
-    if (index != null) this.index = index;
+    if (string != null) this.stringProperty.set(string);
+    if (fontSize != null) this.fontSizeProperty.set(fontSize);
+    if (fontName != null) this.fontNameProperty.set(fontName);
+    if (textStyle != null) this.textStyleProperty.set(textStyle);
+    if (horizontalAlignment != null) this.horizontalAlignmentProperty.set(horizontalAlignment);
+    if (textColor != null) this.textColorProperty.set(textColor);
+    if (index != null) this.indexProperty.set(index);
     this.showAlways = false;
+    
+    initChangeListeners();
   }
   
   public Color getFillColor() {
-    return (this.textColor != null) ? this.textColor : super.getLineColor();
+    return this.textColorProperty.get();
   }
   
   public Color getLineColor() {
@@ -94,7 +97,7 @@ public class MoText extends MoFilledShape implements HasExtent {
   
   
   public String getString() {
-    String str = string;
+    String str = stringProperty.get();
     
     if (moVarForParams != null && str.contains("%")) {
       str = str.replaceAll("%name", moVarForParams.getSimpleName());

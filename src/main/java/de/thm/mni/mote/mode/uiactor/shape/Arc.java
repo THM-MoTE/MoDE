@@ -5,6 +5,8 @@ import de.thm.mni.mote.mode.uiactor.control.modelica.FXMoParentGroup;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.Element;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.FilledElement;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.StrokedElement;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.ArcType;
 import javafx.scene.transform.Rotate;
@@ -26,7 +28,7 @@ public class Arc extends javafx.scene.shape.Arc implements Element, FilledElemen
   private final Translate origin = Transform.translate(0., 0.);
   private final Rotate rotation = Transform.rotate(0., 0., 0.);
   
-  Double initialStrokeWidth = 1.;
+  DoubleProperty initialStrokeWidthProperty = new SimpleDoubleProperty(1.);
   
   public Arc(@NonNull FXMoParentGroup parent, @NonNull MoEllipse data) {
     this.moParent = parent;

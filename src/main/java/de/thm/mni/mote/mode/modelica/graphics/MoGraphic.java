@@ -34,12 +34,11 @@ public class MoGraphic implements Changeable {
   DoubleProperty rotation = new SimpleDoubleProperty(null, "rotation", DEFAULT_ROTATION);
   
   public MoGraphic() {
-    initChangeListeners();
+    this(null, null, null);
   }
   
   public MoGraphic(MoGraphic mg) {
     this(mg.visible.getValue(), mg.getOrigin().getValue(), mg.rotation.getValue());
-    initChangeListeners();
   }
   
   @Builder
@@ -47,6 +46,7 @@ public class MoGraphic implements Changeable {
     if (visible != null) this.visible.setValue(visible);
     if (origin != null) this.origin.setValue(origin);
     if (rotation != null) this.rotation.setValue(rotation);
+    if(this.getClass() == MoGraphic.class) initChangeListeners();
   }
   
   
@@ -74,9 +74,9 @@ public class MoGraphic implements Changeable {
   }
   
   public static String toString(List<MoGraphic> moGraphics) {
-    String str = "";
+    StringBuilder str = new StringBuilder();
     for (MoGraphic moGraphic : moGraphics) {
-      str += ((str.isEmpty()) ? "" : ",") + moGraphic.toString();
+      str.append((str.length() == 0) ? "" : ",").append(moGraphic.toString());
     }
     
     return "annotation(" + str + ")";

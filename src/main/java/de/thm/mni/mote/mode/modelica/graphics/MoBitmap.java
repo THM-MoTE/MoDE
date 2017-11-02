@@ -27,6 +27,8 @@ public class MoBitmap extends MoGraphic implements HasExtent {
     extent = new MoSimpleExtent(p1, p2);
     this.fileName = fileName;
     this.imageSource = imageSource;
+  
+    initChangeListeners();
   }
   
   public static MoBitmap parse(OMCompiler omc, BitmapContext elem) {

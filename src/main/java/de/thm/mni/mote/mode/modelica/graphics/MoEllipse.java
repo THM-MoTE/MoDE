@@ -28,6 +28,8 @@ public class MoEllipse extends MoFilledShape implements HasExtent {
     extent = new MoSimpleExtent(p1, p2);
     if (startAngle != null) this.startAngle = startAngle;
     if (endAngle != null) this.endAngle = endAngle;
+  
+    initChangeListeners();
   }
   
   public static MoEllipse parse(EllipseContext elem) {

@@ -50,8 +50,14 @@ public class MoLine extends MoGraphic implements HasSmoothOption {
   ObjectProperty<Smooth> smoothProperty = new SimpleObjectProperty<>(null, "endArrow", DEFAULT_SMOOTH);
   
   DoubleProperty thicknessProperty = new SimpleDoubleProperty(1.0);
-  
   DoubleProperty arrowSizeProperty = new SimpleDoubleProperty(3.0);
+  
+  
+  ObjectProperty<Point2D> firstPointProperty = new SimpleObjectProperty<>();
+  ObjectProperty<Point2D> secondPointProperty = new SimpleObjectProperty<>();
+  
+  ObjectProperty<Point2D> secondLastPointProperty = new SimpleObjectProperty<>();
+  ObjectProperty<Point2D> lastPointProperty = new SimpleObjectProperty<>();
   
   public MoLine(Point2D start) {
     super();
@@ -77,7 +83,6 @@ public class MoLine extends MoGraphic implements HasSmoothOption {
   @Override
   protected void initChangeListeners() {
     if (this.points == null) return;
-    
     super.initChangeListeners();
     this.points.addListener((ListChangeListener<? super Point2D>) c -> changed());
   }

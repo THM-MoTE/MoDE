@@ -1,6 +1,10 @@
 package de.thm.mni.mote.mode.modelica.graphics;
 
 import de.thm.mni.mote.mode.parser.modelica.AnnotationParser.FilledShapeContext;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.paint.Color;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,29 +15,26 @@ import lombok.Getter;
 @Getter
 public class MoFilledShape extends MoGraphic {
   
-  Color lineColor = Color.BLACK;
-  Color fillColor = Color.BLACK;
-  Utilities.LinePattern pattern = Utilities.LinePattern.SOLID;
-  Utilities.FillPattern fillPattern = Utilities.FillPattern.NONE;
-  Double lineThickness = 0.25;
+  ObjectProperty<Color> lineColorProperty = new SimpleObjectProperty<>(Color.BLACK);
+  ObjectProperty<Color> fillColorProperty = new SimpleObjectProperty<>(Color.BLACK);
+  ObjectProperty<Utilities.LinePattern> patternProperty = new SimpleObjectProperty<>(Utilities.LinePattern.SOLID);
+  ObjectProperty<Utilities.FillPattern> fillPatternProperty = new SimpleObjectProperty<>(Utilities.FillPattern.NONE);
+  DoubleProperty lineThicknessProperty = new SimpleDoubleProperty(0.25);
   
   MoFilledShape(MoFilledShape mfs) {
-    super(mfs);
-    this.lineColor = mfs.lineColor;
-    this.fillColor = mfs.fillColor;
-    this.pattern = mfs.pattern;
-    this.fillPattern = mfs.fillPattern;
-    this.lineThickness = mfs.lineThickness;
+    this(mfs, mfs.lineColorProperty.get(), mfs.fillColorProperty.get(), mfs.patternProperty.get(), mfs.fillPatternProperty.get(), mfs.lineThicknessProperty.get());
   }
   
   @Builder(builderMethodName = "filledShapeBuilder")
   MoFilledShape(MoGraphic mg, Color lineColor, Color fillColor, Utilities.LinePattern pattern, Utilities.FillPattern fillPattern, Double lineThickness) {
     super(mg);
-    if (lineColor != null) this.lineColor = lineColor;
-    if (fillColor != null) this.fillColor = fillColor;
-    if (pattern != null) this.pattern = pattern;
-    if (fillPattern != null) this.fillPattern = fillPattern;
-    if (lineThickness != null) this.lineThickness = lineThickness;
+    if (lineColor != null) this.lineColorProperty.set(lineColor);
+    if (fillColor != null) this.fillColorProperty.set(fillColor);
+    if (pattern != null) this.patternProperty.set(pattern);
+    if (fillPattern != null) this.fillPatternProperty.set(fillPattern);
+    if (lineThickness != null) this.lineThicknessProperty.set(lineThickness);
+    
+    initChangeListeners();
   }
   
   static void parse(MoFilledShapeBuilder mfsb, FilledShapeContext ctx) {

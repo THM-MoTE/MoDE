@@ -6,6 +6,8 @@ import de.thm.mni.mote.mode.uiactor.shape.interfaces.CalculatePathElements;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.Element;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.FilledElement;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.StrokedElement;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.shape.ClosePath;
 import javafx.scene.shape.Path;
@@ -30,7 +32,7 @@ public class Polygon extends Path implements Element, StrokedElement, FilledElem
   private final Translate origin = Transform.translate(0., 0.);
   private final Rotate rotation = Transform.rotate(0., 0., 0.);
   
-  Double initialStrokeWidth = 1.;
+  DoubleProperty initialStrokeWidthProperty = new SimpleDoubleProperty(1.);
   
   public Polygon(@NonNull FXMoParentGroup parent, @NonNull MoPolygon data) {
     this.moParent = parent;
@@ -39,7 +41,7 @@ public class Polygon extends Path implements Element, StrokedElement, FilledElem
   }
   
   public void setInitialStrokeWidth(Double value) {
-    initialStrokeWidth = value;
+    StrokedElement.super.setInitialStrokeWidth(value);
     setStrokeWidth(value);
   }
   

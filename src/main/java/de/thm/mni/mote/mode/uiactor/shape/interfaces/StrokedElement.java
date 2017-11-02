@@ -15,9 +15,15 @@ public interface StrokedElement extends HasStrokeWidth {
   
   default void init() {
     //LinePattern:
-    this.setInitialStrokeWidth(getData().getLineThickness());
+    this.getInitialStrokeWidthProperty().bind(getData().getLineThicknessProperty());
+    
     this.getStrokeDashArray().clear();
-    this.getStrokeDashArray().addAll(Utilities.getLinePattern(getData().getPattern()));
+    this.getStrokeDashArray().addAll(Utilities.getLinePattern(getData().getPatternProperty().get()));
+  
+    getData().getPatternProperty().addListener((observable, oldValue, newValue) -> {
+      this.getStrokeDashArray().clear();
+      this.getStrokeDashArray().addAll(Utilities.getLinePattern(newValue));
+    });
   }
   
 }

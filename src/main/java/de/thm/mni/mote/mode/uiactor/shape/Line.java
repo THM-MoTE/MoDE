@@ -16,32 +16,27 @@ public class Line extends Group implements HasStrokeWidth {
   private final MoLine data;
   
   private final InternalLine line;
+  private final Arrow startArrow;
+  private final Arrow endArrow;
   
   public Line(@NonNull FXMoParentGroup parent, @NonNull MoLine data) {
     this.moParent = parent;
     this.data = data;
     this.line = new InternalLine(data);
+    this.startArrow = new StartArrow(data);
+    this.endArrow = new EndArrow(data);
     if(this.getClass() == Line.class) init();
   }
   
   public void init() {
     this.getChildren().add(this.line);
-    this.getChildren().add(new StartArrow(this));
-    this.getChildren().add(new EndArrow(this));
+    this.getChildren().add(this.startArrow);
+    this.getChildren().add(this.endArrow);
   }
   
   @Override
-  public Double getInitialStrokeWidth() {
-    return this.line.getInitialStrokeWidth();
-  }
-  
-  @Override
-  public void setInitialStrokeWidth(Double value) {
-    this.line.setInitialStrokeWidth(value);
-  }
-  
-  public DoubleProperty strokeWidthProperty() {
-    return this.line.strokeWidthProperty();
+  public DoubleProperty getInitialStrokeWidthProperty() {
+    return this.line.getInitialStrokeWidthProperty();
   }
   
   public void setStrokeWidth(double value) {
@@ -50,6 +45,8 @@ public class Line extends Group implements HasStrokeWidth {
   
   protected void setStroke(Paint p) {
     this.line.setStroke(p);
+    this.startArrow.setColor(p);
+    this.endArrow.setColor(p);
   }
   
 }

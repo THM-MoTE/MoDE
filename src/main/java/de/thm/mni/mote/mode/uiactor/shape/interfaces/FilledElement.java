@@ -18,12 +18,24 @@ public interface FilledElement {
   void setStroke(Paint p);
   
   default void init() {
-    setStyle(this.getStyle() + " " + Utilities.getFillCSS(getData().getFillPattern(), getData().getFillColor(), getData().getLineColor()));
-    
-    if (getData().getPattern() == Utilities.LinePattern.SOLID) {
-      this.setStroke(getData().getLineColor());
-    } else if (getData().getPattern() == Utilities.LinePattern.NONE) {
+    updateStyle();
+    updatePattern(getData().getPatternProperty().get());
+    getData().getPatternProperty().addListener((observable, oldValue, newValue) -> updatePattern(newValue));
+    getData().getFillPatternProperty().addListener((observable, oldValue, newValue) -> updateStyle());
+    getData().getFillColorProperty().addListener((observable, oldValue, newValue) -> updateStyle());
+    getData().getLineColorProperty().addListener((observable, oldValue, newValue) -> updateStyle());
+  }
+  
+  default void updateStyle() {
+    setStyle(this.getStyle() + " " + Utilities.getFillCSS(getData().getFillPatternProperty().get(), getData().getFillColorProperty().get(), getData().getLineColorProperty().get()));
+  }
+  
+  default void updatePattern(Utilities.LinePattern pattern) {
+    if (pattern == Utilities.LinePattern.SOLID) {
+      this.setStroke(getData().getLineColorProperty().get());
+    } else if (pattern == Utilities.LinePattern.NONE) {
       this.setStroke(Color.TRANSPARENT);
     }
+  
   }
 }

@@ -31,6 +31,8 @@ public class MoRectangle extends MoFilledShape implements HasExtent {
     extent = new MoSimpleExtent(p1, p2);
     if (borderPattern != null) this.borderPattern = borderPattern;
     if (radius != null) this.radius = radius;
+  
+    initChangeListeners();
   }
   
   public static MoRectangle parse(RectangleContext elem) {

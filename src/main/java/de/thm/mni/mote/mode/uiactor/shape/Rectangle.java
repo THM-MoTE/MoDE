@@ -5,6 +5,8 @@ import de.thm.mni.mote.mode.uiactor.control.modelica.FXMoParentGroup;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.Element;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.FilledElement;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.StrokedElement;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Transform;
@@ -25,7 +27,7 @@ public class Rectangle extends javafx.scene.shape.Rectangle implements Element, 
   private final Translate origin = Transform.translate(0., 0.);
   private final Rotate rotation = Transform.rotate(0., 0., 0.);
   
-  Double initialStrokeWidth = 1.;
+  DoubleProperty initialStrokeWidthProperty = new SimpleDoubleProperty(1.);
   
   public Rectangle(@NonNull FXMoParentGroup parent, @NonNull MoRectangle data) {
     this.moParent = parent;
@@ -34,7 +36,7 @@ public class Rectangle extends javafx.scene.shape.Rectangle implements Element, 
   }
   
   public void setInitialStrokeWidth(Double value) {
-    initialStrokeWidth = value;
+    StrokedElement.super.setInitialStrokeWidth(value);
     setOwnStrokeWidth(value);
   }
   
