@@ -3,6 +3,8 @@ package de.thm.mni.mote.mode.modelica.graphics;
 import de.thm.mni.mote.mode.parser.modelica.AnnotationParser.PointContext;
 import de.thm.mni.mote.mode.parser.modelica.AnnotationParser.PolygonContext;
 import de.thm.mni.mote.mode.parser.modelica.AnnotationParser.PolygonDataContext;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Point2D;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,13 +20,13 @@ import java.util.List;
 public class MoPolygon extends MoFilledShape implements HasSmoothOption {
   
   List<Point2D> points = new ArrayList<>();
-  Utilities.Smooth smooth = Utilities.Smooth.NONE;
+  ObjectProperty<Utilities.Smooth> smoothProperty = new SimpleObjectProperty<>(Utilities.Smooth.NONE);
   
   @Builder(builderMethodName = "polygonBuilder")
   MoPolygon(MoFilledShape mfs, @Singular List<Point2D> points, Utilities.Smooth smooth) {
     super(mfs);
     this.points = points;
-    if (smooth != null) this.smooth = smooth;
+    if (smooth != null) this.smoothProperty.set(smooth);
   }
   
   public static MoPolygon parse(PolygonContext elem) {
@@ -45,7 +47,6 @@ public class MoPolygon extends MoFilledShape implements HasSmoothOption {
         }
       }
     }
-    
     
     return mb.mfs(
         mfsb.mg(

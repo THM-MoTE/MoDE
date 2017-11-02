@@ -1,17 +1,11 @@
 package de.thm.mni.mote.mode.uiactor.editor.elementmanager.elements;
 
-import de.thm.mni.mote.mode.config.Settings;
 import de.thm.mni.mote.mode.modelica.graphics.MoLine;
-import de.thm.mni.mote.mode.uiactor.control.modelica.FXMoGroup;
+import de.thm.mni.mote.mode.uiactor.control.modelica.FXMoParentGroup;
 import de.thm.mni.mote.mode.uiactor.editor.elementmanager.interfaces.Hoverable;
 import de.thm.mni.mote.mode.uiactor.editor.elementmanager.interfaces.Selectable;
-import de.thm.mni.mote.mode.uiactor.editor.interfaces.Childable;
 import de.thm.mni.mote.mode.uiactor.editor.statemachine.elements.ModifyableLine;
-import de.thm.mni.mote.mode.uiactor.shape.Line;
-import javafx.beans.property.DoubleProperty;
-import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
@@ -20,39 +14,29 @@ import lombok.Getter;
 import lombok.NonNull;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by hobbypunk on 13.02.17.
  */
 @Getter
-public class ManagedLine extends ModifyableLine implements Hoverable, Selectable, Childable {
+public class ManagedLine extends ModifyableLine implements Hoverable, Selectable {
   
-  private Line child = null;
   private Boolean isSelected = false;
-  ObservableList<Node> children = FXCollections.observableArrayList();
   
-  public ManagedLine(@NonNull FXMoGroup parent, @NonNull MoLine data) {
+  public ManagedLine(@NonNull FXMoParentGroup parent, @NonNull MoLine data) {
     super(parent, data);
-    initParentListener();
-  
-    this.child = new Line(parent, data);
-  
-    strokeWidthProperty().bind(child.strokeWidthProperty().add(Settings.load().getMainwindow().getEditor().getLineClickRadius()));
-  
-    child.setStrokeWidth(child.getStrokeWidth());
-  
+    //initParentListener();
+    
     getData().getPoints().addListener((ListChangeListener<Point2D>) c -> {
       removePointNodes();
       if (getIsSelected()) addPointNodes();
     });
-  
-    children.add(child);
   }
   
   @Override
   public void toFront() {
     super.toFront();
-    this.child.toFront();
   }
   
   @Override
@@ -62,17 +46,17 @@ public class ManagedLine extends ModifyableLine implements Hoverable, Selectable
   
   @Override
   public void enterHover() {
-    this.child.setStroke(Color.LIGHTCORAL);
+    this.setStroke(Color.LIGHTCORAL);
   }
   
   @Override
   public void leaveHover() {
-    this.child.setStroke(getData().getColor().get());
+    this.setStroke(getData().getColorProperty().get());
   }
   
   @Override
   public void enterSelection() {
-    this.child.setStroke(Color.RED);
+    this.setStroke(Color.RED);
     isSelected = true;
     addPointNodes();
   }
@@ -81,7 +65,7 @@ public class ManagedLine extends ModifyableLine implements Hoverable, Selectable
   public void leaveSelection() {
     isSelected = false;
     removePointNodes();
-    this.child.setStroke(getData().getColor().get());
+    this.setStroke(getData().getColorProperty().get());
   }
   
   private void addPointNodes() {
@@ -91,22 +75,12 @@ public class ManagedLine extends ModifyableLine implements Hoverable, Selectable
       Circle c = new Circle(p.getX(), p.getY(), 1);
       c.setFill(Color.RED);
       c.setStrokeWidth(0);
-      this.children.add(0, c);
+      this.getChildren().add(0, c);
     }
   }
   
   private void removePointNodes() {
-    this.children.clear();
-    this.children.add(child);
-  }
-  
-  @Override
-  public DoubleProperty ownStrokeWidthProperty() {
-    return child.strokeWidthProperty();
-  }
-  
-  @Override
-  public void setOwnStrokeWidth(double value) {
-    if (child != null) child.setStrokeWidth(value);
+    List<Node> list = this.getChildren().stream().filter(node -> node instanceof Circle).collect(Collectors.toList());
+    this.getChildren().removeAll(list);
   }
 }

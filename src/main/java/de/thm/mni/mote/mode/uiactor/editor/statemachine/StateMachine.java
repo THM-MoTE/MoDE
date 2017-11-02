@@ -195,7 +195,11 @@ public class StateMachine implements EventHandler<InputEvent> {
       if (hasMatchingParent(target, Hoverable.class)) {
         if (type.equals(MouseEvent.MOUSE_ENTERED) || type.equals(MouseEvent.MOUSE_MOVED))
           ElementManager.getInstance(tab.getData()).setHoveredElement((Hoverable) getMatchingParent(target, Hoverable.class));
-        if (type.equals(MouseEvent.MOUSE_EXITED)) ElementManager.getInstance(tab.getData()).clearHoveredElement();
+        if (type.equals(MouseEvent.MOUSE_EXITED))
+          ElementManager.getInstance(tab.getData()).clearHoveredElement();
+      } else {
+        if(type.equals(MouseEvent.MOUSE_MOVED))
+          ElementManager.getInstance(tab.getData()).clearHoveredElement();
       }
     }
   

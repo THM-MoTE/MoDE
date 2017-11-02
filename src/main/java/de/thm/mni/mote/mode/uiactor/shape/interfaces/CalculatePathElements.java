@@ -22,7 +22,7 @@ public interface CalculatePathElements {
   ObservableList<PathElement> getElements();
   
   default Boolean isBezier() {
-    return getData().getSmooth().equals(Utilities.Smooth.BEZIER);
+    return getData().getSmoothProperty().get().equals(Utilities.Smooth.BEZIER);
   }
   
   default void calcElements(List<Point2D> points) {

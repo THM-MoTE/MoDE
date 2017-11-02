@@ -6,7 +6,9 @@ import de.thm.mni.mote.mode.parser.modelica.AnnotationParser;
 import de.thm.mni.mote.mode.parser.modelica.AnnotationParser.LineDataContext;
 import de.thm.mni.mote.mode.parser.modelica.AnnotationParser.PointContext;
 import de.thm.mni.mote.mode.util.StringBuilderUtilities;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -26,11 +28,14 @@ import java.util.List;
 @SuppressWarnings("unchecked")
 @Getter
 public class MoLine extends MoGraphic implements HasSmoothOption {
-  private static Color DEFAULT_COLOR = Color.BLACK;
-  private static LinePattern DEFAULT_LINEPATTERN = LinePattern.SOLID;
+  private static final Arrow DEFAULT_STARTARROW = Arrow.NONE;
+  private static final Arrow DEFAULT_ENDARROW = Arrow.NONE;
+  private static final Smooth DEFAULT_SMOOTH = Smooth.NONE;
+  private static final Color DEFAULT_COLOR = Color.BLACK;
+  private static final LinePattern DEFAULT_LINEPATTERN = LinePattern.SOLID;
   
   
-  enum Arrow {
+  public enum Arrow {
     NONE,
     OPEN,
     FILLED,
@@ -38,12 +43,15 @@ public class MoLine extends MoGraphic implements HasSmoothOption {
   }
   
   ObservableList<Point2D> points = FXCollections.observableArrayList();
-  ObjectProperty<Color> color = new SimpleObjectProperty<>(null, "color", DEFAULT_COLOR);
-  ObjectProperty<LinePattern> linePattern = new SimpleObjectProperty<>(null, "linePattern", DEFAULT_LINEPATTERN);
-  Double thickness = 1.0;
-  Arrow[] arrows = new Arrow[2];
-  Double arrowSize = 3.0;
-  Smooth smooth = Smooth.NONE;
+  ObjectProperty<Color> colorProperty = new SimpleObjectProperty<>(null, "color", DEFAULT_COLOR);
+  ObjectProperty<LinePattern> linePatternProperty = new SimpleObjectProperty<>(null, "linePattern", DEFAULT_LINEPATTERN);
+  ObjectProperty<Arrow> startArrowProperty = new SimpleObjectProperty<>(null, "startArrow", DEFAULT_STARTARROW);
+  ObjectProperty<Arrow> endArrowProperty = new SimpleObjectProperty<>(null, "endArrow", DEFAULT_ENDARROW);
+  ObjectProperty<Smooth> smoothProperty = new SimpleObjectProperty<>(null, "endArrow", DEFAULT_SMOOTH);
+  
+  DoubleProperty thicknessProperty = new SimpleDoubleProperty(1.0);
+  
+  DoubleProperty arrowSizeProperty = new SimpleDoubleProperty(3.0);
   
   public MoLine(Point2D start) {
     super();
@@ -55,14 +63,14 @@ public class MoLine extends MoGraphic implements HasSmoothOption {
   MoLine(MoGraphic mg, @Singular List<Point2D> points, Color color, LinePattern linePattern, Double thickness, Arrow start, Arrow end, Double arrowSize, Smooth smooth) {
     super(mg);
     this.points.addAll(points);
-    this.arrows[0] = start;
-    this.arrows[1] = end;
+    startArrowProperty.set(start);
+    endArrowProperty.set(end);
   
-    if (color != null) this.color.set(color);
-    if (linePattern != null) this.linePattern.set(linePattern);
-    if (thickness != null) this.thickness = thickness;
-    if (arrowSize != null) this.arrowSize = arrowSize;
-    if (smooth != null) this.smooth = smooth;
+    if (color != null) this.colorProperty.set(color);
+    if (linePattern != null) this.linePatternProperty.set(linePattern);
+    if (thickness != null) this.thicknessProperty.set(thickness);
+    if (arrowSize != null) this.arrowSizeProperty.set(arrowSize);
+    if (smooth != null) this.smoothProperty.set(smooth);
     initChangeListeners();
   }
   
@@ -74,13 +82,22 @@ public class MoLine extends MoGraphic implements HasSmoothOption {
     this.points.addListener((ListChangeListener<? super Point2D>) c -> changed());
   }
   
+  public Point2D getFirstPoint() {
+    return this.points.get(0);
+  }
+  
+  public Point2D getLastPoint() {
+    return this.points.get(this.points.size()-1);
+  }
+  
+  
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder("Line(");
     sb.append(super.toString());
-    StringBuilderUtilities.addString(sb, "points = " + Utilities.toString(points), "Line\\(");
-    if (!DEFAULT_COLOR.equals(this.color.get())) StringBuilderUtilities.addProperty(sb, this.color);
-    if (!DEFAULT_LINEPATTERN.equals(this.linePattern.get())) StringBuilderUtilities.addProperty(sb, this.linePattern, "LinePattern.");
+    StringBuilderUtilities.addString(sb, "points = " + Utilities.toString(points), "InternalLine\\(");
+    if (!DEFAULT_COLOR.equals(this.colorProperty.get())) StringBuilderUtilities.addProperty(sb, this.colorProperty);
+    if (!DEFAULT_LINEPATTERN.equals(this.linePatternProperty.get())) StringBuilderUtilities.addProperty(sb, this.linePatternProperty, "LinePattern.");
     
     return sb.append(')').toString();
   }

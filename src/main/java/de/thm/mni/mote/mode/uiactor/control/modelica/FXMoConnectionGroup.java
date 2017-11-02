@@ -4,7 +4,7 @@ import de.thm.mni.mote.mode.modelica.MoConnection;
 import de.thm.mni.mote.mode.modelica.graphics.MoGraphic;
 import de.thm.mni.mote.mode.modelica.graphics.MoLine;
 import de.thm.mni.mote.mode.modelica.graphics.MoText;
-import de.thm.mni.mote.mode.uiactor.shape.Line;
+import de.thm.mni.mote.mode.uiactor.editor.elementmanager.elements.ManagedLine;
 import de.thm.mni.mote.mode.uiactor.shape.Text;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.HasStrokeWidth;
 import javafx.beans.property.BooleanProperty;
@@ -16,7 +16,7 @@ public class FXMoConnectionGroup extends FXMoParentGroup {
   private final FXMoParentGroup moParent;
   private final MoConnection connection;
   
-  public FXMoConnectionGroup(FXMoParentGroup moParent, MoConnection connection) {
+  FXMoConnectionGroup(FXMoParentGroup moParent, MoConnection connection) {
     this.moParent = moParent;
     this.connection = connection;
     initImage();
@@ -28,7 +28,7 @@ public class FXMoConnectionGroup extends FXMoParentGroup {
   
   private void initImage(MoGraphic mg) {
     if (mg instanceof MoText) this.getChildren().add(new Text(this, (MoText) mg));
-    else if (mg instanceof MoLine) this.getChildren().add(new Line(this, (MoLine) mg));
+    else if (mg instanceof MoLine) this.getChildren().add(new ManagedLine(this, (MoLine) mg));
     preventScaling(1., 1.);
   }
   

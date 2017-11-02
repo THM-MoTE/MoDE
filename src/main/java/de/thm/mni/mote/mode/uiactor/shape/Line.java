@@ -1,55 +1,53 @@
 package de.thm.mni.mote.mode.uiactor.shape;
 
 import de.thm.mni.mote.mode.modelica.graphics.MoLine;
-import de.thm.mni.mote.mode.modelica.graphics.Utilities;
 import de.thm.mni.mote.mode.uiactor.control.modelica.FXMoParentGroup;
-import de.thm.mni.mote.mode.uiactor.shape.interfaces.CalculatePathElements;
-import de.thm.mni.mote.mode.uiactor.shape.interfaces.Element;
 import de.thm.mni.mote.mode.uiactor.shape.interfaces.HasStrokeWidth;
-import javafx.collections.ListChangeListener;
-import javafx.geometry.Point2D;
-import javafx.scene.shape.Path;
-import javafx.scene.transform.Rotate;
-import javafx.scene.transform.Transform;
-import javafx.scene.transform.Translate;
+import javafx.beans.property.DoubleProperty;
+import javafx.scene.Group;
+import javafx.scene.paint.Paint;
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.Setter;
-
-/**
- * Created by hobbypunk on 02.11.16.
- */
 
 @Getter
-@Setter
-public class Line extends Path implements Element, HasStrokeWidth, CalculatePathElements {
+public class Line extends Group implements HasStrokeWidth {
+  
   private final FXMoParentGroup moParent;
   private final MoLine data;
   
-  private final Translate origin = Transform.translate(0., 0.);
-  private final Rotate rotation = Transform.rotate(0., 0., 0.);
-  
-  Double initialStrokeWidth = 1.;
+  private final InternalLine line;
   
   public Line(@NonNull FXMoParentGroup parent, @NonNull MoLine data) {
     this.moParent = parent;
     this.data = data;
-    data.getPoints().addListener((ListChangeListener<Point2D>) c -> calcElements(getData().getPoints()));
-    init();
-  }
-  
-  public void setInitialStrokeWidth(Double value) {
-    initialStrokeWidth = value;
-    setOwnStrokeWidth(value);
+    this.line = new InternalLine(this, data);
+    if(this.getClass() == Line.class) init();
   }
   
   public void init() {
-    Element.super.init();
-    
-    calcElements(getData().getPoints());
-    this.getStrokeDashArray().clear();
-    this.getStrokeDashArray().addAll(Utilities.getLinePattern(getData().getLinePattern().get()));
-    this.setInitialStrokeWidth(getData().getThickness());
-    this.setStroke(getData().getColor().get());
+    this.getChildren().add(this.line);
   }
+  
+  @Override
+  public Double getInitialStrokeWidth() {
+    return this.line.getInitialStrokeWidth();
+  }
+  
+  @Override
+  public void setInitialStrokeWidth(Double value) {
+    this.line.setInitialStrokeWidth(value);
+  }
+  
+  public DoubleProperty strokeWidthProperty() {
+    return this.line.strokeWidthProperty();
+  }
+  
+  public void setStrokeWidth(double value) {
+    this.line.setStrokeWidth(value);
+  }
+  
+  protected void setStroke(Paint p) {
+    this.line.setStroke(p);
+  }
+  
 }
