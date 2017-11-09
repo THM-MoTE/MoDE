@@ -9,4 +9,5 @@ public abstract class FXMoParentGroup extends Group {
   public abstract BooleanProperty getFlippedYProperty();
   
   public abstract Point2D convertTo(Point2D scenePoint);
+  
 }

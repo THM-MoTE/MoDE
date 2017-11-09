@@ -29,6 +29,8 @@ public class FXMoDiagramMoGroup extends FXMoGroup {
     this.imageAsBackground = imageAsBackground;
     init();
     this.setId(container.getName().replaceAll("\\.", "_"));
+    
+    variables.forEach((moVariable, fxMoVariableIconMoGroup) -> fxMoVariableIconMoGroup.calculateLocalCenterOnDiagram());
   }
   
   @Override

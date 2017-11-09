@@ -1,10 +1,12 @@
 package de.thm.mni.mote.mode.uiactor.control.modelica;
 
+import de.thm.mni.mote.mode.modelica.MoConnection;
 import de.thm.mni.mote.mode.modelica.MoVariable;
 import de.thm.mni.mote.mode.modelica.graphics.MoSimpleExtent;
 import de.thm.mni.mote.mode.modelica.graphics.MoText;
 import de.thm.mni.mote.mode.modelica.graphics.MoTransformation;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.transform.Affine;
@@ -22,21 +24,32 @@ import java.util.List;
 /**
  * Created by hobbypunk on 19.09.16.
  */
+@Getter
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
-public class FXMoConnectorIconMoGroup extends FXMoGroup {
+public class FXMoConnectorIconMoGroup extends FXMoGroup implements CalculateLocalCenterOnDiagram {
+  
   Translate origin = new Translate();
   Rotate rotation = new Rotate();
   Affine transformation = new Affine();
   
+  @NonNull FXMoVariableIconMoGroup moParent;
+  @NonNull MoVariable variable;
   
-  @Getter @NonNull private final FXMoVariableIconMoGroup moParent;
-  @Getter @NonNull private final MoVariable variable;
+  ObjectProperty<Point2D> centerOnDiagramProperty = new SimpleObjectProperty<>();
   
-  public FXMoConnectorIconMoGroup(FXMoVariableIconMoGroup moParent, MoVariable variable) {
+  public FXMoConnectorIconMoGroup(FXMoVariableIconMoGroup moParent, MoVariable variable, List<MoConnection> to, List<MoConnection> from) {
     super(variable.getType());
     this.moParent = moParent;
     this.variable = variable;
     init();
+    from.stream().filter(conn -> conn.fromContains(this.variable)).forEach(conn -> conn.getLine().getFirstPointProperty().bind(centerOnDiagramProperty));
+    to.stream().filter(conn -> conn.toContains(this.variable)).forEach(conn -> conn.getLine().getLastPointProperty().bind(centerOnDiagramProperty));
+  }
+  
+  @Override
+  public void init() {
+    super.init();
+    CalculateLocalCenterOnDiagram.super.init();
   }
   
   protected void initImage() {
@@ -84,5 +97,15 @@ public class FXMoConnectorIconMoGroup extends FXMoGroup {
     if (that instanceof FXMoDiagramMoGroup) return list;
     if (that instanceof FXMoVariableIconMoGroup) list.add(0, ((FXMoVariableIconMoGroup) that).getVariable());
     return getVariables(that.getParent(), list);
+  }
+  
+  @Override
+  public FXMoDiagramMoGroup getMoDiagram() {
+    return this.moParent.getMoDiagram();
+  }
+  
+  @Override
+  public String toString() {
+    return getVariable().getName();
   }
 }

@@ -122,10 +122,7 @@ public class OMCompiler {
     if (Files.isDirectory(f)) f = f.resolve("package.mo");
     Result r = client.call("loadFile", ScriptingHelper.convertPath(f));
     if (r.result.contains("false") && r.error.isPresent()) {
-      if (r.error.isPresent()) {
-        throw new ParserException(r.error.get());
-      }
-      throw new ParserException(tr("Error", "error", "omcactor.unknown_error"));
+      throw new ParserException(r.error.get());
     }
   }
   
@@ -134,10 +131,7 @@ public class OMCompiler {
   
     Result r = client.call("loadFile", ScriptingHelper.convertPath(f));
     if (r.result.contains("false") && r.error.isPresent()) {
-      if (r.error.isPresent()) {
-        throw new ParserException(r.error.get());
-      }
-      throw new ParserException(tr("Error", "error", "omcactor.unknown_error"));
+      throw new ParserException(r.error.get());
     }
 
     r = client.call("getLoadedLibraries");
@@ -349,7 +343,15 @@ public class OMCompiler {
     
     List<String> list = getClassWithoutContainingClasses(className, ci);
     
-    return list.stream().filter(s -> s.trim().startsWith("connect")).collect(Collectors.toList());
+    return list.stream().filter(new Predicate<String>() {
+      Boolean takeLine = false;
+      @Override
+      public boolean test(String s) {
+        if(s.trim().startsWith("connect")) takeLine = true;
+        Boolean lineEnd = takeLine && s.trim().endsWith(";");
+        if(lineEnd) takeLine = false;
+        return takeLine || lineEnd;}
+    }).collect(Collectors.toList());
   }
   
   public void reload(String className) {

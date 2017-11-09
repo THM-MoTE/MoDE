@@ -1,7 +1,7 @@
 package de.thm.mni.mote.mode.modelica;
 
-import de.thm.mni.mhpp11.smbj.messages.logging.ErrorMessage;
 import de.thm.mni.mhpp11.smbj.actors.messagebus.MessageBus;
+import de.thm.mni.mhpp11.smbj.messages.logging.ErrorMessage;
 import de.thm.mni.mote.mode.modelica.graphics.MoGraphic;
 import de.thm.mni.mote.mode.modelica.graphics.MoLine;
 import de.thm.mni.mote.mode.modelica.graphics.MoText;
@@ -17,6 +17,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Point2D;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
@@ -43,12 +44,21 @@ public class MoConnection implements Changeable {
   
   private final ObservableList<MoGraphic> moGraphics = FXCollections.observableArrayList();
   
+  //TODO: is there a better solution?
+  private final ObjectProperty<Point2D> startPointProperty = new SimpleObjectProperty<>();
+  private final ObjectProperty<Point2D> endPointProperty = new SimpleObjectProperty<>();
+  
   @Builder
   public MoConnection(@NonNull MoClass parent, @NonNull List<MoVariable> from, @NonNull List<MoVariable> to, @Singular List<MoGraphic> graphics) {
     this.parent = parent;
     this.from.addAll(from);
     this.to.addAll(to);
     if (graphics != null) this.moGraphics.addAll(graphics);
+    
+    init();
+  }
+  
+  private void init() {
     this.moGraphics.forEach(mg -> mg.setChangeParent(this));
     initChangeListener();
   }
@@ -87,8 +97,7 @@ public class MoConnection implements Changeable {
   }
   
   private boolean contains(MoVariable var, List<MoVariable> list) {
-    for (MoVariable mv : list) if (mv.equals(var)) return true;
-    return false;
+    return list.contains(var);
   }
   
   private boolean contains(List<MoVariable> list, List<MoVariable> list2) {
@@ -103,7 +112,11 @@ public class MoConnection implements Changeable {
     return fromContains(var) || toContains(var);
   }
   
-  String getIndicator() {
+  String getRegex() {
+    return String.format("connect\\s*\\(\\s*%s\\s*,\\s*%s\\s*\\)", getVariablePath(from), getVariablePath(to));
+  }
+  
+  private String getIndicator() {
     return "connect(" + getVariablePath(from) + ',' + getVariablePath(to) + ")";
   }
   
@@ -138,7 +151,8 @@ public class MoConnection implements Changeable {
       mb.parent(parent);
       mb.from(findVariable(parent, values.get("from")));
       mb.to(findVariable(parent, values.get("to")));
-      if (values.containsKey("annotation")) MoConnection.parse(mb, values.get("annotation"));
+      if (values.containsKey("annotation"))
+        MoConnection.parse(mb, values.get("annotation"));
       return mb.build();
     } catch (Exception e) {
       throw new ParserException(tr("Error", "error.modelica.error_in", parent.getSimpleName()), e);

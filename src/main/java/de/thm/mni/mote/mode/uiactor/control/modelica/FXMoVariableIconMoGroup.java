@@ -1,5 +1,6 @@
 package de.thm.mni.mote.mode.uiactor.control.modelica;
 
+import de.thm.mni.mote.mode.modelica.MoConnection;
 import de.thm.mni.mote.mode.modelica.MoContainer;
 import de.thm.mni.mote.mode.modelica.MoVariable;
 import de.thm.mni.mote.mode.modelica.graphics.MoSimpleExtent;
@@ -7,16 +8,22 @@ import de.thm.mni.mote.mode.modelica.graphics.MoTransformation;
 import de.thm.mni.mote.mode.uiactor.editor.elementmanager.elements.ManagedFXMoConnectorIconMoGroup;
 import de.thm.mni.mote.mode.uiactor.editor.statemachine.elements.ModifyableFXMoConnectorIconMoGroup;
 import javafx.beans.binding.DoubleBinding;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
-import javafx.scene.transform.*;
+import javafx.scene.transform.Affine;
+import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Transform;
+import javafx.scene.transform.Translate;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.experimental.FieldDefaults;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -24,7 +31,7 @@ import java.util.Map;
  */
 @Getter
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
-public class FXMoVariableIconMoGroup extends FXMoGroup {
+public class FXMoVariableIconMoGroup extends FXMoGroup implements CalculateLocalCenterOnDiagram {
   private Map<MoVariable, ModifyableFXMoConnectorIconMoGroup> data = new HashMap<>();
   
   Translate offset = new Translate();
@@ -35,6 +42,8 @@ public class FXMoVariableIconMoGroup extends FXMoGroup {
   private final FXMoDiagramMoGroup moDiagram;
   @NonNull MoVariable variable;
   
+  ObjectProperty<Point2D> centerOnDiagramProperty = new SimpleObjectProperty<>();
+  
   protected FXMoVariableIconMoGroup(FXMoDiagramMoGroup moDiagram, MoContainer parent, MoVariable variable) {
     super(parent);
     this.moDiagram = moDiagram;
@@ -42,19 +51,28 @@ public class FXMoVariableIconMoGroup extends FXMoGroup {
     init();
   }
   
+  @Override
+  public void init() {
+    super.init();
+    CalculateLocalCenterOnDiagram.super.init();
+  }
+  
   protected void initImage() {
     this.getMoClass().getIcon().getMoGraphics().forEach(this::initImage);
-    initConnectors();
     initTransformation();
+    initConnectors();
   }
   
   private void initConnectors() {
-    getMoClass().getConnectorVariables().forEach(this::initConnector);
+    List<MoConnection> to = this.getVariable().getToConnections();
+    List<MoConnection> from = this.getVariable().getFromConnections();
+    
+    getMoClass().getConnectorVariables().forEach(moVariable -> this.initConnector(moVariable, to, from));
   }
   
-  private void initConnector(MoVariable mv) {
+  private void initConnector(MoVariable mv, List<MoConnection> to, List<MoConnection> from) {
     if (mv.getPlacement() == null || (mv.getPlacement().getIconTransformation() == null && mv.getPlacement().getDiagramTransformation() == null)) return;
-    ModifyableFXMoConnectorIconMoGroup mip = new ManagedFXMoConnectorIconMoGroup(this, mv);
+    ModifyableFXMoConnectorIconMoGroup mip = new ManagedFXMoConnectorIconMoGroup(this, mv, to, from);
     getData().put(mv, mip);
     this.add(mip);
   }
@@ -172,5 +190,10 @@ public class FXMoVariableIconMoGroup extends FXMoGroup {
     point = this.rotation.inverseTransform(point.getX(), point.getY());
     point = this.offset.inverseTransform(point.getX(), point.getY());
     return point;
+  }
+  
+  @Override
+  public String toString() {
+    return getVariable().getName();
   }
 }

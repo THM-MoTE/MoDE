@@ -57,9 +57,11 @@ public class MoVariable extends MoElement implements Changeable {
   
     if (type != null) {
       this.type = type;
-      String l = this.line.replace("\"" + this.getComment() + "\"", "");
-      if (l.matches(".*?" + type.getSimpleName() + "\\s+" + this.getName() + "\\s+=.*")) parseValue(l);
-      else if (l.matches(".*?" + this.getName() + "\\s*\\(.*")) this.parseParameter(l);
+      if(this.line != null) {
+        String l = this.line.replace("\"" + this.getComment() + "\"", "");
+        if (l.matches(".*?" + type.getSimpleName() + "\\s+" + this.getName() + "\\s+=.*")) parseValue(l);
+        else if (l.matches(".*?" + this.getName() + "\\s*\\(.*")) this.parseParameter(l);
+      }
     }
     if (annotations != null) this.addAllAnnotations(annotations);
     if (getPlacement() != null) getPlacement().setChangeParent(this);
@@ -121,6 +123,14 @@ public class MoVariable extends MoElement implements Changeable {
     return getConnections(this.parent);
   }
   
+  public List<MoConnection> getFromConnections() {
+    return getConnections().stream().filter(moConnection -> moConnection.fromContains(MoVariable.this)).collect(Collectors.toList());
+  }
+  
+  public List<MoConnection> getToConnections() {
+    return getConnections().stream().filter(moConnection -> moConnection.toContains(MoVariable.this)).collect(Collectors.toList());
+  }
+  
   public List<MoConnection> getConnections(MoClass baseParent) {
     return baseParent.getConnections().stream().filter(moConnection -> moConnection.contains(this)).collect(ImmutableListCollector.toImmutableList());
   }
@@ -136,9 +146,7 @@ public class MoVariable extends MoElement implements Changeable {
   }
   
   public void initReplaceText() {
-    type.getElement().getIcon().getMoGraphics().stream().filter(mg -> mg instanceof MoText).forEach(mg -> {
-      ((MoText) mg).initReplaceText(this);
-    });
+    type.getElement().getIcon().getMoGraphics().stream().filter(mg -> mg instanceof MoText).forEach(mg -> ((MoText) mg).initReplaceText(this));
   }
   
   @Override

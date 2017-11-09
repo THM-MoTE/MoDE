@@ -111,7 +111,7 @@ public class Saver {
     
     for (int i = pos; i < end; i++) {
       for (MoConnection mc : moClass.getDeletedConnections()) {
-        if (fileContent.get(i).contains(mc.getIndicator())) {
+        if (fileContent.get(i).matches(mc.getRegex())) {
           String line;
           do {
             line = fileContent.get(i);
@@ -125,7 +125,7 @@ public class Saver {
       }
       
       for (MoConnection mc : moClass.getConnections().filtered(moConnection -> moConnection.getUnsavedChanges().get().equals(Change.EDIT))) {
-        if (fileContent.get(i).contains(mc.getIndicator())) {
+        if (fileContent.get(i).matches(".*" + mc.getRegex() + ".*")) {
           String line;
           do {
             line = fileContent.get(i);
@@ -133,6 +133,7 @@ public class Saver {
             end--;
           } while (!line.endsWith(";"));
           fileContent.add(i, leading + mc.toString());
+          end++;
           mc.getUnsavedChanges().set(Change.NONE);
           break;
         }

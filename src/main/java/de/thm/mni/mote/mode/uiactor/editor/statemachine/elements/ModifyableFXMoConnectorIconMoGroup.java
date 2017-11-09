@@ -36,8 +36,8 @@ public class ModifyableFXMoConnectorIconMoGroup extends FXMoConnectorIconMoGroup
   private ModifyableFXMoConnectorIconMoGroup freezeTarget = null;
   
   
-  public ModifyableFXMoConnectorIconMoGroup(FXMoVariableIconMoGroup moParent, MoVariable variable) {
-    super(moParent, variable);
+  public ModifyableFXMoConnectorIconMoGroup(FXMoVariableIconMoGroup moParent, MoVariable variable, List<MoConnection> to, List<MoConnection> from) {
+    super(moParent, variable, to, from);
   }
   
   @Override
@@ -155,10 +155,5 @@ public class ModifyableFXMoConnectorIconMoGroup extends FXMoConnectorIconMoGroup
       line.getData().getPoints().remove(p);
       lastPoint.set(p);
     }
-  }
-  
-  @Override
-  public String toString() {
-    return getVariable().getName();
   }
 }

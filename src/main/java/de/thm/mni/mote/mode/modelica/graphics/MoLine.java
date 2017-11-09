@@ -81,30 +81,36 @@ public class MoLine extends MoGraphic implements HasSmoothOption {
   
   @Override
   protected void initChangeListeners() {
-    if (this.points == null) return;
+    if (this.points == null || this.points.size() <= 1) return;
+    initPointProperties();
     super.initChangeListeners();
     this.points.addListener((ListChangeListener<? super Point2D>) c -> changed());
   
-    updatePointProperties();
     this.points.addListener((ListChangeListener<? super Point2D>) c -> updatePointProperties());
   }
-  
-  private void updatePointProperties() {
+  private void initPointProperties() {
     Point2D p = this.points.get(0);
     if(p != this.firstPointProperty.get()) this.firstPointProperty.set(p);
-    p = this.points.get(1);
+    p = this.points.get(this.points.size()-1);
+    if(p != this.lastPointProperty.get()) this.lastPointProperty.set(p);
+  
+    this.firstPointProperty.addListener((observable, oldValue, newValue) -> this.points.set(0, newValue));
+    this.lastPointProperty.addListener((observable, oldValue, newValue) -> this.points.set(this.points.size()-1, newValue));
+  
+    updatePointProperties();
+  }
+  private void updatePointProperties() {
+    Point2D p = this.points.get(1);
     if(p != this.secondPointProperty.get()) this.secondPointProperty.set(p);
     p = this.points.get(this.points.size()-2);
     if(p != this.secondLastPointProperty.get()) this.secondLastPointProperty.set(p);
-    p = this.points.get(this.points.size()-1);
-    if(p != this.lastPointProperty.get()) this.lastPointProperty.set(p);
   }
   
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder("Line(");
     sb.append(super.toString());
-    StringBuilderUtilities.addString(sb, "points = " + Utilities.toString(points), "InternalLine\\(");
+    StringBuilderUtilities.addString(sb, "points = " + Utilities.toString(points), "Line\\(");
     if (!DEFAULT_COLOR.equals(this.colorProperty.get())) StringBuilderUtilities.addProperty(sb, this.colorProperty);
     if (!DEFAULT_LINEPATTERN.equals(this.linePatternProperty.get())) StringBuilderUtilities.addProperty(sb, this.linePatternProperty, "LinePattern.");
     

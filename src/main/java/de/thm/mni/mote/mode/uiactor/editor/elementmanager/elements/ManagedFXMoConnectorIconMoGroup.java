@@ -1,5 +1,6 @@
 package de.thm.mni.mote.mode.uiactor.editor.elementmanager.elements;
 
+import de.thm.mni.mote.mode.modelica.MoConnection;
 import de.thm.mni.mote.mode.modelica.MoVariable;
 import de.thm.mni.mote.mode.uiactor.control.modelica.FXMoIconMoGroup;
 import de.thm.mni.mote.mode.uiactor.control.modelica.FXMoVariableIconMoGroup;
@@ -25,6 +26,7 @@ import lombok.Getter;
 import org.controlsfx.control.PopOver;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -48,8 +50,8 @@ public class ManagedFXMoConnectorIconMoGroup extends ModifyableFXMoConnectorIcon
     HIGHLIGHT.setSpread(.8);
   }
   
-  public ManagedFXMoConnectorIconMoGroup(FXMoVariableIconMoGroup moParent, MoVariable variable) {
-    super(moParent, variable);
+  public ManagedFXMoConnectorIconMoGroup(FXMoVariableIconMoGroup moParent, MoVariable variable, List<MoConnection> to, List<MoConnection> from) {
+    super(moParent, variable, to, from);
     errorPopOver = configuredPopOver();
     infoPopOver = configuredInfoPopOver();
     highlightExtra.addListener((ListChangeListener<? super String>) c -> {

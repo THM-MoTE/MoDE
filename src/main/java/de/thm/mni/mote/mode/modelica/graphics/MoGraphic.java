@@ -76,7 +76,7 @@ public class MoGraphic implements Changeable {
   public static String toString(List<MoGraphic> moGraphics) {
     StringBuilder str = new StringBuilder();
     for (MoGraphic moGraphic : moGraphics) {
-      str.append((str.length() == 0) ? "" : ",").append(moGraphic.toString());
+      str.append((str.length() == 0) ? "" : ", ").append(moGraphic.toString());
     }
     
     return "annotation(" + str + ")";

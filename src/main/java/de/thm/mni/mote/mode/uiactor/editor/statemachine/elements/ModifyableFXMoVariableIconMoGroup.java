@@ -18,10 +18,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.TabPane;
 import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -103,44 +100,45 @@ public class ModifyableFXMoVariableIconMoGroup extends FXMoVariableIconMoGroup i
   
     startMousePos = this.getMoDiagram().convertTo(new Point2D(event.getSceneX(), event.getSceneY()));
     startOrigin = transformation.getOrigin().get();
-    this.getVariable().getConnections().forEach(moConn -> {
-      Boolean to = moConn.toContains(this.getVariable());
-      Boolean from = moConn.fromContains(this.getVariable());
-      if (!startConnectionPointPoses.containsKey(moConn)) {
-        startConnectionPointPoses.put(moConn, new ArrayList<>());
-        startConnectionPoints.put(moConn, new ArrayList<>());
-      }
-      if (from && to) { // self connection: move all points
-        for (int i = 0, size = moConn.getLine().getPoints().size(); 0 < size; i++)
-          startConnectionPointPoses.get(moConn).add(i);
-      } else if (from)    // from is always the first point in a connection
-        startConnectionPointPoses.get(moConn).add(0);
-      else if (to)        // to is always the last point in a connection
-        startConnectionPointPoses.get(moConn).add(moConn.getLine().getPoints().size() - 1);
-      
-      for (Integer pos : startConnectionPointPoses.get(moConn))
-        startConnectionPoints.get(moConn).add(moConn.getLine().getPoints().get(pos));
-    });
+//    this.getVariable().getConnections().forEach(moConn -> {
+//      Boolean to = moConn.toContains(this.getVariable());
+//      Boolean from = moConn.fromContains(this.getVariable());
+//      if (!startConnectionPointPoses.containsKey(moConn)) {
+//        startConnectionPointPoses.put(moConn, new ArrayList<>());
+//        startConnectionPoints.put(moConn, new ArrayList<>());
+//      }
+//      if (from && to) { // self connection: move all points
+//        for (int i = 0, size = moConn.getLine().getPoints().size(); 0 < size; i++)
+//          startConnectionPointPoses.get(moConn).add(i);
+//      } else if (from)    // from is always the first point in a connection
+//        startConnectionPointPoses.get(moConn).add(0);
+//      else if (to)        // to is always the last point in a connection
+//        startConnectionPointPoses.get(moConn).add(moConn.getLine().getPoints().size() - 1);
+//
+//      for (Integer pos : startConnectionPointPoses.get(moConn))
+//        startConnectionPoints.get(moConn).add(moConn.getLine().getPoints().get(pos));
+//    });
   }
   
   private void moveDrag(MouseEvent event) {
     if (this.transformation == null) return;
     Point2D mousePos = getMoDiagram().convertTo(new Point2D(event.getSceneX(), event.getSceneY()));
     Point2D delta = mousePos.subtract(startMousePos);
-    updateConnections(delta);
+//    updateConnections(delta);
     
     transformation.getOrigin().set(startOrigin.add(delta));
+    this.calculateLocalCenterOnDiagram();
   }
   
-  private void updateConnections(Point2D delta) {
-    startConnectionPointPoses.keySet().forEach(moConn -> {
-      for (int i = 0, size = startConnectionPointPoses.get(moConn).size(); i < size; i++) {
-        Integer pos = startConnectionPointPoses.get(moConn).get(i);
-        Point2D point = startConnectionPoints.get(moConn).get(i);
-        moConn.getLine().getPoints().set(pos, point.add(delta));
-      }
-    });
-  }
+//  private void updateConnections(Point2D delta) {
+//    startConnectionPointPoses.keySet().forEach(moConn -> {
+//      for (int i = 0, size = startConnectionPointPoses.get(moConn).size(); i < size; i++) {
+//        Integer pos = startConnectionPointPoses.get(moConn).get(i);
+//        Point2D point = startConnectionPoints.get(moConn).get(i);
+//        moConn.getLine().getPoints().set(pos, point.add(delta));
+//      }
+//    });
+//  }
   
   private TabPane findTabPane(Parent parent) {
     if (parent instanceof TabPane) return (TabPane) parent;
@@ -155,7 +153,6 @@ public class ModifyableFXMoVariableIconMoGroup extends FXMoVariableIconMoGroup i
     if (event.getEventType().equals(MouseEvent.MOUSE_PRESSED)) {
       sm.freeze();
       startCenter = new Point2D(0, 0);
-      this.getChildren().add(new Circle(startCenter.getX(), startCenter.getY(), 3, Color.GREEN));
       startSceneMousePos = new Point2D(event.getSceneX(), event.getSceneY());
       Point2D pos = this.convertTo(startSceneMousePos);
       startAngle = (double) Math.round(Math.toDegrees(Math.atan2(pos.getX() - startCenter.getX(), startCenter.getY() - pos.getY())));
@@ -168,6 +165,7 @@ public class ModifyableFXMoVariableIconMoGroup extends FXMoVariableIconMoGroup i
       transformation.getRotation().set((newRotation < 0) ? 360 + newRotation : newRotation);
       pos = this.convertTo(startSceneMousePos);
       startAngle = (double) Math.round(Math.toDegrees(Math.atan2(pos.getX() - startCenter.getX(), startCenter.getY() - pos.getY())));
+      this.calculateLocalCenterOnDiagram();
       return Command.IGNORE;
     } else if (event.getEventType().equals(MouseEvent.MOUSE_RELEASED)) {
       Command c = new ModifyableMoVariable(getVariable()).createRotation(startRotation);
@@ -191,6 +189,7 @@ public class ModifyableFXMoVariableIconMoGroup extends FXMoVariableIconMoGroup i
       return Command.IGNORE;
     } else if (event.getEventType().equals(MouseEvent.MOUSE_DRAGGED)) {
       this.resizeDrag(event, buttonId);
+      this.calculateLocalCenterOnDiagram();
       return Command.IGNORE;
     } else if (event.getEventType().equals(MouseEvent.MOUSE_RELEASED)) {
       Command c = new ModifyableMoVariable(getVariable()).createResize(startP1, startP2);
