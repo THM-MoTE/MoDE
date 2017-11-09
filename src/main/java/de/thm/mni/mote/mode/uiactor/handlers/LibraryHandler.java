@@ -26,13 +26,9 @@ public class LibraryHandler {
       } else if (action.endsWith("model")) {
         System.out.println("New Model!");
       }
-    } else if (action.startsWith("open_as_")) {
+    } else if (action.startsWith("open")) {
       
-      MainTabControl tab;
-      if(action.endsWith("diagram"))
-        tab = new MainTabControl(container);
-      else
-        tab = new MainTabControl(container, true);
+      MainTabControl tab = new MainTabControl(container);
       
       tabPane.getTabs().add(tab);
       tab.lateInitialize(tabPane.getScene());

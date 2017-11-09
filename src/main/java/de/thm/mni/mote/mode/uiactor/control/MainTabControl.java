@@ -2,9 +2,10 @@ package de.thm.mni.mote.mode.uiactor.control;
 
 import de.thm.mni.mote.mode.modelica.MoContainer;
 import de.thm.mni.mote.mode.parser.ParserException;
-import de.thm.mni.mote.mode.uiactor.control.modelica.FXMoGroup;
 import de.thm.mni.mote.mode.uiactor.control.modelica.FXMoDiagramMoGroup;
+import de.thm.mni.mote.mode.uiactor.control.modelica.FXMoGroup;
 import de.thm.mni.mote.mode.uiactor.control.modelica.FXMoIconMoGroup;
+import de.thm.mni.mote.mode.uiactor.editor.MenuManager;
 import de.thm.mni.mote.mode.uiactor.editor.actionmanager.ActionManager;
 import de.thm.mni.mote.mode.uiactor.editor.elementmanager.ElementManager;
 import de.thm.mni.mote.mode.uiactor.editor.elementmanager.elements.ManagedFXMoDiagramMoGroup;
@@ -37,7 +38,6 @@ import static de.thm.mni.mote.mode.modelica.interfaces.Changeable.Change;
 public class MainTabControl extends Tab implements Initializable {
   
   private final MoContainer data;
-  private final Boolean imagesAsBackground;
   
   @FXML private StackPane main;
   @FXML private ScrollPane scroll;
@@ -45,12 +45,7 @@ public class MainTabControl extends Tab implements Initializable {
   private FXMLLoader loader;
   
   public MainTabControl(MoContainer data) {
-    this(data, false);
-  }
-  
-  public MainTabControl(MoContainer data, Boolean imagesAsBackground) {
     this.data = data;
-    this.imagesAsBackground = imagesAsBackground;
     loader = new FXMLLoader();
     loader.setLocation(Utilities.getControlView("MainTab"));
     loader.setRoot(this);
@@ -72,7 +67,7 @@ public class MainTabControl extends Tab implements Initializable {
     try {
       this.setGraphic(new FXMoIconMoGroup(data).scaleToSize(20., 20.));
   
-      mp = new ManagedFXMoDiagramMoGroup(data, imagesAsBackground);
+      mp = new ManagedFXMoDiagramMoGroup(data);
       
       updateText(Change.NONE);
   
@@ -110,6 +105,14 @@ public class MainTabControl extends Tab implements Initializable {
     
     main.minWidthProperty().bind(Bindings.createDoubleBinding(() -> scroll.getViewportBounds().getWidth(), scroll.viewportBoundsProperty()));
   
+    if(data.getElement().hasIcon()) {
+      MenuManager.getInstance(data).getShowIconProperty().addListener((observable, oldValue, newValue) -> {
+        ManagedFXMoDiagramMoGroup fxdiagram = (ManagedFXMoDiagramMoGroup)main.getChildren().get(0);
+        if(newValue) fxdiagram.setImageAsBackground();
+        else fxdiagram.removeImageAsBackground();
+      });
+    }
+    
     this.setOnSelectionChanged(event -> {
       if (MainTabControl.this.isSelected()) {
         StateMachine.getInstance(data).enter();
@@ -122,6 +125,7 @@ public class MainTabControl extends Tab implements Initializable {
   
     this.setOnClosed(event -> {
       StateMachine.getInstance(data).leave();
+      MenuManager.removeInstance(data);
       ActionManager.removeInstance(data);
       ElementManager.removeInstance(data);
       StateMachine.removeInstance(data);

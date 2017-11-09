@@ -25,7 +25,7 @@ public class MoTreeCell extends TreeCell<MoContainer> {
   private ContextMenu cm = null;
   private TabPane tabPane;
   
-  private ObjectProperty<EventHandler<ActionEvent>> onEditAction = new SimpleObjectProperty<>(null);
+  private ObjectProperty<EventHandler<ActionEvent>> onEditActionProperty = new SimpleObjectProperty<>(null);
   private ObjectProperty<EventHandler<ActionEvent>> onAddNewActionProperty = new SimpleObjectProperty<>(null);
   
   private ObjectProperty<EventHandler<MouseEvent>> onNonRootMouseClickedProperty = new SimpleObjectProperty<>(null);
@@ -41,7 +41,7 @@ public class MoTreeCell extends TreeCell<MoContainer> {
   {
     btnRootEdit.getStyleClass().add("no-border");
     btnRootEdit.setGraphic(new FontIcon("gmi-edit"));
-    btnRootEdit.onActionProperty().bind(onEditAction);
+    btnRootEdit.onActionProperty().bind(onEditActionProperty);
   }
     
   
@@ -120,27 +120,19 @@ public class MoTreeCell extends TreeCell<MoContainer> {
     };
   }
   
-  private final ObjectProperty<EventHandler<ActionEvent>> onEditActionProperty() { return onEditAction; }
+  public final void setOnEditAction(EventHandler<ActionEvent> value) { onEditActionProperty.set(value); }
   
-  public final void setOnEditAction(EventHandler<ActionEvent> value) { onEditActionProperty().set(value); }
+  public final void setOnNonRootMouseClicked(EventHandler<MouseEvent> value) { onNonRootMouseClickedProperty.set(value); }
   
-  private final ObjectProperty<EventHandler<MouseEvent>> onNonRootMouseClickedProperty() { return onNonRootMouseClickedProperty; }
+  public final void setOnNonRootContextMenuRequest(EventHandler<? super ContextMenuEvent> value) { onNonRootContextMenuRequest.set(value); }
   
-  public final void setOnNonRootMouseClicked(EventHandler<MouseEvent> value) { onNonRootMouseClickedProperty().set(value); }
-  
-  private final ObjectProperty<EventHandler<? super ContextMenuEvent>> onNonRootContextMenuRequest() { return onNonRootContextMenuRequest; }
-  
-  public final void setOnNonRootContextMenuRequest(EventHandler<? super ContextMenuEvent> value) { onNonRootContextMenuRequest().set(value); }
-  
-  private final ObjectProperty<EventHandler<ActionEvent>> onNonRootContextMenuItemAction() { return onNonRootContextMenuItemAction; }
-  
-  public final void setOnNonRootContextMenuItemAction(EventHandler<ActionEvent> value) { onNonRootContextMenuItemAction().set(value); }
+  public final void setOnNonRootContextMenuItemAction(EventHandler<ActionEvent> value) { onNonRootContextMenuItemAction.set(value); }
   
   private ContextMenu createLibraryMenu() {
     if (cm != null) return cm;
     cm = new ContextMenu();
   
-    for (String action : new String[]{"add_new.package", "add_new.model", "seperator", "open_as_diagram", "add_to_diagram", "open_as_icon"}) {
+    for (String action : new String[]{"add_new.package", "add_new.model", "seperator", "open", "add_to_diagram"}) {
       createMenu(action, 0, cm.getItems());
     }
     return cm;
@@ -151,10 +143,10 @@ public class MoTreeCell extends TreeCell<MoContainer> {
     if (part + 1 >= splittedAction.length) {
       items.add(createMenuItem(action));
     } else {
-      String newAction = "";
+      StringBuilder newAction = new StringBuilder();
       for (int i = 0; i <= part; i++) {
-        if (!newAction.isEmpty()) newAction += ".";
-        newAction += ((newAction.isEmpty()) ? "" : ".") + splittedAction[i];
+        if (newAction.length() > 0) newAction.append(".");
+        newAction.append((newAction.length() == 0) ? "" : ".").append(splittedAction[i]);
       }
       Menu submenu = null;
       for (MenuItem item : items) {
@@ -164,7 +156,7 @@ public class MoTreeCell extends TreeCell<MoContainer> {
         }
       }
       if (submenu == null) {
-        submenu = new ContextSubMenu(tr("Main", "menu.context." + newAction), newAction);
+        submenu = new ContextSubMenu(tr("Main", "menu.context." + newAction), newAction.toString());
         items.add(submenu);
       }
       createMenu(action, part + 1, submenu.getItems());
@@ -188,11 +180,11 @@ public class MoTreeCell extends TreeCell<MoContainer> {
     return isSystemLib() || isProjectLib();
   }
   
-  public boolean isSystemLib() {
+  private boolean isSystemLib() {
     return itemHasParentType(getItem(), "system_libraries");
   }
   
-  public boolean isProjectLib() {
+  private boolean isProjectLib() {
     return itemHasParentType(getItem(), "project_libraries");
   }
   

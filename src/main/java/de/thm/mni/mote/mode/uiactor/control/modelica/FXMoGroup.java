@@ -86,8 +86,8 @@ public abstract class FXMoGroup extends FXMoParentGroup {
     return (scaleUp) ? ZOOMFACTOR : (1 / ZOOMFACTOR);
   }
   
-  protected FXMoGroup scaleDelta(Boolean scaleUp) throws ParserException {
-    return scaleToFactor(scale.getX() * getScaleFactor(scaleUp), scale.getY() * getScaleFactor(scaleUp), false);
+  protected void scaleDelta(Boolean scaleUp) throws ParserException {
+    scaleToFactor(scale.getX() * getScaleFactor(scaleUp), scale.getY() * getScaleFactor(scaleUp), false);
   }
   
   
@@ -109,7 +109,7 @@ public abstract class FXMoGroup extends FXMoParentGroup {
     return scaleToFactor(scale.getX() * newWidth / oldWidth, scale.getY() * newHeight / oldHeight, true);
   }
   
-  protected FXMoGroup scaleToFactor(Double factorX, Double factorY, Boolean force) {
+  FXMoGroup scaleToFactor(Double factorX, Double factorY, Boolean force) {
     if (force || factorX > 0.25) {
       scale.setX(factorX);
       scale.setY(factorY);
@@ -124,7 +124,7 @@ public abstract class FXMoGroup extends FXMoParentGroup {
     else initCoordinateSystem(this.getMoClass().getDiagramCoordinateSystem());
   }
   
-  protected void initCoordinateSystem(MoCoordinateSystem mcs) {
+  private void initCoordinateSystem(MoCoordinateSystem mcs) {
   
     Point2D extent0 = mcs.getExtent().getP1();
     Point2D extent1 = mcs.getExtent().getP2();
@@ -167,11 +167,13 @@ public abstract class FXMoGroup extends FXMoParentGroup {
     getChildren().remove(node);
   }
   
-  public void remove(MoGraphic mg) {
+  public void remove(MoGraphic mg) {remove(mg, false);}
+  @SuppressWarnings("SuspiciousMethodCalls")
+  public void remove(MoGraphic mg, Boolean force) {
     for (int i = 0, size = getChildren().size(); i < size; i++) {
       if (getChildren().get(i) instanceof Element) {
         Element child = (Element) getChildren().get(i);
-        if (child.getData().equals(mg) && child instanceof Deletable) {
+        if (child.getData().equals(mg) && (child instanceof Deletable || force)) {
           getChildren().remove(child);
           return;
         }
@@ -195,7 +197,7 @@ public abstract class FXMoGroup extends FXMoParentGroup {
     initImage(mg, false);
   }
   
-  void initImage(MoGraphic mg, Boolean grayOut) {
+  void initImage(MoGraphic mg, Boolean asBackground) {
     Node elem = null;
     if (mg instanceof MoText) this.add(new Text(this, (MoText) mg));
     else if (mg instanceof MoRectangle) {
@@ -211,13 +213,15 @@ public abstract class FXMoGroup extends FXMoParentGroup {
     }
     
     if(elem != null) {
-      if(grayOut) {
+      if (!asBackground) {
+        this.add(elem);
+      } else {
         ColorAdjust effect = new ColorAdjust();
         effect.setSaturation(-0.8);
         effect.setSaturation(-0.8);
         elem.setEffect(effect);
+        this.add(1, elem);
       }
-      this.add(elem);
       preventScaling(elem,1., 1.);
     }
   }
@@ -252,6 +256,7 @@ public abstract class FXMoGroup extends FXMoParentGroup {
     return null;
   }
   
+  @SuppressWarnings("WeakerAccess")
   public Point2D convertFrom(Point2D p) {
     
     try {

@@ -4,6 +4,7 @@ import de.thm.mni.mhpp11.smbj.actors.messagebus.MessageBus;
 import de.thm.mni.mhpp11.smbj.messages.logging.TraceMessage;
 import de.thm.mni.mote.mode.modelica.MoContainer;
 import de.thm.mni.mote.mode.uiactor.control.MainTabControl;
+import de.thm.mni.mote.mode.uiactor.editor.MenuManager;
 import de.thm.mni.mote.mode.uiactor.editor.actionmanager.ActionManager;
 import de.thm.mni.mote.mode.uiactor.editor.actionmanager.commands.Command;
 import de.thm.mni.mote.mode.uiactor.editor.elementmanager.ElementManager;
@@ -210,6 +211,7 @@ public class StateMachine implements EventHandler<InputEvent> {
   
   
   public void leave() {
+    MenuManager.getInstance(this.data).getActive().set(false);
     ActionManager.getInstance(this.data).getActive().set(false);
     this.active.set(false);
     state.leave(this.scene);
@@ -222,6 +224,7 @@ public class StateMachine implements EventHandler<InputEvent> {
     state.enter(this.scene);
     this.active.set(true);
     ActionManager.getInstance(this.data).getActive().set(true);
+    MenuManager.getInstance(this.data).getActive().set(true);
   }
   
   public void freeze() {

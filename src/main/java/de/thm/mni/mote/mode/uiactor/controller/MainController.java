@@ -1,12 +1,12 @@
 package de.thm.mni.mote.mode.uiactor.controller;
 
-import de.thm.mni.mhpp11.smbj.messages.logging.ErrorMessage;
 import de.thm.mni.mhpp11.smbj.actors.messagebus.MessageBus;
 import de.thm.mni.mhpp11.smbj.controller.ui.ActorController;
-import de.thm.mni.mhpp11.smbj.messages.ui.creator.StartUIMessage;
-import de.thm.mni.mhpp11.smbj.messages.ui.SplashShowMessage;
 import de.thm.mni.mhpp11.smbj.messages.ExitMessage;
 import de.thm.mni.mhpp11.smbj.messages.Message;
+import de.thm.mni.mhpp11.smbj.messages.logging.ErrorMessage;
+import de.thm.mni.mhpp11.smbj.messages.ui.SplashShowMessage;
+import de.thm.mni.mhpp11.smbj.messages.ui.creator.StartUIMessage;
 import de.thm.mni.mote.mode.config.Settings;
 import de.thm.mni.mote.mode.config.model.MainWindow;
 import de.thm.mni.mote.mode.config.model.Project;
@@ -18,6 +18,7 @@ import de.thm.mni.mote.mode.uiactor.control.*;
 import de.thm.mni.mote.mode.uiactor.controller.dialogs.ChangeProjectLibrariesDialogController;
 import de.thm.mni.mote.mode.uiactor.controller.dialogs.ChangeSystemLibrariesDialogController;
 import de.thm.mni.mote.mode.uiactor.controller.dialogs.CreateNewController;
+import de.thm.mni.mote.mode.uiactor.editor.MenuManager;
 import de.thm.mni.mote.mode.uiactor.editor.actionmanager.ActionManager;
 import de.thm.mni.mote.mode.uiactor.handlers.LibraryHandler;
 import de.thm.mni.mote.mode.uiactor.messages.OMCAvailableLibsUIMessage;
@@ -79,6 +80,9 @@ public class MainController extends NotifyController {
   @FXML private MenuItem miUndo;
   @FXML private MenuItem miRedo;
   
+  @FXML private MenuItem miShowIcon;
+  @FXML private CheckBox cbShowIcon;
+  
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     super.initialize(location, resources);
@@ -94,19 +98,25 @@ public class MainController extends NotifyController {
     super.lateInitialize();
     this.project = (Project) getParams().get(1);
     initTreeView();
-    initActionManager();
+    initMenuManager();
   }
   
-  private void initActionManager() {
-    ActionManager.activeInstance.addListener((observable, oldValue, newValue) -> {
+  private void initMenuManager() {
+    MenuManager.activeInstance.addListener((observable, oldValue, newValue) -> {
       miUndo.disableProperty().unbind();
       miRedo.disableProperty().unbind();
+      miShowIcon.disableProperty().unbind();
+      if(oldValue != null) cbShowIcon.selectedProperty().unbindBidirectional(oldValue.getShowIconProperty());
       if (newValue != null) {
-        miUndo.disableProperty().bind(newValue.getHasUndoCommand().not());
-        miRedo.disableProperty().bind(newValue.getHasRedoCommand().not());
+        miUndo.disableProperty().bind(newValue.getHasUndoCommandsProperty().not());
+        miRedo.disableProperty().bind(newValue.getHasRedoCommandsProperty().not());
+        miShowIcon.disableProperty().bind(newValue.getHasIconProperty().not());
+        cbShowIcon.selectedProperty().bindBidirectional(newValue.getShowIconProperty());
       } else {
         miUndo.setDisable(true);
         miRedo.setDisable(true);
+        miShowIcon.setDisable(true);
+        cbShowIcon.setSelected(false);
       }
     });
   }
@@ -194,8 +204,7 @@ public class MainController extends NotifyController {
         MainTabControl mtc = (MainTabControl) tabPane.getSelectionModel().getSelectedItem();
         menuItem.setDisable(!container.getElement().hasIcon() || mtc == null);
       } else {
-        if (tmp.getAction().equals("open_as_diagram")) menuItem.setDisable(!container.getElement().hasDiagram());
-        else if (tmp.getAction().equals("open_as_icon")) menuItem.setDisable(!container.getElement().hasIcon());
+        if (tmp.getAction().equals("open")) menuItem.setDisable(!container.getElement().hasDiagram());
       }
     });
   }
@@ -212,10 +221,7 @@ public class MainController extends NotifyController {
       }
     }
     if (event.getClickCount() == 2) {
-      if (tabPane.getSelectionModel().getSelectedItem() != null && item.getElement().hasIcon())
-        LibraryHandler.getInstance().handleMenu(tabPane, item, "add_to_diagram");
-      else
-        LibraryHandler.getInstance().handleMenu(tabPane, item, "open_as_diagram");
+      LibraryHandler.getInstance().handleMenu(tabPane, item, "open_as_diagram");
     }
   }
   
@@ -348,15 +354,20 @@ public class MainController extends NotifyController {
   }
   
   @FXML
-  private void undo() {
+  private void handleUndo() {
     ActionManager am = ActionManager.activeInstance.get();
     if (am != null) am.undo();
   }
   
   @FXML
-  private void redo() {
+  private void handleRedo() {
     ActionManager am = ActionManager.activeInstance.get();
     if (am != null) am.redo();
+  }
+  
+  @FXML
+  private void handleShowIcon() {
+    cbShowIcon.setSelected(!cbShowIcon.isSelected());
   }
   
   private static class MainActor extends NotifyActor<MainController, Message> {

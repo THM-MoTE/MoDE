@@ -99,6 +99,17 @@
     -fx-text-fill: white;
 }
 
+.menu-item .check-box:disabled {
+    -fx-opacity: 1;
+}
+
+.menu-item .check-box .box {
+    -fx-background-color: transparent;
+    -fx-border-color:lightgray;
+    -fx-border-radius:0px;
+    -fx-border-width: 1px;
+}
+
 .dialog-pane {
     -fx-background-color: whitesmoke;
 }

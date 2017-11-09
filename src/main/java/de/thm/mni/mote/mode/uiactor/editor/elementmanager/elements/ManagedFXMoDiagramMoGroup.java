@@ -21,16 +21,13 @@ import java.util.stream.Collectors;
  */
 public class ManagedFXMoDiagramMoGroup extends ModifyableFXMoDiagramMoGroup {
   
-  public ManagedFXMoDiagramMoGroup(MoContainer container, Boolean imageAsBackground) throws ParserException {
-    super(container, imageAsBackground);
+  public ManagedFXMoDiagramMoGroup(MoContainer container) throws ParserException {
+    super(container);
   }
   
   public void highlightConnectors(ModifyableFXMoConnectorIconMoGroup connector) {
     List<ManagedFXMoConnectorIconMoGroup> connectors = collectConnectors();
-    ElementManager.getInstance(this.getThat()).setHighlightedElements(connectors.stream().filter(c -> c != connector).map(c -> {
-      c.getHighlightExtra().setAll(getConnectableToMessages(connector.getVariables(), c.getVariables()));
-      return c;
-    }).collect(Collectors.toList()).toArray(new Highlightable[]{}));
+    ElementManager.getInstance(this.getThat()).setHighlightedElements(connectors.stream().filter(c -> c != connector).peek(c -> c.getHighlightExtra().setAll(getConnectableToMessages(connector.getVariables(), c.getVariables()))).collect(Collectors.toList()).toArray(new Highlightable[]{}));
   }
   
   private List<ManagedFXMoConnectorIconMoGroup> collectConnectors() {
@@ -50,7 +47,7 @@ public class ManagedFXMoDiagramMoGroup extends ModifyableFXMoDiagramMoGroup {
     return this.getConnectableToMessages(from, to).isEmpty();
   }
   
-  public List<String> getConnectableToMessages(List<MoVariable> from, List<MoVariable> to) {
+  private List<String> getConnectableToMessages(List<MoVariable> from, List<MoVariable> to) {
     if (isConnectedTo(from, to)) return Collections.singletonList("editor.connectors.already_connected");
     return getConnectableToMessages(from.get(from.size() - 1), to.get(to.size() - 1));
   }
@@ -77,7 +74,7 @@ public class ManagedFXMoDiagramMoGroup extends ModifyableFXMoDiagramMoGroup {
     if (from instanceof MoConnector && to instanceof MoConnector) {
       if (from.getVariables().size() != to.getVariables().size()) return Collections.singletonList("editor.connectors.no_matching_variable_count");
       for (int i = 0; i < from.getVariables().size(); i++) {
-        List<String> list = Collections.EMPTY_LIST;
+        List<String> list = new ArrayList<>();
         Boolean hasMatchingOpposite = false;
         for (int j = 0; j < to.getVariables().size(); j++) {
           list = getConnectableToMessages(from.getVariables().get(i), to.getVariables().get(j));
@@ -95,7 +92,7 @@ public class ManagedFXMoDiagramMoGroup extends ModifyableFXMoDiagramMoGroup {
       if (from != to) return Collections.singletonList("editor.connectors.no_matching_type|" + from.getName() + "|" + to.getName());
     }
     
-    return Collections.EMPTY_LIST;
+    return new ArrayList<>();
   }
   
   private Boolean isConnectedTo(List<MoVariable> from, List<MoVariable> to) {

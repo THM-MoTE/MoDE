@@ -29,8 +29,8 @@ import javafx.scene.input.TransferMode;
  */
 public class ModifyableFXMoDiagramMoGroup extends FXMoDiagramMoGroup implements Zoomable {
   
-  public ModifyableFXMoDiagramMoGroup(MoContainer container, Boolean imageAsBackground) throws ParserException {
-    super(container, imageAsBackground);
+  public ModifyableFXMoDiagramMoGroup(MoContainer container) throws ParserException {
+    super(container);
     initDragNDrop();
   }
   

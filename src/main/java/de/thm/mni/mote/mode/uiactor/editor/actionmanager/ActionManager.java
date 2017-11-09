@@ -6,11 +6,13 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import lombok.Getter;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 
 /**
  * Created by hobbypunk on 21.02.17.
@@ -31,12 +33,10 @@ public class ActionManager {
     INSTANCES.remove(data);
   }
   
-  @Getter public BooleanProperty active = new SimpleBooleanProperty(false);
-  @Getter public BooleanProperty hasUndoCommand = new SimpleBooleanProperty(false);
-  @Getter public BooleanProperty hasRedoCommand = new SimpleBooleanProperty(false);
+  @Getter BooleanProperty active = new SimpleBooleanProperty(false);
   
-  private Stack<Command> undoStack = new Stack<>();
-  private Stack<Command> redoStack = new Stack<>();
+  @Getter private ObservableList<Command> undoStack = FXCollections.observableArrayList();
+  @Getter private ObservableList<Command> redoStack = FXCollections.observableArrayList();
   
   private ActionManager() {
     active.addListener((observable, oldValue, newValue) -> {
@@ -53,7 +53,6 @@ public class ActionManager {
     add(undoStack, command);
     if (redoClear) {
       redoStack.clear();
-      hasRedoCommand.set(false);
     }
   }
   
@@ -61,28 +60,25 @@ public class ActionManager {
     add(redoStack, command);
   }
   
-  private void add(Stack<Command> stack, Command command) {
+  private void add(List<Command> stack, Command command) {
     if (command != null && command != Command.IGNORE) {
-      stack.push(command);
-      checkHasCommands();
+      stack.add(command);
     }
   }
   
   public void undo() {
-    if (!undoStack.isEmpty())
-      addRedo(undoStack.pop().execute());
+    if (!undoStack.isEmpty()) {
+      Command c = undoStack.get(undoStack.size()-1);
+      undoStack.remove(undoStack.size()-1);
+      addRedo(c.execute());
+    }
   }
   
   public void redo() {
-    if (!redoStack.isEmpty())
-      addUndo(redoStack.pop().execute(), false);
-  }
-  
-  private void checkHasCommands() {
-    hasUndoCommand.set(undoStack.isEmpty());
-    hasRedoCommand.set(redoStack.isEmpty());
-    
-    hasUndoCommand.set(!undoStack.isEmpty());
-    hasRedoCommand.set(!redoStack.isEmpty());
+    if (!redoStack.isEmpty()) {
+      Command c = redoStack.get(redoStack.size()-1);
+      redoStack.remove(redoStack.size()-1);
+      addUndo(c.execute(), false);
+    }
   }
 }

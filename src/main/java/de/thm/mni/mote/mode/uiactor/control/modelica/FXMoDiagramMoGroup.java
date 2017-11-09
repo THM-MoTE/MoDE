@@ -3,6 +3,7 @@ package de.thm.mni.mote.mode.uiactor.control.modelica;
 import de.thm.mni.mote.mode.modelica.MoConnection;
 import de.thm.mni.mote.mode.modelica.MoContainer;
 import de.thm.mni.mote.mode.modelica.MoVariable;
+import de.thm.mni.mote.mode.modelica.graphics.MoGraphic;
 import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.uiactor.editor.elementmanager.elements.ManagedFXMoVariableIconMoGroup;
 import javafx.collections.ListChangeListener;
@@ -12,7 +13,9 @@ import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -20,24 +23,33 @@ import java.util.Map;
  */
 public class FXMoDiagramMoGroup extends FXMoGroup {
   
-  private final Boolean imageAsBackground;
   private Map<MoVariable, FXMoVariableIconMoGroup> variables = new HashMap<>();
   private Map<MoConnection, FXMoConnectionGroup> connections = new HashMap<>();
   
-  public FXMoDiagramMoGroup(MoContainer container, Boolean imageAsBackground) throws ParserException {
+  public FXMoDiagramMoGroup(MoContainer container) throws ParserException {
     super(container);
-    this.imageAsBackground = imageAsBackground;
     init();
     this.setId(container.getName().replaceAll("\\.", "_"));
   }
   
   @Override
   protected void initImage() {
-    if(this.imageAsBackground) this.getMoClass().getIcon().getMoGraphics().forEach(node -> this.initImage(node, true));
     initVariables();
     initConnections();
     if (this.getMoClass().getDiagram() != null) this.getMoClass().getDiagram().getMoGraphics().forEach(this::initImage);
     coordianteSystem.setFill(Color.WHITE);
+  }
+  
+  public void setImageAsBackground() {
+    if(this.getMoClass().hasIcon()) {
+      List<MoGraphic> list = this.getMoClass().getIcon().getMoGraphics();
+      Collections.reverse(list);
+      list.forEach(node -> this.initImage(node, true));
+    }
+  }
+  
+  public void removeImageAsBackground() {
+    this.getMoClass().getIcon().getMoGraphics().forEach(node -> this.remove(node, true));
   }
   
   private void addListener(FXMoGroup group, EventHandler<InputEvent> eventHandler) {
