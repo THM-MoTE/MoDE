@@ -1,10 +1,9 @@
 package de.thm.mni.mote.mode.uiactor.editor.statemachine;
 
-import de.thm.mni.mhpp11.smbj.messages.logging.TraceMessage;
 import de.thm.mni.mhpp11.smbj.actors.messagebus.MessageBus;
+import de.thm.mni.mhpp11.smbj.messages.logging.TraceMessage;
 import de.thm.mni.mote.mode.modelica.MoContainer;
 import de.thm.mni.mote.mode.uiactor.control.MainTabControl;
-import de.thm.mni.mote.mode.uiactor.control.modelica.FXMoGroup;
 import de.thm.mni.mote.mode.uiactor.editor.actionmanager.ActionManager;
 import de.thm.mni.mote.mode.uiactor.editor.actionmanager.commands.Command;
 import de.thm.mni.mote.mode.uiactor.editor.elementmanager.ElementManager;
@@ -22,14 +21,11 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
-import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import lombok.Getter;
 import lombok.NonNull;
 
@@ -112,37 +108,6 @@ public class StateMachine implements EventHandler<InputEvent> {
       ActionManager.getInstance(data).addUndo(c);
       event.consume();
     }
-  }
-  
-  FXMoGroup old = null;
-  private Circle centerPosCircle = new Circle(0, 0, 4, Color.GREEN);
-  private Circle mousePosCircle = new Circle(0, 0, 4, Color.BLUE);
-  
-  private void mousePositionHelp(InputEvent event) {
-    if (event.getEventType().equals(MouseEvent.MOUSE_MOVED) || event.getEventType().equals(MouseEvent.MOUSE_DRAGGED)) {
-      FXMoGroup mg = (FXMoGroup) getMatchingParent((Node) event.getTarget(), FXMoGroup.class);
-      if (mg == null && event.getSource() instanceof FXMoGroup) mg = (FXMoGroup) event.getSource();
-      if (mg != null) {
-        if (old != null && old != mg) {
-          old.getChildren().remove(centerPosCircle);
-          old.getChildren().remove(mousePosCircle);
-        }
-        if (!mg.getChildren().contains(mousePosCircle)) {
-          mg.getChildren().add(centerPosCircle);
-          mg.getChildren().add(mousePosCircle);
-        }
-        Point2D pos = new Point2D(((MouseEvent) event).getSceneX(), ((MouseEvent) event).getSceneY());
-        System.out.print(event.getSource().getClass().getSimpleName());
-        System.out.print(" Obj: " + mg.getClass().getSimpleName());
-        System.out.print(" ScenePos: " + pos);
-        pos = mg.convertTo(pos);
-        System.out.println(" MoPos: " + pos);
-        mousePosCircle.setCenterX(pos.getX());
-        mousePosCircle.setCenterY(pos.getY());
-        old = mg;
-      }
-    }
-    
   }
   
   public void switchToNone() {

@@ -1,6 +1,5 @@
 package de.thm.mni.mote.mode.uiactor.editor.statemachine.elements;
 
-import de.thm.mni.mote.mode.modelica.MoConnection;
 import de.thm.mni.mote.mode.modelica.MoContainer;
 import de.thm.mni.mote.mode.modelica.MoVariable;
 import de.thm.mni.mote.mode.modelica.graphics.MoTransformation;
@@ -19,10 +18,6 @@ import javafx.scene.control.TabPane;
 import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseEvent;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 /**
  * Created by hobbypunk on 16.02.17.
  */
@@ -34,8 +29,6 @@ public class ModifyableFXMoVariableIconMoGroup extends FXMoVariableIconMoGroup i
   private Point2D startSceneMousePos = null;
   private Point2D startMousePos = null;
   private Point2D startOrigin = null;
-  private final Map<MoConnection, List<Point2D>> startConnectionPoints = new HashMap<>();
-  private final Map<MoConnection, List<Integer>> startConnectionPointPoses = new HashMap<>();
   
   //ROTATE
   private Point2D startCenter = null;
@@ -84,7 +77,7 @@ public class ModifyableFXMoVariableIconMoGroup extends FXMoVariableIconMoGroup i
     
       Command c = Command.IGNORE;
       if (startOrigin != null && !startOrigin.equals(new Point2D(this.getOrigin().getX(), this.getOrigin().getY())))
-        c = new ModifyableMoVariable(getVariable()).createMove(startOrigin, startConnectionPointPoses, startConnectionPoints);
+        c = new ModifyableMoVariable(getVariable()).createMove(startOrigin);
       clearVariables();
       return c;
     }
@@ -100,24 +93,6 @@ public class ModifyableFXMoVariableIconMoGroup extends FXMoVariableIconMoGroup i
   
     startMousePos = this.getMoDiagram().convertTo(new Point2D(event.getSceneX(), event.getSceneY()));
     startOrigin = transformation.getOrigin().get();
-//    this.getVariable().getConnections().forEach(moConn -> {
-//      Boolean to = moConn.toContains(this.getVariable());
-//      Boolean from = moConn.fromContains(this.getVariable());
-//      if (!startConnectionPointPoses.containsKey(moConn)) {
-//        startConnectionPointPoses.put(moConn, new ArrayList<>());
-//        startConnectionPoints.put(moConn, new ArrayList<>());
-//      }
-//      if (from && to) { // self connection: move all points
-//        for (int i = 0, size = moConn.getLine().getPoints().size(); 0 < size; i++)
-//          startConnectionPointPoses.get(moConn).add(i);
-//      } else if (from)    // from is always the first point in a connection
-//        startConnectionPointPoses.get(moConn).add(0);
-//      else if (to)        // to is always the last point in a connection
-//        startConnectionPointPoses.get(moConn).add(moConn.getLine().getPoints().size() - 1);
-//
-//      for (Integer pos : startConnectionPointPoses.get(moConn))
-//        startConnectionPoints.get(moConn).add(moConn.getLine().getPoints().get(pos));
-//    });
   }
   
   private void moveDrag(MouseEvent event) {
@@ -188,7 +163,7 @@ public class ModifyableFXMoVariableIconMoGroup extends FXMoVariableIconMoGroup i
       startMousePos = this.getMoDiagram().convertTo(startSceneMousePos);
       return Command.IGNORE;
     } else if (event.getEventType().equals(MouseEvent.MOUSE_DRAGGED)) {
-      this.resizeDrag(event, buttonId);
+      this.resizeDrag(event);
       this.calculateLocalCenterOnDiagram();
       return Command.IGNORE;
     } else if (event.getEventType().equals(MouseEvent.MOUSE_RELEASED)) {
@@ -200,7 +175,7 @@ public class ModifyableFXMoVariableIconMoGroup extends FXMoVariableIconMoGroup i
     return null;
   }
   
-  private void resizeDrag(MouseEvent event, Integer modifyOffset) {
+  private void resizeDrag(MouseEvent event) {
     if (this.transformation == null) return;
     Point2D mousePos = this.getMoDiagram().convertTo(new Point2D(event.getSceneX(), event.getSceneY()));
     Point2D delta = startMousePos.subtract(mousePos);
@@ -216,7 +191,5 @@ public class ModifyableFXMoVariableIconMoGroup extends FXMoVariableIconMoGroup i
     startCenter = null;
     startMousePos = null;
     startRotation = null;
-    startConnectionPoints.clear();
-    startConnectionPointPoses.clear();
   }
 }

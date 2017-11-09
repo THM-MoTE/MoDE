@@ -27,9 +27,8 @@ public class ModifyableMoClass implements Addable, Deletable {
     if (params[0] instanceof MoVariable) {
       MoVariable variable = (MoVariable) params[0];
       List<MoConnection> connections = (List<MoConnection>) params[1];
-      this.element.addVariable(variable);
       this.element.addAllConnections(connections);
-      
+      this.element.addVariable(variable);
       return new DeleteCommand(this, variable);
     } else if (params[0] instanceof MoConnection[]) {
       MoConnection[] connections = (MoConnection[]) params[0];

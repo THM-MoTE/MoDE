@@ -85,6 +85,7 @@ public class FXMoVariableIconMoGroup extends FXMoGroup implements CalculateLocal
   }
   
   private void initTransformation(final MoTransformation mt) {
+    
     mt.getExtent().setIconExtent((MoSimpleExtent) this.getMoClass().getIconCoordinateSystem().getExtent());
   
     this.getFlippedXProperty().bind(mt.getExtent().getFlippedXProperty());
@@ -180,6 +181,11 @@ public class FXMoVariableIconMoGroup extends FXMoGroup implements CalculateLocal
     this.rotation.angleProperty().bind(mt.getRotation());
   
     this.getTransforms().addAll(this.origin, this.rotation, this.offset, this.transformation);
+    
+    mt.getOrigin().addListener((observable, oldValue, newValue) -> this.calculateLocalCenterOnDiagram());
+    mt.getRotation().addListener((observable, oldValue, newValue) -> this.calculateLocalCenterOnDiagram());
+    mt.getExtent().getP1Property().addListener((observable, oldValue, newValue) -> this.calculateLocalCenterOnDiagram());
+    mt.getExtent().getP2Property().addListener((observable, oldValue, newValue) -> this.calculateLocalCenterOnDiagram());
   }
   
   
