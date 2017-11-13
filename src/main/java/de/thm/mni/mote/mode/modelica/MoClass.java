@@ -191,6 +191,7 @@ public class MoClass extends MoElement implements Changeable, Comparable<MoClass
   public MoIcon getIcon() {
     MoIcon mi = getInternalIcon();
     if (mi != null) return mi;
+    if (this instanceof MoConnector) return MoDefaults.newConnector();
     if (this instanceof MoPackage) return MoDefaults.newPackage();
     if (this instanceof MoModel) return MoDefaults.newModel();
     if (this instanceof MoFunction) return MoDefaults.newFunction();

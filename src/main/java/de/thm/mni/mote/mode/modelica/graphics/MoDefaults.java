@@ -12,6 +12,7 @@ import java.util.List;
  */
 public class MoDefaults {
   
+  private static MoIcon moConnector = null;
   private static MoIcon moPackage = null;
   private static MoIcon moModel = null;
   private static MoIcon moFunction = null;
@@ -35,6 +36,13 @@ public class MoDefaults {
     
   }
   
+  public static MoIcon newConnector() {
+    if (moConnector == null) {
+      moConnector = newAnything(Color.LIGHTCORAL, "C");
+    }
+    return moConnector;
+  }
+  
   public static MoIcon newPackage() {
     if (moPackage == null) {
       moPackage = newAnything(Color.LIGHTGRAY, "P");
@@ -55,7 +63,7 @@ public class MoDefaults {
   }
   
   public static MoIcon newEmpty() {
-    if (moEmpty == null) moEmpty = newAnything(Color.LIGHTCORAL, "E");
+    if (moEmpty == null) moEmpty = newAnything(Color.LIGHTYELLOW, "?");
     return moEmpty;
   }
 }
