@@ -1,10 +1,9 @@
 package de.thm.mni.mote.mode.config;
 
-import de.thm.mni.mhpp11.smbj.messages.logging.ErrorMessage;
-import de.thm.mni.mhpp11.smbj.actors.messagebus.MessageBus;
+import de.thm.mni.mhpp11.smbj.manager.ActorManager;
+import de.thm.mni.mhpp11.smbj.logging.messages.ErrorMessage;
 import de.thm.mni.mote.mode.config.model.Configuration;
 import de.thm.mni.mote.mode.config.xml.MyMatcher;
-import de.thm.mni.mote.mode.util.Constants;
 import de.thm.mni.mote.mode.util.Utilities;
 import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
@@ -13,6 +12,8 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 
@@ -21,6 +22,14 @@ import java.util.Properties;
  * Created by hobbypunk on 10.09.16.
  */
 public class Settings extends Configuration {
+  
+  public static List<Locale> SUPPORTED_LANGUAGES = new ArrayList<>();
+  
+  static {
+    SUPPORTED_LANGUAGES.add(Locale.ENGLISH);
+    SUPPORTED_LANGUAGES.add(Locale.GERMAN);
+  }
+  
   
   public static String TITLE;
   public static String VERSION;
@@ -93,7 +102,7 @@ public class Settings extends Configuration {
       try {
         serializer.write(this, this.file.toFile());
       } catch (Exception e) {
-        MessageBus.getInstance().send(new ErrorMessage(this.getClass(), Constants.ALLGROUPS, e));
+        ActorManager.getInstance().send(new ErrorMessage(this.getClass(), e));
       }
     });
     t.start();

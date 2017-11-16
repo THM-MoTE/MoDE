@@ -1,6 +1,6 @@
 package de.thm.mni.mote.mode.modelica;
 
-import de.thm.mni.mote.mode.omcactor.OMCompiler;
+import de.thm.mni.mote.mode.backend.omc.OMCompiler;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;

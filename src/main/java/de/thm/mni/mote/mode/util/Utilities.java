@@ -1,7 +1,7 @@
 package de.thm.mni.mote.mode.util;
 
 import de.thm.mni.mote.mode.config.Settings;
-import de.thm.mni.mote.mode.uiactor.utilities.UTF8ResourceBundleControl;
+import de.thm.mni.mhpp11.smbj.ui.utilities.UTF8ResourceBundleControl;
 import lombok.experimental.UtilityClass;
 
 import java.io.IOException;
@@ -21,7 +21,7 @@ import java.util.*;
  */
 @UtilityClass
 public class Utilities {
-  public final String BASEPATH = "de/thm/mni/mote/mode/";
+  private final String BASEPATH = "de/thm/mni/mote/mode/";
   
   private final NumberFormat numberFormat;
   
@@ -30,7 +30,7 @@ public class Utilities {
     numberFormat = new DecimalFormat("#.##", symbols);
   }
   
-  public URL getResource(String postfix) {
+  private URL getResource(String postfix) {
     return Utilities.class.getResource("/" + BASEPATH + postfix);
   }
   
@@ -47,17 +47,21 @@ public class Utilities {
   }
   
   public URL getControlView(String view) {
-    return getView("control", view);
+    return getView("controls", view);
   }
   
   public URL getDialogView(String view) { return getView("dialogs/" + view);}
   
   public URL getFragmentView(String view) { return getView("fragments/" + view);}
   
-  private URL getView(String prefix, String view) {
+  public URL getView(String prefix, String view) {
     if (!prefix.isEmpty())
       prefix += "/";
-    return Utilities.getResource(prefix + "view/" + view + ".fxml");
+    return Utilities.getResource("frontend/" + prefix + "views/" + view + "View.fxml");
+  }
+  
+  public static URL getCSS(String css) {
+    return Utilities.getResource("frontend/" + css);
   }
   
   
@@ -75,20 +79,20 @@ public class Utilities {
   }
   
   public ResourceBundle getControlBundle(String bundle) {
-    return getBundle("control", bundle);
+    return getBundle("controls", bundle);
   }
   
   public ResourceBundle getControlBundle(String bundle, Locale lang) {
-    return getBundle("control", bundle, lang);
+    return getBundle("controls", bundle, lang);
   }
   
   
   private ResourceBundle getBundle(String prefix, String bundle, Locale lang) throws MissingResourceException {
-    String path = BASEPATH;
+    String path = BASEPATH + "frontend/";
     if (!prefix.isEmpty())
       path += prefix + "/";
     
-    return ResourceBundle.getBundle(path + "i18n/" + bundle, lang, new UTF8ResourceBundleControl());
+    return ResourceBundle.getBundle(path + "bundles/" + bundle + "Bundle", lang, new UTF8ResourceBundleControl());
   }
   
   public Path getHome() {
@@ -126,7 +130,7 @@ public class Utilities {
           e.printStackTrace();
         }
       } catch (Exception e) {
-        throw new RuntimeException("can't createMove file");
+        throw new RuntimeException("can't create config file");
       }
     }
     return f;

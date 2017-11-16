@@ -1,7 +1,7 @@
 package de.thm.mni.mote.mode.modelica.graphics;
 
 import de.thm.mni.mote.mode.modelica.interfaces.HasExtent;
-import de.thm.mni.mote.mode.omcactor.OMCompiler;
+import de.thm.mni.mote.mode.backend.omc.OMCompiler;
 import de.thm.mni.mote.mode.parser.modelica.AnnotationParser.BitmapContext;
 import de.thm.mni.mote.mode.parser.modelica.AnnotationParser.BitmapDataContext;
 import javafx.geometry.Point2D;

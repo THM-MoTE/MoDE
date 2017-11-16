@@ -41,8 +41,10 @@ public final class Translator {
   }
   
   public static String tr(ResourceBundle bundle, String group, String key, Object... params) {
-    if (!group.isEmpty()) key = group.toLowerCase() + "." + key;
     try {
+      if (!group.isEmpty()) key = group.toLowerCase() + "." + key;
+      
+      if(bundle == null) throw new MissingResourceException("", "", key);
       if (params.length == 0)
         return bundle.getString(key);
       else

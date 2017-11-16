@@ -1,17 +1,17 @@
 package de.thm.mni.mote.mode.modelica;
 
-import de.thm.mni.mhpp11.smbj.actors.messagebus.MessageBus;
-import de.thm.mni.mhpp11.smbj.messages.logging.ErrorMessage;
+import de.thm.mni.mhpp11.smbj.manager.ActorManager;
+import de.thm.mni.mhpp11.smbj.logging.messages.ErrorMessage;
 import de.thm.mni.mote.mode.modelica.graphics.MoGraphic;
 import de.thm.mni.mote.mode.modelica.graphics.MoLine;
 import de.thm.mni.mote.mode.modelica.graphics.MoText;
 import de.thm.mni.mote.mode.modelica.interfaces.Changeable;
-import de.thm.mni.mote.mode.omcactor.OMCompiler;
+import de.thm.mni.mote.mode.backend.omc.OMCompiler;
 import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.parser.modelica.AnnotationLexer;
 import de.thm.mni.mote.mode.parser.modelica.AnnotationParser;
 import de.thm.mni.mote.mode.parser.modelica.AnnotationParser.ConnectAnnotationElementContext;
-import de.thm.mni.mote.mode.uiactor.control.modelica.FXMoDiagramMoGroup;
+import de.thm.mni.mote.mode.frontend.controls.modelica.FXMoDiagramMoGroup;
 import de.thm.mni.mote.mode.util.ImmutableListCollector;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -139,7 +139,7 @@ public class MoConnection implements Changeable {
       try {
         return parse(parent, map);
       } catch (ParserException e) {
-        MessageBus.getInstance().send(new ErrorMessage(MoConnection.class, omc.getGroup(), e));
+        ActorManager.getInstance().send(new ErrorMessage(MoConnection.class, omc.getID(), e));
         return null;
       }
     }).filter(Objects::nonNull).collect(ImmutableListCollector.toImmutableList());

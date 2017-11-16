@@ -1,8 +1,8 @@
 package de.thm.mni.mote.mode.modelica;
 
-import de.thm.mni.mhpp11.smbj.messages.logging.ErrorMessage;
-import de.thm.mni.mhpp11.smbj.actors.messagebus.MessageBus;
-import de.thm.mni.mote.mode.omcactor.OMCompiler;
+import de.thm.mni.mhpp11.smbj.manager.ActorManager;
+import de.thm.mni.mhpp11.smbj.logging.messages.ErrorMessage;
+import de.thm.mni.mote.mode.backend.omc.OMCompiler;
 import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.util.HierarchyData;
 import javafx.collections.FXCollections;
@@ -115,7 +115,7 @@ public class MoContainer implements Comparable<MoContainer>, HierarchyData<MoCon
       try {
         this.element = MoClass.parse(omc, (MoLater) this.element);
       } catch (ParserException e) {
-        MessageBus.getInstance().send(new ErrorMessage(MoContainer.class, omc.getGroup(), new ParserException(tr("Error", "error", "modelica.error_in", getSimpleName()), e)));
+        ActorManager.getInstance().send(new ErrorMessage(MoContainer.class, omc.getID(), new ParserException(tr("Error", "error", "modelica.error_in", getSimpleName()), e)));
       }
     }
     return this.element;

@@ -1,7 +1,7 @@
 package de.thm.mni.mote.mode.parser;
 
-import de.thm.mni.mhpp11.smbj.messages.logging.WarnMessage;
-import de.thm.mni.mhpp11.smbj.actors.messagebus.MessageBus;
+import de.thm.mni.mhpp11.smbj.logging.messages.WarnMessage;
+import de.thm.mni.mhpp11.smbj.manager.ActorManager;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -9,14 +9,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Created by hobbypunk on 14.09.16.
  */
 public class PackageParser {
   
-  public static Path findBasePackage(UUID group, Path f) {
+  public static Path findBasePackage(Path f) {
     f = f.toAbsolutePath().normalize();
     Path f2 = f;
     try {
@@ -40,7 +39,7 @@ public class PackageParser {
       Iterator<Path> iterator = ds.iterator();
       if (iterator.hasNext()) return iterator.next();
     } catch (IOException e) {
-      MessageBus.getInstance().send(new WarnMessage(PackageParser.class, group, "Cannot read lines"));
+      ActorManager.getInstance().send(new WarnMessage(PackageParser.class, "Cannot read lines"));
     }
     return f;
   }

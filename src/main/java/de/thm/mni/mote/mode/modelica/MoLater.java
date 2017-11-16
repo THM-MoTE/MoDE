@@ -1,8 +1,8 @@
 package de.thm.mni.mote.mode.modelica;
 
-import de.thm.mni.mhpp11.smbj.messages.logging.ErrorMessage;
-import de.thm.mni.mhpp11.smbj.actors.messagebus.MessageBus;
-import de.thm.mni.mote.mode.omcactor.OMCompiler;
+import de.thm.mni.mhpp11.smbj.logging.messages.ErrorMessage;
+import de.thm.mni.mhpp11.smbj.manager.ActorManager;
+import de.thm.mni.mote.mode.backend.omc.OMCompiler;
 import de.thm.mni.mote.mode.parser.ParserException;
 import lombok.NonNull;
 
@@ -62,7 +62,7 @@ public class MoLater extends MoClass {
       try {
         if (!childName.isEmpty()) MoLater.lightParsing(omc, childName, tmp, n);
       } catch (ParserException e) {
-        MessageBus.getInstance().send(new ErrorMessage(MoLater.class, omc.getGroup(), e));
+        ActorManager.getInstance().send(new ErrorMessage(MoLater.class, omc.getID(), e));
       }
     }
   }

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ButtonType?>
+<?import javafx.scene.control.DialogPane?>
+<?import javafx.scene.layout.VBox?>
+
+<DialogPane fx:controller="de.thm.mni.mote.mode.frontend.dialogs.controllers.ChangeSystemLibrariesDialogController"
+            stylesheets="@../../css/Basis.css" xmlns="http://javafx.com/javafx/8.0.76-ea"
+            xmlns:fx="http://javafx.com/fxml/1">
+  <content>
+    <VBox>
+      <fx:include fx:id="selectSystemLibs" source="../../fragments/views/SelectSystemLibsView.fxml"/>
+    </VBox>
+  </content>
+  <buttonTypes>
+    <ButtonType fx:constant="APPLY"/>
+    <ButtonType fx:constant="CANCEL"/>
+  </buttonTypes>
+</DialogPane>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonType?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.DialogPane?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<DialogPane prefHeight="350.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/8.0.76-ea"
+            xmlns:fx="http://javafx.com/fxml/1" stylesheets="@../../css/Basis.css"
+            fx:controller="de.thm.mni.mote.mode.frontend.dialogs.controllers.SettingsDialogController">
+  <content>
+    <GridPane hgap="10.0">
+      <columnConstraints>
+        <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="275.0" minWidth="10.0" prefWidth="191.0"/>
+        <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" maxWidth="277.0" minWidth="10.0" prefWidth="277.0"/>
+      </columnConstraints>
+      <rowConstraints>
+        <RowConstraints maxHeight="-Infinity" prefHeight="30.0" vgrow="SOMETIMES"/>
+        <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="10.0" vgrow="SOMETIMES"/>
+        <RowConstraints maxHeight="60.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+        <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="10.0" vgrow="SOMETIMES"/>
+        <RowConstraints maxHeight="60.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+        <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+        <RowConstraints maxHeight="60.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+        <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="10.0" vgrow="SOMETIMES"/>
+        <RowConstraints maxHeight="-Infinity" prefHeight="30.0" vgrow="SOMETIMES"/>
+        <RowConstraints maxHeight="30.0" minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+        <RowConstraints maxHeight="-Infinity" prefHeight="30.0" vgrow="SOMETIMES"/>
+        <RowConstraints prefHeight="30.0" vgrow="ALWAYS"/>
+      </rowConstraints>
+      <ChoiceBox fx:id="cbLanguage" prefWidth="150.0" GridPane.columnIndex="1">
+        <GridPane.margin>
+          <Insets/>
+        </GridPane.margin>
+      </ChoiceBox>
+      <Label alignment="CENTER_RIGHT" text="%settings.global.select_language"/>
+      <Label alignment="CENTER_RIGHT" text="%settings.global.select_recent_count" textAlignment="RIGHT" wrapText="true"
+             GridPane.hgrow="SOMETIMES" GridPane.rowIndex="2" GridPane.vgrow="ALWAYS"/>
+      <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.columnIndex="1"
+            GridPane.rowIndex="2">
+        <GridPane.margin>
+          <Insets/>
+        </GridPane.margin>
+        <padding>
+          <Insets right="10.0"/>
+        </padding>
+        <TextField fx:id="tfRecentCount" editable="false" prefWidth="35.0"/>
+        <Slider fx:id="sRecentCount" max="20.0" min="3.0" showTickMarks="true" value="5.0" HBox.hgrow="ALWAYS"/>
+      </HBox>
+      <Label alignment="CENTER_RIGHT" text="%settings.notify.select_seconds" GridPane.rowIndex="6"/>
+      <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="10.0" GridPane.columnIndex="1"
+            GridPane.rowIndex="6">
+        <padding>
+          <Insets right="10.0"/>
+        </padding>
+        <TextField fx:id="tfNotifySeconds" editable="false" prefWidth="35.0"/>
+        <Slider fx:id="sNotifySeconds" max="15.0" showTickMarks="true" value="5.0" HBox.hgrow="ALWAYS"/>
+      </HBox>
+      <Label alignment="CENTER_RIGHT" text="%settings.notify.select_level" GridPane.rowIndex="8"/>
+      <ChoiceBox fx:id="cbLoggerLevel" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="10"/>
+      <ChoiceBox fx:id="cbLoggerNotifyLevel" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="8"/>
+      <Label fx:id="lModelicaCompiler" alignment="CENTER_RIGHT" text="%settings.global.select_modelica_compiler"
+             wrapText="true" GridPane.rowIndex="4"/>
+      <HBox alignment="CENTER_LEFT" spacing="10.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+        <padding>
+          <Insets right="10.0"/>
+        </padding>
+        <TextField fx:id="tfModelicaCompiler" editable="false" HBox.hgrow="ALWAYS"/>
+        <Button fx:id="btnModelicaCompiler" minWidth="80.0" mnemonicParsing="false"
+                onAction="#onModelicaCompilerClick" text="%settings.global.file"/>
+      </HBox>
+      <Label alignment="CENTER_RIGHT" text="%settings.logger.select_level" GridPane.rowIndex="10"/>
+    </GridPane>
+  </content>
+  <ButtonType fx:constant="CLOSE"/>
+</DialogPane>

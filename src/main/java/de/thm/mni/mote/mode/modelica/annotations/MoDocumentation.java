@@ -1,6 +1,6 @@
 package de.thm.mni.mote.mode.modelica.annotations;
 
-import de.thm.mni.mote.mode.omcactor.OMCompiler;
+import de.thm.mni.mote.mode.backend.omc.OMCompiler;
 import de.thm.mni.mote.mode.parser.modelica.AnnotationParser.DocumentationContentContext;
 import de.thm.mni.mote.mode.parser.modelica.AnnotationParser.DocumentationContext;
 import lombok.AllArgsConstructor;
