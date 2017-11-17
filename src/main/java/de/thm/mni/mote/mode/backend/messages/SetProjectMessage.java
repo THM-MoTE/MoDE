@@ -1,0 +1,22 @@
+package de.thm.mni.mote.mode.backend.messages;
+
+import de.thm.mni.mhpp11.smbj.messages.base.ask.AskClassMessage;
+import de.thm.mni.mote.mode.backend.file.actors.FileWatcherActor;
+import de.thm.mni.mote.mode.backend.omc.actors.OMCActor;
+import de.thm.mni.mote.mode.config.model.Project;
+import lombok.Getter;
+import lombok.NonNull;
+
+import java.util.Arrays;
+import java.util.UUID;
+
+/**
+ * Created by hobbypunk on 24.01.17.
+ */
+@Getter
+public abstract class SetProjectMessage extends AskClassMessage<Project, Project, Void> {
+  
+  protected SetProjectMessage(@NonNull UUID source, Project payload) {
+    super(source, Arrays.asList(OMCActor.class, FileWatcherActor.class), payload);
+  }
+}

@@ -112,7 +112,7 @@ public class MoConnection implements Changeable {
     return fromContains(var) || toContains(var);
   }
   
-  String getRegex() {
+  public String getRegex() {
     return String.format("connect\\s*\\(\\s*%s\\s*,\\s*%s\\s*\\)", getVariablePath(from), getVariablePath(to));
   }
   

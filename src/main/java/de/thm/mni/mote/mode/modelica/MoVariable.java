@@ -141,7 +141,7 @@ public class MoVariable extends MoElement implements Changeable {
     return null;
   }
   
-  String getIndicator() {
+  public String getIndicator() {
     return String.format("%s %s", type.getName(), getName());
   }
   

@@ -3,10 +3,12 @@ package de.thm.mni.mote.mode.frontend.controllers;
 import de.thm.mni.mhpp11.smbj.logging.messages.ErrorMessage;
 import de.thm.mni.mhpp11.smbj.messages.ExitMessage;
 import de.thm.mni.mhpp11.smbj.ui.messages.StartUIMessage;
+import de.thm.mni.mote.mode.backend.file.messages.FileNewMessage;
+import de.thm.mni.mote.mode.backend.file.messages.ModelsSaveMessage;
+import de.thm.mni.mote.mode.backend.messages.SetProjectMessage;
 import de.thm.mni.mote.mode.backend.omc.actors.OMCActor;
 import de.thm.mni.mote.mode.backend.omc.messages.GetAvailableLibsOMCMessage;
 import de.thm.mni.mote.mode.backend.omc.messages.GetDataOMCMessage;
-import de.thm.mni.mote.mode.backend.omc.messages.SetProjectOMCMessage;
 import de.thm.mni.mote.mode.backend.omc.messages.UpdateClassOMCMessage;
 import de.thm.mni.mote.mode.config.Settings;
 import de.thm.mni.mote.mode.config.model.MainWindow;
@@ -45,6 +47,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static de.thm.mni.mote.mode.util.Translator.tr;
 
@@ -296,7 +299,7 @@ public class MainController extends NotifyController {
   private void handleCreateNew(String type, MoContainer parent) {
     Dialog<Boolean> d = new Dialog<>();
     FXMLLoader loader = new FXMLLoader();
-    loader.setLocation(Utilities.getView("dialogs/CreateNew" + type));
+    loader.setLocation(Utilities.getView("dialogs", "CreateNew" + type));
     loader.setResources(Utilities.getBundle("MoDE"));
     
     try {
@@ -308,7 +311,7 @@ public class MainController extends NotifyController {
       d.setResultConverter(param -> param.getButtonData().getTypeCode().equals("I"));
       d.setOnCloseRequest(event -> {
         if (d.getResult()) {
-          //TODO: getActor().send(new CreateNewOMCMessage(getID(), parent, type, controller.getData()));
+          getActor().send(new FileNewMessage(getID(), parent, type, controller.getData()));
         }
       });
     } catch (IOException e) {
@@ -320,7 +323,7 @@ public class MainController extends NotifyController {
   private void reloadProject() {
     try {
       project.save();
-      getActor().send(new SetProjectOMCMessage(getID(), project) {
+      getActor().send(new SetProjectMessage(getID(), project) {
         @Override
         public Void answer(UUID source, Project payload) {
           Platform.runLater(MainController.this::hide);
@@ -344,12 +347,12 @@ public class MainController extends NotifyController {
   
   @FXML
   private void handleSaveAll() {
-    //TODO: getActor().send(new SaveAllOMCMessage(getGroup(), tabPane.getTabs().stream().map(tab -> ((MainTabControl) tab).getData()).collect(Collectors.toList())));
+    getActor().send(new ModelsSaveMessage(getID(), tabPane.getTabs().stream().map(tab -> ((MainTabControl) tab).getData()).collect(Collectors.toList())));
     tabPane.getTabs().forEach(tab -> handleSave(((MainTabControl) tab).getData()));
   }
   
   private void handleSave(MoContainer container) {
-    //TODO: getActor().send(new SaveOMCMessage(getGroup(), container));
+    getActor().send(new ModelsSaveMessage(getID(), container));
   }
   
   @FXML

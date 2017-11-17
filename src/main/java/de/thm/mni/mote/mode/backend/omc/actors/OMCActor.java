@@ -5,7 +5,8 @@ import de.thm.mni.mhpp11.smbj.logging.messages.ErrorMessage;
 import de.thm.mni.mhpp11.smbj.messages.ErrorExitMessage;
 import de.thm.mni.mhpp11.smbj.messages.ExitMessage;
 import de.thm.mni.mhpp11.smbj.messages.base.Message;
-import de.thm.mni.mote.mode.backend.file.messages.CreateNewOMCMessage;
+import de.thm.mni.mote.mode.backend.file.messages.FileChangedMessage;
+import de.thm.mni.mote.mode.backend.messages.SetProjectMessage;
 import de.thm.mni.mote.mode.backend.omc.OMCException;
 import de.thm.mni.mote.mode.backend.omc.OMCUtilities;
 import de.thm.mni.mote.mode.backend.omc.OMCompiler;
@@ -17,22 +18,14 @@ import de.thm.mni.mote.mode.modelica.MoContainer;
 import de.thm.mni.mote.mode.modelica.MoLater;
 import de.thm.mni.mote.mode.modelica.MoRoot;
 import de.thm.mni.mote.mode.parser.ParserException;
-import de.thm.mni.mote.mode.util.Utilities;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.Getter;
-import org.apache.commons.io.IOUtils;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
-import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import static de.thm.mni.mote.mode.util.Translator.tr;
 
@@ -86,7 +79,7 @@ public class OMCActor extends AbstractActor {
     }
   }
   
-  public void setProject(SetProjectOMCMessage msg) {
+  public void setProject(SetProjectMessage msg) {
     this.project = msg.getPayload();
     msg.answer(getID(), this.project);
     
@@ -116,35 +109,6 @@ public class OMCActor extends AbstractActor {
       container.update(omc);
     } catch (Exception e) {
       send(new ErrorMessage(OMCActor.class, getID(), e));
-    }
-  }
-  
-  private void createNew(CreateNewOMCMessage msg) {
-    MoContainer parent = msg.getParent();
-    String type = msg.getType().toLowerCase();
-    String name = msg.getData().get("name");
-    System.out.println(parent + ":" + name);
-    Path parentDir = parent.getElement().getClassInformation().getFileName().getParent();
-    List<String> fileContent = null;
-    try {
-      fileContent = IOUtils.readLines(Utilities.getTemplate(type + ".mo"), StandardCharsets.UTF_8);
-      for (Map.Entry<String, String> entry : msg.getData().entrySet()) {
-        for (int i = 0; i < fileContent.size(); i++) {
-          fileContent.set(i, fileContent.get(i).replaceAll("<" + entry.getKey() + ">", entry.getValue()));
-        }
-      }
-      
-      Path file = parentDir.resolve(name + ".mo");
-      if (type.equals("package")) {
-        parentDir = parentDir.resolve(name);
-        Files.createDirectory(parentDir);
-        file = parentDir.resolve("package.mo");
-      }
-      
-      Files.write(file, fileContent, StandardCharsets.UTF_8, StandardOpenOption.CREATE_NEW);
-      reload(parent, name);
-    } catch (IOException e) {
-      e.printStackTrace();
     }
   }
   
@@ -188,46 +152,36 @@ public class OMCActor extends AbstractActor {
     });
   }
   
+  private void reloadProject(FileChangedMessage msg) {
+    //TODO: react to file changes on filesystem
+    System.out.println(msg);
+  }
+  
+  
   @Override
   public void execute(Message msg) {
     if (msg instanceof StartOMCMessage) {
       startOMC((StartOMCMessage)msg);
-    }
-    if (msg instanceof ExitMessage || msg instanceof ErrorExitMessage) {
+    } else if (msg instanceof ExitMessage || msg instanceof ErrorExitMessage) {
       if (omc != null) {
         omc.disconnect();
         started = false;
       }
-    }
-    if (msg instanceof OMCMessage) {
+    } else if(msg instanceof SetProjectMessage || msg instanceof FileChangedMessage || msg instanceof OMCMessage) {
       if (!started) send(new ErrorMessage(OMCActor.class, getID(), new OMCException(tr("Error", "error.omcactor.omc_not_running"))));
-  
-      if (msg instanceof SetProjectOMCMessage) {
-        setProject((SetProjectOMCMessage) msg);
-      } else if(msg instanceof ReloadProjectOMCMessage) {
-        reload();
-      } else if (msg instanceof GetDataOMCMessage) {
-        ((GetDataOMCMessage)msg).answer(getID(), getData());
-      } else if (msg instanceof UpdateClassOMCMessage) {
-        updateClass(((UpdateClassOMCMessage) msg).getPayload());
-      } else if (msg instanceof GetAvailableLibsOMCMessage) {
-        ((GetAvailableLibsOMCMessage) msg).answer(getID(), omc.getAvailableLibraries());
+      else {
+        if (msg instanceof SetProjectMessage) {
+          setProject((SetProjectMessage) msg);
+        } else if(msg instanceof FileChangedMessage) {
+          reloadProject((FileChangedMessage) msg);
+        } else if (msg instanceof GetDataOMCMessage) {
+          ((GetDataOMCMessage)msg).answer(getID(), getData());
+        } else if (msg instanceof UpdateClassOMCMessage) {
+          updateClass(((UpdateClassOMCMessage) msg).getPayload());
+        } else if (msg instanceof GetAvailableLibsOMCMessage) {
+          ((GetAvailableLibsOMCMessage) msg).answer(getID(), omc.getAvailableLibraries());
+        }
       }
-//      else if (msg instanceof CreateNewOMCMessage) {
-//        createNew((CreateNewOMCMessage) msg);
-//      } else if (msg instanceof SaveOMCMessage) {
-//        saveAll(Collections.singletonList(((SaveOMCMessage) msg).getContainer()));
-//      } else if (msg instanceof SaveAllOMCMessage) {
-//        saveAll(((SaveAllOMCMessage) msg).getContainers());
-//      }
-    }
-  }
-  
-  private void reload() {
-    try {
-      omc.reloadProject();
-    } catch (ParserException e) {
-      send(new ErrorMessage(OMCActor.class, getID(), e));
     }
   }
   
@@ -235,5 +189,12 @@ public class OMCActor extends AbstractActor {
   public void onStop(Message msg) {
     super.onStop(msg);
     es.shutdownNow();
+    if(msg instanceof ErrorExitMessage) {
+      try {
+        es.awaitTermination(500, TimeUnit.MILLISECONDS);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+    }
   }
 }

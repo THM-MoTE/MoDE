@@ -1,5 +1,6 @@
 package de.thm.mni.mote.mode.modelica;
 
+import de.thm.mni.mote.mode.backend.omc.OMCompiler;
 import de.thm.mni.mote.mode.modelica.annotations.MoAnnotation;
 import de.thm.mni.mote.mode.modelica.annotations.MoDiagram;
 import de.thm.mni.mote.mode.modelica.annotations.MoDocumentation;
@@ -8,17 +9,15 @@ import de.thm.mni.mote.mode.modelica.graphics.MoCoordinateSystem;
 import de.thm.mni.mote.mode.modelica.graphics.MoDefaults;
 import de.thm.mni.mote.mode.modelica.interfaces.Changeable;
 import de.thm.mni.mote.mode.modelica.interfaces.MoElement;
-import de.thm.mni.mote.mode.backend.omc.OMCompiler;
 import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.util.ImmutableListCollector;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,11 +30,14 @@ import static de.thm.mni.mote.mode.util.Translator.tr;
  * Created by hobbypunk on 07.09.16.
  */
 @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
+@Data
 @Getter
+@EqualsAndHashCode(callSuper = true)
+@FieldDefaults(makeFinal = true)
 public class MoClass extends MoElement implements Changeable, Comparable<MoClass> {
-  private final ObjectProperty<Change> unsavedChanges = new SimpleObjectProperty<>(Change.NONE);
+  ObjectProperty<Change> unsavedChanges = new SimpleObjectProperty<>(Change.NONE);
   
-  @Getter private static final List<MoContainer> bases;
+  @Getter static List<MoContainer> bases;
   
   static {
     bases = new ArrayList<>();
@@ -46,24 +48,25 @@ public class MoClass extends MoElement implements Changeable, Comparable<MoClass
     bases.add(new MoContainer(null, null, "Enum").setElement(new MoClass()));
   }
   
-  private ClassInformation classInformation;
-  @Setter(AccessLevel.PACKAGE) private MoContainer container = null;
-  private Boolean complete = false;
+  @Setter(value = AccessLevel.PRIVATE) @NonFinal ClassInformation classInformation;
+  @NonFinal MoContainer container;
+  @Setter(value = AccessLevel.PRIVATE) @NonFinal Boolean complete = false;
   
   
-  private final ObservableList<MoVariable> variables = FXCollections.observableArrayList();
-  @Getter(value = AccessLevel.PROTECTED) private final List<MoVariable> deletedVariables = new ArrayList<>();
+  ObservableList<MoVariable> variables = FXCollections.observableArrayList();
+  List<MoVariable> deletedVariables = new ArrayList<>();
   
-  private final ObservableList<MoConnection> connections = FXCollections.observableArrayList();
-  @Getter(value = AccessLevel.PROTECTED) private final List<MoConnection> deletedConnections = new ArrayList<>();
+  ObservableList<MoConnection> connections = FXCollections.observableArrayList();
+  List<MoConnection> deletedConnections = new ArrayList<>();
   
   
-  MoClass() {
+  private MoClass() {
     this("b", "");
   }
   
   protected MoClass(String prefix, String comment) {
     super(prefix, comment);
+    this.container = null;
   }
   
   protected MoClass(ClassInformation classInformation, @NonNull MoLater that) {
@@ -98,7 +101,7 @@ public class MoClass extends MoElement implements Changeable, Comparable<MoClass
   public ObservableList<MoVariable> getVariables() {
   
     this.container.getInheritedClasses().forEach(inheritedClass ->
-                                                     inheritedClass.getElement().getVariables().filtered(variable -> !this.variables.contains(variable)).forEach(this.variables::add)
+                                                     this.variables.addAll(inheritedClass.getElement().getVariables().filtered(variable -> !this.variables.contains(variable)))
     );
     
     return this.variables;
@@ -134,7 +137,7 @@ public class MoClass extends MoElement implements Changeable, Comparable<MoClass
     return this.connections;
   }
   
-  public void addConnection(MoConnection connection) {
+  private void addConnection(MoConnection connection) {
     connection.getUnsavedChanges().set(Change.NEW);
     if (this.deletedConnections.contains(connection)) {
       connection.getUnsavedChanges().set(Change.EDIT);
@@ -143,7 +146,7 @@ public class MoClass extends MoElement implements Changeable, Comparable<MoClass
     this.connections.add(connection);
   }
   
-  public void removeConnection(MoConnection connection) {
+  private void removeConnection(MoConnection connection) {
     this.connections.remove(connection);
     connection.getUnsavedChanges().set(Change.DELETE);
     this.deletedConnections.add(connection);

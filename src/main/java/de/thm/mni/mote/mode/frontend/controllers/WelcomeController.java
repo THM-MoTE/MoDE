@@ -3,7 +3,7 @@ package de.thm.mni.mote.mode.frontend.controllers;
 import de.thm.mni.mhpp11.smbj.logging.messages.ErrorMessage;
 import de.thm.mni.mhpp11.smbj.messages.ExitMessage;
 import de.thm.mni.mhpp11.smbj.ui.messages.StartUIMessage;
-import de.thm.mni.mote.mode.backend.omc.messages.SetProjectOMCMessage;
+import de.thm.mni.mote.mode.backend.messages.SetProjectMessage;
 import de.thm.mni.mote.mode.config.Settings;
 import de.thm.mni.mote.mode.config.model.Project;
 import de.thm.mni.mote.mode.frontend.actors.MainActor;
@@ -164,7 +164,7 @@ public class WelcomeController extends NotifyController {
       p.save();
       getSettings().getRecent().remove(p.getProjectPath());
       getSettings().getRecent().add(p.getProjectPath());
-      getActor().send(new SetProjectOMCMessage(getID(), p) {
+      getActor().send(new SetProjectMessage(getID(), p) {
   
         @Override
         public Void answer(UUID source, Project payload) {
@@ -179,9 +179,7 @@ public class WelcomeController extends NotifyController {
   
         @Override
         public void error(UUID source, Exception e) {
-          Platform.runLater(() -> {
-            getActor().send(new StartUIMessage(source, WelcomeActor.class, new Stage()));
-          });
+          Platform.runLater(() -> getActor().send(new StartUIMessage(source, WelcomeActor.class, new Stage())));
         }
       });
     } catch (Exception e) {
