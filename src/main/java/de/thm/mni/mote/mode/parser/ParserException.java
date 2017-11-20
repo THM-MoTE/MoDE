@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.NonNull;
 
 /**
- * Created by hobbypunk on 08.09.16.
+ * Created by Marcel Hoppe on 08.09.16.
  */
 @Getter
 public class ParserException extends Exception {

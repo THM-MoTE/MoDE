@@ -9,23 +9,21 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 
 /**
- * Created by hobbypunk on 22.02.17.
+ * Created by Marcel Hoppe on 22.02.17.
  */
 public interface Childable {
   
   ObservableList<Node> getChildren();
   
   default void initParentListener() {
-    parentProperty().addListener((observable, oldValue, newValue) -> {
-      Platform.runLater(() -> { //Possible Bug in jfx? no remove of children in Listener possible.
-        getChildren().forEach(child -> {
-          if (oldValue instanceof Group && ((Group) oldValue).getChildren().contains(child))
-            ((Group) oldValue).getChildren().remove(child);
-          if (newValue instanceof Group && !((Group) newValue).getChildren().contains(child))
-            ((Group) newValue).getChildren().add(2, child);
-        });
+    parentProperty().addListener((observable, oldValue, newValue) -> Platform.runLater(() -> { //Possible Bug in jfx? no remove of children in Listener possible.
+      getChildren().forEach(child -> {
+        if (oldValue instanceof Group && ((Group) oldValue).getChildren().contains(child))
+          ((Group) oldValue).getChildren().remove(child);
+        if (newValue instanceof Group && !((Group) newValue).getChildren().contains(child))
+          ((Group) newValue).getChildren().add(2, child);
       });
-    });
+    }));
     
     getChildren().addListener((ListChangeListener<? super Node>) c -> {
       while (c.next()) {

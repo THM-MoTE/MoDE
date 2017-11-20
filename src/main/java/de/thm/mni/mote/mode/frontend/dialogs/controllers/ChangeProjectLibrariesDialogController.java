@@ -7,7 +7,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 /**
- * Created by hobbypunk on 03.02.17.
+ * Created by Marcel Hoppe on 03.02.17.
  */
 public class ChangeProjectLibrariesDialogController {
   

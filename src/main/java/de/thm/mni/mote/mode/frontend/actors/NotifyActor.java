@@ -10,9 +10,9 @@ import javafx.stage.Stage;
 import java.util.List;
 import java.util.UUID;
 
-public abstract class NotifyActor<C extends NotifyController> extends AbstractUIActor<C> {
+abstract class NotifyActor<C extends NotifyController> extends AbstractUIActor<C> {
   
-  public NotifyActor(UUID id, Stage stage, List<?> params) {
+  NotifyActor(UUID id, Stage stage, List<?> params) {
     super(id, stage, params);
   }
   

@@ -10,7 +10,7 @@ import org.junit.Test;
 import java.io.ByteArrayInputStream;
 
 /**
- * Created by hobbypunk on 29.09.16.
+ * Created by Marcel Hoppe on 29.09.16.
  */
 public class GeneratorTest {
   @Test
@@ -41,11 +41,6 @@ public class GeneratorTest {
     AnnotationParser p = new AnnotationParser(new CommonTokenStream(new AnnotationLexer(is)));
     AnnotationParser.AnnotationContext ac = p.annotation();
     System.out.println(ac);
-  }
-  
-  @Test
-  public void testGenerator() throws Exception {
-    
   }
   
 }

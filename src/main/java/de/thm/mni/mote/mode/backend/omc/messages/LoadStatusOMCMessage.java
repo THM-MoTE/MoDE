@@ -7,7 +7,7 @@ import lombok.NonNull;
 import java.util.UUID;
 
 /**
- * Created by hobbypunk on 30.01.17.
+ * Created by Marcel Hoppe on 30.01.17.
  */
 @Getter
 public class LoadStatusOMCMessage extends TellUUIDMessage<LoadStatusOMCMessage.STATUS> implements OMCMessage {
@@ -16,12 +16,12 @@ public class LoadStatusOMCMessage extends TellUUIDMessage<LoadStatusOMCMessage.S
   public enum STATUS {
     START,
     PROJECT_READY,
-    PROJECTLIB_READY,
-    SYSTEMLIB_READY,
+    PROJECT_LIB_READY,
+    SYSTEM_LIB_READY,
     COMPLETE;
     
     public static boolean isComplete(int value) {
-      return value >= (START.ordinal() + SYSTEMLIB_READY.ordinal() + PROJECTLIB_READY.ordinal() + PROJECT_READY.ordinal());
+      return value >= (START.ordinal() + SYSTEM_LIB_READY.ordinal() + PROJECT_LIB_READY.ordinal() + PROJECT_READY.ordinal());
     }
   }
   

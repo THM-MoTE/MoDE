@@ -12,17 +12,18 @@ import de.thm.mni.mote.mode.frontend.editor.actionmanager.interfaces.Deletable;
 import java.util.List;
 
 /**
- * Created by hobbypunk on 21.02.17.
+ * Created by Marcel Hoppe on 21.02.17.
  */
 public class ModifyableMoClass implements Addable, Deletable {
   
-  private MoClass element;
+  private final MoClass element;
   
   public ModifyableMoClass(MoClass element) {
     this.element = element;
   }
   
   @Override
+  @SuppressWarnings("unchecked")
   public Command add(Object... params) {
     if (params[0] instanceof MoVariable) {
       MoVariable variable = (MoVariable) params[0];

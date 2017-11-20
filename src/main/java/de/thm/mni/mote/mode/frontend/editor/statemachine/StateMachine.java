@@ -35,7 +35,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 /**
- * Created by hobbypunk on 15.11.16.
+ * Created by Marcel Hoppe on 15.11.16.
  */
 
 @Getter
@@ -78,7 +78,7 @@ public class StateMachine implements EventHandler<InputEvent> {
   
   @Override
   public void handle(InputEvent event) {
-    handleElementManagment(event, freezeState);
+    handleElementManagement(event, freezeState);
     if (eventToSkip != null && event.getEventType() == eventToSkip) {
       eventToSkip = null;
       event.consume();
@@ -150,11 +150,11 @@ public class StateMachine implements EventHandler<InputEvent> {
     changeState(state);
   }
   
-  private void handleElementManagment(InputEvent event, Boolean fixedSelection) {
-    handleElementManagment(event, (Node) event.getTarget(), fixedSelection);
+  private void handleElementManagement(InputEvent event, Boolean fixedSelection) {
+    handleElementManagement(event, (Node) event.getTarget(), fixedSelection);
   }
   
-  private void handleElementManagment(InputEvent event, Node target, Boolean fixedSelection) {
+  private void handleElementManagement(InputEvent event, Node target, Boolean fixedSelection) {
     EventType<? extends Event> type = event.getEventType();
   
     if (type.equals(MouseEvent.MOUSE_ENTERED) || type.equals(MouseEvent.MOUSE_MOVED) || type.equals(MouseEvent.MOUSE_EXITED)) {

@@ -52,7 +52,7 @@ import java.util.stream.Collectors;
 import static de.thm.mni.mote.mode.util.Translator.tr;
 
 /**
- * Created by hobbypunk on 15.09.16.
+ * Created by Marcel Hoppe on 15.09.16.
  */
 public class MainController extends NotifyController {
   
@@ -71,7 +71,7 @@ public class MainController extends NotifyController {
   @FXML private TabPane tabPane;
   
   @FXML private TreeView<MoContainer> tvLibrary;
-  private TreeViewWithItemsWrapper<MoContainer> tvwiwLibrary;
+  private TreeViewWithItemsWrapper<MoContainer> treeViewWithItemsWrapper;
   
   @FXML private MenuItem miUndo;
   @FXML private MenuItem miRedo;
@@ -84,7 +84,7 @@ public class MainController extends NotifyController {
     super.initialize(location, resources);
     ScrollPaneHorizontalScroll.modify(spLeft);
   
-    tvwiwLibrary = new TreeViewWithItemsWrapper<>(tvLibrary);
+    treeViewWithItemsWrapper = new TreeViewWithItemsWrapper<>(tvLibrary);
     DragResizer.makeResizable(sLeft, hbLeft, DragResizer.LTR);
     DragResizer.makeResizable(sRight, hbRight, DragResizer.RTL);
   }
@@ -97,7 +97,7 @@ public class MainController extends NotifyController {
     getActor().send(new GetDataOMCMessage(getID(), OMCActor.class) {
       @Override
       public Void answer(UUID source, ObservableList<MoContainer> payload) {
-        Platform.runLater(() -> tvwiwLibrary.setItems(payload));
+        Platform.runLater(() -> treeViewWithItemsWrapper.setItems(payload));
         return null;
       }
     });
@@ -158,8 +158,8 @@ public class MainController extends NotifyController {
     tvLibrary.setRoot(new TreeItem<>());
     tvLibrary.setShowRoot(false);
     
-    tvwiwLibrary.setTreeItemExpandListener(parent -> getActor().send(new UpdateClassOMCMessage(getID(), parent)));
-    tvwiwLibrary.setTreeItemConfigurer((treeItem, value) -> {
+    treeViewWithItemsWrapper.setTreeItemExpandListener(parent -> getActor().send(new UpdateClassOMCMessage(getID(), parent)));
+    treeViewWithItemsWrapper.setTreeItemConfigurator((treeItem, value) -> {
       if (value instanceof MoRoot) {
         treeItem.setExpanded(true);
         treeItem.expandedProperty().addListener((observable, oldValue, newValue) -> {
@@ -168,7 +168,7 @@ public class MainController extends NotifyController {
       }
     });
     tvLibrary.setCellFactory(param -> {
-      MoTreeCell tmp = new MoTreeCell(tabPane);
+      MoTreeCell tmp = new MoTreeCell();
       tmp.setOnEditAction(this::handleTreeCellLibraryEdit);
       tmp.setOnNonRootMouseClicked(this::handleTreeCellMouseClick);
       tmp.setOnNonRootContextMenuRequest(this::handleTreeCellContextMenuRequest);

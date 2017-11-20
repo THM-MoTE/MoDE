@@ -8,7 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 /**
- * Created by hobbypunk on 19.09.16.
+ * Created by Marcel Hoppe on 19.09.16.
  */
 @Getter
 public class MoRectangle extends MoFilledShape implements HasExtent {

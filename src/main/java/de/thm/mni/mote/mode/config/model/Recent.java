@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by hobbypunk on 11.09.16.
+ * Created by Marcel Hoppe on 11.09.16.
  */
 
 @Getter
@@ -52,6 +52,7 @@ public class Recent {
     return ret;
   }
   
+  @SuppressWarnings("ResultOfMethodCallIgnored")
   private void checkLength() {
     while (projects.size() > this.count)
       projects.get(0);

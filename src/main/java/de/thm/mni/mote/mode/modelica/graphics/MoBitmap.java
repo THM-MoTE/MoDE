@@ -11,7 +11,7 @@ import lombok.Getter;
 import java.nio.file.Path;
 
 /**
- * Created by hobbypunk on 29.09.16.
+ * Created by Marcel Hoppe on 29.09.16.
  */
 @Getter
 public class MoBitmap extends MoGraphic implements HasExtent {

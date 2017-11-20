@@ -5,10 +5,11 @@ import javafx.scene.paint.Color;
 import lombok.experimental.UtilityClass;
 
 /**
- * Created by hobbypunk on 02.12.16.
+ * Created by Marcel Hoppe on 02.12.16.
  */
 @UtilityClass
 public class StringBuilderUtilities {
+  @SuppressWarnings("UnusedReturnValue")
   public StringBuilder addProperty(StringBuilder sb, ReadOnlyProperty<?> property) {
     return addProperty(sb, property, "");
   }

@@ -6,9 +6,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- * Created by hobbypunk on 08.10.16.
+ * Created by Marcel Hoppe on 08.10.16.
  */
-public class PathTransform implements Transform<Path> {
+class PathTransform implements Transform<Path> {
   @Override
   public Path read(String value) throws Exception {
     return Paths.get(value);

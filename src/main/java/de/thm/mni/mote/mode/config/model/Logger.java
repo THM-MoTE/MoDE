@@ -1,17 +1,14 @@
 package de.thm.mni.mote.mode.config.model;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
 import org.simpleframework.xml.Element;
 import org.slf4j.event.Level;
 
 /**
- * Created by hobbypunk on 13.09.16.
+ * Created by Marcel Hoppe on 13.09.16.
  */
-@Getter
-@Setter
-@ToString
+@Data
+@SuppressWarnings("WeakerAccess")
 public class Logger {
   
   @Element Level level = Level.ERROR;

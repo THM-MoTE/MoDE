@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 /**
- * Created by hobbypunk on 26.01.17.
+ * Created by Marcel Hoppe on 26.01.17.
  */
 public class SelectSystemLibsController<T extends Comparable<T>> extends VBox implements IController {
   

@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 
 /**
- * Created by hobbypunk on 19.09.16.
+ * Created by Marcel Hoppe on 19.09.16.
  */
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class FXMoIconMoGroup extends FXMoGroup {

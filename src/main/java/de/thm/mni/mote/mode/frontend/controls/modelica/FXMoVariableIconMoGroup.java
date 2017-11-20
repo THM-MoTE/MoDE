@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by hobbypunk on 19.09.16.
+ * Created by Marcel Hoppe on 19.09.16.
  */
 @Getter
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)

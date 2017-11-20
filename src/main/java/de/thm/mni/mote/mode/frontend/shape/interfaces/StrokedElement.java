@@ -5,7 +5,7 @@ import de.thm.mni.mote.mode.modelica.graphics.Utilities;
 import javafx.collections.ObservableList;
 
 /**
- * Created by hobbypunk on 03.11.16.
+ * Created by Marcel Hoppe on 03.11.16.
  */
 public interface StrokedElement extends HasStrokeWidth {
   MoFilledShape getData();

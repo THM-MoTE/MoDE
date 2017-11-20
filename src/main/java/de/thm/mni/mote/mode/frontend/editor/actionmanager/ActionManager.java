@@ -15,12 +15,12 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by hobbypunk on 21.02.17.
+ * Created by Marcel Hoppe on 21.02.17.
  */
 
 public class ActionManager {
-  public static ObjectProperty<ActionManager> activeInstance = new SimpleObjectProperty<>(null);
-  private static Map<MoContainer, ActionManager> INSTANCES = new HashMap<>();
+  public static final ObjectProperty<ActionManager> activeInstance = new SimpleObjectProperty<>(null);
+  private static final Map<MoContainer, ActionManager> INSTANCES = new HashMap<>();
   
   public static ActionManager getInstance(MoContainer container) {
     if (!INSTANCES.containsKey(container)) INSTANCES.put(container, new ActionManager());

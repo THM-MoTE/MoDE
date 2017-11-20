@@ -1,7 +1,7 @@
 package de.thm.mni.mote.mode.frontend.utilities;
 
 import de.thm.mni.mote.mode.util.HierarchyData;
-import de.thm.mni.mote.mode.util.TreeItemConfigurer;
+import de.thm.mni.mote.mode.util.TreeItemConfigurator;
 import de.thm.mni.mote.mode.util.UpdateListener;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -43,10 +43,10 @@ public class TreeViewWithItemsWrapper<T extends HierarchyData<T> & Comparable<T>
    */
   private final Map<TreeItem<T>, WeakListChangeListener<T>> weakListeners = new HashMap<>();
   
-  private ObjectProperty<ObservableList<? extends T>> items = new SimpleObjectProperty<>(this, "items");
+  private final ObjectProperty<ObservableList<? extends T>> items = new SimpleObjectProperty<>(this, "items");
   
   @Getter @Setter private UpdateListener<T> treeItemExpandListener = null;
-  @Getter @Setter private TreeItemConfigurer<T> treeItemConfigurer = null;
+  @Getter @Setter private TreeItemConfigurator<T> treeItemConfigurator = null;
   
   private final TreeView<T> element;
   
@@ -201,7 +201,7 @@ public class TreeViewWithItemsWrapper<T extends HierarchyData<T> & Comparable<T>
       if (newValue && treeItemExpandListener != null) treeItemExpandListener.update(value);
     });
     treeItem.setValue(value);
-    if (this.treeItemConfigurer != null) this.treeItemConfigurer.call(treeItem, value);
+    if (this.treeItemConfigurator != null) this.treeItemConfigurator.call(treeItem, value);
     
     if (value != null && value.getChildren() != null) {
       ListChangeListener<T> listChangeListener = getListChangeListener(treeItem.getChildren());
@@ -235,7 +235,7 @@ public class TreeViewWithItemsWrapper<T extends HierarchyData<T> & Comparable<T>
     return this.element.rootProperty();
   }
   
-  public TreeItem<T> getRoot() {
+  private TreeItem<T> getRoot() {
     return this.element.getRoot();
   }
   

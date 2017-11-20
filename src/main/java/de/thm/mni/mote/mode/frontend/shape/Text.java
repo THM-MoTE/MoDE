@@ -24,7 +24,7 @@ import lombok.NonNull;
 import lombok.Setter;
 
 /**
- * Created by hobbypunk on 02.11.16.
+ * Created by Marcel Hoppe on 02.11.16.
  */
 @Getter
 @Setter
@@ -83,7 +83,7 @@ public class Text extends Pane implements Element, FilledElement, StrokedElement
     
     this.text.setFont(f);
     this.text.setText(getData().getString());
-    this.text.setUnderline(MoText.TextStyle.isUnterline(getData().getTextStyleProperty().get()));
+    this.text.setUnderline(MoText.TextStyle.isUnderline(getData().getTextStyleProperty().get()));
   
   
     Double tlx = Math.min(extent0.getX(), extent1.getX());

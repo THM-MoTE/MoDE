@@ -31,7 +31,7 @@ abstract class Arrow extends Path implements Element, HasStrokeWidth {
   abstract ObjectProperty<Point2D> getNextPointProperty();
   abstract ObjectProperty<MoLine.Arrow> getArrowProperty();
   
-  public Arrow(MoLine data) {
+  Arrow(MoLine data) {
     super();
     this.data = data;
     init();

@@ -8,7 +8,7 @@ import lombok.ToString;
 import java.nio.file.Path;
 
 /**
- * Created by hobbypunk on 20.10.16.
+ * Created by Marcel Hoppe on 20.10.16.
  */
 @Getter
 @AllArgsConstructor

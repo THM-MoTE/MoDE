@@ -8,7 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 /**
- * Created by hobbypunk on 16.09.16.
+ * Created by Marcel Hoppe on 16.09.16.
  */
 
 @Getter

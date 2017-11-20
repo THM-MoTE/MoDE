@@ -108,7 +108,7 @@ fontName            : 'fontName' EQUALS val=STRING;
 textStyle           : 'textStyle' EQUALS 'TextStyle' LIT_DOT type=textStyleType;
 textStyleType  : BOLD
                 | ITALIC
-                | UNTERLINE
+                | UNDERLINE
                 ;
 
 horizontalAlignment : 'horizontalAlignment' EQUALS val=textAlignment;
@@ -172,7 +172,7 @@ SMOOTH  : 'Smooth';
 //TEXTSTYLE
 BOLD        : 'Bold';
 ITALIC      : 'Italic';
-UNTERLINE   : 'UnderLine';
+UNDERLINE   : 'UnderLine';
 
 //TEXTALIGNMENT
 LEFT    : 'Left';

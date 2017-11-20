@@ -8,7 +8,7 @@ import javafx.scene.input.InputEvent;
 import javafx.scene.shape.Circle;
 
 /**
- * Created by hobbypunk on 22.02.17.
+ * Created by Marcel Hoppe on 22.02.17.
  */
 public class ModifyableCircle extends Circle implements Rotateable, Resizeable {
   
@@ -19,7 +19,7 @@ public class ModifyableCircle extends Circle implements Rotateable, Resizeable {
   private static final Double RADIUS = 10.;
   
   private final ModifyableFXMoVariableIconMoGroup parent;
-  private Integer buttonId;
+  private final Integer buttonId;
   
   public ModifyableCircle(ModifyableFXMoVariableIconMoGroup parent, Double centerX, Double centerY, Integer buttonId) {
     super(centerX, centerY, RADIUS);

@@ -8,10 +8,10 @@ import javafx.collections.ObservableList;
 import java.util.UUID;
 
 /**
- * Created by hobbypunk on 24.01.17.
+ * Created by Marcel Hoppe on 24.01.17.
  */
 public abstract class GetDataOMCMessage extends AskClassMessage<Void, ObservableList<MoContainer>, Void> implements OMCMessage {
-  public GetDataOMCMessage(UUID source, Class<? extends IActor> sink) {
+  protected GetDataOMCMessage(UUID source, Class<? extends IActor> sink) {
     super(source, sink, null);
   }
 }

@@ -11,12 +11,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by hobbypunk on 21.02.17.
+ * Created by Marcel Hoppe on 21.02.17.
  */
 
 public class MenuManager {
-  public static ObjectProperty<MenuManager> activeInstance = new SimpleObjectProperty<>(null);
-  private static Map<MoContainer, MenuManager> INSTANCES = new HashMap<>();
+  public static final ObjectProperty<MenuManager> activeInstance = new SimpleObjectProperty<>(null);
+  private static final Map<MoContainer, MenuManager> INSTANCES = new HashMap<>();
   
   public static MenuManager getInstance(MoContainer container) {
     if (!INSTANCES.containsKey(container)) INSTANCES.put(container, new MenuManager(container));

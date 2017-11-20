@@ -34,7 +34,7 @@ import java.util.stream.Stream;
 import static de.thm.mni.mote.mode.util.Translator.tr;
 
 /**
- * Created by hobbypunk on 27.09.16.
+ * Created by Marcel Hoppe on 27.09.16.
  */
 @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
 public class OMCompiler {
@@ -151,7 +151,7 @@ public class OMCompiler {
     return null;
   }
   
-  public void loadProjectLibraries(Path projectFile) throws ParserException {
+  public void loadProjectLibraries(Path projectFile) {
     importHandler = new ImportHandler(projectFile);
     try {
       importHandler.loadLibraries(this.client);
@@ -273,10 +273,6 @@ public class OMCompiler {
     return list;
   }
   
-  List<Map<String, String>> getConnections(String className) {
-    return getConnections(className, getClassInformation(className));
-  }
-  
   public List<Map<String, String>> getConnections(String className, ClassInformation ci) {
     List<String> equations = getEquations(className, ci);
     
@@ -308,7 +304,7 @@ public class OMCompiler {
   private List<String> getClassWithoutContainingClasses(String className, ClassInformation ci) {
     try (Stream<String> lines = Files.lines(ci.getFileName())) {
       return lines.limit(ci.getLineNumberEnd()).skip(ci.getLineNumberStart() - 1).filter(new Predicate<String>() {
-        List<String> names = new ArrayList<>();
+        final List<String> names = new ArrayList<>();
         
         @Override
         public boolean test(String s) {
@@ -371,6 +367,7 @@ public class OMCompiler {
     return toStringArray(s, true, true);
   }
   
+  @SuppressWarnings("SameParameterValue")
   private List<String> toStringArray(String s, Boolean unsorted, Boolean removeEmpty) {
     List<String> l = ScriptingHelper.fromNestedArray(s);
     Stream<String> stream = l.stream();

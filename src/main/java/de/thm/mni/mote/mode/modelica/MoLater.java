@@ -1,9 +1,6 @@
 package de.thm.mni.mote.mode.modelica;
 
-import de.thm.mni.mhpp11.smbj.logging.messages.ErrorMessage;
-import de.thm.mni.mhpp11.smbj.manager.ActorManager;
 import de.thm.mni.mote.mode.backend.omc.OMCompiler;
-import de.thm.mni.mote.mode.parser.ParserException;
 import lombok.NonNull;
 
 import java.util.List;
@@ -11,7 +8,7 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
- * Created by hobbypunk on 06.10.16.
+ * Created by Marcel Hoppe on 06.10.16.
  */
 public class MoLater extends MoClass {
   
@@ -20,7 +17,7 @@ public class MoLater extends MoClass {
   }
   
   
-  public static void lightParsing(@NonNull OMCompiler omc, @NonNull String name, @NonNull MoContainer parent) throws ParserException {
+  public static void lightParsing(@NonNull OMCompiler omc, @NonNull String name, @NonNull MoContainer parent) {
     Queue<MoContainer> queue = new ConcurrentLinkedQueue<>();
     MoContainer tmp = new MoContainer(omc, parent, name);
     tmp = parent.addChild(tmp).setElement(new MoLater());
@@ -49,7 +46,7 @@ public class MoLater extends MoClass {
     }
   }
   
-  private static void lightParsing(@NonNull OMCompiler omc, @NonNull String name, MoContainer parent, @NonNull String parentName) throws ParserException {
+  private static void lightParsing(@NonNull OMCompiler omc, @NonNull String name, MoContainer parent, @NonNull String parentName) {
   
     String n = (parentName.equals("")) ? name : parentName + "." + name;
   
@@ -60,11 +57,7 @@ public class MoLater extends MoClass {
     }
     List<String> names = omc.getChildren(n);
     for (String childName : names) {
-      try {
-        if (!childName.isEmpty()) MoLater.lightParsing(omc, childName, tmp, n);
-      } catch (ParserException e) {
-        ActorManager.getInstance().send(new ErrorMessage(MoLater.class, omc.getID(), e));
-      }
+      if (!childName.isEmpty()) MoLater.lightParsing(omc, childName, tmp, n);
     }
   }
 }

@@ -6,7 +6,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
 /**
- * Created by hobbypunk on 03.11.16.
+ * Created by Marcel Hoppe on 03.11.16.
  */
 public interface FilledElement {
   void setStyle(String css);

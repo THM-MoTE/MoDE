@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by hobbypunk on 11.10.16.
+ * Created by Marcel Hoppe on 11.10.16.
  */
 public class MoDefaults {
   

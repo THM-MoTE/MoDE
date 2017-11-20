@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.UUID;
 
 /**
- * Created by hobbypunk on 24.01.17.
+ * Created by Marcel Hoppe on 24.01.17.
  */
 @Getter
 public abstract class SetProjectMessage extends AskClassMessage<Project, Project, Void> {

@@ -8,7 +8,7 @@ import javafx.scene.transform.Transform;
 import javafx.scene.transform.Translate;
 
 /**
- * Created by hobbypunk on 03.11.16.
+ * Created by Marcel Hoppe on 03.11.16.
  */
 public interface Element {
   MoGraphic getData();

@@ -32,38 +32,34 @@
         <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
         <RowConstraints maxHeight="200.0" minHeight="10.0" prefHeight="200.0" vgrow="ALWAYS"/>
       </rowConstraints>
-      <children>
-        <Label alignment="CENTER" contentDisplay="TOP" text="%dialog.new_class.package" textAlignment="CENTER"
-               GridPane.columnSpan="2147483647" GridPane.halignment="CENTER">
-          <font>
-            <Font size="18.0"/>
-          </font>
-        </Label>
-        <Label text="%dialog.new_class.path" GridPane.halignment="RIGHT" GridPane.rowIndex="2"/>
-        <TextField fx:id="tfPath" disable="true" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-  
-        <Label text="%dialog.new_class.name" GridPane.halignment="RIGHT" GridPane.rowIndex="4"/>
-        <TextField fx:id="tfName" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
-  
-        <Label text="%dialog.new_class.comment" GridPane.halignment="RIGHT" GridPane.rowIndex="6"/>
-        <TextField fx:id="tfComment" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
-  
-        <Label text="%dialog.new_class.documentation" GridPane.columnSpan="2147483647" GridPane.hgrow="ALWAYS"
-               GridPane.rowIndex="8"/>
-        <TextArea fx:id="taDocumentation" prefHeight="250.0" GridPane.columnSpan="2147483647" GridPane.hgrow="ALWAYS"
-                  GridPane.rowIndex="9" GridPane.vgrow="ALWAYS">
-          <GridPane.margin>
-            <Insets/>
-          </GridPane.margin>
-        </TextArea>
-      </children>
       <padding>
         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
       </padding>
+      <Label alignment="CENTER" contentDisplay="TOP" text="%dialog.new_class.package" textAlignment="CENTER"
+             GridPane.columnSpan="2147483647" GridPane.halignment="CENTER">
+        <font>
+          <Font size="18.0"/>
+        </font>
+      </Label>
+      <Label text="%dialog.new_class.path" GridPane.halignment="RIGHT" GridPane.rowIndex="2"/>
+      <TextField fx:id="tfPath" disable="true" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+    
+      <Label text="%dialog.new_class.name" GridPane.halignment="RIGHT" GridPane.rowIndex="4"/>
+      <TextField fx:id="tfName" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+    
+      <Label text="%dialog.new_class.comment" GridPane.halignment="RIGHT" GridPane.rowIndex="6"/>
+      <TextField fx:id="tfComment" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
+    
+      <Label text="%dialog.new_class.documentation" GridPane.columnSpan="2147483647" GridPane.hgrow="ALWAYS"
+             GridPane.rowIndex="8"/>
+      <TextArea fx:id="taDocumentation" prefHeight="250.0" GridPane.columnSpan="2147483647" GridPane.hgrow="ALWAYS"
+                GridPane.rowIndex="9" GridPane.vgrow="ALWAYS">
+        <GridPane.margin>
+          <Insets/>
+        </GridPane.margin>
+      </TextArea>
     </GridPane>
   </content>
-  <buttonTypes>
-    <ButtonType fx:constant="FINISH"/>
-    <ButtonType fx:constant="CANCEL"/>
-  </buttonTypes>
+  <ButtonType fx:constant="FINISH"/>
+  <ButtonType fx:constant="CANCEL"/>
 </DialogPane>

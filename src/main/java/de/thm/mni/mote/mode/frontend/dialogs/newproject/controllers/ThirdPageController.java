@@ -8,12 +8,10 @@ import javafx.fxml.FXML;
 import javafx.scene.layout.StackPane;
 import lombok.Setter;
 
-import java.net.URL;
-import java.util.ResourceBundle;
 import java.util.UUID;
 
 /**
- * Created by hobbypunk on 26.01.17.
+ * Created by Marcel Hoppe on 26.01.17.
  */
 public class ThirdPageController extends DialogStackController {
   
@@ -22,14 +20,9 @@ public class ThirdPageController extends DialogStackController {
   
   @FXML private SelectProjectLibsController selectProjectLibsController;
   
-  public ThirdPageController(UUID id, StackPane parent) {
+  ThirdPageController(UUID id, StackPane parent) {
     super(id, parent, true);
     load();
-  }
-  
-  @Override
-  public void initialize(URL location, ResourceBundle resources) {
-    super.initialize(location, resources);
   }
   
   @Override

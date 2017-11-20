@@ -17,7 +17,7 @@ import java.util.ResourceBundle;
 import java.util.UUID;
 
 /**
- * Created by hobbypunk on 26.01.17.
+ * Created by Marcel Hoppe on 26.01.17.
  */
 public class SecondPageController extends DialogStackController {
   
@@ -26,7 +26,7 @@ public class SecondPageController extends DialogStackController {
   
   @FXML private SelectSystemLibsController<String> selectSystemLibsController;
   
-  public SecondPageController(UUID id, StackPane parent) {
+  SecondPageController(UUID id, StackPane parent) {
     super(id, parent, false);
     load();
   }

@@ -1,5 +1,5 @@
 within <path>;
 package <name> "<comment>"
 
-annotation(Documentation(info="<docu>"));
+annotation(Documentation(info="<documentation>"));
 end <name>;

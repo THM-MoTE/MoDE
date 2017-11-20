@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by hobbypunk on 16.02.17.
+ * Created by Marcel Hoppe on 16.02.17.
  */
 public class ModifyableLine extends LineWithHelper implements Addable, Actionable, Deletable, Moveable {
   
@@ -35,7 +35,7 @@ public class ModifyableLine extends LineWithHelper implements Addable, Actionabl
     LINE
   }
   
-  private Settings settings = Settings.load();
+  private final Settings settings = Settings.load();
   
   private STATUS status = STATUS.NOTHING;
   private Point2D startMousePos = null;
@@ -45,7 +45,7 @@ public class ModifyableLine extends LineWithHelper implements Addable, Actionabl
   private Point2D firstPoint = null;
   private Point2D secondPoint = null;
   
-  public ModifyableLine(@NonNull FXMoParentGroup parent, @NonNull MoLine data) {
+  protected ModifyableLine(@NonNull FXMoParentGroup parent, @NonNull MoLine data) {
     super(parent, data);
   }
   

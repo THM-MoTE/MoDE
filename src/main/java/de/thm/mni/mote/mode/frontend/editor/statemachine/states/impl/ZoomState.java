@@ -14,7 +14,7 @@ import javafx.scene.input.InputEvent;
 import javafx.scene.input.ScrollEvent;
 
 /**
- * Created by hobbypunk on 15.02.17.
+ * Created by Marcel Hoppe on 15.02.17.
  */
 public class ZoomState extends State {
   

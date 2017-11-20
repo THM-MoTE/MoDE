@@ -1,14 +1,13 @@
 package de.thm.mni.mote.mode.frontend.editor.elementmanager.elements;
 
-import de.thm.mni.mote.mode.modelica.MoClass;
-import de.thm.mni.mote.mode.modelica.MoConnector;
-import de.thm.mni.mote.mode.modelica.MoContainer;
-import de.thm.mni.mote.mode.modelica.MoVariable;
-import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.frontend.editor.elementmanager.ElementManager;
 import de.thm.mni.mote.mode.frontend.editor.elementmanager.interfaces.Highlightable;
 import de.thm.mni.mote.mode.frontend.editor.statemachine.elements.ModifyableFXMoConnectorIconMoGroup;
 import de.thm.mni.mote.mode.frontend.editor.statemachine.elements.ModifyableFXMoDiagramMoGroup;
+import de.thm.mni.mote.mode.modelica.MoClass;
+import de.thm.mni.mote.mode.modelica.MoConnector;
+import de.thm.mni.mote.mode.modelica.MoContainer;
+import de.thm.mni.mote.mode.modelica.MoVariable;
 import javafx.scene.Node;
 
 import java.util.ArrayList;
@@ -17,11 +16,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Created by hobbypunk on 02.03.17.
+ * Created by Marcel Hoppe on 02.03.17.
  */
 public class ManagedFXMoDiagramMoGroup extends ModifyableFXMoDiagramMoGroup {
   
-  public ManagedFXMoDiagramMoGroup(MoContainer container) throws ParserException {
+  public ManagedFXMoDiagramMoGroup(MoContainer container) {
     super(container);
   }
   

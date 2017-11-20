@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by hobbypunk on 16.09.16.
+ * Created by Marcel Hoppe on 16.09.16.
  */
 @Getter
 public class MoIcon extends MoAnnotation {

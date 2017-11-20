@@ -2,6 +2,5 @@
 
 image::MoDE.svg[link="https://github.com/THM-MoTE/MoDE/", align="center"]
 
-MoDE - Modelica Diagram Editor
-===============================
+= MoDE - Modelica Diagram Editor
 MoDE is a graphical editor for modelica diagrams.

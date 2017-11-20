@@ -36,7 +36,7 @@ import static de.thm.mni.mote.mode.util.Translator.tr;
 
 
 /**
- * Created by hobbypunk on 10.09.16.
+ * Created by Marcel Hoppe on 10.09.16.
  */
 public class WelcomeController extends NotifyController {
   
@@ -52,7 +52,7 @@ public class WelcomeController extends NotifyController {
   
   @FXML private StackPane dialogStack;
   
-  private PopOver po = new PopOver();
+  private final PopOver po = new PopOver();
   
   @FXML
   @Override

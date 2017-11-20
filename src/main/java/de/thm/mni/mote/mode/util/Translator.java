@@ -4,12 +4,12 @@ import java.text.MessageFormat;
 import java.util.*;
 
 /**
- * Created by hobbypunk on 30.01.17.
+ * Created by Marcel Hoppe on 30.01.17.
  */
 public final class Translator {
-  private static Map<String, ResourceBundle> bundles = new HashMap<>();
+  private static final Map<String, ResourceBundle> bundles = new HashMap<>();
   
-  public static ResourceBundle getBundle(String bundle) {
+  private static ResourceBundle getBundle(String bundle) {
     if (!bundles.containsKey(bundle)) {
       bundles.put(bundle, Utilities.getBundle(bundle));
     }
@@ -40,7 +40,7 @@ public final class Translator {
     return tr(bundle, "", key, params);
   }
   
-  public static String tr(ResourceBundle bundle, String group, String key, Object... params) {
+  private static String tr(ResourceBundle bundle, String group, String key, Object... params) {
     try {
       if (!group.isEmpty()) key = group.toLowerCase() + "." + key;
       

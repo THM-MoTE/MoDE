@@ -10,7 +10,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 /**
- * Created by hobbypunk on 06.02.17.
+ * Created by Marcel Hoppe on 06.02.17.
  */
 public class DialogStackButtonsController implements IController {
   @Getter @FXML private Button btnNext;
@@ -18,7 +18,7 @@ public class DialogStackButtonsController implements IController {
   
   @FXML private FontIcon fiNext;
   
-  public void isLastPage() {
+  void isLastPage() {
     fiNext.setIconLiteral("gmi-done");
     fiNext.setIconSize(24);
   }

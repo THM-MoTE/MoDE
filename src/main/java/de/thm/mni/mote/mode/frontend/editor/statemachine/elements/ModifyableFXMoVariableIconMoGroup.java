@@ -19,7 +19,7 @@ import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseEvent;
 
 /**
- * Created by hobbypunk on 16.02.17.
+ * Created by Marcel Hoppe on 16.02.17.
  */
 
 public class ModifyableFXMoVariableIconMoGroup extends FXMoVariableIconMoGroup implements Actionable, Deletable, Moveable {

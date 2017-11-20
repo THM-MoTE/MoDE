@@ -7,7 +7,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.util.StringConverter;
 import org.controlsfx.control.PopOver;
@@ -15,7 +14,6 @@ import org.slf4j.event.Level;
 
 import java.io.File;
 import java.net.URL;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Locale;
@@ -24,7 +22,7 @@ import java.util.ResourceBundle;
 import static de.thm.mni.mote.mode.util.Translator.tr;
 
 /**
- * Created by hobbypunk on 14.09.16.
+ * Created by Marcel Hoppe on 14.09.16.
  */
 public class SettingsDialogController extends Controller {
   
@@ -44,7 +42,7 @@ public class SettingsDialogController extends Controller {
   @FXML private Label lModelicaCompiler;
   @FXML private Button btnModelicaCompiler;
   
-  private PopOver po = new PopOver();
+  private final PopOver po = new PopOver();
   
   @Override
   public void initialize(URL location, ResourceBundle resources) {
@@ -110,36 +108,25 @@ public class SettingsDialogController extends Controller {
   private void onModelicaCompilerClick() {
     Path f = fileDialog(
         getSettings().getModelica().getCompiler(),
-        tr(null, "settings", "global.select_modelica_compiler"),
-        true);
+        tr(null, "settings", "global.select_modelica_compiler")
+    );
     
     if (f == null) return;
     tfModelicaCompiler.setText(f.toString());
     tfModelicaCompiler.positionCaret(f.toString().length() + 1);
   }
   
-  private Path fileDialog(Path init, String title, Boolean file) {
+  private Path fileDialog(Path init, String title) {
     title = title.replaceAll(":$", "");
     File f;
-    if (file) {
-      FileChooser fc = new FileChooser();
-      fc.setTitle(title);
-      if (init != null) {
-        fc.setInitialDirectory(init.getParent().toFile());
-        fc.setInitialFileName(init.getFileName().toString());
-      }
-      po.hide();
-      f = fc.showOpenDialog(this.getStage());
-    } else {
-      DirectoryChooser dc = new DirectoryChooser();
-      dc.setTitle(title);
-      if (init != null) {
-        if (!Files.isDirectory(init)) init = init.getParent();
-        dc.setInitialDirectory(init.toFile());
-      }
-  
-      f = dc.showDialog(this.getStage());
+    FileChooser fc = new FileChooser();
+    fc.setTitle(title);
+    if (init != null) {
+      fc.setInitialDirectory(init.getParent().toFile());
+      fc.setInitialFileName(init.getFileName().toString());
     }
+    po.hide();
+    f = fc.showOpenDialog(this.getStage());
     return (f == null) ? null : f.toPath();
   }
   

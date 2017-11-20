@@ -1,9 +1,5 @@
 package de.thm.mni.mote.mode.frontend.editor.statemachine.elements;
 
-import de.thm.mni.mote.mode.modelica.MoConnection;
-import de.thm.mni.mote.mode.modelica.MoVariable;
-import de.thm.mni.mote.mode.modelica.graphics.MoLine;
-import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.frontend.controls.modelica.FXMoConnectorIconMoGroup;
 import de.thm.mni.mote.mode.frontend.controls.modelica.FXMoDiagramMoGroup;
 import de.thm.mni.mote.mode.frontend.controls.modelica.FXMoVariableIconMoGroup;
@@ -14,6 +10,9 @@ import de.thm.mni.mote.mode.frontend.editor.statemachine.interfaces.Actionable;
 import de.thm.mni.mote.mode.frontend.editor.statemachine.interfaces.Addable;
 import de.thm.mni.mote.mode.frontend.editor.statemachine.interfaces.Deletable;
 import de.thm.mni.mote.mode.frontend.shape.InternalLine;
+import de.thm.mni.mote.mode.modelica.MoConnection;
+import de.thm.mni.mote.mode.modelica.MoVariable;
+import de.thm.mni.mote.mode.modelica.graphics.MoLine;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -27,7 +26,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Created by hobbypunk on 16.02.17.
+ * Created by Marcel Hoppe on 16.02.17.
  */
 public class ModifyableFXMoConnectorIconMoGroup extends FXMoConnectorIconMoGroup implements Actionable, Addable, Deletable {
   
@@ -36,7 +35,7 @@ public class ModifyableFXMoConnectorIconMoGroup extends FXMoConnectorIconMoGroup
   private ModifyableFXMoConnectorIconMoGroup freezeTarget = null;
   
   
-  public ModifyableFXMoConnectorIconMoGroup(FXMoVariableIconMoGroup moParent, MoVariable variable, List<MoConnection> to, List<MoConnection> from) {
+  protected ModifyableFXMoConnectorIconMoGroup(FXMoVariableIconMoGroup moParent, MoVariable variable, List<MoConnection> to, List<MoConnection> from) {
     super(moParent, variable, to, from);
   }
   
@@ -73,19 +72,14 @@ public class ModifyableFXMoConnectorIconMoGroup extends FXMoConnectorIconMoGroup
         if (freezeTarget == this) {
           builder.addPoint();
         } else {
-          try {
-            builder.updateLastPoint(this.getMoParent().getMoDiagram().convertTo(convertFrom(new Point2D(0, 0))));
-            builder.addPoint();
-            MoConnection conn = builder.build(this.getVariables());
-            if (((ManagedFXMoDiagramMoGroup) this.getMoParent().getMoDiagram()).isConnectAbleTo(conn.getFrom(), conn.getTo())) {
-              abort(sm);
-              return this.getMoParent().getMoDiagram().getModifyableMoClass().add((Object) new MoConnection[]{conn});
-            } else {
-              builder.removePoint();
-            }
-          } catch (ParserException e) {
+          builder.updateLastPoint(this.getMoParent().getMoDiagram().convertTo(convertFrom(new Point2D(0, 0))));
+          builder.addPoint();
+          MoConnection conn = builder.build(this.getVariables());
+          if (((ManagedFXMoDiagramMoGroup) this.getMoParent().getMoDiagram()).isConnectAbleTo(conn.getFrom(), conn.getTo())) {
             abort(sm);
-            return Command.IGNORE;
+            return this.getMoParent().getMoDiagram().getModifyableMoClass().add((Object) new MoConnection[]{conn});
+          } else {
+            builder.removePoint();
           }
         }
       }
@@ -117,9 +111,9 @@ public class ModifyableFXMoConnectorIconMoGroup extends FXMoConnectorIconMoGroup
   
   private class ConnectionBuilder {
     private final InternalLine line;
-    private List<MoVariable> startConnector;
-    private FXMoDiagramMoGroup moGroup;
-    private ObjectProperty<Point2D> lastPoint = new SimpleObjectProperty<>(null);
+    private final List<MoVariable> startConnector;
+    private final FXMoDiagramMoGroup moGroup;
+    private final ObjectProperty<Point2D> lastPoint = new SimpleObjectProperty<>(null);
     
     ConnectionBuilder(FXMoDiagramMoGroup moGroup, List<MoVariable> connector, Point2D start) {
       this.moGroup = moGroup;
@@ -146,7 +140,7 @@ public class ModifyableFXMoConnectorIconMoGroup extends FXMoConnectorIconMoGroup
       moGroup.remove(line);
     }
     
-    MoConnection build(List<MoVariable> endConnector) throws ParserException {
+    MoConnection build(List<MoVariable> endConnector) {
       return new MoConnection(moGroup.getMoClass(), startConnector, endConnector, Collections.singletonList(line.getData()));
     }
   

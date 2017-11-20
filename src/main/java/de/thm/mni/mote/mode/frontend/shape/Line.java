@@ -28,7 +28,7 @@ public class Line extends Group implements HasStrokeWidth {
     if(this.getClass() == Line.class) init();
   }
   
-  public void init() {
+  void init() {
     this.getChildren().add(this.line);
     this.getChildren().add(this.startArrow);
     this.getChildren().add(this.endArrow);

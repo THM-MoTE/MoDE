@@ -13,7 +13,7 @@ import de.thm.mni.mote.mode.frontend.editor.actionmanager.interfaces.Rotateable;
 import javafx.geometry.Point2D;
 
 /**
- * Created by hobbypunk on 22.02.17.
+ * Created by Marcel Hoppe on 22.02.17.
  */
 public class ModifyableMoVariable implements Moveable, Rotateable, Resizeable {
   private final MoVariable element;

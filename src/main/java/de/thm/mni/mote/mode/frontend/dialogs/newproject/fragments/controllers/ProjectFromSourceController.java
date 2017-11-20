@@ -32,11 +32,11 @@ import java.util.ResourceBundle;
 import static de.thm.mni.mote.mode.util.Translator.tr;
 
 /**
- * Created by hobbypunk on 26.01.17.
+ * Created by Marcel Hoppe on 26.01.17.
  */
 
 public class ProjectFromSourceController extends GridPane implements NewProject, IController {
-  private ResourceBundle i18n = null;
+  private final ResourceBundle i18n = null;
   
   private final BooleanProperty isNameValidProperty = new SimpleBooleanProperty(false);
   private final BooleanProperty isPathValidProperty = new SimpleBooleanProperty(false);

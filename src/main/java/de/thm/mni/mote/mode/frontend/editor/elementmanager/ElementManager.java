@@ -8,10 +8,10 @@ import de.thm.mni.mote.mode.frontend.editor.elementmanager.interfaces.Selectable
 import java.util.*;
 
 /**
- * Created by hobbypunk on 13.02.17.
+ * Created by Marcel Hoppe on 13.02.17.
  */
 public class ElementManager {
-  private static Map<MoContainer, ElementManager> INSTANCES = new HashMap<>();
+  private static final Map<MoContainer, ElementManager> INSTANCES = new HashMap<>();
   
   public static ElementManager getInstance(MoContainer container) {
     if (!INSTANCES.containsKey(container)) INSTANCES.put(container, new ElementManager());

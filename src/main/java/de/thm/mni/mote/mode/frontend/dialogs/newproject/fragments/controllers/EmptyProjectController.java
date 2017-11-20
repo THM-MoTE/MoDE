@@ -32,7 +32,7 @@ import java.util.ResourceBundle;
 import static de.thm.mni.mote.mode.util.Translator.tr;
 
 /**
- * Created by hobbypunk on 26.01.17.
+ * Created by Marcel Hoppe on 26.01.17.
  */
 
 public class EmptyProjectController extends GridPane implements NewProject, IController {

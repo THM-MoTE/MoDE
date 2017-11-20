@@ -8,10 +8,10 @@ import java.util.Date;
 import java.util.TimeZone;
 
 /**
- * Created by hobbypunk on 08.10.16.
+ * Created by Marcel Hoppe on 08.10.16.
  */
-public class ISODateTransform implements Transform<Date> {
-  private static DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+class ISODateTransform implements Transform<Date> {
+  private static final DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
   
   static {
     df.setTimeZone(TimeZone.getTimeZone("UTC"));

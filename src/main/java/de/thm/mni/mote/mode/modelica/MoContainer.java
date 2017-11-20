@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 import static de.thm.mni.mote.mode.util.Translator.tr;
 
 /**
- * Created by hobbypunk on 27.01.17.
+ * Created by Marcel Hoppe on 27.01.17.
  */
 @Getter
 public class MoContainer implements Comparable<MoContainer>, HierarchyData<MoContainer> {
@@ -67,11 +67,11 @@ public class MoContainer implements Comparable<MoContainer>, HierarchyData<MoCon
     this.parent = newParent;
   }
   
-  public Boolean contains(MoContainer elem) throws ParserException {
+  public Boolean contains(MoContainer elem) {
     return contains(elem.getElement());
   }
   
-  public Boolean contains(MoClass elem) {
+  private Boolean contains(MoClass elem) {
     if (element.equals(elem)) return true;
     
     for (MoContainer c : children)
@@ -112,8 +112,8 @@ public class MoContainer implements Comparable<MoContainer>, HierarchyData<MoCon
   }
   
   public void removeNotExistingChildren(List<String> names) {
-    List<MoContainer> notExistingChidren = this.getChildren().stream().filter(moContainer -> !names.contains(moContainer.getSimpleName())).collect(Collectors.toList());
-    notExistingChidren.forEach(this::removeChild);
+    List<MoContainer> notExistingChildren = this.getChildren().stream().filter(moContainer -> !names.contains(moContainer.getSimpleName())).collect(Collectors.toList());
+    notExistingChildren.forEach(this::removeChild);
   }
   
   synchronized private MoContainer removeChild(MoContainer container) {
@@ -174,7 +174,7 @@ public class MoContainer implements Comparable<MoContainer>, HierarchyData<MoCon
     return element.compareTo(that.element);
   }
   
-  private void update(OMCompiler omc, int depth) throws ParserException {
+  private void update(OMCompiler omc, int depth) {
     this.omc = omc;
     this.getElement();
     if (depth > 0) {
@@ -184,7 +184,7 @@ public class MoContainer implements Comparable<MoContainer>, HierarchyData<MoCon
     }
   }
   
-  public void update(OMCompiler omc) throws ParserException {
+  public void update(OMCompiler omc) {
     update(omc, MAX_LOADING_DEPTH);
   }
 }

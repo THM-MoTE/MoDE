@@ -19,7 +19,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 /**
- * Created by hobbypunk on 13.09.16.
+ * Created by Marcel Hoppe on 13.09.16.
  */
 public class NotificationControl extends VBox implements Initializable {
   

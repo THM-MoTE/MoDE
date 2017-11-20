@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Created by hobbypunk on 29.11.16.
+ * Created by Marcel Hoppe on 29.11.16.
  */
 public interface Changeable {
   
@@ -22,6 +22,7 @@ public interface Changeable {
   
   Changeable getChangeParent();
   
+  @SuppressWarnings("unchecked")
   default List<Changeable> getChangeChildren() {return Collections.EMPTY_LIST; }
   
   default void initChangeListener() {

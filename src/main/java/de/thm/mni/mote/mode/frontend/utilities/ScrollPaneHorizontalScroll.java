@@ -6,10 +6,11 @@ import javafx.scene.input.ScrollEvent;
 import lombok.experimental.UtilityClass;
 
 /**
- * Created by hobbypunk on 15.02.17.
+ * Created by Marcel Hoppe on 15.02.17.
  */
 @UtilityClass
 public class ScrollPaneHorizontalScroll {
+  @SuppressWarnings("UnusedReturnValue")
   public ScrollPane modify(ScrollPane pane) {
     pane.addEventFilter(ScrollEvent.SCROLL, e -> {
       if (e.getEventType().equals(ScrollEvent.SCROLL) && e.isShiftDown() && (e.getDeltaX() == 0 && e.getTextDeltaX() == 0)) {

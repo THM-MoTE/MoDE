@@ -11,7 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.input.InputEvent;
 
 /**
- * Created by hobbypunk on 15.02.17.
+ * Created by Marcel Hoppe on 15.02.17.
  */
 public class MoveState extends State {
   @Override

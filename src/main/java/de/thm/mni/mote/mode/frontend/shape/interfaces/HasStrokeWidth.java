@@ -3,7 +3,7 @@ package de.thm.mni.mote.mode.frontend.shape.interfaces;
 import javafx.beans.property.DoubleProperty;
 
 /**
- * Created by hobbypunk on 02.11.16.
+ * Created by Marcel Hoppe on 02.11.16.
  */
 public interface HasStrokeWidth {
   

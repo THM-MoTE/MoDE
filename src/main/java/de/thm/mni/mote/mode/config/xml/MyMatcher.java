@@ -7,7 +7,7 @@ import java.nio.file.Path;
 import java.util.Date;
 
 /**
- * Created by hobbypunk on 08.10.16.
+ * Created by Marcel Hoppe on 08.10.16.
  */
 public class MyMatcher implements Matcher {
   @Override

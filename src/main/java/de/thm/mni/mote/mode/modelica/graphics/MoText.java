@@ -15,7 +15,7 @@ import lombok.Getter;
 import java.util.regex.Pattern;
 
 /**
- * Created by hobbypunk on 19.09.16.
+ * Created by Marcel Hoppe on 19.09.16.
  */
 @Getter
 public class MoText extends MoFilledShape implements HasExtent {
@@ -38,7 +38,7 @@ public class MoText extends MoFilledShape implements HasExtent {
   public enum TextStyle {
     BOLD(1),
     ITALIC(1 << 1),
-    UNTERLINE(1 << 2);
+    UNDERLINE(1 << 2);
     final int val;
     
     public static Boolean isBold(Integer val) {
@@ -49,8 +49,8 @@ public class MoText extends MoFilledShape implements HasExtent {
       return (val & ITALIC.val) == ITALIC.val;
     }
   
-    public static Boolean isUnterline(Integer val) {
-      return (val & UNTERLINE.val) == UNTERLINE.val;
+    public static Boolean isUnderline(Integer val) {
+      return (val & UNDERLINE.val) == UNDERLINE.val;
     }
   }
   
@@ -68,6 +68,7 @@ public class MoText extends MoFilledShape implements HasExtent {
   }
   
   @Builder(builderMethodName = "textBuilder")
+  @SuppressWarnings("SameParameterValue")
   private MoText(MoFilledShape mfs, Point2D p1, Point2D p2, String string, Double fontSize, String fontName, Integer textStyle, Color textColor, TextAlignment horizontalAlignment, Integer index) {
     super(mfs);
     extent = new MoSimpleExtent(p1, p2);
@@ -87,14 +88,9 @@ public class MoText extends MoFilledShape implements HasExtent {
     return this.textColorProperty.get();
   }
   
-  public Color getLineColor() {
-    return Color.TRANSPARENT;
-  }
-  
   public void initReplaceText(MoVariable that) {
     this.moVarForParams = that;
   }
-  
   
   public String getString() {
     String str = stringProperty.get();

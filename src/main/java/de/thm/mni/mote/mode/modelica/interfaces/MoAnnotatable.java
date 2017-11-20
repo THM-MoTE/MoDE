@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by hobbypunk on 01.11.16.
+ * Created by Marcel Hoppe on 01.11.16.
  */
 
 @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
@@ -23,7 +23,7 @@ public abstract class MoAnnotatable {
     annotations.add(index, annotation);
   }
   
-  public void addAllAnnotations(List<MoAnnotation> list) {
+  protected void addAllAnnotations(List<MoAnnotation> list) {
     annotations.addAll(list);
   }
   

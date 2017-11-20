@@ -6,6 +6,7 @@ import de.thm.mni.mote.mode.modelica.ClassInformation;
 import de.thm.mni.mote.mode.modelica.MoClass;
 import de.thm.mni.mote.mode.modelica.MoRoot;
 import de.thm.mni.mote.mode.parser.ParserException;
+import lombok.val;
 import omc.corba.Result;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.After;
@@ -23,10 +24,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Created by hobbypunk on 27.09.16.
+ * Created by Marcel Hoppe on 27.09.16.
  */
 public class OmcTest {
-  OMCompiler omc = null;
+  private OMCompiler omc = null;
   
   @Before
   public void before() throws IOException {
@@ -94,7 +95,8 @@ public class OmcTest {
   @Test
   public void testConnections() throws ParserException {
 //    omc.loadProjectLibraries(Arrays.asList(Paths.get("/home/hobbypunk/Dokumente/Entwicklung/THM_Projekte/Projektphase/2014-modelica-kotani/SHM/package.mo")));
-    List<Map<String, String>> list = omc.getConnections("SHM.SeidelThesis.Examples.FullModel.SeidelThesisFullExample");
+    val className = "SHM.SeidelThesis.Examples.FullModel.SeidelThesisFullExample";
+    List<Map<String, String>> list = omc.getConnections(className, omc.getClassInformation(className));
     System.out.println(list);
   }
   
@@ -123,7 +125,7 @@ public class OmcTest {
         System.out.println("\tto:   " + m.group(2));
       }
     }
-  
-    omc.getConnections("SHM.SeidelThesis.Examples.FullModel.SeidelThesisFullExample").forEach(System.out::println);
+    val className = "SHM.SeidelThesis.Examples.FullModel.SeidelThesisFullExample";
+    omc.getConnections(className, omc.getClassInformation(className)).forEach(System.out::println);
   }
 }

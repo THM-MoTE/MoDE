@@ -12,8 +12,6 @@
       <fx:include fx:id="selectProjectLibs" source="../../fragments/views/SelectProjectLibsView.fxml"/>
     </VBox>
   </content>
-  <buttonTypes>
-    <ButtonType fx:constant="APPLY"/>
-    <ButtonType fx:constant="CANCEL"/>
-  </buttonTypes>
+  <ButtonType fx:constant="APPLY"/>
+  <ButtonType fx:constant="CANCEL"/>
 </DialogPane>

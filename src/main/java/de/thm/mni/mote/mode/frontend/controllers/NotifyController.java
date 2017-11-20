@@ -17,14 +17,14 @@ import java.util.Observer;
 import java.util.ResourceBundle;
 
 /**
- * Created by hobbypunk on 13.09.16.
+ * Created by Marcel Hoppe on 13.09.16.
  */
 public abstract class NotifyController extends Controller implements Observer {
   
   @FXML private Button btnNotifications;
   
-  private VBox notifications = new VBox(1);
-  private PopOver poNotifications = new PopOver(notifications);
+  private final VBox notifications = new VBox(1);
+  private final PopOver poNotifications = new PopOver(notifications);
   
   @Override
   public void initialize(URL location, ResourceBundle resources) {
@@ -53,11 +53,6 @@ public abstract class NotifyController extends Controller implements Observer {
         btnNotifications.getStyleClass().add(highest.toString().toLowerCase() + "-notification");
       }
     }));
-  }
-  
-  @Override
-  public void deinitialize() {
-    super.deinitialize();
   }
   
   @FXML

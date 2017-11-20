@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by hobbypunk on 13.02.17.
+ * Created by Marcel Hoppe on 13.02.17.
  */
 public class ManagedFXMoConnectorIconMoGroup extends ModifyableFXMoConnectorIconMoGroup implements Highlightable, Hoverable, Selectable {
   

@@ -10,7 +10,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 /**
- * Created by hobbypunk on 20.09.16.
+ * Created by Marcel Hoppe on 20.09.16.
  */
 @Getter
 public class MoFilledShape extends MoGraphic {

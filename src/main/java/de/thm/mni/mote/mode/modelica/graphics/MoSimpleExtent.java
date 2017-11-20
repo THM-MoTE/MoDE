@@ -5,11 +5,11 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Point2D;
 
 /**
- * Created by hobbypunk on 23.02.17.
+ * Created by Marcel Hoppe on 23.02.17.
  */
 public class MoSimpleExtent extends MoExtent {
-  protected final ObjectProperty<Point2D> p1 = new SimpleObjectProperty<>(new Point2D(-100., -100.));
-  protected final ObjectProperty<Point2D> p2 = new SimpleObjectProperty<>(new Point2D(100., 100.));
+  private final ObjectProperty<Point2D> p1 = new SimpleObjectProperty<>(new Point2D(-100., -100.));
+  private final ObjectProperty<Point2D> p2 = new SimpleObjectProperty<>(new Point2D(100., 100.));
   
   MoSimpleExtent(Point2D p1, Point2D p2) {
     if (p1 != null) this.p1.set(p1);

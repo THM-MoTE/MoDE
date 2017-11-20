@@ -18,25 +18,24 @@ import static de.thm.mni.mote.mode.frontend.utilities.Constants.MOCONTAINER;
 import static de.thm.mni.mote.mode.util.Translator.tr;
 
 /**
- * Created by hobbypunk on 03.02.17.
+ * Created by Marcel Hoppe on 03.02.17.
  */
 public class MoTreeCell extends TreeCell<MoContainer> {
   
   private ContextMenu cm = null;
-  private TabPane tabPane;
   
-  private ObjectProperty<EventHandler<ActionEvent>> onEditActionProperty = new SimpleObjectProperty<>(null);
+  private final ObjectProperty<EventHandler<ActionEvent>> onEditActionProperty = new SimpleObjectProperty<>(null);
   private ObjectProperty<EventHandler<ActionEvent>> onAddNewActionProperty = new SimpleObjectProperty<>(null);
   
-  private ObjectProperty<EventHandler<MouseEvent>> onNonRootMouseClickedProperty = new SimpleObjectProperty<>(null);
-  private ObjectProperty<EventHandler<? super ContextMenuEvent>> onNonRootContextMenuRequest = new SimpleObjectProperty<>(null);
-  private ObjectProperty<EventHandler<ActionEvent>> onNonRootContextMenuItemAction = new SimpleObjectProperty<>(null);
+  private final ObjectProperty<EventHandler<MouseEvent>> onNonRootMouseClickedProperty = new SimpleObjectProperty<>(null);
+  private final ObjectProperty<EventHandler<? super ContextMenuEvent>> onNonRootContextMenuRequest = new SimpleObjectProperty<>(null);
+  private final ObjectProperty<EventHandler<ActionEvent>> onNonRootContextMenuItemAction = new SimpleObjectProperty<>(null);
   
-  private ChangeListener<Boolean> preventRootSelection = (observable, oldValue, newValue) -> {
+  private final ChangeListener<Boolean> preventRootSelection = (observable, oldValue, newValue) -> {
     if (newValue) this.updateSelected(false);
   };
   
-  private Button btnRootEdit = new Button("");
+  private final Button btnRootEdit = new Button("");
   
   {
     btnRootEdit.getStyleClass().add("no-border");
@@ -45,9 +44,8 @@ public class MoTreeCell extends TreeCell<MoContainer> {
   }
     
   
-  public MoTreeCell(TabPane tabPane) {
+  public MoTreeCell() {
     super();
-    this.tabPane = tabPane;
   }
   
   @Override
@@ -132,7 +130,7 @@ public class MoTreeCell extends TreeCell<MoContainer> {
     if (cm != null) return cm;
     cm = new ContextMenu();
   
-    for (String action : new String[]{"add_new.package", "add_new.model", "seperator", "open", "add_to_diagram"}) {
+    for (String action : new String[]{"add_new.package", "add_new.model", "separator", "open", "add_to_diagram"}) {
       createMenu(action, 0, cm.getItems());
     }
     return cm;
@@ -164,7 +162,7 @@ public class MoTreeCell extends TreeCell<MoContainer> {
   }
   
   private MenuItem createMenuItem(String action) {
-    if (action.equals("seperator")) return new SeparatorMenuItem();
+    if (action.equals("separator")) return new SeparatorMenuItem();
     ContextMenuItem tmp = new ContextMenuItem(tr("Main", "menu.context." + action), action);
     
     if (action.startsWith("add_new")) {

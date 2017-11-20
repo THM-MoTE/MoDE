@@ -15,11 +15,11 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
- * Created by hobbypunk on 03.02.17.
+ * Created by Marcel Hoppe on 03.02.17.
  * TODO: validation
  */
 public class CreateNewModelController extends CreateNewController {
-  private BooleanProperty isExtentValidProperty = new SimpleBooleanProperty(true);
+  private final BooleanProperty isExtentValidProperty = new SimpleBooleanProperty(true);
   
   
   @FXML private TextField tfX1;

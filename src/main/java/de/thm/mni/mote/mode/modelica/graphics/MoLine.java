@@ -23,16 +23,16 @@ import java.util.List;
 
 
 /**
- * Created by hobbypunk on 19.09.16.
+ * Created by Marcel Hoppe on 19.09.16.
  */
 @SuppressWarnings("unchecked")
 @Getter
 public class MoLine extends MoGraphic implements HasSmoothOption {
-  private static final Arrow DEFAULT_STARTARROW = Arrow.NONE;
-  private static final Arrow DEFAULT_ENDARROW = Arrow.NONE;
+  private static final Arrow DEFAULT_START_ARROW = Arrow.NONE;
+  private static final Arrow DEFAULT_END_ARROW = Arrow.NONE;
   private static final Smooth DEFAULT_SMOOTH = Smooth.NONE;
   private static final Color DEFAULT_COLOR = Color.BLACK;
-  private static final LinePattern DEFAULT_LINEPATTERN = LinePattern.SOLID;
+  private static final LinePattern DEFAULT_LINE_PATTERN = LinePattern.SOLID;
   
   
   public enum Arrow {
@@ -44,9 +44,9 @@ public class MoLine extends MoGraphic implements HasSmoothOption {
   
   ObservableList<Point2D> points = FXCollections.observableArrayList();
   ObjectProperty<Color> colorProperty = new SimpleObjectProperty<>(DEFAULT_COLOR);
-  ObjectProperty<LinePattern> linePatternProperty = new SimpleObjectProperty<>(DEFAULT_LINEPATTERN);
-  ObjectProperty<Arrow> startArrowProperty = new SimpleObjectProperty<>(DEFAULT_STARTARROW);
-  ObjectProperty<Arrow> endArrowProperty = new SimpleObjectProperty<>(DEFAULT_ENDARROW);
+  ObjectProperty<LinePattern> linePatternProperty = new SimpleObjectProperty<>(DEFAULT_LINE_PATTERN);
+  ObjectProperty<Arrow> startArrowProperty = new SimpleObjectProperty<>(DEFAULT_START_ARROW);
+  ObjectProperty<Arrow> endArrowProperty = new SimpleObjectProperty<>(DEFAULT_END_ARROW);
   ObjectProperty<Smooth> smoothProperty = new SimpleObjectProperty<>(DEFAULT_SMOOTH);
   
   DoubleProperty thicknessProperty = new SimpleDoubleProperty(1.0);
@@ -79,6 +79,7 @@ public class MoLine extends MoGraphic implements HasSmoothOption {
     initChangeListeners();
   }
   
+  @SuppressWarnings("WeakerAccess")
   @Override
   protected void initChangeListeners() {
     if (this.points == null || this.points.size() <= 1) return;
@@ -112,7 +113,7 @@ public class MoLine extends MoGraphic implements HasSmoothOption {
     sb.append(super.toString());
     StringBuilderUtilities.addString(sb, "points = " + Utilities.toString(points), "Line\\(");
     if (!DEFAULT_COLOR.equals(this.colorProperty.get())) StringBuilderUtilities.addProperty(sb, this.colorProperty);
-    if (!DEFAULT_LINEPATTERN.equals(this.linePatternProperty.get())) StringBuilderUtilities.addProperty(sb, this.linePatternProperty, "LinePattern.");
+    if (!DEFAULT_LINE_PATTERN.equals(this.linePatternProperty.get())) StringBuilderUtilities.addProperty(sb, this.linePatternProperty, "LinePattern.");
     
     return sb.append(')').toString();
   }

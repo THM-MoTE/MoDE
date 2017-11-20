@@ -6,7 +6,7 @@ import org.junit.Test;
 import java.nio.file.Paths;
 
 /**
- * Created by hobbypunk on 08.10.16.
+ * Created by Marcel Hoppe on 08.10.16.
  */
 public class PackageParserTest {
   

@@ -7,10 +7,10 @@ import javafx.geometry.Point2D;
 import javafx.scene.control.TabPane;
 
 /**
- * Created by hobbypunk on 22.11.16.
+ * Created by Marcel Hoppe on 22.11.16.
  */
 public class LibraryHandler {
-  private static LibraryHandler ourInstance = new LibraryHandler();
+  private static final LibraryHandler ourInstance = new LibraryHandler();
   
   public static LibraryHandler getInstance() {
     return ourInstance;
@@ -40,9 +40,9 @@ public class LibraryHandler {
     } else if (action.equals("add_to_diagram")) {
       MainTabControl tab = (MainTabControl) tabPane.getSelectionModel().getSelectedItem();
   
-      ModifyableFXMoDiagramMoGroup mmdg = (ModifyableFXMoDiagramMoGroup) tabPane.getScene().lookup("#" + tab.getData().getName().replaceAll("\\.", "_"));
+      ModifyableFXMoDiagramMoGroup moGroup = (ModifyableFXMoDiagramMoGroup) tabPane.getScene().lookup("#" + tab.getData().getName().replaceAll("\\.", "_"));
   
-      mmdg.addNewVariable(container, new Point2D(0, 0));
+      moGroup.addNewVariable(container, new Point2D(0, 0));
     }
   }
 }

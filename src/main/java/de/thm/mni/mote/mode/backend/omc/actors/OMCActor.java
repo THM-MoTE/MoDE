@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 import static de.thm.mni.mote.mode.util.Translator.tr;
 
 /**
- * Created by hobbypunk on 23.01.17.
+ * Created by Marcel Hoppe on 23.01.17.
  */
 @Getter
 public class OMCActor extends AbstractActor {
@@ -56,8 +56,8 @@ public class OMCActor extends AbstractActor {
   }
   
   private enum LOAD_TYPE {
-    SYSTEMLIBS,
-    PROJECTLIBS,
+    SYSTEM_LIBS,
+    PROJECT_LIBS,
     PROJECT
   }
   
@@ -84,7 +84,7 @@ public class OMCActor extends AbstractActor {
     }
   }
   
-  public void setProject(SetProjectMessage msg) {
+  private void setProject(SetProjectMessage msg) {
     this.project = msg.getPayload();
     msg.answer(getID(), this.project);
     
@@ -94,10 +94,10 @@ public class OMCActor extends AbstractActor {
       omc.clearProject();
       
       omc.addSystemLibraries(project.getSystemLibraries());
-      collectDataInBackground(LOAD_TYPE.SYSTEMLIBS);
+      collectDataInBackground(LOAD_TYPE.SYSTEM_LIBS);
   
       omc.loadProjectLibraries(project.getMoFile());
-      collectDataInBackground(LOAD_TYPE.PROJECTLIBS);
+      collectDataInBackground(LOAD_TYPE.PROJECT_LIBS);
   
       omc.setProject(project.getMoFile());
       collectDataInBackground(LOAD_TYPE.PROJECT);
@@ -132,15 +132,15 @@ public class OMCActor extends AbstractActor {
     es.execute(() -> {
       LoadStatusOMCMessage.STATUS status = null;
       switch (type) {
-        case SYSTEMLIBS:
+        case SYSTEM_LIBS:
           data.get(0).getChildren().clear();
           OMCUtilities.lightCollect(this.omc, data.get(0), this.omc.getSystemLibraries());
-          status = LoadStatusOMCMessage.STATUS.SYSTEMLIB_READY;
+          status = LoadStatusOMCMessage.STATUS.SYSTEM_LIB_READY;
           break;
-        case PROJECTLIBS:
+        case PROJECT_LIBS:
           data.get(1).getChildren().clear();
           OMCUtilities.lightCollect(this.omc, data.get(1), this.omc.getProjectLibraries());
-          status = LoadStatusOMCMessage.STATUS.PROJECTLIB_READY;
+          status = LoadStatusOMCMessage.STATUS.PROJECT_LIB_READY;
           break;
         case PROJECT:
           data.get(2).getChildren().clear();
@@ -189,7 +189,7 @@ public class OMCActor extends AbstractActor {
   
   private void elementCreated(Path path) {
     Path projectPath = project.getMoFile().getParent().getParent();
-    MoContainer parent = MoContainer.staticFind(projectPath.relativize(path).getParent().toString().replaceAll("\\/", "."));
+    MoContainer parent = MoContainer.staticFind(projectPath.relativize(path).getParent().toString().replaceAll("/", "."));
     
     if (parent == null) {
       send(new ErrorMessage(OMCActor.class, getID(), new NoSuchElementException("No such parent")));
@@ -197,17 +197,13 @@ public class OMCActor extends AbstractActor {
     }
   
     OMCUtilities.lightCollect(getOmc(), parent.getParent(), parent.getSimpleName());
-    try {
-      parent.update(getOmc());
-    } catch (ParserException e) {
-      send(new ErrorMessage(OMCActor.class, getID(), e));
-    }
+    parent.update(getOmc());
   }
   
   private void elementModified(Path path) {
     Path projectPath = project.getMoFile().getParent().getParent();
   
-    MoContainer parent = MoContainer.staticFind(projectPath.relativize(path).getParent().toString().replaceAll("\\/", "."));
+    MoContainer parent = MoContainer.staticFind(projectPath.relativize(path).getParent().toString().replaceAll("/", "."));
     if (parent == null) {
       send(new ErrorMessage(OMCActor.class, getID(), new NoSuchElementException("No such parent")));
       return;
@@ -218,7 +214,9 @@ public class OMCActor extends AbstractActor {
       parent.removeNotExistingChildren(getOmc().getChildren(parent.getName()));
       elementCreated(path.getParent());
     } else if(path.toString().endsWith(".mo")) {
-      List<MoContainer> list = parent.getChildren().stream().filter(container -> container.getElement().getClassInformation().getFileName().equals(path)).collect(Collectors.toList());
+      List<MoContainer> list = parent.getChildren().stream().filter(
+          container -> container.getElement().getClassInformation().getFileName().equals(path)).collect(
+              Collectors.toList());
       list.forEach(element -> {
         element.setElement(new MoLater()).getElement();
         parent.getChildren().set(parent.getChildren().indexOf(element), element);
@@ -228,7 +226,7 @@ public class OMCActor extends AbstractActor {
   
   private void elementDeleted(Path path) {
     Path projectPath = project.getMoFile().getParent().getParent();
-    MoContainer parent = MoContainer.staticFind(projectPath.relativize(path).getParent().toString().replaceAll("\\/", "."));
+    MoContainer parent = MoContainer.staticFind(projectPath.relativize(path).getParent().toString().replaceAll("/", "."));
   
     if (parent == null) {
       send(new ErrorMessage(OMCActor.class, getID(), new NoSuchElementException("No such parent")));

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by hobbypunk on 07.09.16.
+ * Created by Marcel Hoppe on 07.09.16.
  */
 @Getter
 public class MoFunction extends MoClass {

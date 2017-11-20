@@ -10,7 +10,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- * Created by hobbypunk on 22.09.16.
+ * Created by Marcel Hoppe on 22.09.16.
  */
 @Getter
 @Setter

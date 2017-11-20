@@ -5,9 +5,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 
 /**
- * Created by hobbypunk on 18.11.16.
+ * Created by Marcel Hoppe on 18.11.16.
  */
-public class MyEvents {
+class MyEvents {
   
   public static final EventType<MouseEvent> MOUSE_ALT_CLICKED = new EventType<>(MouseEvent.ANY, "MOUSE_ALT_CLICKED");
   public static final EventType<MouseEvent> MOUSE_CTRL_CLICKED = new EventType<>(MouseEvent.ANY, "MOUSE_CTRL_CLICKED");

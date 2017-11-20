@@ -10,7 +10,7 @@ import javafx.scene.input.InputEvent;
 import lombok.NonNull;
 
 /**
- * Created by hobbypunk on 15.02.17.
+ * Created by Marcel Hoppe on 15.02.17.
  */
 public abstract class State {
   

@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
- * Created by hobbypunk on 20.10.16.
+ * Created by Marcel Hoppe on 20.10.16.
  */
 @Getter
 public class MoVariable extends MoElement implements Changeable {
@@ -47,6 +47,7 @@ public class MoVariable extends MoElement implements Changeable {
   }
   
   @Builder
+  @SuppressWarnings("SameParameterValue")
   private MoVariable(@NonNull MoClass parent, Specification kind, Boolean isParameter, MoContainer type, String name, String comment, @Singular List<MoAnnotation> annotations, String line) {
     super("v", comment);
     this.name = name;
@@ -71,8 +72,8 @@ public class MoVariable extends MoElement implements Changeable {
   private void parseParameter(String line) {
     line = line.replaceFirst("^.*?" + this.getName() + "\\s*\\(", "");
     line = line.replaceFirst("\\s*//.+$", "");
-    line = line.replaceFirst("\\)[^\\)]*?;$", "");
-    line = line.replaceFirst("\\)[^\\)]*?annotation.*$", "");
+    line = line.replaceFirst("\\)[^)]*?;$", "");
+    line = line.replaceFirst("\\)[^)]*?annotation.*$", "");
     String[] params = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)"); //http://stackoverflow.com/questions/1757065/java-splitting-a-comma-separated-string-but-ignoring-commas-in-quotes
     for (String param : params) {
       for (MoVariable p : getParameters()) {
@@ -106,7 +107,7 @@ public class MoVariable extends MoElement implements Changeable {
     return list;
   }
   
-  public List<MoVariable> getVariables() {
+  private List<MoVariable> getVariables() {
     return getType().getElement().getVariables();
   }
   

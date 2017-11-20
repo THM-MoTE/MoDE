@@ -1,9 +1,5 @@
 package de.thm.mni.mote.mode.frontend.editor.statemachine.states.impl;
 
-/**
- * Created by hobbypunk on 16.02.17.
- */
-
 import de.thm.mni.mote.mode.frontend.editor.actionmanager.commands.Command;
 import de.thm.mni.mote.mode.frontend.editor.statemachine.StateMachine;
 import de.thm.mni.mote.mode.frontend.editor.statemachine.interfaces.Actionable;
@@ -15,6 +11,7 @@ import lombok.NonNull;
 
 /**
  * ActionState == double click or shift click
+ * Created by Marcel Hoppe on 16.02.17.
  */
 public class ActionState extends State {
   

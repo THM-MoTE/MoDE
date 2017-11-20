@@ -11,7 +11,7 @@ import java.util.List;
 import static de.thm.mni.mote.mode.modelica.interfaces.Changeable.Change;
 
 /**
- * Created by hobbypunk on 02.12.16.
+ * Created by Marcel Hoppe on 02.12.16.
  */
 
 @UtilityClass

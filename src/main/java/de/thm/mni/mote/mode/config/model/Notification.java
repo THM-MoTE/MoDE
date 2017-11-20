@@ -1,17 +1,13 @@
 package de.thm.mni.mote.mode.config.model;
 
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.simpleframework.xml.Element;
 
 /**
- * Created by hobbypunk on 14.09.16.
+ * Created by Marcel Hoppe on 14.09.16.
  */
-@Getter
-@Setter
-@ToString
+@Data
+@SuppressWarnings("WeakerAccess")
 public class Notification {
   @Element
   @NonNull Integer seconds = 5;

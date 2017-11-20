@@ -12,7 +12,7 @@ import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseEvent;
 
 /**
- * Created by hobbypunk on 15.02.17.
+ * Created by Marcel Hoppe on 15.02.17.
  */
 public class DeleteState extends State {
   @Override

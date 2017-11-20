@@ -1,18 +1,15 @@
 package de.thm.mni.mote.mode.config.model;
 
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.Setter;
+import lombok.Data;
 import org.simpleframework.xml.Element;
 
 /**
- * Created by hobbypunk on 20.02.17.
+ * Created by Marcel Hoppe on 20.02.17.
  */
-@Getter
-@Setter
+@Data
+@SuppressWarnings("WeakerAccess")
 public class Editor {
-  @Element @NonNull Boolean defaultSnap = false;
-  @Element @NonNull Double snapRadius = 2.5;
-  @Element @NonNull Double lineClickRadius = 4.;
-  
+  @Element Boolean defaultSnap = false;
+  @Element Double snapRadius = 2.5;
+  @Element Double lineClickRadius = 4.;
 }

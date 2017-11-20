@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
- * Created by hobbypunk on 03.02.17.
+ * Created by Marcel Hoppe on 03.02.17.
  */
 @Getter(AccessLevel.PROTECTED)
 public abstract class CreateNewController implements Initializable {
@@ -59,7 +59,7 @@ public abstract class CreateNewController implements Initializable {
     data.put("path", tfPath.getText());
     data.put("name", getName());
     data.put("comment", getComment());
-    data.put("docu", getDocumentation());
+    data.put("documentation", getDocumentation());
     return data;
   }
 }

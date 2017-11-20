@@ -16,16 +16,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by hobbypunk on 21.02.17.
+ * Created by Marcel Hoppe on 21.02.17.
  */
 public class ModifyableMoLine implements Addable, Deletable, Moveable {
   
-  private MoLine element;
+  private final MoLine element;
   
   public ModifyableMoLine(MoLine element) {
     this.element = element;
   }
   
+  @SuppressWarnings("unchecked")
   @Override
   public Command add(Object... params) {
     Integer[] poses = (Integer[]) params[0];

@@ -16,7 +16,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Created by hobbypunk on 16.09.16.
+ * Created by Marcel Hoppe on 16.09.16.
  */
 @Getter
 public class MoGraphic implements Changeable {
@@ -33,11 +33,11 @@ public class MoGraphic implements Changeable {
   ObjectProperty<Point2D> origin = new SimpleObjectProperty<>(null, "origin", DEFAULT_ORIGIN); //Ursprung des Elements
   DoubleProperty rotation = new SimpleDoubleProperty(null, "rotation", DEFAULT_ROTATION);
   
-  public MoGraphic() {
+  MoGraphic() {
     this(null, null, null);
   }
   
-  public MoGraphic(MoGraphic mg) {
+  MoGraphic(MoGraphic mg) {
     this(mg.visible.getValue(), mg.getOrigin().getValue(), mg.rotation.getValue());
   }
   
@@ -56,7 +56,7 @@ public class MoGraphic implements Changeable {
     return Collections.EMPTY_LIST;
   }
   
-  protected void initChangeListeners() {
+  void initChangeListeners() {
     initChangeListener();
     visible.addListener((observable, oldValue, newValue) -> changed());
     origin.addListener((observable, oldValue, newValue) -> changed());
@@ -91,7 +91,7 @@ public class MoGraphic implements Changeable {
     return l;
   }
   
-  public static MoGraphic parse(OMCompiler omc, ElementContext item) {
+  private static MoGraphic parse(OMCompiler omc, ElementContext item) {
     ParserRuleContext elem = (ParserRuleContext) item.children.get(0);
     
     switch (elem.getClass().getSimpleName()) {

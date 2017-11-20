@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Created by hobbypunk on 16.09.16.
+ * Created by Marcel Hoppe on 16.09.16.
  */
 public abstract class MoAnnotation {
   
@@ -24,7 +24,7 @@ public abstract class MoAnnotation {
     return MoAnnotation.parse(omc, omc.getAnnotationStrings(parent.getName()));
   }
   
-  public static List<MoAnnotation> parse(OMCompiler omc, List<String> annotations) {
+  private static List<MoAnnotation> parse(OMCompiler omc, List<String> annotations) {
     List<MoAnnotation> list = new ArrayList<>();
     for (String annotation : annotations) {
       list.addAll(MoAnnotation.parse(omc, annotation));
@@ -57,11 +57,11 @@ public abstract class MoAnnotation {
   }
   
   public static String toString(List<MoAnnotation> annotations) {
-    String str = "";
+    StringBuilder str = new StringBuilder();
     for (MoAnnotation moAnnotation : annotations) {
-      str += ((str.isEmpty()) ? "" : ",") + moAnnotation.toString();
+      str.append((str.length() == 0) ? "" : ",").append(moAnnotation.toString());
     }
     
-    return str;
+    return str.toString();
   }
 }

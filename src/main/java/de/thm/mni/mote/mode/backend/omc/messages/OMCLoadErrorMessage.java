@@ -6,9 +6,9 @@ import lombok.NonNull;
 import java.util.UUID;
 
 /**
- * Created by hobbypunk on 28.02.17.
+ * Created by Marcel Hoppe on 28.02.17.
  */
-public class OMCLoadErrorMessage extends ErrorMessage {
+class OMCLoadErrorMessage extends ErrorMessage {
   public OMCLoadErrorMessage(@NonNull Class<?> cause, @NonNull Throwable throwable) {
     super(cause, throwable);
   }

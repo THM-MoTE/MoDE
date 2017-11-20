@@ -10,7 +10,7 @@ import de.thm.mni.mhpp11.smbj.ui.splashscreen.SplashActorManagerPlugin;
 import de.thm.mni.mhpp11.smbj.ui.splashscreen.actors.SplashActor;
 import de.thm.mni.mhpp11.smbj.ui.splashscreen.messages.InitSplashMessage;
 import de.thm.mni.mhpp11.smbj.ui.splashscreen.messages.ShowSplashMessage;
-import de.thm.mni.mote.mode.backend.file.actors.FileManagmentActor;
+import de.thm.mni.mote.mode.backend.file.actors.FileManagementActor;
 import de.thm.mni.mote.mode.backend.file.actors.FileWatcherActor;
 import de.thm.mni.mote.mode.backend.omc.actors.OMCActor;
 import de.thm.mni.mote.mode.config.Settings;
@@ -27,7 +27,7 @@ public class Main extends Application {
     bus.send(new SimpleStartMessage(LogActor.class));
     bus.send(new SimpleStartMessage(OMCActor.class));
     bus.send(new SimpleStartMessage(FileWatcherActor.class));
-    bus.send(new SimpleStartMessage(FileManagmentActor.class));
+    bus.send(new SimpleStartMessage(FileManagementActor.class));
   
     launch(args);
   }

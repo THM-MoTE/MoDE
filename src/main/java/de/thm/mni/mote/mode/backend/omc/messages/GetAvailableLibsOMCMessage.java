@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * Created by hobbypunk on 26.01.17.
+ * Created by Marcel Hoppe on 26.01.17.
  */
 public abstract class GetAvailableLibsOMCMessage extends AskClassMessage<Void, List<String>, Void> implements OMCMessage {
-  public GetAvailableLibsOMCMessage(@NonNull UUID source) {
+  protected GetAvailableLibsOMCMessage(@NonNull UUID source) {
     super(source, OMCActor.class, null);
   }
 }

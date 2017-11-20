@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by hobbypunk on 03.11.16.
+ * Created by Marcel Hoppe on 03.11.16.
  */
 public interface CalculatePathElements {
   

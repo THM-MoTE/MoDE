@@ -1,11 +1,10 @@
 package de.thm.mni.mote.mode.frontend.controls.modelica;
 
+import de.thm.mni.mote.mode.frontend.editor.elementmanager.elements.ManagedFXMoVariableIconMoGroup;
 import de.thm.mni.mote.mode.modelica.MoConnection;
 import de.thm.mni.mote.mode.modelica.MoContainer;
 import de.thm.mni.mote.mode.modelica.MoVariable;
 import de.thm.mni.mote.mode.modelica.graphics.MoGraphic;
-import de.thm.mni.mote.mode.parser.ParserException;
-import de.thm.mni.mote.mode.frontend.editor.elementmanager.elements.ManagedFXMoVariableIconMoGroup;
 import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -19,14 +18,16 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by hobbypunk on 19.09.16.
+ * Created by Marcel Hoppe on 19.09.16.
  */
 public class FXMoDiagramMoGroup extends FXMoGroup {
   
-  private Map<MoVariable, FXMoVariableIconMoGroup> variables = new HashMap<>();
-  private Map<MoConnection, FXMoConnectionGroup> connections = new HashMap<>();
+  @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
+  private final Map<MoVariable, FXMoVariableIconMoGroup> variables = new HashMap<>();
+  @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
+  private final Map<MoConnection, FXMoConnectionGroup> connections = new HashMap<>();
   
-  public FXMoDiagramMoGroup(MoContainer container) throws ParserException {
+  protected FXMoDiagramMoGroup(MoContainer container) {
     super(container);
     init();
     this.setId(container.getName().replaceAll("\\.", "_"));
@@ -37,7 +38,7 @@ public class FXMoDiagramMoGroup extends FXMoGroup {
     initVariables();
     initConnections();
     if (this.getMoClass().getDiagram() != null) this.getMoClass().getDiagram().getMoGraphics().forEach(this::initImage);
-    coordianteSystem.setFill(Color.WHITE);
+    coordinateSystem.setFill(Color.WHITE);
   }
   
   public void setImageAsBackground() {
@@ -138,7 +139,7 @@ public class FXMoDiagramMoGroup extends FXMoGroup {
     mcg.preventScaling(getScale().getX(), getScale().getY());
   }
   
-  public void remove(MoConnection mc) {
+  private void remove(MoConnection mc) {
     for (int i = 0, size = getChildren().size(); i < size; i++) {
       if (getChildren().get(i) instanceof FXMoConnectionGroup) {
         FXMoConnectionGroup child = (FXMoConnectionGroup) getChildren().get(i);

@@ -9,7 +9,7 @@ import lombok.Builder;
 import java.util.List;
 
 /**
- * Created by hobbypunk on 26.10.16.
+ * Created by Marcel Hoppe on 26.10.16.
  */
 
 public class MoDiagram extends MoIcon {

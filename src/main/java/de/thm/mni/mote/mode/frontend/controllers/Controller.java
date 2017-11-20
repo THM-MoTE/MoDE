@@ -11,7 +11,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 /**
- * Created by hobbypunk on 14.09.16.
+ * Created by Marcel Hoppe on 14.09.16.
  */
 @Getter
 public abstract class Controller extends ActorController implements IController {
@@ -20,7 +20,7 @@ public abstract class Controller extends ActorController implements IController 
   
   ResourceBundle i18n;
   
-  public Controller() {
+  protected Controller() {
     try {
       settings = Settings.load();
     } catch (Exception e) {
@@ -62,5 +62,5 @@ public abstract class Controller extends ActorController implements IController 
     super.onClose();
   }
   
-  public void deinitialize() {}
+  void deinitialize() {}
 }

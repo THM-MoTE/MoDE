@@ -1,15 +1,14 @@
 package de.thm.mni.mote.mode.frontend.controls.modelica;
 
-import de.thm.mni.mote.mode.modelica.MoClass;
-import de.thm.mni.mote.mode.modelica.MoContainer;
-import de.thm.mni.mote.mode.modelica.MoVariable;
-import de.thm.mni.mote.mode.modelica.graphics.*;
-import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.frontend.editor.actionmanager.elements.ModifyableMoClass;
 import de.thm.mni.mote.mode.frontend.editor.statemachine.interfaces.Deletable;
 import de.thm.mni.mote.mode.frontend.shape.*;
 import de.thm.mni.mote.mode.frontend.shape.interfaces.Element;
 import de.thm.mni.mote.mode.frontend.shape.interfaces.HasStrokeWidth;
+import de.thm.mni.mote.mode.modelica.MoClass;
+import de.thm.mni.mote.mode.modelica.MoContainer;
+import de.thm.mni.mote.mode.modelica.MoVariable;
+import de.thm.mni.mote.mode.modelica.graphics.*;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -27,16 +26,16 @@ import lombok.NonNull;
 import lombok.Setter;
 
 /**
- * Created by hobbypunk on 26.10.16.
+ * Created by Marcel Hoppe on 26.10.16.
  */
 
 @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
 @Getter(AccessLevel.PROTECTED)
 @Setter(AccessLevel.PROTECTED)
 public abstract class FXMoGroup extends FXMoParentGroup {
-  protected static final double ZOOMFACTOR = 1.2;
+  protected static final double ZOOM_FACTOR = 1.2;
   @Getter private final Group basis = new Group();
-  javafx.scene.shape.Rectangle coordianteSystem = null; //TODO: add InitialStroke Interface
+  javafx.scene.shape.Rectangle coordinateSystem = null; //TODO: add InitialStroke Interface
   @Getter private final MoContainer that;
   
   private Double moveX = 100.0;
@@ -59,7 +58,7 @@ public abstract class FXMoGroup extends FXMoParentGroup {
     this.setFocusTraversable(true);
   }
   
-  protected void init() {
+  void init() {
     if (this instanceof FXMoIconMoGroup || this.that.getElement().getIcon() != null) {
       initCoordinateSystem();
       initImage();
@@ -83,10 +82,10 @@ public abstract class FXMoGroup extends FXMoParentGroup {
   }
   
   protected Double getScaleFactor(Boolean scaleUp) {
-    return (scaleUp) ? ZOOMFACTOR : (1 / ZOOMFACTOR);
+    return (scaleUp) ? ZOOM_FACTOR : (1 / ZOOM_FACTOR);
   }
   
-  protected void scaleDelta(Boolean scaleUp) throws ParserException {
+  protected void scaleDelta(Boolean scaleUp) {
     scaleToFactor(scale.getX() * getScaleFactor(scaleUp), scale.getY() * getScaleFactor(scaleUp), false);
   }
   
@@ -129,9 +128,9 @@ public abstract class FXMoGroup extends FXMoParentGroup {
     Point2D extent0 = mcs.getExtent().getP1();
     Point2D extent1 = mcs.getExtent().getP2();
   
-    coordianteSystem = new javafx.scene.shape.Rectangle(extent0.getX(), extent0.getY(), mcs.getExtent().getWidth(), mcs.getExtent().getHeight());
-    coordianteSystem.setFill(Color.TRANSPARENT);
-    getChildren().add(coordianteSystem);
+    coordinateSystem = new javafx.scene.shape.Rectangle(extent0.getX(), extent0.getY(), mcs.getExtent().getWidth(), mcs.getExtent().getHeight());
+    coordinateSystem.setFill(Color.TRANSPARENT);
+    getChildren().add(coordinateSystem);
   
     //Flips to coordinate system - Modelica is bottom to top!
     flipping.append(Transform.scale(1., -1.));
@@ -155,7 +154,7 @@ public abstract class FXMoGroup extends FXMoParentGroup {
   }
   
   
-  public void add(Node node) {
+  void add(Node node) {
     getChildren().add(node);
   }
   
@@ -169,7 +168,7 @@ public abstract class FXMoGroup extends FXMoParentGroup {
   
   public void remove(MoGraphic mg) {remove(mg, false);}
   @SuppressWarnings("SuspiciousMethodCalls")
-  public void remove(MoGraphic mg, Boolean force) {
+  void remove(MoGraphic mg, Boolean force) {
     for (int i = 0, size = getChildren().size(); i < size; i++) {
       if (getChildren().get(i) instanceof Element) {
         Element child = (Element) getChildren().get(i);
@@ -181,7 +180,7 @@ public abstract class FXMoGroup extends FXMoParentGroup {
     }
   }
   
-  public void remove(MoVariable mv) {
+  void remove(MoVariable mv) {
     for (int i = 0, size = getChildren().size(); i < size; i++) {
       if (getChildren().get(i) instanceof FXMoVariableIconMoGroup) {
         FXMoVariableIconMoGroup child = (FXMoVariableIconMoGroup) getChildren().get(i);

@@ -19,11 +19,11 @@ import java.util.Properties;
 
 
 /**
- * Created by hobbypunk on 10.09.16.
+ * Created by Marcel Hoppe on 10.09.16.
  */
 public class Settings extends Configuration {
   
-  public static List<Locale> SUPPORTED_LANGUAGES = new ArrayList<>();
+  public static final List<Locale> SUPPORTED_LANGUAGES = new ArrayList<>();
   
   static {
     SUPPORTED_LANGUAGES.add(Locale.ENGLISH);
@@ -33,7 +33,7 @@ public class Settings extends Configuration {
   
   public static String TITLE;
   public static String VERSION;
-  public static String SUBTITLE = "The Modelica Diagram Editor";
+  public static final String SUBTITLE = "The Modelica Diagram Editor";
   
   static {
     Properties props = new Properties();

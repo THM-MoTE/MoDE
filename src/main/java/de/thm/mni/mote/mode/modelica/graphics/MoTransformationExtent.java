@@ -10,7 +10,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * Created by hobbypunk on 23.02.17.
+ * Created by Marcel Hoppe on 23.02.17.
  */
 @Getter
 public class MoTransformationExtent extends MoExtent implements Changeable {
@@ -78,6 +78,7 @@ public class MoTransformationExtent extends MoExtent implements Changeable {
     initChangeListener();
   }
   
+  @SuppressWarnings("SpellCheckingInspection")
   public void setIconExtent(MoSimpleExtent iconExtent) {
 //    if (this.iconExtent != null)  //TODO: wahrscheinlich probleme bei vererbung und das kind verschiebt den connector. deepcopy der variablen nötig?
 //      throw new UnsupportedOperationException("Already set!");
@@ -99,7 +100,7 @@ public class MoTransformationExtent extends MoExtent implements Changeable {
     return flippedXProperty.get();
   }
   
-  public Boolean isFlipY() {
+  private Boolean isFlipY() {
     return flippedYProperty.get();
   }
   
@@ -133,13 +134,6 @@ public class MoTransformationExtent extends MoExtent implements Changeable {
       p1Property.set(new Point2D(tmp.getX(), p2Property.get().getY()));
       p2Property.set(new Point2D(p2Property.get().getX(), tmp.getY()));
     }
-  }
-  
-  @Override
-  public String toString() {
-    //calcPoints();
-    
-    return super.toString();
   }
   
   public ObjectProperty<Point2D> getOffsetProperty() {

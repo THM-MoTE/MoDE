@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Created by hobbypunk on 13.02.17.
+ * Created by Marcel Hoppe on 13.02.17.
  */
 @Getter
 public class ManagedLine extends ModifyableLine implements Hoverable, Selectable {
@@ -32,16 +32,6 @@ public class ManagedLine extends ModifyableLine implements Hoverable, Selectable
       removePointNodes();
       if (getIsSelected()) addPointNodes();
     });
-  }
-  
-  @Override
-  public void toFront() {
-    super.toFront();
-  }
-  
-  @Override
-  public void init() {
-    super.init();
   }
   
   @Override

@@ -37,6 +37,7 @@
 }
 
 /*TODO: anders lösen*/
+/*noinspection CssUnusedSymbol*/
 .tree-view.no-border {
     -fx-border-width: 0px;
     -fx-border-insets: 0px;
@@ -66,10 +67,12 @@
     -fx-border-width: 1px;
 }
 
+/*noinspection CssUnusedSymbol,CssUnusedSymbol*/
 .scroll-pane.white, .scroll-pane.white:focused {
     -fx-background-color: white;
 }
 
+/*noinspection CssUnusedSymbol*/
 .scroll-pane > .viewport {
     -fx-background-color: transparent;
 }
@@ -91,6 +94,7 @@
     -fx-padding: 2px 10px;
 }
 
+/*noinspection CssUnusedSymbol,CssUnusedSymbol,CssUnusedSymbol,CssUnusedSymbol,CssUnusedSymbol,CssUnusedSymbol*/
 .menu-button:hover, .menu-button:showing, .menu-button:showing, .menu-item:hover, .menu-item:focused, .list-view .list-cell:selected {
     -fx-background-color: cornflowerblue;
 }
@@ -99,10 +103,12 @@
     -fx-text-fill: white;
 }
 
+/*noinspection CssUnusedSymbol*/
 .menu-item .check-box:disabled {
     -fx-opacity: 1;
 }
 
+/*noinspection CssUnusedSymbol*/
 .menu-item .check-box .box {
     -fx-background-color: transparent;
     -fx-border-color:lightgray;
@@ -110,6 +116,7 @@
     -fx-border-width: 1px;
 }
 
+/*noinspection CssUnusedSymbol*/
 .dialog-pane {
     -fx-background-color: whitesmoke;
 }
@@ -128,12 +135,14 @@
     -fx-text-fill: red;
 }
 
+/*noinspection CssUnusedSymbol*/
 .separator {
     -fx-cursor: w_resize;
 }
 
 /* Tabs*/
 
+/*noinspection CssUnusedSymbol*/
 .tab-pane {
     -fx-tab-min-height: 24px;
     -fx-tab-max-height: 24px;
@@ -144,17 +153,20 @@
     -fx-border-color: darkgray;
 }
 
+/*noinspection CssUnusedSymbol*/
 .tab-pane .tab-header-area > .tab-header-background {
     -fx-background-color: transparent;
     -fx-border-width: 0px 0px 1px 1px;
     -fx-border-color: derive(darkgray, -10%);
 }
 
+/*noinspection CssInvalidFunction,CssUnusedSymbol*/
 .tab-pane .tab-header-area {
     -fx-padding: 0px 1px 3px 1px;
     -fx-background-color: linear-gradient(whitesmoke 0%, whitesmoke 85%, derive(darkgray, -10%) 85%, derive(darkgray, -10%) 91%, derive(white, -2%) 91%, derive(white, -2%) 100%);
 }
 
+/*noinspection CssUnusedSymbol*/
 .tab-pane .tab {
     -fx-background-color: derive(darkgray, 50%);
     -fx-background-radius: 0px;
@@ -163,6 +175,7 @@
     -fx-border-color: derive(darkgray, -10%);
 }
 
+/*noinspection CssUnusedSymbol*/
 .tab-pane .tab:selected {
     -fx-background-color: derive(white, -2%);
     -fx-border-width: 1px 1px 1px 0px;
@@ -172,14 +185,17 @@
 }
 
 /* TreeView */
+/*noinspection CssUnusedSymbol*/
 .tree-cell {
     -fx-background-color: white;
 }
 
+/*noinspection CssUnusedSymbol*/
 .tree-cell:selected {
     -fx-background-color: cornflowerblue;
 }
 
+/*noinspection CssUnusedSymbol,CssUnusedSymbol,CssUnusedSymbol,CssUnusedSymbol*/
 .tree-cell.root-element, .tree-cell.root-element:selected {
     -fx-background-color: derive(whitesmoke, -5%);
     -fx-font-weight: bold;
@@ -190,11 +206,13 @@
     -fx-pref-height: 25px;
 }
 
+/*noinspection CssUnusedSymbol*/
 .tree-cell.root-element .ikonli-font-icon {
     -fx-icon-size: 16px;
     -fx-icon-color: grey;
 }
 
+/*noinspection CssUnusedSymbol*/
 .tree-cell.root-element .button:hover .ikonli-font-icon {
     -fx-icon-color: black;
 }
@@ -207,37 +225,45 @@
     -fx-font-size: 10px;
 }
 
+/*noinspection CssUnusedSymbol,CssUnusedSymbol*/
 .warn-notification, .error-notification {
     -fx-text-fill: whitesmoke;
 }
 
+/*noinspection CssUnusedSymbol*/
 .notification > .ikonli-font-icon {
     -fx-icon-size: 22px;
 }
 
+/*noinspection CssUnusedSymbol*/
 .no-notification > .ikonli-font-icon {
     -fx-icon-code: gmi-notifications-none;
     -fx-icon-color: darkgray;
 }
 
+/*noinspection CssUnusedSymbol,CssUnusedSymbol,CssUnusedSymbol*/
 .log-notification > .ikonli-font-icon, .info-notification > .ikonli-font-icon, .warn-notification > .ikonli-font-icon {
     -fx-icon-code: gmi-notifications;
     -fx-icon-color: darkgray;
 }
 
+/*noinspection CssUnusedSymbol*/
 .info-notification > .ikonli-font-icon {
     -fx-icon-color: derive(greenyellow, -15%);
 }
 
+/*noinspection CssUnusedSymbol*/
 .warn-notification > .ikonli-font-icon {
     -fx-icon-color: darkorange;
 }
 
+/*noinspection CssUnusedSymbol*/
 .error-notification > .ikonli-font-icon {
     -fx-icon-code: gmi-notifications-active;
     -fx-icon-color: firebrick;
 }
 
+/*noinspection CssUnusedSymbol,CssUnusedSymbol,CssUnusedSymbol,CssUnusedSymbol,CssUnusedSymbol,CssUnusedSymbol*/
 .hide-elements .html-editor-indent,
 .hide-elements .html-editor-outdent,
 .hide-elements .html-editor-cut,
@@ -255,43 +281,52 @@
     -fx-start-margin: -5px;
 }
 
+/*noinspection CssUnusedSymbol*/
 .scroll-bar:vertical {
     -fx-padding: 0px -1px;
 }
 
+/*noinspection CssUnusedSymbol*/
 .scroll-bar:horizontal {
     -fx-padding: 0px 0px 0px 0px;
 }
 
+/*noinspection CssUnusedSymbol*/
 .scroll-bar {
     -fx-background-color: transparent;
     -fx-background-insets: inherit;
 }
 
+/*noinspection CssUnusedSymbol*/
 .scroll-pane .corner {
     -fx-background-color: transparent;
     -fx-max-height: 0px;
     -fx-padding: 0px 10px 0px 0px;
 }
 
+/*noinspection CssUnusedSymbol,CssUnusedSymbol*/
 .scroll-bar > .decrement-button, .scroll-bar > .increment-button {
     -fx-background-color: transparent;
 }
 
+/*noinspection CssUnusedSymbol,CssUnusedSymbol*/
 .scroll-bar:horizontal > .decrement-button, .scroll-bar:horizontal > .increment-button {
     -fx-padding: 5px 0px;
 }
 
+/*noinspection CssUnusedSymbol,CssUnusedSymbol*/
 .scroll-bar:vertical > .decrement-button, .scroll-bar:vertical > .increment-button {
     -fx-padding: 0px 5px;
 }
 
+/*noinspection CssUnusedSymbol,CssUnusedSymbol*/
 .scroll-bar .decrement-arrow, .scroll-bar .increment-arrow {
     -fx-effect: inherit;
     -fx-padding: 0px;
     -fx-background-color: blue;
 }
 
+/*noinspection CssUnusedSymbol*/
 .scroll-bar .thumb {
     -fx-background-color: rgba(149, 149, 149, 0.7);
     -fx-background-insets: inherit;

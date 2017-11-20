@@ -20,7 +20,7 @@ import java.util.function.Consumer;
 import static javafx.scene.paint.Color.BLACK;
 
 /**
- * Created by hobbypunk on 31.10.16.
+ * Created by Marcel Hoppe on 31.10.16.
  */
 @UtilityClass
 public class Utilities {

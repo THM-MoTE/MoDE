@@ -18,7 +18,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Created by hobbypunk on 21.10.16.
+ * Created by Marcel Hoppe on 21.10.16.
  */
 @Getter
 public class MoTransformation implements HasExtent, Changeable {
@@ -82,8 +82,8 @@ public class MoTransformation implements HasExtent, Changeable {
   public String toString(boolean isIcon) {
     NumberFormat fmt = de.thm.mni.mote.mode.util.Utilities.getFormatter();
   
-    return ((isIcon) ? "iconT" : "t") +
-               String.format("ransformation(origin = %s, extent = {%s}, rotation = %s)",
+    return ((isIcon) ? "iconTransformation" : "transformation") +
+               String.format("(origin = %s, extent = {%s}, rotation = %s)",
                    Utilities.toString(origin.get()),
                    extent,
                    fmt.format(rotation.get())

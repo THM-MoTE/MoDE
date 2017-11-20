@@ -1,7 +1,5 @@
 package de.thm.mni.mote.mode.frontend.controls;
 
-import de.thm.mni.mote.mode.modelica.MoContainer;
-import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.frontend.controls.modelica.FXMoDiagramMoGroup;
 import de.thm.mni.mote.mode.frontend.controls.modelica.FXMoGroup;
 import de.thm.mni.mote.mode.frontend.controls.modelica.FXMoIconMoGroup;
@@ -11,6 +9,7 @@ import de.thm.mni.mote.mode.frontend.editor.elementmanager.ElementManager;
 import de.thm.mni.mote.mode.frontend.editor.elementmanager.elements.ManagedFXMoDiagramMoGroup;
 import de.thm.mni.mote.mode.frontend.editor.statemachine.StateMachine;
 import de.thm.mni.mote.mode.frontend.utilities.ScrollPaneHorizontalScroll;
+import de.thm.mni.mote.mode.modelica.MoContainer;
 import de.thm.mni.mote.mode.util.Utilities;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -33,8 +32,9 @@ import java.util.ResourceBundle;
 
 import static de.thm.mni.mote.mode.modelica.interfaces.Changeable.Change;
 
+@SuppressWarnings("DefaultAnnotationParam")
 @Getter
-@EqualsAndHashCode(callSuper = false, exclude = {"main", "loader"})
+@EqualsAndHashCode(exclude = {"main", "loader"}, callSuper = false)
 public class MainTabControl extends Tab implements Initializable {
   
   private final MoContainer data;
@@ -64,22 +64,17 @@ public class MainTabControl extends Tab implements Initializable {
     //data.getUnsavedChanges().setValue(Change.NONE);
     FXMoGroup mp;
   
-    try {
-      this.setGraphic(new FXMoIconMoGroup(data).scaleToSize(20., 20.));
+    this.setGraphic(new FXMoIconMoGroup(data).scaleToSize(20., 20.));
   
-      mp = new ManagedFXMoDiagramMoGroup(data);
-      
-      updateText(Change.NONE);
+    mp = new ManagedFXMoDiagramMoGroup(data);
   
-      mp.scaleToSize(600., 600.);
-      mp.setLayoutX(100.);
-      mp.setLayoutY(100.);
-      mp.setInternalStyle("-fx-background-color: white;");
-      main.getChildren().add(mp);
-      
-    } catch (ParserException e) {
-      e.printStackTrace();
-    }
+    updateText(Change.NONE);
+  
+    mp.scaleToSize(600., 600.);
+    mp.setLayoutX(100.);
+    mp.setLayoutY(100.);
+    mp.setInternalStyle("-fx-background-color: white;");
+    main.getChildren().add(mp);
   
     data.getElement().getUnsavedChanges().addListener((observable, oldValue, newValue) -> updateText(newValue));
   }
@@ -107,9 +102,9 @@ public class MainTabControl extends Tab implements Initializable {
   
     if(data.getElement().hasIcon()) {
       MenuManager.getInstance(data).getShowIconProperty().addListener((observable, oldValue, newValue) -> {
-        ManagedFXMoDiagramMoGroup fxdiagram = (ManagedFXMoDiagramMoGroup)main.getChildren().get(0);
-        if(newValue) fxdiagram.setImageAsBackground();
-        else fxdiagram.removeImageAsBackground();
+        ManagedFXMoDiagramMoGroup fxDiagram = (ManagedFXMoDiagramMoGroup)main.getChildren().get(0);
+        if(newValue) fxDiagram.setImageAsBackground();
+        else fxDiagram.removeImageAsBackground();
       });
     }
     

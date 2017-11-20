@@ -28,7 +28,7 @@ import java.util.UUID;
 import static de.thm.mni.mote.mode.util.Translator.tr;
 
 /**
- * Created by hobbypunk on 26.01.17.
+ * Created by Marcel Hoppe on 26.01.17.
  */
 public class FirstPageController extends DialogStackController implements NewProject {
   
@@ -52,7 +52,7 @@ public class FirstPageController extends DialogStackController implements NewPro
     options.add(new Option(tr(i18n, "dialog.new_project.project_from_source"), "gmi-folder-open", Color.CHOCOLATE, Option.TYPE.PROJECT_FROM_SOURCE));
     lvOptionList.setItems(options);
     lvOptionList.setCellFactory(param -> new ListCell<Option>() {
-      private FontIcon icon = new FontIcon();
+      private final FontIcon icon = new FontIcon();
       
       @Override
       protected void updateItem(Option item, boolean empty) {

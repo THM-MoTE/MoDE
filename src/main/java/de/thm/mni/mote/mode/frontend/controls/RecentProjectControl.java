@@ -22,7 +22,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 /**
- * Created by hobbypunk on 12.09.16.
+ * Created by Marcel Hoppe on 12.09.16.
  */
 public class RecentProjectControl extends GridPane implements Initializable {
   @FXML private Label lName;

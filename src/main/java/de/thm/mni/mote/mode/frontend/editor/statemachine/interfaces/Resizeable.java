@@ -5,7 +5,7 @@ import de.thm.mni.mote.mode.frontend.editor.statemachine.StateMachine;
 import javafx.scene.input.InputEvent;
 
 /**
- * Created by hobbypunk on 15.02.17.
+ * Created by Marcel Hoppe on 15.02.17.
  */
 public interface Resizeable extends HandleEvent {
   Command resize(StateMachine sm, InputEvent event);

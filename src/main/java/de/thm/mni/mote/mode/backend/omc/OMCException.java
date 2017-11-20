@@ -1,7 +1,7 @@
 package de.thm.mni.mote.mode.backend.omc;
 
 /**
- * Created by hobbypunk on 24.01.17.
+ * Created by Marcel Hoppe on 24.01.17.
  */
 public class OMCException extends Exception {
   

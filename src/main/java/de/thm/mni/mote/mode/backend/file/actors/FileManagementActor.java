@@ -18,9 +18,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class FileManagmentActor extends AbstractActor {
+public class FileManagementActor extends AbstractActor {
   
-  public FileManagmentActor(UUID id) {
+  public FileManagementActor(UUID id) {
     super(id);
   }
   

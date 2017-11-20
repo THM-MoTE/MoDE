@@ -1,17 +1,16 @@
 package de.thm.mni.mote.mode.modelica;
 
-import de.thm.mni.mhpp11.smbj.manager.ActorManager;
 import de.thm.mni.mhpp11.smbj.logging.messages.ErrorMessage;
+import de.thm.mni.mhpp11.smbj.manager.ActorManager;
+import de.thm.mni.mote.mode.backend.omc.OMCompiler;
 import de.thm.mni.mote.mode.modelica.graphics.MoGraphic;
 import de.thm.mni.mote.mode.modelica.graphics.MoLine;
 import de.thm.mni.mote.mode.modelica.graphics.MoText;
 import de.thm.mni.mote.mode.modelica.interfaces.Changeable;
-import de.thm.mni.mote.mode.backend.omc.OMCompiler;
 import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.parser.modelica.AnnotationLexer;
 import de.thm.mni.mote.mode.parser.modelica.AnnotationParser;
 import de.thm.mni.mote.mode.parser.modelica.AnnotationParser.ConnectAnnotationElementContext;
-import de.thm.mni.mote.mode.frontend.controls.modelica.FXMoDiagramMoGroup;
 import de.thm.mni.mote.mode.util.ImmutableListCollector;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -32,7 +31,7 @@ import java.util.*;
 import static de.thm.mni.mote.mode.util.Translator.tr;
 
 /**
- * Created by hobbypunk on 01.11.16.
+ * Created by Marcel Hoppe on 01.11.16.
  */
 @Getter
 public class MoConnection implements Changeable {
@@ -145,7 +144,7 @@ public class MoConnection implements Changeable {
     }).filter(Objects::nonNull).collect(ImmutableListCollector.toImmutableList());
   }
   
-  public static MoConnection parse(MoClass parent, Map<String, String> values) throws ParserException {
+  private static MoConnection parse(MoClass parent, Map<String, String> values) throws ParserException {
     try {
       MoConnectionBuilder mb = builder();
       mb.parent(parent);
@@ -174,22 +173,16 @@ public class MoConnection implements Changeable {
     }
   }
   
-  private static List<MoVariable> findVariable(MoClass parent, String name) throws ParserException {
+  private static List<MoVariable> findVariable(MoClass parent, String name) {
     List<MoVariable> list = new ArrayList<>();
     Optional<MoVariable> moVariable = parent.getVariables().stream().filter(mv -> name.startsWith(mv.getName())).findFirst();
-    if (moVariable.isPresent()) {
-      MoVariable mv = moVariable.get();
-      if (mv.getType() == null) throw new NoSuchElementException(tr("Error", "error.modelica.variable_has_null_type", name));
-      list.add(mv);
-      if (!name.endsWith(mv.getName()))
-        list.addAll(findVariable(mv.getType().getElement(), name.replaceFirst(mv.getName() + "\\.", "")));
-    }
+    moVariable.ifPresent(moVariable1 -> {
+      if (moVariable1.getType() == null) throw new NoSuchElementException(tr("Error", "error.modelica.variable_has_null_type", name));
+      list.add(moVariable1);
+      if (!name.endsWith(moVariable1.getName()))
+        list.addAll(findVariable(moVariable1.getType().getElement(), name.replaceFirst(moVariable1.getName() + "\\.", "")));
+    });
     if (list.isEmpty()) throw new NoSuchElementException(tr("Error", "error.modelica.cant_find_variable", name));
     return list;
-  }
-  
-  public Integer getVariablePos(FXMoDiagramMoGroup diagram, MoVariable variable) {
-    
-    return null;
   }
 }

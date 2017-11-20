@@ -3,11 +3,11 @@ package de.thm.mni.mote.mode.frontend.editor.actionmanager.commands;
 import de.thm.mni.mote.mode.frontend.editor.actionmanager.interfaces.Moveable;
 
 /**
- * Created by hobbypunk on 21.02.17.
+ * Created by Marcel Hoppe on 21.02.17.
  */
 public class MoveCommand extends Command {
   
-  private Moveable that;
+  private final Moveable that;
   
   public MoveCommand(Moveable that, Object... params) {
     super(params);

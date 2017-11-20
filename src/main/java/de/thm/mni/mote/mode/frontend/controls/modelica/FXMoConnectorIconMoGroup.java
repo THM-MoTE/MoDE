@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by hobbypunk on 19.09.16.
+ * Created by Marcel Hoppe on 19.09.16.
  */
 @Getter
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
@@ -37,7 +37,7 @@ public class FXMoConnectorIconMoGroup extends FXMoGroup implements CalculateLoca
   
   ObjectProperty<Point2D> centerOnDiagramProperty = new SimpleObjectProperty<>();
   
-  public FXMoConnectorIconMoGroup(FXMoVariableIconMoGroup moParent, MoVariable variable, List<MoConnection> to, List<MoConnection> from) {
+  protected FXMoConnectorIconMoGroup(FXMoVariableIconMoGroup moParent, MoVariable variable, List<MoConnection> to, List<MoConnection> from) {
     super(variable.getType());
     this.moParent = moParent;
     this.variable = variable;

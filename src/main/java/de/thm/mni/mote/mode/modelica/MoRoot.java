@@ -1,7 +1,7 @@
 package de.thm.mni.mote.mode.modelica;
 
 /**
- * Created by hobbypunk on 06.10.16.
+ * Created by Marcel Hoppe on 06.10.16.
  */
 public class MoRoot extends MoContainer {
   

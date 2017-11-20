@@ -27,7 +27,7 @@ import java.util.NoSuchElementException;
 import static de.thm.mni.mote.mode.util.Translator.tr;
 
 /**
- * Created by hobbypunk on 07.09.16.
+ * Created by Marcel Hoppe on 07.09.16.
  */
 @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
 @Data
@@ -64,12 +64,12 @@ public class MoClass extends MoElement implements Changeable, Comparable<MoClass
     this("b", "");
   }
   
-  protected MoClass(String prefix, String comment) {
+  MoClass(String prefix, String comment) {
     super(prefix, comment);
     this.container = null;
   }
   
-  protected MoClass(ClassInformation classInformation, @NonNull MoLater that) {
+  MoClass(ClassInformation classInformation, @NonNull MoLater that) {
     super("c", "");
     this.classInformation = classInformation;
     this.container = that.getContainer();
@@ -179,6 +179,8 @@ public class MoClass extends MoElement implements Changeable, Comparable<MoClass
     return getVariables().stream().filter(moVariable -> moVariable.getType().getElement() instanceof MoConnector).collect(ImmutableListCollector.toImmutableList());
   }
   
+  @SuppressWarnings("WeakerAccess")
+  @Override
   public List<MoAnnotation> getAnnotations() {
     List<MoAnnotation> annotations = new ArrayList<>();
     annotations.addAll(super.getAnnotations());
@@ -270,6 +272,7 @@ public class MoClass extends MoElement implements Changeable, Comparable<MoClass
   }
   
   //TODO: richtiges "vererben" aller elemente, nicht nur verknüpfen: deepcopy.
+  @SuppressWarnings("SpellCheckingInspection")
   private void parseExtra(@NonNull OMCompiler omc) throws ParserException {
     if (complete) return;
     List<String> list = omc.getInheritedClasses(this.container.getName());

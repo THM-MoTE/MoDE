@@ -17,7 +17,7 @@ import java.text.NumberFormat;
 import java.util.*;
 
 /**
- * Created by hobbypunk on 14.09.16.
+ * Created by Marcel Hoppe on 14.09.16.
  */
 @UtilityClass
 public class Utilities {
@@ -42,7 +42,7 @@ public class Utilities {
     return getResourceAsStream("templates/" + template);
   }
   
-  public URL getView(String view) {
+  private URL getView(String view) {
     return getView("", view);
   }
   
@@ -69,7 +69,7 @@ public class Utilities {
     return getBundle("", bundle);
   }
   
-  public ResourceBundle getBundle(String prefix, String bundle) throws MissingResourceException {
+  private ResourceBundle getBundle(String prefix, String bundle) throws MissingResourceException {
     Settings settings = Settings.load();
     return getBundle(prefix, bundle, settings.getLang());
   }

@@ -8,7 +8,7 @@ import java.util.stream.Collector;
 
 public class ImmutableListCollector {
   
-  public static <t, A extends List<t>> Collector<t, A, List<t>> toImmutableList(Supplier<A> collectionFactory) {
+  private static <t, A extends List<t>> Collector<t, A, List<t>> toImmutableList(Supplier<A> collectionFactory) {
     return Collector.of(collectionFactory, List::add, (left, right) -> {
       left.addAll(right);
       return left;

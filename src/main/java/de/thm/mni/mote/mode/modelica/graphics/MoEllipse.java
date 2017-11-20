@@ -8,7 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 /**
- * Created by hobbypunk on 19.09.16.
+ * Created by Marcel Hoppe on 19.09.16.
  */
 @Getter
 public class MoEllipse extends MoFilledShape implements HasExtent {
@@ -23,6 +23,7 @@ public class MoEllipse extends MoFilledShape implements HasExtent {
   }
   
   @Builder(builderMethodName = "ellipseBuilder")
+  @SuppressWarnings("SameParameterValue")
   private MoEllipse(MoFilledShape mfs, Point2D p1, Point2D p2, Double startAngle, Double endAngle) {
     super(mfs);
     extent = new MoSimpleExtent(p1, p2);

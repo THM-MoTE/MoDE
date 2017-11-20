@@ -1,7 +1,7 @@
 package de.thm.mni.mote.mode.frontend.editor.elementmanager.interfaces;
 
 /**
- * Created by hobbypunk on 13.02.17.
+ * Created by Marcel Hoppe on 13.02.17.
  */
 public interface Hoverable {
   void enterHover();

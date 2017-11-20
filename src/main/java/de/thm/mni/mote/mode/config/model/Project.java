@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 
 
 /**
- * Created by hobbypunk on 11.09.16.
+ * Created by Marcel Hoppe on 11.09.16.
  */
 @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
 @Getter

@@ -4,13 +4,13 @@ import javafx.scene.control.Menu;
 import lombok.Getter;
 
 /**
- * Created by hobbypunk on 22.11.16.
+ * Created by Marcel Hoppe on 22.11.16.
  */
 @Getter
-public class ContextSubMenu extends Menu implements HasAction {
+class ContextSubMenu extends Menu implements HasAction {
   String action = "";
   
-  public ContextSubMenu(String text, String action) {
+  ContextSubMenu(String text, String action) {
     super(text);
     this.action = action;
   }

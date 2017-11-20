@@ -22,12 +22,12 @@ import java.util.ResourceBundle;
 import static de.thm.mni.mote.mode.util.Translator.tr;
 
 /**
- * Created by hobbypunk on 06.02.17.
+ * Created by Marcel Hoppe on 06.02.17.
  * /de/thm/mni/mote/mode/view/fragments/SelectProjectLibsView.fxml
  */
 public class SelectProjectLibsController implements IController {
   
-  private ObjectProperty<Path> pLibrary = new SimpleObjectProperty<>(Paths.get("."));
+  private final ObjectProperty<Path> pLibrary = new SimpleObjectProperty<>(Paths.get("."));
   @FXML private TextField tfLibrary;
   @FXML private Button btnSelect;
   @FXML private Button btnAdd;
@@ -143,7 +143,7 @@ public class SelectProjectLibsController implements IController {
   }
   
   private void addEntry(Path path) {
-    //TODO: add subdependencies as childs
+    //TODO: add sub dependencies as children
     tvLibraries.getRoot().getChildren().add(new TreeItem<>(path));
   }
 }

@@ -22,14 +22,14 @@ import java.util.ResourceBundle;
 import java.util.UUID;
 
 /**
- * Created by hobbypunk on 26.01.17.
+ * Created by Marcel Hoppe on 26.01.17.
  */
 public abstract class DialogStackController extends VBox implements IController {
   
   private final Boolean isLastPage;
   protected ResourceBundle i18n;
   
-  private FXMLLoader loader;
+  private final FXMLLoader loader;
   @Getter private UUID ID;
   @Getter private final StackPane stackPane;
   @Getter @Setter private EventHandler<Project> onFinishListener;
@@ -37,7 +37,7 @@ public abstract class DialogStackController extends VBox implements IController 
   @FXML protected DialogStackButtonsController dialogStackButtonsController;
   
   
-  public DialogStackController(UUID id, StackPane stackPane, Boolean isLastPage) {
+  protected DialogStackController(UUID id, StackPane stackPane, Boolean isLastPage) {
     super();
     this.ID = id;
     this.stackPane = stackPane;
