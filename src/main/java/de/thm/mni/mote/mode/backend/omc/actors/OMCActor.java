@@ -22,10 +22,15 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.Getter;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static de.thm.mni.mote.mode.util.Translator.tr;
 
@@ -152,11 +157,86 @@ public class OMCActor extends AbstractActor {
     });
   }
   
-  private void reloadProject(FileChangedMessage msg) {
-    //TODO: react to file changes on filesystem
-    System.out.println(msg);
+  private void projectChanged(FileChangedMessage msg) {
+    try {
+      
+      //TODO: react to file changes on filesystem
+      System.out.println(msg);
+      
+      Path path = msg.getPayload();
+      
+      if(Files.isDirectory(path)) {
+        if(!Files.exists(path.resolve("package.mo"))) return;
+      }
+      
+      if(msg.getType().equals(FileChangedMessage.TYPE.CREATED)) {
+        omc.reloadProject();
+        elementCreated(path);
+      } else if (msg.getType().equals(FileChangedMessage.TYPE.MODIFIED)) {
+        if (Files.isDirectory(path)) return;
+        omc.reloadProject();
+  
+        elementModified(path);
+      } else if (msg.getType().equals(FileChangedMessage.TYPE.DELETED)) {
+        omc.reloadProject();
+        elementDeleted(path);
+      }
+      
+    } catch (ParserException e) {
+      send(new ErrorMessage(OMCActor.class, getID(), e));
+    }
   }
   
+  private void elementCreated(Path path) {
+    Path projectPath = project.getMoFile().getParent().getParent();
+    MoContainer parent = MoContainer.staticFind(projectPath.relativize(path).getParent().toString().replaceAll("\\/", "."));
+    
+    if (parent == null) {
+      send(new ErrorMessage(OMCActor.class, getID(), new NoSuchElementException("No such parent")));
+      return;
+    }
+  
+    OMCUtilities.lightCollect(getOmc(), parent.getParent(), parent.getSimpleName());
+    try {
+      parent.update(getOmc());
+    } catch (ParserException e) {
+      send(new ErrorMessage(OMCActor.class, getID(), e));
+    }
+  }
+  
+  private void elementModified(Path path) {
+    Path projectPath = project.getMoFile().getParent().getParent();
+  
+    MoContainer parent = MoContainer.staticFind(projectPath.relativize(path).getParent().toString().replaceAll("\\/", "."));
+    if (parent == null) {
+      send(new ErrorMessage(OMCActor.class, getID(), new NoSuchElementException("No such parent")));
+      return;
+    }
+
+    if(path.endsWith("package.mo")) {
+      
+      parent.removeNotExistingChildren(getOmc().getChildren(parent.getName()));
+      elementCreated(path.getParent());
+    } else if(path.toString().endsWith(".mo")) {
+      List<MoContainer> list = parent.getChildren().stream().filter(container -> container.getElement().getClassInformation().getFileName().equals(path)).collect(Collectors.toList());
+      list.forEach(element -> {
+        element.setElement(new MoLater()).getElement();
+        parent.getChildren().set(parent.getChildren().indexOf(element), element);
+      });
+    }
+  }
+  
+  private void elementDeleted(Path path) {
+    Path projectPath = project.getMoFile().getParent().getParent();
+    MoContainer parent = MoContainer.staticFind(projectPath.relativize(path).getParent().toString().replaceAll("\\/", "."));
+  
+    if (parent == null) {
+      send(new ErrorMessage(OMCActor.class, getID(), new NoSuchElementException("No such parent")));
+      return;
+    }
+
+    parent.removeNotExistingChildren(getOmc().getChildren(parent.getName()));
+  }
   
   @Override
   public void execute(Message msg) {
@@ -173,9 +253,9 @@ public class OMCActor extends AbstractActor {
         if (msg instanceof SetProjectMessage) {
           setProject((SetProjectMessage) msg);
         } else if(msg instanceof FileChangedMessage) {
-          reloadProject((FileChangedMessage) msg);
+          projectChanged((FileChangedMessage) msg);
         } else if (msg instanceof GetDataOMCMessage) {
-          ((GetDataOMCMessage)msg).answer(getID(), getData());
+          ((GetDataOMCMessage)msg).answer(getID(), FXCollections.unmodifiableObservableList(getData()));
         } else if (msg instanceof UpdateClassOMCMessage) {
           updateClass(((UpdateClassOMCMessage) msg).getPayload());
         } else if (msg instanceof GetAvailableLibsOMCMessage) {

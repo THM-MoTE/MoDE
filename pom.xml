@@ -132,7 +132,7 @@
     <dependency>
       <groupId>com.github.THM-MoTE</groupId>
       <artifactId>EnhancedWatchService</artifactId>
-      <version>29c28f6</version>
+      <version>08aa8ba</version>
     </dependency>
   
     <dependency>
@@ -214,6 +214,7 @@
         <artifactId>versions-maven-plugin</artifactId>
         <version>2.3</version>
         <configuration>
+          <!--suppress MavenModelInspection -->
           <newVersion>
             ${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.nextIncrementalVersion}-SNAPSHOT
           </newVersion>

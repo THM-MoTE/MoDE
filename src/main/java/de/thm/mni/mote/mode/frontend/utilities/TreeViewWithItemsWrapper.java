@@ -31,7 +31,7 @@ import java.util.Map;
  */
 
 @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
-public class TreeViewWithItemsWrapper<T extends HierarchyData<T>> {
+public class TreeViewWithItemsWrapper<T extends HierarchyData<T> & Comparable<T>> {
   
   /**
    * Keep hard references for each listener, so that they don'messagebus get garbage collected too soon.
@@ -60,8 +60,8 @@ public class TreeViewWithItemsWrapper<T extends HierarchyData<T>> {
    * @param root The root tree item.
    * @see TreeView#TreeView(javafx.scene.control.TreeItem)
    */
-  public TreeViewWithItemsWrapper(TreeItem<T> root) {
-    this(new TreeView<T>(root));
+  private TreeViewWithItemsWrapper(TreeItem<T> root) {
+    this(new TreeView<>(root));
   }
   
   public TreeViewWithItemsWrapper(TreeView<T> element) {
@@ -151,14 +151,14 @@ public class TreeViewWithItemsWrapper<T extends HierarchyData<T>> {
         if (change.wasPermutated()) {
           // Store the new order.
           Map<Integer, TreeItem<T>> tempMap = new HashMap<>();
-          
+
           for (int i = change.getTo() - 1; i >= change.getFrom(); i--) {
             int a = change.getPermutation(i);
             tempMap.put(a, treeItemChildren.remove(i));
           }
-          
+
           getSelectionModel().clearSelection();
-          
+
           // Add the items in the new order.
           for (int i = change.getFrom(); i < change.getTo(); i++) {
             treeItemChildren.add(tempMap.remove(i));
@@ -173,6 +173,7 @@ public class TreeViewWithItemsWrapper<T extends HierarchyData<T>> {
    *
    * @param item The tree item.
    */
+  @SuppressWarnings("UnusedReturnValue")
   private TreeItem<T> removeRecursively(TreeItem<T> item) {
     if (item.getValue() != null && item.getValue().getChildren() != null) {
       
@@ -180,7 +181,7 @@ public class TreeViewWithItemsWrapper<T extends HierarchyData<T>> {
         item.getValue().getChildren().removeListener(weakListeners.remove(item));
         hardReferences.remove(item);
       }
-      for (TreeItem<T> treeItem : item.getChildren()) {
+      for (TreeItem<T> treeItem : item.getChildren().sorted()) {
         removeRecursively(treeItem);
       }
     }
@@ -209,14 +210,14 @@ public class TreeViewWithItemsWrapper<T extends HierarchyData<T>> {
       
       hardReferences.put(treeItem, listChangeListener);
       weakListeners.put(treeItem, weakListener);
-      for (T child : value.getChildren()) {
+      for (T child : value.getChildren().sorted()) {
         treeItem.getChildren().add(addRecursively(child));
       }
     }
     return treeItem;
   }
   
-  public ObservableList<? extends T> getItems() {
+  private ObservableList<? extends T> getItems() {
     return items.get();
   }
   
@@ -238,7 +239,7 @@ public class TreeViewWithItemsWrapper<T extends HierarchyData<T>> {
     return this.element.getRoot();
   }
   
-  public MultipleSelectionModel<TreeItem<T>> getSelectionModel() {
+  private MultipleSelectionModel<TreeItem<T>> getSelectionModel() {
     return this.element.getSelectionModel();
   }
 }

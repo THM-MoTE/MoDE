@@ -18,18 +18,16 @@ import java.util.List;
 public class OMCUtilities {
   
   public void lightCollect(OMCompiler omc, MoContainer parent, List<Pair<String, Path>> libraries) {
-    libraries.forEach(library -> {
-      try {
-        MoLater.lightParsing(omc, library.getKey(), parent);
-      } catch (ParserException e) {
-        ActorManager.getInstance().send(new ErrorMessage(OMCUtilities.class, omc.getID(), e));
-      }
-    });
+    libraries.forEach(library -> OMCUtilities.lightCollect(omc, parent, library.getKey()));
   }
   
   public void lightCollect(OMCompiler omc, MoContainer parent, Pair<String, Path> project) {
+    OMCUtilities.lightCollect(omc, parent, project.getKey());
+  }
+  
+  public void lightCollect(OMCompiler omc, MoContainer parent, String name) {
     try {
-      MoLater.lightParsing(omc, project.getKey(), parent);
+      MoLater.lightParsing(omc, name, parent);
     } catch (ParserException e) {
       ActorManager.getInstance().send(new ErrorMessage(OMCUtilities.class, omc.getID(), e));
     }

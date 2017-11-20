@@ -28,7 +28,7 @@ public class MoLater extends MoClass {
       MoClass.getBases().add(tmp);
   
     queue.offer(tmp);
-    //lightParsing(omc, name, parent, "");
+
     walk(queue);
   }
   
@@ -41,6 +41,7 @@ public class MoLater extends MoClass {
   
   private static void addChildren(Queue<MoContainer> queue, MoContainer parent) {
     List<String> names = parent.getOmc().getChildren(parent.getName());
+    parent.removeNotExistingChildren(names);
     for (String childName : names) {
       MoContainer tmp = new MoContainer(parent.getOmc(), parent, childName);
       tmp = parent.addChild(tmp).setElement(new MoLater());

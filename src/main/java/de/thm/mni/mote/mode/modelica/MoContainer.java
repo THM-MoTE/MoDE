@@ -1,7 +1,7 @@
 package de.thm.mni.mote.mode.modelica;
 
-import de.thm.mni.mhpp11.smbj.manager.ActorManager;
 import de.thm.mni.mhpp11.smbj.logging.messages.ErrorMessage;
+import de.thm.mni.mhpp11.smbj.manager.ActorManager;
 import de.thm.mni.mote.mode.backend.omc.OMCompiler;
 import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.util.HierarchyData;
@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static de.thm.mni.mote.mode.util.Translator.tr;
 
@@ -107,6 +108,23 @@ public class MoContainer implements Comparable<MoContainer>, HierarchyData<MoCon
       if (c.similar(container)) return c;
     }
     this.getChildren().add(container);
+    return container;
+  }
+  
+  public void removeNotExistingChildren(List<String> names) {
+    List<MoContainer> notExistingChidren = this.getChildren().stream().filter(moContainer -> !names.contains(moContainer.getSimpleName())).collect(Collectors.toList());
+    notExistingChidren.forEach(this::removeChild);
+  }
+  
+  synchronized private MoContainer removeChild(MoContainer container) {
+    int pos = -1;
+    for (int i = 0; i < this.getChildren().size(); i++) {
+      MoContainer c = this.getChildren().get(i);
+      if (c.similar(container)) {
+         pos = i;
+      }
+    }
+    if(pos >= 0) this.getChildren().remove(pos);
     return container;
   }
   

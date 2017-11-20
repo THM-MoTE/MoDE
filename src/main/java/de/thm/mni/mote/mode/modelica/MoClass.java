@@ -304,6 +304,7 @@ public class MoClass extends MoElement implements Changeable, Comparable<MoClass
   
   @Override
   public int compareTo(MoClass that) {
+    if(that == null) return 0;
     return this.getName().compareTo(that.getName());
   }
   
