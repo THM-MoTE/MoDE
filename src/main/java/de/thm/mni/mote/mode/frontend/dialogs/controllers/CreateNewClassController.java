@@ -18,7 +18,7 @@ import java.util.ResourceBundle;
  * Created by Marcel Hoppe on 03.02.17.
  * TODO: validation
  */
-public class CreateNewModelController extends CreateNewController {
+public class CreateNewClassController extends CreateNewController {
   private final BooleanProperty isExtentValidProperty = new SimpleBooleanProperty(true);
   
   

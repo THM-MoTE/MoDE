@@ -4,10 +4,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.DialogPane;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 
@@ -30,12 +27,21 @@ public abstract class CreateNewController implements Initializable {
   @FXML private TextField tfName;
   @FXML private TextField tfComment;
   @FXML private TextArea taDocumentation;
+  @FXML private Label lType;
   
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     dialog.lookupButton(ButtonType.FINISH).disableProperty().bind(isValidProperty.not());
     tfName.textProperty().addListener((observable, oldValue, newValue) -> isNameValidProperty.set(!(newValue.isEmpty() || newValue.contains(" ") || newValue.matches("^\\d.*"))));
     isValidProperty.bind(isNameValidProperty);
+  }
+  
+  public void setType(String type) {
+    lType.textProperty().setValue(type);
+  }
+  
+  private String getType() {
+    return lType.getText().toLowerCase();
   }
   
   private String getName() {
@@ -56,6 +62,7 @@ public abstract class CreateNewController implements Initializable {
   
   public Map<String, String> getData() {
     Map<String, String> data = new HashMap<>();
+    data.put("type", getType());
     data.put("path", tfPath.getText());
     data.put("name", getName());
     data.put("comment", getComment());

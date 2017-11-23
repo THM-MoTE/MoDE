@@ -130,7 +130,7 @@ public class MoTreeCell extends TreeCell<MoContainer> {
     if (cm != null) return cm;
     cm = new ContextMenu();
   
-    for (String action : new String[]{"add_new.package", "add_new.model", "separator", "open", "add_to_diagram"}) {
+    for (String action : new String[]{"add_new.package", "add_new.connector", "add_new.model", "separator", "open", "add_to_diagram"}) {
       createMenu(action, 0, cm.getItems());
     }
     return cm;
@@ -168,6 +168,7 @@ public class MoTreeCell extends TreeCell<MoContainer> {
     if (action.startsWith("add_new")) {
       if (action.endsWith("package")) tmp.setGraphic(new FXMoIconMoGroup(MoDefaults.newPackage()).scaleToSize(20., 20.));
       else if (action.endsWith("model")) tmp.setGraphic(new FXMoIconMoGroup(MoDefaults.newModel()).scaleToSize(20., 20.));
+      else if (action.endsWith("connector")) tmp.setGraphic(new FXMoIconMoGroup(MoDefaults.newConnector()).scaleToSize(20., 20.));
     }
     tmp.onActionProperty().bind(onNonRootContextMenuItemAction);
 

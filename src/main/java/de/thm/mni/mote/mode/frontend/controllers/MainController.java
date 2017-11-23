@@ -184,7 +184,7 @@ public class MainController extends NotifyController {
       String type = item.getAction().substring(8);
       type = Character.toUpperCase(type.charAt(0)) + type.substring(1);
       System.out.println(item.getAction() + ": " + type + ":" + cell.getItem().getName());
-      if (type.equals("Package") || type.equals("Model")) handleCreateNew(type, cell.getItem());
+      handleCreateNew(type, cell.getItem());
     } else {
       LibraryHandler.getInstance().handleMenu(tabPane, cell.getItem(), item.getAction());
     }
@@ -299,12 +299,13 @@ public class MainController extends NotifyController {
   private void handleCreateNew(String type, MoContainer parent) {
     Dialog<Boolean> d = new Dialog<>();
     FXMLLoader loader = new FXMLLoader();
-    loader.setLocation(Utilities.getView("dialogs", "CreateNew" + type));
+    loader.setLocation(Utilities.getView("dialogs", "CreateNew" + ((type.equals("Package")) ? "Package" : "Class")));
     loader.setResources(Utilities.getBundle("MoDE"));
     
     try {
       DialogPane dp = loader.load();
       CreateNewController controller = loader.getController();
+      controller.setType(type);
       controller.setPath(parent.getName());
       d.setDialogPane(dp);
       d.show();

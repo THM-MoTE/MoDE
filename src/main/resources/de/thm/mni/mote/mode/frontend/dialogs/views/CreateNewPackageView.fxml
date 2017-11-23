@@ -35,7 +35,7 @@
       <padding>
         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
       </padding>
-      <Label alignment="CENTER" contentDisplay="TOP" text="%dialog.new_class.package" textAlignment="CENTER"
+      <Label fx:id="lType" alignment="CENTER" contentDisplay="TOP" textAlignment="CENTER"
              GridPane.columnSpan="2147483647" GridPane.halignment="CENTER">
         <font>
           <Font size="18.0"/>

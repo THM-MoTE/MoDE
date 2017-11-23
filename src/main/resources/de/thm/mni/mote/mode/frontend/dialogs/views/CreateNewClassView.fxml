@@ -16,7 +16,7 @@
 
 <DialogPane fx:id="dialog" stylesheets="@../../css/Basis.css" xmlns="http://javafx.com/javafx/8.0.121"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="de.thm.mni.mote.mode.frontend.dialogs.controllers.CreateNewModelController">
+            fx:controller="de.thm.mni.mote.mode.frontend.dialogs.controllers.CreateNewClassController">
   <content>
     <GridPane hgap="5.0">
       <columnConstraints>
@@ -46,7 +46,7 @@
       <padding>
         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
       </padding>
-      <Label alignment="CENTER" contentDisplay="TOP" text="%dialog.new_class.model" textAlignment="CENTER"
+      <Label fx:id="lType" alignment="CENTER" contentDisplay="TOP" textAlignment="CENTER"
              GridPane.columnSpan="2147483647" GridPane.halignment="CENTER">
         <font>
           <Font size="18.0"/>
