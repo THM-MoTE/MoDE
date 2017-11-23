@@ -14,11 +14,6 @@ public class MoRoot extends MoContainer {
   }
   
   @Override
-  public String getName() {
-    return super.name;
-  }
-  
-  @Override
   public MoContainer find(String s) {
     MoContainer that;
     for (MoContainer child : getChildren()) {

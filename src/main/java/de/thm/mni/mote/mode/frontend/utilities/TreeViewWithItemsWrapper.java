@@ -14,9 +14,11 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.val;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * This class extends the {@link TreeView} to use items as a data source.
@@ -136,16 +138,24 @@ public class TreeViewWithItemsWrapper<T extends HierarchyData<T> & Comparable<T>
           continue;
         }
         if (change.wasRemoved()) {
-          for (int i = change.getRemovedSize() - 1; i >= 0; i--) {
-            removeRecursively(treeItemChildren.remove(change.getFrom() + i));
-          }
+          change.getRemoved().forEach((Consumer<T>) t -> {
+            TreeItem<T> ti = null;
+            for (val tmp : treeItemChildren) {
+              if(tmp.getValue().equals(t)) {
+                ti = tmp;
+                break;
+              }
+            }
+            if(ti != null) {
+              removeRecursively(ti);
+              treeItemChildren.remove(ti);
+            }
+          });
         }
         // If items have been added
         if (change.wasAdded()) {
           // Get the new items
-          for (int i = change.getFrom(); i < change.getTo(); i++) {
-            treeItemChildren.add(i, addRecursively(change.getList().get(i)));
-          }
+          change.getAddedSubList().forEach(t -> treeItemChildren.add(addRecursively(t)));
         }
         // If the list was sorted.
         if (change.wasPermutated()) {
@@ -181,7 +191,7 @@ public class TreeViewWithItemsWrapper<T extends HierarchyData<T> & Comparable<T>
         item.getValue().getChildren().removeListener(weakListeners.remove(item));
         hardReferences.remove(item);
       }
-      for (TreeItem<T> treeItem : item.getChildren().sorted()) {
+      for (TreeItem<T> treeItem : item.getChildren()) {
         removeRecursively(treeItem);
       }
     }
@@ -210,7 +220,7 @@ public class TreeViewWithItemsWrapper<T extends HierarchyData<T> & Comparable<T>
       
       hardReferences.put(treeItem, listChangeListener);
       weakListeners.put(treeItem, weakListener);
-      for (T child : value.getChildren().sorted()) {
+      for (T child : value.getChildren()) {
         treeItem.getChildren().add(addRecursively(child));
       }
     }

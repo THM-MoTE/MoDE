@@ -7,8 +7,11 @@ import de.thm.mni.mote.mode.parser.ParserException;
 import de.thm.mni.mote.mode.util.HierarchyData;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import lombok.AccessLevel;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.experimental.FieldDefaults;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -21,9 +24,10 @@ import static de.thm.mni.mote.mode.util.Translator.tr;
 /**
  * Created by Marcel Hoppe on 27.01.17.
  */
-@Getter
+@Data
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class MoContainer implements Comparable<MoContainer>, HierarchyData<MoContainer> {
-  private static final int MAX_LOADING_DEPTH = 2;
+  static final int MAX_LOADING_DEPTH = 2;
   
   @Getter static final Set<MoRoot> ROOTS = new HashSet<>();
   
@@ -36,13 +40,13 @@ public class MoContainer implements Comparable<MoContainer>, HierarchyData<MoCon
     return null;
   }
   
-  private OMCompiler omc = null;
-  private MoContainer parent = null;
-  protected String name = null;
-  private MoClass element = null;
+  OMCompiler omc = null;
+  MoContainer parent = null;
+  String name = null;
+  MoClass element = null;
   
-  private final List<MoContainer> inheritedClasses = new ArrayList<>();
-  private final ObservableList<MoContainer> children = FXCollections.observableArrayList();
+  final List<MoContainer> inheritedClasses = new ArrayList<>();
+  final ObservableList<MoContainer> children = FXCollections.observableArrayList();
   
   public MoContainer(OMCompiler omc, MoContainer parent, @NonNull String name) {
     this.omc = omc;
@@ -54,17 +58,6 @@ public class MoContainer implements Comparable<MoContainer>, HierarchyData<MoCon
     this.element = element;
     element.setContainer(this);
     return this;
-  }
-  
-  public synchronized void moveTo(MoContainer newParent) {
-    moveTo(-1, newParent);
-  }
-  
-  private synchronized void moveTo(Integer index, MoContainer newParent) {
-    if (this.parent != null) this.parent.getChildren().remove(this);
-    if (index > -1) newParent.getChildren().set(index, this);
-    else newParent.getChildren().add(this);
-    this.parent = newParent;
   }
   
   public Boolean contains(MoContainer elem) {
@@ -108,6 +101,7 @@ public class MoContainer implements Comparable<MoContainer>, HierarchyData<MoCon
       if (c.similar(container)) return c;
     }
     this.getChildren().add(container);
+    FXCollections.sort(this.getChildren());
     return container;
   }
   
@@ -164,14 +158,19 @@ public class MoContainer implements Comparable<MoContainer>, HierarchyData<MoCon
     }
     return false;
   }
+
+  @Override
+  public int hashCode() {
+    return getName().hashCode() + ((getElement() != null) ? getElement().hashCode() : 0);
+  }
   
   private boolean equals(MoContainer that) {
-    return (this == that || this.element == that.element);
+    return (this == that || this.getElement() == that.getElement());
   }
   
   @Override
   public int compareTo(MoContainer that) {
-    return element.compareTo(that.element);
+    return (that == null) ? -1 : getName().compareTo(that.getName());
   }
   
   private void update(OMCompiler omc, int depth) {
@@ -186,5 +185,10 @@ public class MoContainer implements Comparable<MoContainer>, HierarchyData<MoCon
   
   public void update(OMCompiler omc) {
     update(omc, MAX_LOADING_DEPTH);
+  }
+  
+  @Override
+  public String toString() {
+    return "MoContainer(" + getName() + ")";
   }
 }
