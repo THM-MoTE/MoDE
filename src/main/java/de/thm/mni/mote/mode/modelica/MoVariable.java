@@ -165,7 +165,7 @@ public class MoVariable extends MoElement implements Changeable {
   public static List<MoVariable> parse(OMCompiler omc, MoClass parent) {
     List<MoVariable> list = new ArrayList<>();
     try {
-      for (Map<String, String> m : omc.getVariables(parent.getContainer().getName(), parent.getClassInformation())) {
+      for (Map<String, String> m : omc.getVariables(parent.getName(), parent.getClassInformation())) {
         list.add(parse(omc, parent, m));
       }
     } catch (IOException e) {

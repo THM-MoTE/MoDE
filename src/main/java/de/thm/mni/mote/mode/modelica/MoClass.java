@@ -32,7 +32,7 @@ import static de.thm.mni.mote.mode.util.Translator.tr;
 @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
 @Data
 @Getter
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, exclude = {"container"})
 @FieldDefaults(makeFinal = true)
 public class MoClass extends MoElement implements Changeable, Comparable<MoClass> {
   ObjectProperty<Change> unsavedChanges = new SimpleObjectProperty<>(Change.NONE);
@@ -201,7 +201,7 @@ public class MoClass extends MoElement implements Changeable, Comparable<MoClass
     if (this instanceof MoModel) return MoDefaults.newModel();
     if (this instanceof MoFunction) return MoDefaults.newFunction();
     else {
-      System.out.println(this.getClass().getSimpleName() + ": " + this.container.getName());
+      System.out.println(this.getClass().getSimpleName() + ": " + this.getName());
       return MoDefaults.newEmpty();
     }
   }

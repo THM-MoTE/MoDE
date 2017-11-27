@@ -144,7 +144,7 @@ public class MoContainer implements Comparable<MoContainer>, HierarchyData<MoCon
   
   
   private boolean similar(MoContainer that) {
-    return this.equals(that) || this.getName().equals(that.getName());
+    return this.getName().equals(that.getName());
   }
   
   @Override
