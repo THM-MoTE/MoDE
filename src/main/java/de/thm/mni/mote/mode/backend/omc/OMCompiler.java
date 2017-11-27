@@ -325,17 +325,16 @@ public class OMCompiler {
       }).collect(Collectors.toList());
     } catch (IOException e) {
       e.printStackTrace();
-      return Collections.EMPTY_LIST;
+      return Collections.emptyList();
     }
   }
   
-  @SuppressWarnings("unchecked")
   private List<String> getEquations(String className, ClassInformation ci) {
     Result r = client.call("getEquationCount", className);
     Integer blockCount = Integer.parseInt(r.result);
     r = client.call("getEquationItemsCount", className);
     Integer itemsCount = Integer.parseInt(r.result);
-    if (blockCount == 0 || itemsCount == 0) return Collections.EMPTY_LIST;
+    if (blockCount == 0 || itemsCount == 0) return Collections.emptyList();
     
     List<String> list = getClassWithoutContainingClasses(className, ci);
     

@@ -1,17 +1,18 @@
 package de.thm.mni.mote.mode.frontend.editor.elementmanager.elements;
 
-import de.thm.mni.mote.mode.modelica.MoConnection;
-import de.thm.mni.mote.mode.modelica.MoVariable;
 import de.thm.mni.mote.mode.frontend.controls.modelica.FXMoIconMoGroup;
 import de.thm.mni.mote.mode.frontend.controls.modelica.FXMoVariableIconMoGroup;
 import de.thm.mni.mote.mode.frontend.editor.elementmanager.interfaces.Highlightable;
 import de.thm.mni.mote.mode.frontend.editor.elementmanager.interfaces.Hoverable;
 import de.thm.mni.mote.mode.frontend.editor.elementmanager.interfaces.Selectable;
 import de.thm.mni.mote.mode.frontend.editor.statemachine.elements.ModifyableFXMoConnectorIconMoGroup;
+import de.thm.mni.mote.mode.modelica.MoConnection;
+import de.thm.mni.mote.mode.modelica.MoVariable;
 import de.thm.mni.mote.mode.util.Translator;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
@@ -26,7 +27,6 @@ import lombok.Getter;
 import org.controlsfx.control.PopOver;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -50,7 +50,7 @@ public class ManagedFXMoConnectorIconMoGroup extends ModifyableFXMoConnectorIcon
     HIGHLIGHT.setSpread(.8);
   }
   
-  public ManagedFXMoConnectorIconMoGroup(FXMoVariableIconMoGroup moParent, MoVariable variable, List<MoConnection> to, List<MoConnection> from) {
+  public ManagedFXMoConnectorIconMoGroup(FXMoVariableIconMoGroup moParent, MoVariable variable, FilteredList<MoConnection> to, FilteredList<MoConnection> from) {
     super(moParent, variable, to, from);
     errorPopOver = configuredPopOver();
     infoPopOver = configuredInfoPopOver();

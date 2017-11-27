@@ -1,15 +1,17 @@
 package de.thm.mni.mote.mode.modelica;
 
+import de.thm.mni.mote.mode.backend.omc.OMCompiler;
 import de.thm.mni.mote.mode.modelica.annotations.MoAnnotation;
 import de.thm.mni.mote.mode.modelica.annotations.MoPlacement;
 import de.thm.mni.mote.mode.modelica.graphics.MoText;
 import de.thm.mni.mote.mode.modelica.interfaces.Changeable;
 import de.thm.mni.mote.mode.modelica.interfaces.MoElement;
-import de.thm.mni.mote.mode.backend.omc.OMCompiler;
 import de.thm.mni.mote.mode.util.ImmutableListCollector;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.transformation.FilteredList;
 import lombok.*;
+import lombok.experimental.NonFinal;
 
 import java.io.IOException;
 import java.util.*;
@@ -19,19 +21,20 @@ import java.util.stream.Collectors;
 /**
  * Created by Marcel Hoppe on 20.10.16.
  */
-@Getter
+@Value
+@EqualsAndHashCode(callSuper = true, exclude = {"parent"})
 public class MoVariable extends MoElement implements Changeable {
-  private final ObjectProperty<Change> unsavedChanges = new SimpleObjectProperty<>(Change.NONE);
+  ObjectProperty<Change> unsavedChanges = new SimpleObjectProperty<>(Change.NONE);
   
-  private static final Pattern PATTERN = Pattern.compile("(^\"|\"$)");
+  static Pattern PATTERN = Pattern.compile("(^\"|\"$)");
   
-  private final MoClass parent;
-  private final Boolean isParameter;
-  private final String name;
-  private final Specification kind;
-  @Setter private MoContainer type = null;
-  private final String line;
-  @Setter(AccessLevel.PRIVATE) private String value = "";
+  MoClass parent;
+  Boolean isParameter;
+  String name;
+  Specification kind;
+  @NonFinal @Setter MoContainer type = null;
+  String line;
+  @NonFinal @Setter(AccessLevel.PRIVATE) String value = "";
   
   private final Map<MoVariable, String> paramValues = new HashMap<>();
   
@@ -116,24 +119,24 @@ public class MoVariable extends MoElement implements Changeable {
       return getVariables().stream().filter(MoVariable::getIsParameter).collect(Collectors.toList());
     } catch (NullPointerException e) {
       e.printStackTrace();
-      return null;
+      return Collections.emptyList();
     }
   }
   
-  public List<MoConnection> getConnections() {
+  public FilteredList<MoConnection> getConnections() {
     return getConnections(this.parent);
   }
   
-  public List<MoConnection> getFromConnections() {
-    return getConnections().stream().filter(moConnection -> moConnection.fromContains(MoVariable.this)).collect(Collectors.toList());
+  public FilteredList<MoConnection> getFromConnections() {
+    return getConnections().filtered(conn -> conn.fromContains(this));
   }
   
-  public List<MoConnection> getToConnections() {
-    return getConnections().stream().filter(moConnection -> moConnection.toContains(MoVariable.this)).collect(Collectors.toList());
+  public FilteredList<MoConnection> getToConnections() {
+    return getConnections().filtered(conn -> conn.toContains(this));
   }
   
-  public List<MoConnection> getConnections(MoClass baseParent) {
-    return baseParent.getConnections().stream().filter(moConnection -> moConnection.contains(this)).collect(ImmutableListCollector.toImmutableList());
+  public FilteredList<MoConnection> getConnections(MoClass baseParent) {
+    return baseParent.getConnections().filtered(moConnection -> moConnection.contains(this));
   }
   
   public MoPlacement getPlacement() {

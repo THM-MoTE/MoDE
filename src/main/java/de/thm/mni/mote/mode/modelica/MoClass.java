@@ -26,9 +26,7 @@ import static de.thm.mni.mote.mode.util.Translator.tr;
 /**
  * Created by Marcel Hoppe on 07.09.16.
  */
-@SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
 @Data
-@Getter
 @EqualsAndHashCode(callSuper = true, exclude = {"container"})
 @FieldDefaults(makeFinal = true)
 public class MoClass extends MoElement implements Changeable, Comparable<MoClass> {
@@ -129,7 +127,6 @@ public class MoClass extends MoElement implements Changeable, Comparable<MoClass
     variable.getUnsavedChanges().set(Change.DELETE);
     this.deletedVariables.add(variable);
   }
-  
   
   public ObservableList<MoConnection> getConnections() {
     this.container.getInheritedClasses().forEach(inheritedClass -> inheritedClass.getElement().getConnections().forEach(connection -> {

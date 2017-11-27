@@ -16,8 +16,9 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.EqualsAndHashCode;
 import lombok.Singular;
+import lombok.Value;
 
 import java.util.List;
 
@@ -25,8 +26,8 @@ import java.util.List;
 /**
  * Created by Marcel Hoppe on 19.09.16.
  */
-@SuppressWarnings("unchecked")
-@Getter
+@Value
+@EqualsAndHashCode(callSuper = true)
 public class MoLine extends MoGraphic implements HasSmoothOption {
   private static final Arrow DEFAULT_START_ARROW = Arrow.NONE;
   private static final Arrow DEFAULT_END_ARROW = Arrow.NONE;
@@ -53,11 +54,11 @@ public class MoLine extends MoGraphic implements HasSmoothOption {
   DoubleProperty arrowSizeProperty = new SimpleDoubleProperty(3.0);
   
   
-  ObjectProperty<Point2D> firstPointProperty = new SimpleObjectProperty<>();
-  ObjectProperty<Point2D> secondPointProperty = new SimpleObjectProperty<>();
+  ObjectProperty<Point2D> firstPointProperty = new SimpleObjectProperty<>(null);
+  ObjectProperty<Point2D> secondPointProperty = new SimpleObjectProperty<>(null);
   
-  ObjectProperty<Point2D> secondLastPointProperty = new SimpleObjectProperty<>();
-  ObjectProperty<Point2D> lastPointProperty = new SimpleObjectProperty<>();
+  ObjectProperty<Point2D> secondLastPointProperty = new SimpleObjectProperty<>(null);
+  ObjectProperty<Point2D> lastPointProperty = new SimpleObjectProperty<>(null);
   
   public MoLine(Point2D start) {
     super();
@@ -89,6 +90,7 @@ public class MoLine extends MoGraphic implements HasSmoothOption {
   
     this.points.addListener((ListChangeListener<? super Point2D>) c -> updatePointProperties());
   }
+  
   private void initPointProperties() {
     Point2D p = this.points.get(0);
     if(p != this.firstPointProperty.get()) this.firstPointProperty.set(p);

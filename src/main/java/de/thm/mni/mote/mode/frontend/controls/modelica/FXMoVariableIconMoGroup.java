@@ -1,17 +1,18 @@
 package de.thm.mni.mote.mode.frontend.controls.modelica;
 
+import de.thm.mni.mote.mode.frontend.editor.elementmanager.elements.ManagedFXMoConnectorIconMoGroup;
+import de.thm.mni.mote.mode.frontend.editor.statemachine.elements.ModifyableFXMoConnectorIconMoGroup;
 import de.thm.mni.mote.mode.modelica.MoConnection;
 import de.thm.mni.mote.mode.modelica.MoContainer;
 import de.thm.mni.mote.mode.modelica.MoVariable;
 import de.thm.mni.mote.mode.modelica.graphics.MoSimpleExtent;
 import de.thm.mni.mote.mode.modelica.graphics.MoTransformation;
-import de.thm.mni.mote.mode.frontend.editor.elementmanager.elements.ManagedFXMoConnectorIconMoGroup;
-import de.thm.mni.mote.mode.frontend.editor.statemachine.elements.ModifyableFXMoConnectorIconMoGroup;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.geometry.Point2D;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Rotate;
@@ -23,7 +24,6 @@ import lombok.NonNull;
 import lombok.experimental.FieldDefaults;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -64,13 +64,13 @@ public class FXMoVariableIconMoGroup extends FXMoGroup implements CalculateLocal
   }
   
   private void initConnectors() {
-    List<MoConnection> to = this.getVariable().getToConnections();
-    List<MoConnection> from = this.getVariable().getFromConnections();
+    FilteredList<MoConnection> to = this.getVariable().getToConnections();
+    FilteredList<MoConnection> from = this.getVariable().getFromConnections();
     
     getMoClass().getConnectorVariables().forEach(moVariable -> this.initConnector(moVariable, to, from));
   }
   
-  private void initConnector(MoVariable mv, List<MoConnection> to, List<MoConnection> from) {
+  private void initConnector(MoVariable mv, FilteredList<MoConnection> to, FilteredList<MoConnection> from) {
     if (mv.getPlacement() == null || (mv.getPlacement().getIconTransformation() == null && mv.getPlacement().getDiagramTransformation() == null)) return;
     ModifyableFXMoConnectorIconMoGroup mip = new ManagedFXMoConnectorIconMoGroup(this, mv, to, from);
     getData().put(mv, mip);
@@ -78,6 +78,8 @@ public class FXMoVariableIconMoGroup extends FXMoGroup implements CalculateLocal
   }
   
   private void initTransformation() {
+    if(getVariable().getPlacement() == null) return;
+    
     MoTransformation mt = getVariable().getPlacement().getIconTransformation();
     if (mt == null) mt = getVariable().getPlacement().getDiagramTransformation();
     if (mt == null) return;

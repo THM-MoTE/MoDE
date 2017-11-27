@@ -1,8 +1,13 @@
 package de.thm.mni.mote.mode.modelica;
 
+import lombok.EqualsAndHashCode;
+import lombok.Value;
+
 /**
  * Created by Marcel Hoppe on 06.10.16.
  */
+@Value
+@EqualsAndHashCode(callSuper = true)
 public class MoRoot extends MoContainer {
   
   public MoRoot() {

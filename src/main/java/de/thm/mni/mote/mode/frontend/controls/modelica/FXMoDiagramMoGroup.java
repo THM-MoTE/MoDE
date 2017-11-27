@@ -22,9 +22,8 @@ import java.util.Map;
  */
 public class FXMoDiagramMoGroup extends FXMoGroup {
   
-  @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
   private final Map<MoVariable, FXMoVariableIconMoGroup> variables = new HashMap<>();
-  @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
+  
   private final Map<MoConnection, FXMoConnectionGroup> connections = new HashMap<>();
   
   protected FXMoDiagramMoGroup(MoContainer container) {
@@ -134,6 +133,7 @@ public class FXMoDiagramMoGroup extends FXMoGroup {
   private void initConnection(MoConnection mc) {
   //  mc.getMoGraphics().forEach(super::initImage);
     FXMoConnectionGroup mcg = new FXMoConnectionGroup(this, mc);
+    System.err.println("\t\t\t\t" + mc);
     connections.put(mc, mcg);
     this.add(1, mcg);
     mcg.preventScaling(getScale().getX(), getScale().getY());

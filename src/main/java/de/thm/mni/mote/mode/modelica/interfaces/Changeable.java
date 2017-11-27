@@ -22,8 +22,7 @@ public interface Changeable {
   
   Changeable getChangeParent();
   
-  @SuppressWarnings("unchecked")
-  default List<Changeable> getChangeChildren() {return Collections.EMPTY_LIST; }
+  default List<Changeable> getChangeChildren() {return Collections.emptyList(); }
   
   default void initChangeListener() {
     getUnsavedChanges().addListener((observable, oldValue, newValue) -> {

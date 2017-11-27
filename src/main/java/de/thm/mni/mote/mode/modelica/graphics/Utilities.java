@@ -178,8 +178,8 @@ public class Utilities {
   
   public String toString(Point2D point) {
     NumberFormat fmt = de.thm.mni.mote.mode.util.Utilities.getFormatter();
-    
-    return String.format("{%s, %s}", fmt.format(point.getX()), fmt.format(point.getY()));
+    if (point == null) return "null";
+      return String.format("{%s, %s}", fmt.format(point.getX()), fmt.format(point.getY()));
   }
   
   public static String toString(List<Point2D> points) {

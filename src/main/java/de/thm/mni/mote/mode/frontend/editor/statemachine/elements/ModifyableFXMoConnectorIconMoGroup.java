@@ -16,7 +16,7 @@ import de.thm.mni.mote.mode.modelica.graphics.MoLine;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
-import javafx.geometry.Bounds;
+import javafx.collections.transformation.FilteredList;
 import javafx.geometry.Point2D;
 import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseButton;
@@ -35,7 +35,7 @@ public class ModifyableFXMoConnectorIconMoGroup extends FXMoConnectorIconMoGroup
   private ModifyableFXMoConnectorIconMoGroup freezeTarget = null;
   
   
-  protected ModifyableFXMoConnectorIconMoGroup(FXMoVariableIconMoGroup moParent, MoVariable variable, List<MoConnection> to, List<MoConnection> from) {
+  protected ModifyableFXMoConnectorIconMoGroup(FXMoVariableIconMoGroup moParent, MoVariable variable, FilteredList<MoConnection> to, FilteredList<MoConnection> from) {
     super(moParent, variable, to, from);
   }
   
@@ -57,7 +57,6 @@ public class ModifyableFXMoConnectorIconMoGroup extends FXMoConnectorIconMoGroup
     
     if (event.getEventType().equals(MouseEvent.MOUSE_CLICKED)) {
       if (builder == null) { //first Click
-        Bounds b = this.localToScene(this.getBoundsInLocal());
         builder = new ConnectionBuilder(this.getMoParent().getMoDiagram(), this.getVariables(), this.getMoParent().getMoDiagram().convertTo(convertFrom(new Point2D(0, 0))));
         changeListener = (observable, oldValue, newValue) -> {
           if (!newValue) {

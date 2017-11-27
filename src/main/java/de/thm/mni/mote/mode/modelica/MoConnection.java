@@ -17,10 +17,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.Singular;
+import lombok.*;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 
@@ -33,19 +30,20 @@ import static de.thm.mni.mote.mode.util.Translator.tr;
 /**
  * Created by Marcel Hoppe on 01.11.16.
  */
-@Getter
+@Value
+@EqualsAndHashCode(exclude = {"parent"})
 public class MoConnection implements Changeable {
-  private final ObjectProperty<Change> unsavedChanges = new SimpleObjectProperty<>(Change.NONE);
+  ObjectProperty<Change> unsavedChanges = new SimpleObjectProperty<>(Change.NONE);
   
-  private final MoClass parent;
-  private final List<MoVariable> from = new ArrayList<>();
-  private final List<MoVariable> to = new ArrayList<>();
+  MoClass parent;
+  List<MoVariable> from = new ArrayList<>();
+  List<MoVariable> to = new ArrayList<>();
   
-  private final ObservableList<MoGraphic> moGraphics = FXCollections.observableArrayList();
+  ObservableList<MoGraphic> moGraphics = FXCollections.observableArrayList();
   
   //TODO: is there a better solution?
-  private final ObjectProperty<Point2D> startPointProperty = new SimpleObjectProperty<>();
-  private final ObjectProperty<Point2D> endPointProperty = new SimpleObjectProperty<>();
+  ObjectProperty<Point2D> startPointProperty;
+  ObjectProperty<Point2D> endPointProperty;
   
   @Builder
   public MoConnection(@NonNull MoClass parent, @NonNull List<MoVariable> from, @NonNull List<MoVariable> to, @Singular List<MoGraphic> graphics) {
@@ -53,6 +51,9 @@ public class MoConnection implements Changeable {
     this.from.addAll(from);
     this.to.addAll(to);
     if (graphics != null) this.moGraphics.addAll(graphics);
+    
+    this.startPointProperty =  this.getLine().getFirstPointProperty();
+    this.endPointProperty = this.getLine().getLastPointProperty();
     
     init();
   }

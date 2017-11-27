@@ -5,8 +5,11 @@ import de.thm.mni.mote.mode.modelica.MoVariable;
 import de.thm.mni.mote.mode.modelica.graphics.MoSimpleExtent;
 import de.thm.mni.mote.mode.modelica.graphics.MoText;
 import de.thm.mni.mote.mode.modelica.graphics.MoTransformation;
+import de.thm.mni.mote.mode.modelica.graphics.Utilities;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.ListChangeListener;
+import javafx.collections.transformation.FilteredList;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.transform.Affine;
@@ -36,14 +39,54 @@ public class FXMoConnectorIconMoGroup extends FXMoGroup implements CalculateLoca
   @NonNull MoVariable variable;
   
   ObjectProperty<Point2D> centerOnDiagramProperty = new SimpleObjectProperty<>();
+  FilteredList<MoConnection> from;
+  FilteredList<MoConnection> to;
   
-  protected FXMoConnectorIconMoGroup(FXMoVariableIconMoGroup moParent, MoVariable variable, List<MoConnection> to, List<MoConnection> from) {
+  protected FXMoConnectorIconMoGroup(FXMoVariableIconMoGroup moParent, MoVariable variable, FilteredList<MoConnection> to, FilteredList<MoConnection> from) {
     super(variable.getType());
     this.moParent = moParent;
     this.variable = variable;
     init();
-    from.stream().filter(conn -> conn.fromContains(this.variable)).forEach(conn -> conn.getLine().getFirstPointProperty().bind(centerOnDiagramProperty));
-    to.stream().filter(conn -> conn.toContains(this.variable)).forEach(conn -> conn.getLine().getLastPointProperty().bind(centerOnDiagramProperty));
+    this.from = from.filtered(conn -> conn.fromContains(this.variable));
+    this.to = to.filtered(conn -> conn.toContains(this.variable));
+  
+    this.from.forEach(this::addFromBinding);
+    this.to.forEach(this::addToBinding);
+    
+    this.from.addListener((ListChangeListener<MoConnection>) c -> {
+      while(c.next()) {
+        c.getAddedSubList().forEach(this::addFromBinding);
+        c.getRemoved().forEach(this::removeFromBinding);
+      }
+    });
+  
+    this.to.addListener((ListChangeListener<MoConnection>) c -> {
+      while(c.next()) {
+        c.getAddedSubList().forEach(this::addToBinding);
+        c.getRemoved().forEach(this::removeToBinding);
+      }
+    });
+  }
+  
+  private void addFromBinding(MoConnection conn) {
+    conn.getStartPointProperty().bind(centerOnDiagramProperty);
+    conn.getStartPointProperty().addListener((observable, oldValue, newValue) -> System.out.println(conn + ": " + Utilities.toString(oldValue) + " -> " + Utilities.toString(newValue)));
+    System.err.println("Create From:\t" + conn);
+  }
+  
+  private void addToBinding(MoConnection conn) {
+    conn.getEndPointProperty().bind(centerOnDiagramProperty);
+    System.err.println("Create to:\t\t" + conn);
+  }
+  
+  private void removeFromBinding(MoConnection conn) {
+    conn.getStartPointProperty().bind(centerOnDiagramProperty);
+    System.err.println("Remove from:\t" + conn);
+  }
+  
+  private void removeToBinding(MoConnection conn) {
+    conn.getEndPointProperty().bind(centerOnDiagramProperty);
+    System.err.println("Remove to:\t\t" + conn);
   }
   
   @Override
@@ -59,6 +102,8 @@ public class FXMoConnectorIconMoGroup extends FXMoGroup implements CalculateLoca
   
   private void initTransformation() {
     MoTransformation mt;
+    if(getVariable().getPlacement() == null) return;
+    
     mt = this.variable.getPlacement().getIconTransformation();
     if (mt == null) mt = this.variable.getPlacement().getDiagramTransformation();
     if (mt == null) return;
