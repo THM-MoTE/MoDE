@@ -108,9 +108,9 @@ public class ModifyableFXMoDiagramMoGroup extends FXMoDiagramMoGroup implements 
     MoTransformation trans = new MoTransformation(pos, (MoSimpleExtent) mcs.getExtent(), mcs.getInitialScale().get(), 0.);
     
     mv.add(new MoPlacement(true, null, trans));
-    ElementManager.getInstance(this.getThat()).clearSelectedElement();
+    ElementManager.getInstanceManager().getActive().clearSelectedElement();
     this.getThat().getElement().addVariable(mv);
-    ActionManager.getInstance(this.getThat()).addUndo(new DeleteCommand(new ModifyableMoClass(this.getThat().getElement()), mv));
+    ActionManager.getInstanceManager().getActive().addUndo(new DeleteCommand(new ModifyableMoClass(this.getThat().getElement()), mv));
   }
   
 }

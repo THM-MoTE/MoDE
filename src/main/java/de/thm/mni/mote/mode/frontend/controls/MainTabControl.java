@@ -3,9 +3,8 @@ package de.thm.mni.mote.mode.frontend.controls;
 import de.thm.mni.mote.mode.frontend.controls.modelica.FXMoDiagramMoGroup;
 import de.thm.mni.mote.mode.frontend.controls.modelica.FXMoGroup;
 import de.thm.mni.mote.mode.frontend.controls.modelica.FXMoIconMoGroup;
+import de.thm.mni.mote.mode.frontend.editor.MasterManager;
 import de.thm.mni.mote.mode.frontend.editor.MenuManager;
-import de.thm.mni.mote.mode.frontend.editor.actionmanager.ActionManager;
-import de.thm.mni.mote.mode.frontend.editor.elementmanager.ElementManager;
 import de.thm.mni.mote.mode.frontend.editor.elementmanager.elements.ManagedFXMoDiagramMoGroup;
 import de.thm.mni.mote.mode.frontend.editor.statemachine.StateMachine;
 import de.thm.mni.mote.mode.frontend.utilities.ScrollPaneHorizontalScroll;
@@ -90,18 +89,21 @@ public class MainTabControl extends Tab implements Initializable {
   }
   
   public void lateInitialize(Scene scene) {
-    ElementManager.getInstance(data);
+    MasterManager.getInstanceManager().create(scene, this, data);
+    
     Node child = main.getChildren().get(0);
   
-    if (child instanceof FXMoDiagramMoGroup) ((FXMoDiagramMoGroup) child).addHandler(StateMachine.getInstance(scene, this, data));
+    StateMachine sm = StateMachine.getInstanceManager().get(data);
   
-    main.addEventHandler(InputEvent.ANY, StateMachine.getInstance(data));
-    main.addEventFilter(ScrollEvent.ANY, StateMachine.getInstance(data));
+    if (child instanceof FXMoDiagramMoGroup) ((FXMoDiagramMoGroup) child).addHandler(sm);
+  
+    main.addEventHandler(InputEvent.ANY, sm);
+    main.addEventFilter(ScrollEvent.ANY, sm);
     
     main.minWidthProperty().bind(Bindings.createDoubleBinding(() -> scroll.getViewportBounds().getWidth(), scroll.viewportBoundsProperty()));
   
     if(data.getElement().hasIcon()) {
-      MenuManager.getInstance(data).getShowIconProperty().addListener((observable, oldValue, newValue) -> {
+      MenuManager.getInstanceManager().get(this.data).getShowIconProperty().addListener((observable, oldValue, newValue) -> {
         ManagedFXMoDiagramMoGroup fxDiagram = (ManagedFXMoDiagramMoGroup)main.getChildren().get(0);
         if(newValue) fxDiagram.setImageAsBackground();
         else fxDiagram.removeImageAsBackground();
@@ -110,20 +112,14 @@ public class MainTabControl extends Tab implements Initializable {
     
     this.setOnSelectionChanged(event -> {
       if (MainTabControl.this.isSelected()) {
-        StateMachine.getInstance(data).enter();
+        MasterManager.getInstanceManager().activate(data);
       } else {
-        StateMachine.getInstance(data).leave();
+        MasterManager.getInstanceManager().deactivate();
       }
     });
   
-    if (this.isSelected()) StateMachine.getInstance(data).enter();
+    if (this.isSelected()) MasterManager.getInstanceManager().activate(data);
   
-    this.setOnClosed(event -> {
-      StateMachine.getInstance(data).leave();
-      MenuManager.removeInstance(data);
-      ActionManager.removeInstance(data);
-      ElementManager.removeInstance(data);
-      StateMachine.removeInstance(data);
-    });
+    this.setOnClosed(event -> MasterManager.getInstanceManager().remove(data));
   }
 }

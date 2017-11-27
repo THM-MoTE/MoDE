@@ -149,19 +149,12 @@ public class MoContainer implements Comparable<MoContainer>, HierarchyData<MoCon
   
   @Override
   public boolean equals(Object obj) {
-    if (obj instanceof MoContainer) {
-      return this.equals((MoContainer) obj);
-    }
-    if (MoClass.class.isAssignableFrom(obj.getClass())) {
-      MoClass that = (MoClass) obj;
-      return (this.element == that);
-    }
-    return false;
+    return obj instanceof MoContainer && this.equals((MoContainer) obj);
   }
 
   @Override
   public int hashCode() {
-    return getName().hashCode() + ((getElement() != null) ? getElement().hashCode() : 0);
+    return getName().hashCode();
   }
   
   private boolean equals(MoContainer that) {

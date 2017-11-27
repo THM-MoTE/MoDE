@@ -1,49 +1,33 @@
 package de.thm.mni.mote.mode.frontend.editor.actionmanager;
 
-import de.thm.mni.mote.mode.modelica.MoContainer;
 import de.thm.mni.mote.mode.frontend.editor.actionmanager.commands.Command;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import de.thm.mni.mote.mode.frontend.utilities.ActiveInstanceManager;
+import de.thm.mni.mote.mode.frontend.utilities.ActiveInstance;
+import de.thm.mni.mote.mode.modelica.MoContainer;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import lombok.Getter;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Marcel Hoppe on 21.02.17.
  */
 
-public class ActionManager {
-  public static final ObjectProperty<ActionManager> activeInstance = new SimpleObjectProperty<>(null);
-  private static final Map<MoContainer, ActionManager> INSTANCES = new HashMap<>();
+public class ActionManager extends ActiveInstance {
   
-  public static ActionManager getInstance(MoContainer container) {
-    if (!INSTANCES.containsKey(container)) INSTANCES.put(container, new ActionManager());
-    
-    return INSTANCES.get(container);
-  }
-  
-  public static void removeInstance(MoContainer data) {
-    if (activeInstance.get() == INSTANCES.get(data)) activeInstance.set(null);
-    INSTANCES.remove(data);
-  }
-  
-  @Getter BooleanProperty active = new SimpleBooleanProperty(false);
+  @Getter
+  private static ActiveInstanceManager<ActionManager> instanceManager = new ActiveInstanceManager<ActionManager>() {
+    @Override
+    protected ActionManager createInstance(MoContainer container) {
+      return new ActionManager();
+    }
+  };
   
   @Getter private ObservableList<Command> undoStack = FXCollections.observableArrayList();
   @Getter private ObservableList<Command> redoStack = FXCollections.observableArrayList();
   
-  private ActionManager() {
-    active.addListener((observable, oldValue, newValue) -> {
-      if (newValue) activeInstance.set(this);
-      else if (activeInstance.get() == this) activeInstance.set(null);
-    });
-  }
+  private ActionManager() {}
   
   public void addUndo(Command command) {
     addUndo(command, true);

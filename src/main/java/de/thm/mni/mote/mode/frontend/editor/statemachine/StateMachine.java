@@ -1,10 +1,8 @@
 package de.thm.mni.mote.mode.frontend.editor.statemachine;
 
-import de.thm.mni.mhpp11.smbj.manager.ActorManager;
 import de.thm.mni.mhpp11.smbj.logging.messages.TraceMessage;
-import de.thm.mni.mote.mode.modelica.MoContainer;
+import de.thm.mni.mhpp11.smbj.manager.ActorManager;
 import de.thm.mni.mote.mode.frontend.controls.MainTabControl;
-import de.thm.mni.mote.mode.frontend.editor.MenuManager;
 import de.thm.mni.mote.mode.frontend.editor.actionmanager.ActionManager;
 import de.thm.mni.mote.mode.frontend.editor.actionmanager.commands.Command;
 import de.thm.mni.mote.mode.frontend.editor.elementmanager.ElementManager;
@@ -14,6 +12,9 @@ import de.thm.mni.mote.mode.frontend.editor.statemachine.interfaces.*;
 import de.thm.mni.mote.mode.frontend.editor.statemachine.states.KeyState;
 import de.thm.mni.mote.mode.frontend.editor.statemachine.states.State;
 import de.thm.mni.mote.mode.frontend.editor.statemachine.states.States;
+import de.thm.mni.mote.mode.frontend.utilities.ActiveInstance;
+import de.thm.mni.mote.mode.frontend.utilities.ActiveInstanceManager;
+import de.thm.mni.mote.mode.modelica.MoContainer;
 import de.thm.mni.mote.mode.util.Utilities;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
@@ -29,33 +30,29 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import lombok.Getter;
 import lombok.NonNull;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import org.apache.commons.lang3.NotImplementedException;
 
 /**
  * Created by Marcel Hoppe on 15.11.16.
  */
 
 @Getter
-public class StateMachine implements EventHandler<InputEvent> {
-  private static Map<MoContainer, StateMachine> INSTANCES = new HashMap<>();
-  private EventType<? extends Event> eventToSkip = null;
+public class StateMachine extends ActiveInstance implements EventHandler<InputEvent> {
   
-  public static StateMachine getInstance(MoContainer container) {
-    if (!INSTANCES.containsKey(container)) throw new NoSuchElementException("No such StateMachine");
-    return INSTANCES.get(container);
-  }
+  @Getter
+  private static ActiveInstanceManager<StateMachine> instanceManager = new ActiveInstanceManager<StateMachine>() {
+    @Override
+    public void create(MoContainer container) {
+      throw new NotImplementedException("");
+    }
   
-  public static StateMachine getInstance(Scene scene, MainTabControl tab, MoContainer container) {
-    if (!INSTANCES.containsKey(container)) INSTANCES.put(container, new StateMachine(scene, tab, container));
-    return INSTANCES.get(container);
-  }
+    @Override
+    public void create(Scene scene, MainTabControl tab, MoContainer container) {
+      if(instances.containsKey(container)) throw new RuntimeException("Already created!");
   
-  public static void removeInstance(MoContainer data) {
-    INSTANCES.remove(data);
-  }
+      instances.put(container, new StateMachine(scene, tab, container));
+    }
+  };
   
   
   public BooleanProperty active = new SimpleBooleanProperty(false);
@@ -65,6 +62,9 @@ public class StateMachine implements EventHandler<InputEvent> {
 
   private Scene scene;
   private MainTabControl tab;
+  
+  private EventType<? extends Event> eventToSkip = null;
+  
   @NonNull private ObjectProperty<KeyState> keyState = new SimpleObjectProperty<>(KeyState.NONE);
   
   @NonNull private State state = States.NONE;
@@ -106,14 +106,14 @@ public class StateMachine implements EventHandler<InputEvent> {
         
     Command c = state.handle(this, target, event);
     if (c != null) {
-      ActionManager.getInstance(data).addUndo(c);
+      ActionManager.getInstanceManager().get(this.data).addUndo(c);
       event.consume();
     }
   }
   
   public void switchToNone() {
     this.state = States.NONE;
-    ElementManager.getInstance(this.data).clearSelectedElement();
+    ElementManager.getInstanceManager().get(this.data).clearSelectedElement();
   }
   
   private void updateKeyState(MouseEvent event) {
@@ -156,25 +156,26 @@ public class StateMachine implements EventHandler<InputEvent> {
   
   private void handleElementManagement(InputEvent event, Node target, Boolean fixedSelection) {
     EventType<? extends Event> type = event.getEventType();
+    ElementManager em = ElementManager.getInstanceManager().get(this.data);
   
     if (type.equals(MouseEvent.MOUSE_ENTERED) || type.equals(MouseEvent.MOUSE_MOVED) || type.equals(MouseEvent.MOUSE_EXITED)) {
       if (hasMatchingParent(target, Hoverable.class)) {
         if (type.equals(MouseEvent.MOUSE_ENTERED) || type.equals(MouseEvent.MOUSE_MOVED))
-          ElementManager.getInstance(tab.getData()).setHoveredElement((Hoverable) getMatchingParent(target, Hoverable.class));
+          em.setHoveredElement((Hoverable) getMatchingParent(target, Hoverable.class));
         if (type.equals(MouseEvent.MOUSE_EXITED))
-          ElementManager.getInstance(tab.getData()).clearHoveredElement();
+          em.clearHoveredElement();
       } else {
         if(type.equals(MouseEvent.MOUSE_MOVED))
-          ElementManager.getInstance(tab.getData()).clearHoveredElement();
+          em.clearHoveredElement();
       }
     }
   
     if (type.equals(MouseEvent.MOUSE_PRESSED)) {
       if (!fixedSelection) {
         if (hasMatchingParent(target, Selectable.class)) {
-          ElementManager.getInstance(tab.getData()).setSelectedElement((Selectable) getMatchingParent(target, Selectable.class));
+          em.setSelectedElement((Selectable) getMatchingParent(target, Selectable.class));
         } else {
-          ElementManager.getInstance(tab.getData()).clearSelectedElement();
+          em.clearSelectedElement();
         }
       }
     }
@@ -209,22 +210,16 @@ public class StateMachine implements EventHandler<InputEvent> {
     this.state.enter(this.scene);
   }
   
-  
-  public void leave() {
-    MenuManager.getInstance(this.data).getActive().set(false);
-    ActionManager.getInstance(this.data).getActive().set(false);
-    this.active.set(false);
+  @Override
+  public void onDeactivation() {
     state.leave(this.scene);
     ActorManager.getInstance().send(new TraceMessage(StateMachine.class, tab.getText() + " leave"));
   }
   
-  public void enter() {
+  @Override
+  public void onActivation() {
     ActorManager.getInstance().send(new TraceMessage(StateMachine.class, tab.getText() + " enter"));
-  
     state.enter(this.scene);
-    this.active.set(true);
-    ActionManager.getInstance(this.data).getActive().set(true);
-    MenuManager.getInstance(this.data).getActive().set(true);
   }
   
   public void freeze() {

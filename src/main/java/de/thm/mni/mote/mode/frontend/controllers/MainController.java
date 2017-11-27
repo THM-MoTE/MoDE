@@ -107,7 +107,7 @@ public class MainController extends NotifyController {
   }
   
   private void initMenuManager() {
-    MenuManager.activeInstance.addListener((observable, oldValue, newValue) -> {
+    MenuManager.getInstanceManager().getActiveProperty().addListener((observable, oldValue, newValue) -> {
       miUndo.disableProperty().unbind();
       miRedo.disableProperty().unbind();
       miShowIcon.disableProperty().unbind();
@@ -370,13 +370,13 @@ public class MainController extends NotifyController {
   
   @FXML
   private void handleUndo() {
-    ActionManager am = ActionManager.activeInstance.get();
+    ActionManager am = ActionManager.getInstanceManager().getActive();
     if (am != null) am.undo();
   }
   
   @FXML
   private void handleRedo() {
-    ActionManager am = ActionManager.activeInstance.get();
+    ActionManager am = ActionManager.getInstanceManager().getActive();
     if (am != null) am.redo();
   }
   

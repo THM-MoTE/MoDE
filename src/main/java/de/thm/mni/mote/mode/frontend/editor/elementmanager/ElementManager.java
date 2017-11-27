@@ -1,27 +1,29 @@
 package de.thm.mni.mote.mode.frontend.editor.elementmanager;
 
-import de.thm.mni.mote.mode.modelica.MoContainer;
 import de.thm.mni.mote.mode.frontend.editor.elementmanager.interfaces.Highlightable;
 import de.thm.mni.mote.mode.frontend.editor.elementmanager.interfaces.Hoverable;
 import de.thm.mni.mote.mode.frontend.editor.elementmanager.interfaces.Selectable;
+import de.thm.mni.mote.mode.frontend.utilities.ActiveInstance;
+import de.thm.mni.mote.mode.frontend.utilities.ActiveInstanceManager;
+import de.thm.mni.mote.mode.modelica.MoContainer;
+import lombok.Getter;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by Marcel Hoppe on 13.02.17.
  */
-public class ElementManager {
-  private static final Map<MoContainer, ElementManager> INSTANCES = new HashMap<>();
+public class ElementManager extends ActiveInstance {
   
-  public static ElementManager getInstance(MoContainer container) {
-    if (!INSTANCES.containsKey(container)) INSTANCES.put(container, new ElementManager());
-    
-    return INSTANCES.get(container);
-  }
-  
-  public static void removeInstance(MoContainer data) {
-    INSTANCES.remove(data);
-  }
+  @Getter
+  private static ActiveInstanceManager<ElementManager> instanceManager = new ActiveInstanceManager<ElementManager>() {
+    @Override
+    protected ElementManager createInstance(MoContainer container) {
+      return new ElementManager();
+    }
+  };
   
   private Hoverable hoveredElement = null;
   private Selectable selectedElement = null;

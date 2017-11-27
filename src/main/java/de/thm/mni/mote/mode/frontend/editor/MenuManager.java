@@ -1,61 +1,51 @@
 package de.thm.mni.mote.mode.frontend.editor;
 
-import de.thm.mni.mote.mode.modelica.MoContainer;
 import de.thm.mni.mote.mode.frontend.editor.actionmanager.ActionManager;
 import de.thm.mni.mote.mode.frontend.editor.actionmanager.commands.Command;
-import javafx.beans.property.*;
+import de.thm.mni.mote.mode.frontend.utilities.ActiveInstance;
+import de.thm.mni.mote.mode.frontend.utilities.ActiveInstanceManager;
+import de.thm.mni.mote.mode.modelica.MoContainer;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ListChangeListener;
+import lombok.AccessLevel;
 import lombok.Getter;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by Marcel Hoppe on 21.02.17.
  */
 
-public class MenuManager {
-  public static final ObjectProperty<MenuManager> activeInstance = new SimpleObjectProperty<>(null);
-  private static final Map<MoContainer, MenuManager> INSTANCES = new HashMap<>();
+@Getter
+public class MenuManager extends ActiveInstance {
   
-  public static MenuManager getInstance(MoContainer container) {
-    if (!INSTANCES.containsKey(container)) INSTANCES.put(container, new MenuManager(container));
-    
-    return INSTANCES.get(container);
-  }
+  @Getter
+  private static ActiveInstanceManager<MenuManager> instanceManager = new ActiveInstanceManager<MenuManager>() {
+    @Override
+    protected MenuManager createInstance(MoContainer container) {
+      return new MenuManager(container);
+    }
+  };
   
-  public static void removeInstance(MoContainer data) {
-    if (activeInstance.get() == INSTANCES.get(data)) activeInstance.set(null);
-    INSTANCES.remove(data);
-    ActionManager.removeInstance(data);
-  }
+  @Getter(AccessLevel.PRIVATE) final BooleanProperty internalHasRedoCommandsProperty = new SimpleBooleanProperty(false);
+  @Getter(AccessLevel.PRIVATE) final BooleanProperty internalHasUndoCommandsProperty = new SimpleBooleanProperty(false);
+  @Getter(AccessLevel.PRIVATE) final BooleanProperty internalHasIconProperty = new SimpleBooleanProperty(false);
+  @Getter(AccessLevel.PRIVATE) final BooleanProperty internalShowIconProperty = new SimpleBooleanProperty(false);
   
-  @Getter BooleanProperty active = new SimpleBooleanProperty(false);
-  @Getter final ReadOnlyBooleanProperty hasUndoCommandsProperty;
-  @Getter final ReadOnlyBooleanProperty hasRedoCommandsProperty;
+  final ReadOnlyBooleanProperty hasUndoCommandsProperty = internalHasUndoCommandsProperty;
+  final ReadOnlyBooleanProperty hasRedoCommandsProperty = internalHasRedoCommandsProperty;
   
-  @Getter final ReadOnlyBooleanProperty hasIconProperty;
-  @Getter BooleanProperty showIconProperty = new SimpleBooleanProperty(false);
+  final ReadOnlyBooleanProperty hasIconProperty = internalHasIconProperty;
+  final BooleanProperty showIconProperty = internalShowIconProperty;
   
   
   private MenuManager(MoContainer container) {
-    active.addListener((observable, oldValue, newValue) -> {
-      if (newValue) activeInstance.set(this);
-      else if (activeInstance.get() == this) activeInstance.set(null);
-    });
-  
-    BooleanProperty hasRedoCommandsProperty = new SimpleBooleanProperty(false);
-    BooleanProperty hasUndoCommandsProperty = new SimpleBooleanProperty(false);
-    BooleanProperty hasIconProperty = new SimpleBooleanProperty(false);
+    ActionManager ai = ActionManager.getInstanceManager().get(container);
+    ai.getRedoStack().addListener(
+        (ListChangeListener<? super Command>) c -> internalHasRedoCommandsProperty.set(!ai.getRedoStack().isEmpty()));
+    ai.getUndoStack().addListener(
+        (ListChangeListener<? super Command>) c -> internalHasUndoCommandsProperty.set(!ai.getUndoStack().isEmpty()));
     
-    this.hasRedoCommandsProperty = hasRedoCommandsProperty;
-    this.hasUndoCommandsProperty = hasUndoCommandsProperty;
-    this.hasIconProperty = hasIconProperty;
-    
-    ActionManager.getInstance(container).getRedoStack().addListener((ListChangeListener<? super Command>) c -> hasRedoCommandsProperty.set(!ActionManager.getInstance(container).getRedoStack().isEmpty()));
-  
-    ActionManager.getInstance(container).getUndoStack().addListener((ListChangeListener<? super Command>) c -> hasUndoCommandsProperty.set(!ActionManager.getInstance(container).getUndoStack().isEmpty()));
-    
-    hasIconProperty.set(container.getElement().hasIcon());
+    internalHasIconProperty.set(container.getElement().hasIcon());
   }
 }

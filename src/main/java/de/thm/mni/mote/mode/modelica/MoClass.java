@@ -19,10 +19,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 import static de.thm.mni.mote.mode.util.Translator.tr;
 
@@ -76,6 +73,11 @@ public class MoClass extends MoElement implements Changeable, Comparable<MoClass
     if (!(this instanceof MoLater)) initChangeListener();
   }
   
+  @Override
+  public void initChangeListener() {
+    Changeable.super.initChangeListener();
+  }
+  
   public Boolean isBasisType() {
     return bases.contains(this.getContainer());
   }
@@ -121,9 +123,8 @@ public class MoClass extends MoElement implements Changeable, Comparable<MoClass
   }
   
   public void removeVariable(MoVariable variable) {
-    for (MoConnection connection : variable.getConnections()) {
-      this.removeConnection(connection);
-    }
+    removeAllConnections(variable.getConnections());
+    
     this.variables.remove(variable);
     variable.getUnsavedChanges().set(Change.DELETE);
     this.deletedVariables.add(variable);
@@ -152,10 +153,12 @@ public class MoClass extends MoElement implements Changeable, Comparable<MoClass
     this.deletedConnections.add(connection);
   }
   
+  
+  private void removeAllConnections(List<MoConnection> connections) {
+    connections.forEach(this::removeConnection);
+  }
   public void removeAllConnections(MoConnection... connections) {
-    for (MoConnection conn : connections) {
-      this.removeConnection(conn);
-    }
+    removeAllConnections(Arrays.asList(connections));
   }
   
   public void addAllConnections(List<MoConnection> connections) {
@@ -163,9 +166,7 @@ public class MoClass extends MoElement implements Changeable, Comparable<MoClass
   }
   
   public void addAllConnections(MoConnection... connections) {
-    for (MoConnection conn : connections) {
-      this.addConnection(conn);
-    }
+    addAllConnections(Arrays.asList(connections));
   }
   
   

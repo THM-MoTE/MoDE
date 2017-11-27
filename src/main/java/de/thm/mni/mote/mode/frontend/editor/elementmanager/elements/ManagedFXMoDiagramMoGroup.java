@@ -26,7 +26,7 @@ public class ManagedFXMoDiagramMoGroup extends ModifyableFXMoDiagramMoGroup {
   
   public void highlightConnectors(ModifyableFXMoConnectorIconMoGroup connector) {
     List<ManagedFXMoConnectorIconMoGroup> connectors = collectConnectors();
-    ElementManager.getInstance(this.getThat()).setHighlightedElements(connectors.stream().filter(c -> c != connector).peek(c -> c.getHighlightExtra().setAll(getConnectableToMessages(connector.getVariables(), c.getVariables()))).collect(Collectors.toList()).toArray(new Highlightable[]{}));
+    ElementManager.getInstanceManager().getActive().setHighlightedElements(connectors.stream().filter(c -> c != connector).peek(c -> c.getHighlightExtra().setAll(getConnectableToMessages(connector.getVariables(), c.getVariables()))).collect(Collectors.toList()).toArray(new Highlightable[]{}));
   }
   
   private List<ManagedFXMoConnectorIconMoGroup> collectConnectors() {
@@ -39,7 +39,7 @@ public class ManagedFXMoDiagramMoGroup extends ModifyableFXMoDiagramMoGroup {
   }
   
   public void clearHighlight() {
-    ElementManager.getInstance(this.getThat()).clearHighlightedElements();
+    ElementManager.getInstanceManager().getActive().clearHighlightedElements();
   }
   
   public Boolean isConnectAbleTo(List<MoVariable> from, List<MoVariable> to) {
