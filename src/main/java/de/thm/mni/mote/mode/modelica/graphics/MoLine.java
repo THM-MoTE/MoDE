@@ -20,6 +20,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Singular;
 import lombok.Value;
 
+import java.util.Collections;
 import java.util.List;
 
 
@@ -61,13 +62,11 @@ public class MoLine extends MoGraphic implements HasSmoothOption {
   ObjectProperty<Point2D> lastPointProperty = new SimpleObjectProperty<>(null);
   
   public MoLine(Point2D start) {
-    super();
-    this.points.add(start);
-    initChangeListeners();
+    this(new MoGraphic(), Collections.singletonList(start), null, null, null, null, null, null, null);
   }
   
   @Builder(builderMethodName = "lineBuilder")
-  MoLine(MoGraphic mg, @Singular List<Point2D> points, Color color, LinePattern linePattern, Double thickness, Arrow start, Arrow end, Double arrowSize, Smooth smooth) {
+  private MoLine(MoGraphic mg, @Singular List<Point2D> points, Color color, LinePattern linePattern, Double thickness, Arrow start, Arrow end, Double arrowSize, Smooth smooth) {
     super(mg);
     this.points.addAll(points);
     if(start != null) startArrowProperty.set(start);
@@ -83,7 +82,6 @@ public class MoLine extends MoGraphic implements HasSmoothOption {
   @SuppressWarnings("WeakerAccess")
   @Override
   protected void initChangeListeners() {
-    if (this.points == null || this.points.size() <= 1) return;
     initPointProperties();
     super.initChangeListeners();
     this.points.addListener((ListChangeListener<? super Point2D>) c -> changed());
@@ -103,6 +101,8 @@ public class MoLine extends MoGraphic implements HasSmoothOption {
     updatePointProperties();
   }
   private void updatePointProperties() {
+    if (this.points.size() <= 1) return;
+    
     Point2D p = this.points.get(1);
     if(p != this.secondPointProperty.get()) this.secondPointProperty.set(p);
     p = this.points.get(this.points.size()-2);

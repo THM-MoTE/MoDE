@@ -5,7 +5,6 @@ import de.thm.mni.mote.mode.modelica.MoVariable;
 import de.thm.mni.mote.mode.modelica.graphics.MoSimpleExtent;
 import de.thm.mni.mote.mode.modelica.graphics.MoText;
 import de.thm.mni.mote.mode.modelica.graphics.MoTransformation;
-import de.thm.mni.mote.mode.modelica.graphics.Utilities;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ListChangeListener;
@@ -70,23 +69,18 @@ public class FXMoConnectorIconMoGroup extends FXMoGroup implements CalculateLoca
   
   private void addFromBinding(MoConnection conn) {
     conn.getStartPointProperty().bind(centerOnDiagramProperty);
-    conn.getStartPointProperty().addListener((observable, oldValue, newValue) -> System.out.println(conn + ": " + Utilities.toString(oldValue) + " -> " + Utilities.toString(newValue)));
-    System.err.println("Create From:\t" + conn);
   }
   
   private void addToBinding(MoConnection conn) {
     conn.getEndPointProperty().bind(centerOnDiagramProperty);
-    System.err.println("Create to:\t\t" + conn);
   }
   
   private void removeFromBinding(MoConnection conn) {
     conn.getStartPointProperty().bind(centerOnDiagramProperty);
-    System.err.println("Remove from:\t" + conn);
   }
   
   private void removeToBinding(MoConnection conn) {
     conn.getEndPointProperty().bind(centerOnDiagramProperty);
-    System.err.println("Remove to:\t\t" + conn);
   }
   
   @Override
