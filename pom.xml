@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>de.thm.mni.mote.mode</groupId>
   <artifactId>MoDE</artifactId>
-  <version>0.7.0-SNAPSHOT</version>
+  <version>0.7.2-SNAPSHOT</version>
   
   <packaging>jar</packaging>
   
@@ -17,7 +17,7 @@
 
     <skipTests>true</skipTests>
   </properties>
-  
+
   <dependencies>
     <dependency>
       <groupId>org.projectlombok</groupId>
@@ -143,6 +143,17 @@
   </dependencies>
   
   <repositories>
+    <repository>
+      <id>oss.sonatype.org-snapshot</id>
+      <url>http://oss.sonatype.org/content/repositories/snapshots</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+
     <repository>
       <id>central</id>
       <name>jcenter</name>
