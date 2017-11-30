@@ -107,7 +107,7 @@
     
     <dependency>
       <groupId>de.thm.mni.mhpp11.smbj</groupId>
-      <artifactId>Base</artifactId>
+      <artifactId>Core</artifactId>
       <version>${smbj.version}</version>
     </dependency>
   
@@ -119,7 +119,7 @@
   
     <dependency>
       <groupId>de.thm.mni.mhpp11.smbj.ui</groupId>
-      <artifactId>Base</artifactId>
+      <artifactId>UICore</artifactId>
       <version>${smbj.version}</version>
     </dependency>
   
