@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>de.thm.mni.mote.mode</groupId>
   <artifactId>MoDE</artifactId>
@@ -14,10 +13,19 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <ikonli.version>1.9.0</ikonli.version>
     <smbj.version>0.7.0-SNAPSHOT</smbj.version>
-
+  
+    <maven.javadoc.skip>true</maven.javadoc.skip>
     <skipTests>true</skipTests>
+    <ignoreSnapshots>true</ignoreSnapshots>
   </properties>
-
+  
+  <scm>
+    <connection>scm:git:git@github.com:THM-MoTE/MoDE.git</connection>
+    <developerConnection>scm:git:git@github.com:THM-MoTE/MoDE.git</developerConnection>
+    <url>https://github.com/THM-MoTE/MoDE</url>
+    <tag>HEAD</tag>
+  </scm>
+  
   <dependencies>
     <dependency>
       <groupId>org.projectlombok</groupId>
@@ -165,6 +173,16 @@
       <url>https://jitpack.io</url>
     </repository>
   </repositories>
+  <pluginRepositories>
+    <pluginRepository>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>bintray-cy6ergn0m-maven</id>
+      <name>bintray-plugins</name>
+      <url>http://dl.bintray.com/cy6ergn0m/maven</url>
+    </pluginRepository>
+  </pluginRepositories>
   
   <build>
     
@@ -197,46 +215,11 @@
           <includeEmptyDirs>true</includeEmptyDirs>
         </configuration>
       </plugin>
-      
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <version>3.0.0</version>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>parse-version</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-  
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>versions-maven-plugin</artifactId>
-        <version>2.3</version>
-        <configuration>
-          <!--suppress MavenModelInspection -->
-          <newVersion>
-            ${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.nextIncrementalVersion}-SNAPSHOT
-          </newVersion>
-        </configuration>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>set</goal>
-              <goal>commit</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
   
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>2.4.3</version>
+        <version>3.1.0</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -264,7 +247,7 @@
               </artifactSet>
               
               <transformers>
-                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                   <manifestEntries>
                     <Main-Class>${app.main.class}</Main-Class>
@@ -276,6 +259,19 @@
             </configuration>
           </execution>
         </executions>
+      </plugin>
+  
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>2.5.3</version>
+        <configuration>
+          <goals>install</goals>
+          <autoVersionSubmodules>true</autoVersionSubmodules>
+          <localCheckout>true</localCheckout>
+          <pushChanges>true</pushChanges>
+          <tagNameFormat>v@{project.version}</tagNameFormat>
+        </configuration>
       </plugin>
     </plugins>
   </build>
