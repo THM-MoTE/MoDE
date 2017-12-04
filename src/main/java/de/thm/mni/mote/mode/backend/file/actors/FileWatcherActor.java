@@ -1,11 +1,13 @@
 package de.thm.mni.mote.mode.backend.file.actors;
 
 import de.thm.mni.mhpp11.smbj.actors.AbstractActor;
+import de.thm.mni.mhpp11.smbj.logging.messages.ErrorMessage;
 import de.thm.mni.mhpp11.smbj.messages.ErrorExitMessage;
 import de.thm.mni.mhpp11.smbj.messages.base.Message;
 import de.thm.mni.mote.mode.backend.file.messages.FileChangedMessage;
 import de.thm.mni.mote.mode.backend.file.messages.FileChangedMessage.TYPE;
 import de.thm.mni.mote.mode.backend.messages.SetProjectMessage;
+import de.thm.mni.mote.mode.backend.messages.UnsetProjectMessage;
 import de.thm.mni.mote.mode.config.model.Project;
 import ews.EnhancedWatchService;
 import ews.PathFilter;
@@ -54,16 +56,34 @@ public class FileWatcherActor extends AbstractActor implements WatchServiceListe
     super(id);
   }
   
-  private void restartWatcherService(Project project) {
-    this.project = project;
-    EnhancedWatchService ews = new EnhancedWatchService(project.getProjectPath().getParent(), true, events);
+  private void startWatcherService(Project project) {
     try {
-      if(watcherFuture != null)
-        watcherFuture.cancel(true);
-      watcherFuture = es.submit(ews.setup(this, filter));
+      if(this.project != null) throw new IllegalStateException("Watcher already running");
       
-    } catch (IOException e) {
-      e.printStackTrace();
+      this.project = project;
+      EnhancedWatchService ews = new EnhancedWatchService(project.getProjectPath().getParent(), true, events);
+      watcherFuture = es.submit(ews.setup(this, filter));
+  
+    } catch (IOException | IllegalStateException e) {
+      if(this.watcherFuture != null) this.watcherFuture.cancel(true);
+      this.watcherFuture = null;
+      this.project = null;
+      send(new ErrorMessage(this.getClass(), getID(), e));
+    }
+  }
+  
+  private void stopWatcherService() {
+    try {
+      if (this.project == null || this.watcherFuture == null) throw new IllegalStateException("Watcher not running");
+      watcherFuture.cancel(true);
+  
+      watcherFuture = null;
+      this.project = null;
+    } catch (IllegalStateException e) {
+      if (this.watcherFuture != null) this.watcherFuture.cancel(true);
+      this.watcherFuture = null;
+      this.project = null;
+      send(new ErrorMessage(this.getClass(), getID(), e));
     }
   }
   
@@ -85,7 +105,9 @@ public class FileWatcherActor extends AbstractActor implements WatchServiceListe
   @Override
   public void execute(Message msg) {
     if (msg instanceof SetProjectMessage) {
-      restartWatcherService(((SetProjectMessage) msg).getPayload());
+      startWatcherService(((SetProjectMessage) msg).getPayload());
+    } else if(msg instanceof UnsetProjectMessage) {
+      stopWatcherService();
     }
   }
   
@@ -99,6 +121,7 @@ public class FileWatcherActor extends AbstractActor implements WatchServiceListe
       try {
         es.awaitTermination(500, TimeUnit.MILLISECONDS);
       } catch (InterruptedException e) {
+        send(new ErrorMessage(this.getClass(), getID(), e));
         e.printStackTrace();
       }
     }

@@ -6,6 +6,7 @@ import de.thm.mni.mhpp11.smbj.ui.messages.StartUIMessage;
 import de.thm.mni.mote.mode.backend.file.messages.FileNewMessage;
 import de.thm.mni.mote.mode.backend.file.messages.ModelsSaveMessage;
 import de.thm.mni.mote.mode.backend.messages.SetProjectMessage;
+import de.thm.mni.mote.mode.backend.messages.UnsetProjectMessage;
 import de.thm.mni.mote.mode.backend.omc.actors.OMCActor;
 import de.thm.mni.mote.mode.backend.omc.messages.GetAvailableLibsOMCMessage;
 import de.thm.mni.mote.mode.backend.omc.messages.GetDataOMCMessage;
@@ -198,13 +199,17 @@ public class MainController extends NotifyController {
       
       HasAction tmp = (HasAction) menuItem;
       MoContainer container = cell.getItem();
-      if (tmp.getAction().equals("add_new")) {
-        menuItem.setDisable(!(container.getElement() instanceof MoPackage) || cell.isLibrary());
-      } else if (tmp.getAction().equals("add_to_diagram")) {
-        MainTabControl mtc = (MainTabControl) tabPane.getSelectionModel().getSelectedItem();
-        menuItem.setDisable(!container.getElement().hasIcon() || mtc == null);
-      } else {
-        if (tmp.getAction().equals("open")) menuItem.setDisable(!container.getElement().hasDiagram());
+      switch (tmp.getAction()) {
+        case "add_new":
+          menuItem.setDisable(!(container.getElement() instanceof MoPackage) || cell.isLibrary());
+          break;
+        case "add_to_diagram":
+          MainTabControl mtc = (MainTabControl) tabPane.getSelectionModel().getSelectedItem();
+          menuItem.setDisable(!container.getElement().hasIcon() || mtc == null);
+          break;
+        case "open":
+          menuItem.setDisable(!container.getElement().hasDiagram());
+          break;
       }
     });
   }
@@ -359,6 +364,7 @@ public class MainController extends NotifyController {
   @FXML
   private void handleCloseProject() {
     this.hide();
+    getActor().send(new UnsetProjectMessage(getID()));
     getActor().send(new StartUIMessage(getID(), WelcomeActor.class, new Stage()));
     getActor().send(new ExitMessage(getID(), getID()));
   }

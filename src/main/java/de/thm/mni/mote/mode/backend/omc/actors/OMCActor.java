@@ -7,6 +7,7 @@ import de.thm.mni.mhpp11.smbj.messages.ExitMessage;
 import de.thm.mni.mhpp11.smbj.messages.base.Message;
 import de.thm.mni.mote.mode.backend.file.messages.FileChangedMessage;
 import de.thm.mni.mote.mode.backend.messages.SetProjectMessage;
+import de.thm.mni.mote.mode.backend.messages.UnsetProjectMessage;
 import de.thm.mni.mote.mode.backend.omc.OMCException;
 import de.thm.mni.mote.mode.backend.omc.OMCUtilities;
 import de.thm.mni.mote.mode.backend.omc.OMCompiler;
@@ -85,13 +86,14 @@ public class OMCActor extends AbstractActor {
   }
   
   private void setProject(SetProjectMessage msg) {
-    this.project = msg.getPayload();
-    msg.answer(getID(), this.project);
-    
-    loadStatus = LoadStatusOMCMessage.STATUS.START.ordinal();
-    send(new LoadStatusOMCMessage(getID(), LoadStatusOMCMessage.STATUS.START, loadStatus));
     try {
-      omc.clearProject();
+      if(this.project != null) throw new IllegalStateException("project already set");
+      
+      this.project = msg.getPayload();
+      msg.answer(getID(), this.project);
+      
+      loadStatus = LoadStatusOMCMessage.STATUS.START.ordinal();
+      send(new LoadStatusOMCMessage(getID(), LoadStatusOMCMessage.STATUS.START, loadStatus));
       
       omc.addSystemLibraries(project.getSystemLibraries());
       collectDataInBackground(LOAD_TYPE.SYSTEM_LIBS);
@@ -102,10 +104,19 @@ public class OMCActor extends AbstractActor {
       omc.setProject(project.getMoFile());
       collectDataInBackground(LOAD_TYPE.PROJECT);
       
-    } catch (Exception e) {
-      e = new OMCException(tr("Error", "error.omcactor.cant_load_project", project.getName()), e);
+    } catch (IllegalStateException | ParserException e) {
       msg.error(getID(), e);
-      send(new ErrorMessage(OMCActor.class, getID(), e));
+      send(new ErrorMessage(this.getClass(), getID(), e));
+    }
+  }
+  
+  private void unsetProject() {
+    try {
+      if(this.project == null) throw new IllegalStateException("project not set");
+      this.project = null;
+      omc.clearProject();
+    } catch (ParserException | IllegalStateException e) {
+      send(new ErrorMessage(this.getClass(), getID(), e));
     }
   }
   
@@ -116,17 +127,6 @@ public class OMCActor extends AbstractActor {
       send(new ErrorMessage(OMCActor.class, getID(), e));
     }
   }
-  
-  private void reload(MoContainer parent, String name) {
-    try {
-      omc.reloadProject();
-      parent.getChildren().add(new MoContainer(omc, parent, name).setElement(new MoLater()));
-      parent.update(omc);
-    } catch (ParserException e) {
-      e.printStackTrace();
-    }
-  }
-  
   
   private void collectDataInBackground(LOAD_TYPE type) {
     es.execute(() -> {
@@ -159,9 +159,6 @@ public class OMCActor extends AbstractActor {
   
   private void projectChanged(FileChangedMessage msg) {
     try {
-      
-      //TODO: react to file changes on filesystem
-      System.out.println(msg);
       
       Path path = msg.getPayload();
       
@@ -245,11 +242,13 @@ public class OMCActor extends AbstractActor {
         omc.disconnect();
         started = false;
       }
-    } else if(msg instanceof SetProjectMessage || msg instanceof FileChangedMessage || msg instanceof OMCMessage) {
-      if (!started) send(new ErrorMessage(OMCActor.class, getID(), new OMCException(tr("Error", "error.omcactor.omc_not_running"))));
+    } else if(msg instanceof SetProjectMessage || msg instanceof FileChangedMessage || msg instanceof OMCMessage || msg instanceof UnsetProjectMessage) {
+      if (!started) send(new ErrorMessage(OMCActor.class, getID(), new IllegalStateException(tr("Error", "error.omcactor.omc_not_running"))));
       else {
         if (msg instanceof SetProjectMessage) {
           setProject((SetProjectMessage) msg);
+        } else if (msg instanceof UnsetProjectMessage) {
+          unsetProject();
         } else if(msg instanceof FileChangedMessage) {
           projectChanged((FileChangedMessage) msg);
         } else if (msg instanceof GetDataOMCMessage) {

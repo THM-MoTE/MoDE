@@ -1,6 +1,7 @@
 package de.thm.mni.mote.mode.backend.file.actors;
 
 import de.thm.mni.mhpp11.smbj.actors.AbstractActor;
+import de.thm.mni.mhpp11.smbj.logging.messages.ErrorMessage;
 import de.thm.mni.mhpp11.smbj.messages.base.Message;
 import de.thm.mni.mote.mode.backend.file.Saver;
 import de.thm.mni.mote.mode.backend.file.messages.FileNewMessage;
@@ -59,7 +60,7 @@ public class FileManagementActor extends AbstractActor {
     
       Files.write(file, fileContent, StandardCharsets.UTF_8, StandardOpenOption.CREATE_NEW);
     } catch (IOException e) {
-      e.printStackTrace();
+      send(new ErrorMessage(this.getClass(), getID(), e));
     }
   }
   
