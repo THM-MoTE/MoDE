@@ -120,13 +120,13 @@ public abstract class FXMoGroup extends FXMoParentGroup {
   
   private void initCoordinateSystem() {
     if (this instanceof FXMoIconMoGroup) initCoordinateSystem(((FXMoIconMoGroup) this).getImage().getMoCoordinateSystem());
+    else if(this instanceof FXMoVariableIconMoGroup) initCoordinateSystem(this.getMoClass().getIconCoordinateSystem());
     else initCoordinateSystem(this.getMoClass().getDiagramCoordinateSystem());
   }
   
   private void initCoordinateSystem(MoCoordinateSystem mcs) {
   
     Point2D extent0 = mcs.getExtent().getP1();
-    Point2D extent1 = mcs.getExtent().getP2();
   
     coordinateSystem = new javafx.scene.shape.Rectangle(extent0.getX(), extent0.getY(), mcs.getExtent().getWidth(), mcs.getExtent().getHeight());
     coordinateSystem.setFill(Color.TRANSPARENT);

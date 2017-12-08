@@ -38,6 +38,10 @@ public class MoCoordinateSystem {
     this.grid.set(that.grid.get());
   }
   
+  public MoCoordinateSystem copy() {
+    return new MoCoordinateSystem(this);
+  }
+  
   public static MoCoordinateSystem parse(CoordinateSystemContext system) {
     MoCoordinateSystemBuilder mb = builder();
     
@@ -54,9 +58,5 @@ public class MoCoordinateSystem {
       }
   
     return mb.build();
-  }
-  
-  public MoCoordinateSystem copy() {
-    return new MoCoordinateSystem(this);
   }
 }

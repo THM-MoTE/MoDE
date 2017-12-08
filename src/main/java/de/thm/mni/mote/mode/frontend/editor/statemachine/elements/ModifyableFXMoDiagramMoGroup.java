@@ -103,7 +103,7 @@ public class ModifyableFXMoDiagramMoGroup extends FXMoDiagramMoGroup implements 
     }
     
     MoVariable mv = new MoVariable(this.getThat().getElement(), variable, variable.getSimpleName().toLowerCase() + "_" + counter);
-    MoCoordinateSystem mcs = mv.getType().getElement().getDiagramCoordinateSystem();
+    MoCoordinateSystem mcs = mv.getType().getElement().getIconCoordinateSystem();
     
     MoTransformation trans = new MoTransformation(pos, (MoSimpleExtent) mcs.getExtent(), mcs.getInitialScale().get(), 0.);
     
