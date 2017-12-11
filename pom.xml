@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>de.thm.mni.mote.mode</groupId>
   <artifactId>MoDE</artifactId>
-  <version>0.7.3</version>
+  <version>0.7.4-SNAPSHOT</version>
   
   <packaging>jar</packaging>
   
@@ -23,7 +23,7 @@
     <connection>scm:git:git@github.com:THM-MoTE/MoDE.git</connection>
     <developerConnection>scm:git:git@github.com:THM-MoTE/MoDE.git</developerConnection>
     <url>https://github.com/THM-MoTE/MoDE</url>
-    <tag>v0.7.3</tag>
+    <tag>HEAD</tag>
   </scm>
   
   <dependencies>
