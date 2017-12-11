@@ -17,6 +17,7 @@
     <maven.javadoc.skip>true</maven.javadoc.skip>
     <skipTests>true</skipTests>
     <ignoreSnapshots>true</ignoreSnapshots>
+    <github.draft>true</github.draft>
   </properties>
   
   <scm>
@@ -266,12 +267,50 @@
         <artifactId>maven-release-plugin</artifactId>
         <version>2.5.3</version>
         <configuration>
-          <goals>install</goals>
+          <!--<goals>install</goals>-->
           <autoVersionSubmodules>true</autoVersionSubmodules>
           <localCheckout>true</localCheckout>
           <pushChanges>true</pushChanges>
           <tagNameFormat>v@{project.version}</tagNameFormat>
         </configuration>
+        
+        <executions>
+          <execution>
+            <id>release-project</id>
+            <phase>install</phase>
+            <goals>
+              <goal>prepare</goal>
+              <goal>perform</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      
+      <plugin>
+        <groupId>de.jutzig</groupId>
+        <artifactId>github-release-plugin</artifactId>
+        <version>1.2.0</version>
+        <executions>
+          <execution>
+            <id>github-upload</id>
+            <phase>install</phase>
+            <goals>
+              <goal>release</goal>
+            </goals>
+            <configuration>
+              <releaseName>v@{project.version}</releaseName>
+              <tag>v@{project.version}</tag>
+              <fileSets>
+                <fileSet>
+                  <directory>${project.build.directory}</directory>
+                  <includes>
+                    <include>${project.artifactId}-${project.version}.jar</include>
+                  </includes>
+                </fileSet>
+              </fileSets>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
