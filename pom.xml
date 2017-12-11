@@ -267,7 +267,7 @@
         <artifactId>maven-release-plugin</artifactId>
         <version>2.5.3</version>
         <configuration>
-          <!--<goals>install</goals>-->
+          <goals>install</goals>
           <autoVersionSubmodules>true</autoVersionSubmodules>
           <localCheckout>true</localCheckout>
           <pushChanges>true</pushChanges>
@@ -288,8 +288,8 @@
               <goal>release</goal>
             </goals>
             <configuration>
-              <releaseName>v@{project.version}</releaseName>
-              <tag>v@{project.version}</tag>
+              <releaseName>v${project.version}</releaseName>
+              <tag>v${project.version}</tag>
               <fileSets>
                 <fileSet>
                   <directory>${project.build.directory}</directory>
