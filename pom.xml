@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>de.thm.mni.mote.mode</groupId>
   <artifactId>MoDE</artifactId>
-  <version>0.7.3-SNAPSHOT</version>
+  <version>0.7.2-SNAPSHOT</version>
   
   <packaging>jar</packaging>
   
