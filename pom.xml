@@ -17,6 +17,8 @@
     <maven.javadoc.skip>true</maven.javadoc.skip>
     <skipTests>true</skipTests>
     <ignoreSnapshots>true</ignoreSnapshots>
+    
+    <github.prerelease>true</github.prerelease>
   </properties>
   
   <scm>
