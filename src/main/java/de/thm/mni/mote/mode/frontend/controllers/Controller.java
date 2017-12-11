@@ -5,8 +5,14 @@ import de.thm.mni.mhpp11.smbj.messages.ExitMessage;
 import de.thm.mni.mhpp11.smbj.ui.controllers.ActorController;
 import de.thm.mni.mote.mode.config.Settings;
 import de.thm.mni.mote.mode.util.Utilities;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import lombok.Getter;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -63,4 +69,32 @@ public abstract class Controller extends ActorController implements IController 
   }
   
   void deinitialize() {}
+  
+  @FXML
+  void onOpenHelp() {
+    System.out.println("onOpenHelp");
+  }
+  
+  @FXML
+  void onOpenAbout() {
+    Stage dialog = new Stage();
+    FXMLLoader loader = new FXMLLoader();
+    loader.setLocation(Utilities.getView("About"));
+    loader.setResources(Utilities.getBundle("About"));
+    try {
+      Scene scene = new Scene(loader.load());
+      dialog.setScene(scene);
+      dialog.initOwner(getStage());
+      dialog.initModality(Modality.APPLICATION_MODAL);
+      
+      Controller c = loader.getController();
+      c.setActor(getActor());
+      c.setScene(scene);
+      c.setStage(dialog);
+      c.lateInitialize();
+      dialog.showAndWait();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
 }

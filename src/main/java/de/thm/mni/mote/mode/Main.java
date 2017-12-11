@@ -28,7 +28,7 @@ public class Main extends Application {
     bus.send(new SimpleStartMessage(OMCActor.class));
     bus.send(new SimpleStartMessage(FileWatcherActor.class));
     bus.send(new SimpleStartMessage(FileManagementActor.class));
-  
+
     launch(args);
   }
   
@@ -42,7 +42,7 @@ public class Main extends Application {
     builder.version(Settings.VERSION);
     bus.send(builder.build());
     bus.send(new ShowSplashMessage(null));
-    
+
     List<?> params = getParameters().getUnnamed();
     bus.send(new StartUIMessage(WelcomeActor.class, primaryStage, params));
   }

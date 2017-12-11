@@ -41,7 +41,7 @@
             </graphic>
           </MenuItem>
           <Menu disable="true" mnemonicParsing="false" text="%menu.file.open_recent" />
-          <MenuItem mnemonicParsing="false" onAction="#handleCloseProject" text="%menu.file.close_project" />
+          <MenuItem mnemonicParsing="false" onAction="#onCloseProject" text="%menu.file.close_project" />
           <SeparatorMenuItem mnemonicParsing="false" />
           <MenuItem disable="true" mnemonicParsing="false" text="%menu.file.add_system_library">
             <graphic>
@@ -54,26 +54,26 @@
             </graphic>
           </MenuItem>
           <SeparatorMenuItem mnemonicParsing="false" />
-          <MenuItem accelerator="Shortcut+S" mnemonicParsing="false" onAction="#handleSave" text="%menu.file.save">
+          <MenuItem accelerator="Shortcut+S" mnemonicParsing="false" onAction="#onSave" text="%menu.file.save">
             <graphic>
               <FontIcon iconColor="deepskyblue" iconLiteral="mdi-content-save" iconSize="18" />
             </graphic>
           </MenuItem>
-          <MenuItem accelerator="Shortcut+Shift+S" mnemonicParsing="false" onAction="#handleSaveAll" text="%menu.file.save_all">
+          <MenuItem accelerator="Shortcut+Shift+S" mnemonicParsing="false" onAction="#onSaveAll" text="%menu.file.save_all">
             <graphic>
               <FontIcon iconColor="deepskyblue" iconLiteral="mdi-content-save-all" iconSize="18" />
             </graphic>
           </MenuItem>
           <SeparatorMenuItem mnemonicParsing="false" />
-          <MenuItem accelerator="Shortcut+X" mnemonicParsing="false" onAction="#handleClose" text="%menu.file.exit" />
+          <MenuItem accelerator="Shortcut+X" mnemonicParsing="false" onAction="#onCloseClick" text="%menu.file.exit" />
         </Menu>
         <Menu mnemonicParsing="false" text="%menu.edit">
-          <MenuItem fx:id="miUndo" accelerator="Shortcut+Z" disable="true" mnemonicParsing="false" onAction="#handleUndo" text="%menu.edit.undo">
+          <MenuItem fx:id="miUndo" accelerator="Shortcut+Z" disable="true" mnemonicParsing="false" onAction="#onUndo" text="%menu.edit.undo">
             <graphic>
               <FontIcon iconColor="mediumpurple" iconLiteral="gmi-undo" iconSize="18" />
             </graphic>
           </MenuItem>
-          <MenuItem fx:id="miRedo" accelerator="Shortcut+Y" disable="true" mnemonicParsing="false" onAction="#handleRedo" text="%menu.edit.redo">
+          <MenuItem fx:id="miRedo" accelerator="Shortcut+Y" disable="true" mnemonicParsing="false" onAction="#onRedo" text="%menu.edit.redo">
             <graphic>
               <FontIcon iconColor="mediumpurple" iconLiteral="gmi-redo" iconSize="18" />
             </graphic>
@@ -86,19 +86,19 @@
           </MenuItem>
         </Menu>
         <Menu mnemonicParsing="false" text="%menu.view">
-          <MenuItem fx:id="miShowIcon" accelerator="Shortcut+I" disable="true" mnemonicParsing="false" onAction="#handleShowIcon" text="%menu.view.show_icon">
+          <MenuItem fx:id="miShowIcon" accelerator="Shortcut+I" disable="true" mnemonicParsing="false" onAction="#onShowIcon" text="%menu.view.show_icon">
                   <graphic>
                      <CheckBox fx:id="cbShowIcon" mnemonicParsing="false" disable="true"/>
                   </graphic>
           </MenuItem>
         </Menu>
-        <Menu mnemonicParsing="false" text="%menu.help">
+        <Menu mnemonicParsing="false" text="%menu.help" onAction="#onOpenHelp">
           <MenuItem accelerator="F1" mnemonicParsing="false" text="%menu.help.help">
             <graphic>
               <FontIcon iconColor="deepskyblue" iconLiteral="gmi-help" iconSize="18" />
             </graphic>
           </MenuItem>
-          <MenuItem mnemonicParsing="false" text="%menu.help.about">
+          <MenuItem mnemonicParsing="false" text="%menu.help.about" onAction="#onOpenAbout">
             <graphic>
               <FontIcon iconColor="deepskyblue" iconLiteral="gmi-info" iconSize="18" />
             </graphic>

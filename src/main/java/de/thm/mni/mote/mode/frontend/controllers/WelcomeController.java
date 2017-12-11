@@ -231,16 +231,6 @@ public class WelcomeController extends NotifyController {
     removedProjects.forEach(getSettings().getRecent()::remove);
   }
   
-  @FXML
-  void onOpenHelp() {
-    System.out.println("onOpenHelp");
-  }
-  
-  @FXML
-  void onOpenAbout() {
-    System.out.println("onOpenAbout");
-  }
-  
   public void updateUI(Boolean omcStarted) {
     this.omcStarted = omcStarted;
     vbRecent.setDisable(!omcStarted);

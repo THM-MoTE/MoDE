@@ -345,24 +345,24 @@ public class MainController extends NotifyController {
   }
   
   @FXML
-  private void handleSave() {
+  private void onSave() {
     if (!tabPane.getSelectionModel().isEmpty()) {
-      handleSave(((MainTabControl) tabPane.getSelectionModel().getSelectedItem()).getData());
+      onSave(((MainTabControl) tabPane.getSelectionModel().getSelectedItem()).getData());
     }
   }
   
   @FXML
-  private void handleSaveAll() {
+  private void onSaveAll() {
     getActor().send(new ModelsSaveMessage(getID(), tabPane.getTabs().stream().map(tab -> ((MainTabControl) tab).getData()).collect(Collectors.toList())));
-    tabPane.getTabs().forEach(tab -> handleSave(((MainTabControl) tab).getData()));
+    tabPane.getTabs().forEach(tab -> onSave(((MainTabControl) tab).getData()));
   }
   
-  private void handleSave(MoContainer container) {
+  private void onSave(MoContainer container) {
     getActor().send(new ModelsSaveMessage(getID(), container));
   }
   
   @FXML
-  private void handleCloseProject() {
+  private void onCloseProject() {
     this.hide();
     getActor().send(new UnsetProjectMessage(getID()));
     getActor().send(new StartUIMessage(getID(), WelcomeActor.class, new Stage()));
@@ -370,24 +370,24 @@ public class MainController extends NotifyController {
   }
   
   @FXML
-  private void handleClose() {
+  private void onCloseClick() {
     getActor().send(new ExitMessage(getID()));
   }
   
   @FXML
-  private void handleUndo() {
+  private void onUndo() {
     ActionManager am = ActionManager.getInstanceManager().getActive();
     if (am != null) am.undo();
   }
   
   @FXML
-  private void handleRedo() {
+  private void onRedo() {
     ActionManager am = ActionManager.getInstanceManager().getActive();
     if (am != null) am.redo();
   }
   
   @FXML
-  private void handleShowIcon() {
+  private void onShowIcon() {
     cbShowIcon.setSelected(!cbShowIcon.isSelected());
   }
 

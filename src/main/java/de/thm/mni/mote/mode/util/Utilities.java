@@ -42,7 +42,7 @@ public class Utilities {
     return getResourceAsStream("templates/" + template);
   }
   
-  private URL getView(String view) {
+  public URL getView(String view) {
     return getView("", view);
   }
   
