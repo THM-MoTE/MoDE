@@ -272,18 +272,8 @@
           <localCheckout>true</localCheckout>
           <pushChanges>true</pushChanges>
           <tagNameFormat>v@{project.version}</tagNameFormat>
+          <preparationGoals>github-release:release</preparationGoals>
         </configuration>
-        
-        <executions>
-          <execution>
-            <id>release-project</id>
-            <phase>install</phase>
-            <goals>
-              <goal>prepare</goal>
-              <goal>perform</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
       
       <plugin>
