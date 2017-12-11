@@ -17,7 +17,6 @@
     <maven.javadoc.skip>true</maven.javadoc.skip>
     <skipTests>true</skipTests>
     <ignoreSnapshots>true</ignoreSnapshots>
-    <github.draft>true</github.draft>
   </properties>
   
   <scm>
@@ -189,6 +188,32 @@
     
     <plugins>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>3.0.1</version>
+      </plugin>
+  
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>3.0.2</version>
+        <configuration>
+          <includeEmptyDirs>true</includeEmptyDirs>
+        </configuration>
+      </plugin>
+  
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.0.0</version>
+      </plugin>
+  
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <version>2.8.2</version>
+      </plugin>
+  
+      <plugin>
         <groupId>org.antlr</groupId>
         <artifactId>antlr4-maven-plugin</artifactId>
         <version>4.5.3</version>
@@ -209,14 +234,6 @@
         </executions>
       </plugin>
       
-      <plugin>
-        <artifactId>maven-resources-plugin</artifactId>
-        <version>3.0.2</version>
-        <configuration>
-          <includeEmptyDirs>true</includeEmptyDirs>
-        </configuration>
-      </plugin>
-  
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
@@ -272,7 +289,6 @@
           <localCheckout>true</localCheckout>
           <pushChanges>true</pushChanges>
           <tagNameFormat>v@{project.version}</tagNameFormat>
-          <completionGoals>github-release:release</completionGoals>
         </configuration>
       </plugin>
       
