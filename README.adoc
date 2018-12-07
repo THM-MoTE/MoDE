@@ -1,4 +1,4 @@
-:imagesdir: https://rawgit.com/THM-MoTE/Logos/master/svgs
+:imagesdir: https://cdn.jsdelivr.net/gh/THM-MoTE/Logos/svgs
 
 image::MoDE.svg[link="https://github.com/THM-MoTE/MoDE/", align="center"]
 
